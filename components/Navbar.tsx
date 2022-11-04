@@ -111,7 +111,9 @@ const Navbar = () : JSX.Element => {
           <MenuItem to="/service">Service</MenuItem>
           <MenuItem to="/pricing">Pricing</MenuItem>
           <MenuItem to="/resources">Resources</MenuItem>
-          <MenuItem to="/team">Team</MenuItem>
+          <Link href="/login" >
+            <Text fontWeight="700" fontSize="18px" ml={[0, 0, 4, 16]} mr="8" mt={16} mb={4}>Login</Text>
+          </Link>
           {/* <MenuItem to="/search"> */}
           <Button ml={[0, 0, 4, 8]} mt={12} mb={4} variant="homeWhite" size="lg">
             Try It Now
