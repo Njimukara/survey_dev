@@ -81,11 +81,11 @@ const Navbar = () : JSX.Element => {
       top="0"
       margin="auto"
       position="fixed"
-      bg={navScroll ? "#1C121F" : ""}
+      bg={navScroll ? "#fff" : ""}
       boxShadow="sm"
-      color="white"
+      color={navScroll ? "" :"white"}
     >
-      <Text mt={[6, 6, 6, 4]} mb={4} fontSize="32px" fontWeight="800">
+      <Text mt={[6, 6, 6 , 8]} mb={4} fontSize="32px" fontWeight="800">
         SurveyPlanner
       </Text>
 
@@ -115,7 +115,7 @@ const Navbar = () : JSX.Element => {
             <Text fontWeight="700" fontSize="18px" ml={[0, 0, 4, 16]} mr="8" mt={16} mb={4}>Login</Text>
           </Link>
           {/* <MenuItem to="/search"> */}
-          <Button ml={[0, 0, 4, 8]} mt={12} mb={4} variant="homeWhite" size="lg">
+          <Button ml={[0, 0, 4, 8]} mt={10} mb={4} variant={navScroll ? "homePrimary" : "homeWhite"} size="lg">
             Try It Now
           </Button>
           {/* </MenuItem> */}

@@ -161,6 +161,24 @@ export const buttonStyles = {
           boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
         },
       }),
+      homePrimary: (props: StyleFunctionProps) => ({
+        bg: "primary.500",
+        color: "white",
+        borderRadius: "5px",
+        pt: "9",
+        pb: "8",
+        px: "8",
+        _focus: {
+          bg: mode("blue.500", "blue.400")(props),
+        },
+        _active: {
+          bg: mode("blue.500", "blue.400")(props),
+        },
+        _hover: {
+          bg: "primary.600",
+          boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
+        },
+      }),
     },
     // default values for props eg size and variant
     defaultProps: {},
