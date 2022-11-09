@@ -1,5 +1,6 @@
-import { extendTheme, theme as base } from "@chakra-ui/react";
+import { extendTheme, theme as base, HTMLChakraProps, ThemingProps } from "@chakra-ui/react";
 import { buttonStyles as Button } from "./components/Button";
+import { CardStyles as Card } from "./components/Card";
 import { globalStyles } from './styles';
 
 export const theme = extendTheme({
@@ -29,6 +30,7 @@ export const theme = extendTheme({
   },
   components: {
     Button,
+    Card,
     Progress: {
       baseStyle: {
         filledTrack: {},
@@ -36,3 +38,5 @@ export const theme = extendTheme({
     },
   },
 });
+
+export interface CustomCardProps extends HTMLChakraProps<'div'>, ThemingProps {}
