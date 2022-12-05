@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-
+// import Image from 'next/image'
 import {
   Button,
   Container,
@@ -15,6 +15,7 @@ import {
   TabList,
   TabPanel,
   TabPanels,
+  Heading,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -109,6 +110,7 @@ const MonthlyPricing = [
     ],
   },
 ];
+
 const Home: NextPage = () => {
   return (
     <Box p={0}>
@@ -249,9 +251,14 @@ const Home: NextPage = () => {
             <TabPanel>
               <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
                 {MonthlyPricing.map((x) => (
-                  <PricingCard title={x.title} price={x.price} period={x.period} description={x.description} advantages={x.advantages}></PricingCard>
+                  <PricingCard
+                    title={x.title}
+                    price={x.price}
+                    period={x.period}
+                    description={x.description}
+                    advantages={x.advantages}
+                  ></PricingCard>
                 ))}
-            
               </SimpleGrid>
             </TabPanel>
             <TabPanel>
@@ -262,6 +269,26 @@ const Home: NextPage = () => {
           </TabPanels>
         </Tabs>
       </Section>
+
+      {/* Get started Section ; */}
+      <Box>
+        <Container maxW='container.xl' centerContent py="150px">
+          <SimpleGrid columns={2} spacing={100} minChildWidth="570px">
+            <Box w="570px" mt="100px" mx="50px">
+              <Heading as="h2" lineHeight="50px" mb="23px" >
+                Fast, Secured and Easy Access to our platform
+              </Heading>
+              <Text lineHeight="35px" color="gray.600" mb="23px" fontSize="20px">
+                You need a to have an active account to get access to our
+                platform. Creating an account is simple. Click on the button
+                below to create an account.
+              </Text>
+              <Button variant="homePrimary">Get Started</Button>
+            </Box>
+            <Image src="/he_sitting_with_notebook.png" alt="me" width="670" />
+          </SimpleGrid>
+        </Container>
+      </Box>
     </Box>
   );
 };

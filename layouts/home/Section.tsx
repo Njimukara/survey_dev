@@ -3,7 +3,7 @@ import React from "react";
 
 type sectionProps = {
   children?: JSX.Element;
-  title: string;
+  title?: string;
   bg?: string
 };
 const Section = ({ title, children, bg }: sectionProps) => {
