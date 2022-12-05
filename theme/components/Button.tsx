@@ -73,7 +73,18 @@ export const buttonStyles = {
         },
       },
       outline: () => ({
-        borderRadius: "16px",
+        borderRadius: "5px",
+        border: "2px",
+        borderColor: "primary.500",
+        color: "primary.500",
+        py:"9",
+        px:"14",
+        fontSize:"16px",
+        fontWeight:"semibold",
+        _selected:{
+          bg: "primary.500",
+          color: "white",
+        }
       }),
       brand: (props: StyleFunctionProps) => ({
         bg: mode("blue.500", "blue.400")(props),

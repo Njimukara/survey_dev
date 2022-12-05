@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 
 import {
+  Button,
   Container,
   Image,
   Box,
@@ -9,6 +10,11 @@ import {
   Icon,
   VStack,
   Square,
+  Tab,
+  Tabs,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -16,6 +22,7 @@ import { BsCalculator } from "react-icons/bs";
 import Hero from "../layouts/home/Hero";
 import Section from "../layouts/home/Section";
 import Card from "../components/Card";
+import { PricingCard } from "../components/PricingCard";
 
 const slides = [
   {
@@ -48,6 +55,60 @@ const slides = [
   },
 ];
 
+const MonthlyPricing = [
+  {
+    id: 1,
+    title: "Single Product Licence",
+    price: 48,
+    period: "Month",
+    description:
+      "Keep it simple, This licence gives you access to one product of your choice",
+    advantages: [
+      { name: "Access to a single product " },
+      { name: "Unlimited Generation of surveys" },
+      { name: "Customer Support" },
+    ],
+  },
+  {
+    id: 2,
+    title: "Double Product Licence",
+    price: 98,
+    period: "Month",
+    description:
+      "In need of more, This licence gives you access to two product of your choice",
+    advantages: [
+      { name: "Access to two producta" },
+      { name: "Unlimited Generation of surveys" },
+      { name: "Customer Support" },
+    ],
+  },
+  {
+    id: 3,
+    title: "Triple Product Licence",
+    price: 158,
+    period: "Month",
+    description:
+      "Make it flexible, This licence gives you access to three product of your choice",
+    advantages: [
+      { name: "Access to a three producta" },
+      { name: "Unlimited Generation of surveys" },
+      { name: "Customer Support" },
+    ],
+  },
+  {
+    id: 4,
+    title: "Complete Product Licence",
+    price: 48,
+    period: "Month",
+    description:
+      "No stressing, No limits, This licence gives you access to all our products",
+    advantages: [
+      { name: "Access to all products" },
+      { name: "Unlimited Generation of surveys" },
+      { name: "Customer Support" },
+    ],
+  },
+];
 const Home: NextPage = () => {
   return (
     <Box p={0}>
@@ -117,24 +178,89 @@ const Home: NextPage = () => {
       <Section title="All The Assitance You Need For Your Hydrolic Surveys Inspections">
         <SimpleGrid columns={2} spacing={10}>
           {slides.map((slide, sid) => (
-              <Card key={`slide-${sid}`} shadow="md" variant="bordered" fontSize="18px" w="400px" p="0">
-                <Image
-                  src={slide.image}
-                  w="400px"
-                  h="250px"
-                  _hover={{
-                    scale: 1.1,
-                  }}
-                  borderRadius="0px"
-                />
-                <Box p="20px">
-
-                <Text mb="1" fontWeight="bold">{slide.name}</Text>
+            <Card
+              key={`slide-${sid}`}
+              shadow="md"
+              variant="bordered"
+              fontSize="18px"
+              w="400px"
+              p="0"
+            >
+              <Image
+                src={slide.image}
+                w="400px"
+                h="250px"
+                _hover={{
+                  scale: 1.1,
+                }}
+                borderRadius="0px"
+              />
+              <Box p="20px">
+                <Text mb="1" fontWeight="bold">
+                  {slide.name}
+                </Text>
                 <Text>{slide.description}</Text>
-                </Box>
-              </Card>
+              </Box>
+            </Card>
           ))}
         </SimpleGrid>
+      </Section>
+
+      {/* Pricing Plan Section  */}
+      <Section
+        bg="secondary.500"
+        title="A simple and transaparent pricing just for you"
+      >
+        <Tabs variant="unstyled" w="full">
+          <TabList as="Flex" justifyContent="center" mb="70px">
+            <Tab
+              bg="white"
+              borderLeftRadius="20px"
+              pt="9"
+              pb="8"
+              px="20"
+              fontSize="20px"
+              fontWeight="semibold"
+              _selected={{
+                bg: "primary.500",
+                color: "white",
+                borderLeftRadius: "20px",
+              }}
+            >
+              Monthly
+            </Tab>
+            <Tab
+              bg="white"
+              borderRightRadius="20px"
+              pt="9"
+              pb="8"
+              px="20"
+              fontSize="20px"
+              fontWeight="semibold"
+              _selected={{
+                bg: "primary.500",
+                color: "white",
+              }}
+            >
+              Annually
+            </Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
+                {MonthlyPricing.map((x) => (
+                  <PricingCard title={x.title} price={x.price} period={x.period} description={x.description} advantages={x.advantages}></PricingCard>
+                ))}
+            
+              </SimpleGrid>
+            </TabPanel>
+            <TabPanel>
+              <Button variant="homePrimary" size="lg">
+                Annually!
+              </Button>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Section>
     </Box>
   );

@@ -4,10 +4,11 @@ import React from "react";
 type sectionProps = {
   children?: JSX.Element;
   title: string;
+  bg?: string
 };
-const Section = ({ title, children }: sectionProps) => {
+const Section = ({ title, children, bg }: sectionProps) => {
   return (
-    <Box>
+    <Box bg={ bg ? bg : ""}>
       <Container maxW='container.xl' centerContent py="150px">
         <Heading as="h2" mb="100px" textAlign="center" w="75%">
           {title}
