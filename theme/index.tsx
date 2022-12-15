@@ -2,6 +2,7 @@ import { extendTheme, theme as base, HTMLChakraProps, ThemingProps } from "@chak
 import { buttonStyles as Button } from "./components/Button";
 import { CardStyles as Card } from "./components/Card";
 import { globalStyles } from './styles';
+import { inputTheme } from "./components/Inputs";
 
 export const theme = extendTheme({
   // fonts: {
@@ -45,6 +46,7 @@ export const theme = extendTheme({
   components: {
     Button,
     Card,
+    Input: inputTheme,
     Progress: {
       baseStyle: {
         filledTrack: {},

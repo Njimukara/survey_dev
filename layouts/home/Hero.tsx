@@ -4,8 +4,9 @@ const Hero = () => {
   return (
     <Center
       as="header"
-      bgImg='linear-gradient(to right bottom, rgba(55, 9, 255, 0.601), rgba(28,5,128, 0.601)), url("/background-hero.jpg")'
+      bgImg='linear-gradient(to right bottom, rgba(57, 101, 255, 0.90), rgba(115, 83, 255, 0.9)), url("/background-hero-3.jpg")'
       backgroundSize="cover"
+      backgroundPosition= "bottom"
       h="100vh"
       w="100vw"
     >

@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { VSeparator } from "../components/separator/Separator";
 // import Image from 'next/image'
 import {
   Button,
@@ -16,6 +17,12 @@ import {
   TabPanel,
   TabPanels,
   Heading,
+  Stack,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Input,
+  Textarea
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -24,6 +31,7 @@ import Hero from "../layouts/home/Hero";
 import Section from "../layouts/home/Section";
 import Card from "../components/Card";
 import { PricingCard } from "../components/PricingCard";
+import Footer from "../layouts/home/Footer";
 
 const slides = [
   {
@@ -289,6 +297,52 @@ const Home: NextPage = () => {
           </SimpleGrid>
         </Container>
       </Box>
+
+      {/* Contact us section  */}
+      <Box>
+      <Container maxW='container.xl' centerContent>
+        <Stack divider={<VSeparator />} boxShadow='2xl'  direction={['column', 'row'] } >
+          <Box width="600px" px="95px" mt="50px" >
+            <Heading as="h2" my="30px">Lets get in touch</Heading>
+            <Text>Morbi non quam nec dui luctus rutrum.</Text>
+            <Box as="form" mt="25px" mb="100px">
+              <FormControl isRequired mb="25px">
+                <FormLabel >Name</FormLabel>
+                <Input height="50px" variant="rounded" type='text'/>
+              </FormControl>
+              <FormControl isRequired mb="25px">
+                <FormLabel>Email address</FormLabel>
+                <Input height="50px" variant="rounded" type='email'/>
+              </FormControl>
+              <FormControl mb="25px">
+                <FormLabel>Telephone number</FormLabel>
+                <Input height="50px" variant="rounded" type='tel' placeholder="+1(567)123-4567"/>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Your messages</FormLabel>
+                <Textarea height="50px" placeholder="Say what you want here"/>
+              </FormControl>
+
+              <Button my="25px" width="full" variant="homePrimary">Contact us</Button>
+
+              <Text>We will reply as soon as possible we promise</Text>
+            </Box>
+          </Box>
+          
+          <Box width="600px" px="95px" mt="50px">
+            <Image src="/contact-us.jpg" width="450px" height="330px" borderRadius="16px"/>
+            <Heading as="h3" fontSize="64px" my="30px">Do you have a question ?</Heading>
+            <Text mt="30px" mb="30px">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat. Dolor ipsum amet sin iquarum tempea</Text>
+            <Text mb="12px">Feel free to contact us here</Text>
+            <Text fontSize="22px">Call: <Text as="span" color="primary.500">+1 (555) 123-4567</Text></Text>
+          </Box>
+
+        </Stack>
+        </Container>
+      </Box>
+
+      {/* Contect section  */}
+      <Footer />
     </Box>
   );
 };
