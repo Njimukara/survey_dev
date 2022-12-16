@@ -279,7 +279,7 @@ const Home: NextPage = () => {
       </Section>
 
       {/* Get started Section ; */}
-      <Box>
+      <Box pb="430px">
         <Container maxW='container.xl' centerContent py="150px">
           <SimpleGrid columns={2} spacing={100} minChildWidth="570px">
             <Box w="570px" mt="100px" mx="50px">
@@ -298,10 +298,12 @@ const Home: NextPage = () => {
         </Container>
       </Box>
 
-      {/* Contact us section  */}
-      <Box>
-      <Container maxW='container.xl' centerContent>
-        <Stack divider={<VSeparator />} boxShadow='2xl'  direction={['column', 'row'] } >
+      {/* Contect section  */}
+      <Footer>
+               {/* Contact us section  */}
+      <Box mt="-450px">
+      <Container maxW='container.xl' centerContent >
+        <Stack divider={<VSeparator />} boxShadow='2xl' bg="white" direction={['column', 'row'] } >
           <Box width="600px" px="95px" mt="50px" >
             <Heading as="h2" my="30px">Lets get in touch</Heading>
             <Text>Morbi non quam nec dui luctus rutrum.</Text>
@@ -329,10 +331,10 @@ const Home: NextPage = () => {
             </Box>
           </Box>
           
-          <Box width="600px" px="95px" mt="50px">
+          <Box width="600px" px="95px" mt="60px">
             <Image src="/contact-us.jpg" width="450px" height="330px" borderRadius="16px"/>
-            <Heading as="h3" fontSize="64px" my="30px">Do you have a question ?</Heading>
-            <Text mt="30px" mb="30px">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat. Dolor ipsum amet sin iquarum tempea</Text>
+            <Heading as="h3" fontSize="64px" mt="40px">Do you have a question ?</Heading>
+            <Text mt="20px" mb="30px">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat. Dolor ipsum amet sin iquarum tempea</Text>
             <Text mb="12px">Feel free to contact us here</Text>
             <Text fontSize="22px">Call: <Text as="span" color="primary.500">+1 (555) 123-4567</Text></Text>
           </Box>
@@ -340,9 +342,7 @@ const Home: NextPage = () => {
         </Stack>
         </Container>
       </Box>
-
-      {/* Contect section  */}
-      <Footer />
+      </Footer>
     </Box>
   );
 };
