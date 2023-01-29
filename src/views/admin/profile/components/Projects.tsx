@@ -8,7 +8,7 @@ import Project3 from 'img/profile/Project3.png'
 import Card from 'components/card/Card'
 import Project from 'views/admin/profile/components/Project'
 
-export default function Projects (props: { [x: string]: any }) {
+export default function Projects(props: { [x: string]: any }) {
   const { ...rest } = props
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue('secondaryGray.900', 'white')
@@ -24,9 +24,8 @@ export default function Projects (props: { [x: string]: any }) {
         fontWeight='bold'
         fontSize='2xl'
         mt='10px'
-        mb='4px'
-      >
-        All projects
+        mb='4px'>
+        My Users
       </Text>
       <Text color={textColorSecondary} fontSize='md' me='26px' mb='40px'>
         Here you can find more details about your projects. Keep you user

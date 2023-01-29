@@ -11,7 +11,7 @@ import {
   getActiveNavbar,
   getActiveNavbarText,
   getActiveRoute,
-  isWindowAvailable
+  isWindowAvailable,
 } from 'utils/navigation'
 
 interface DashboardLayoutProps extends PropsWithChildren {
@@ -19,7 +19,7 @@ interface DashboardLayoutProps extends PropsWithChildren {
 }
 
 // Custom Chakra theme
-export default function AdminLayout (props: DashboardLayoutProps) {
+export default function AdminLayout(props: DashboardLayoutProps) {
   const { children, ...rest } = props
   // states and functions
   const [fixed] = useState(false)
@@ -36,9 +36,8 @@ export default function AdminLayout (props: DashboardLayoutProps) {
       <SidebarContext.Provider
         value={{
           toggleSidebar,
-          setToggleSidebar
-        }}
-      >
+          setToggleSidebar,
+        }}>
         <Sidebar routes={routes} display='none' {...rest} />
         <Box
           float='right'
@@ -52,8 +51,7 @@ export default function AdminLayout (props: DashboardLayoutProps) {
           transition='all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)'
           transitionDuration='.2s, .2s, .35s'
           transitionProperty='top, bottom, width'
-          transitionTimingFunction='linear, linear, ease'
-        >
+          transitionTimingFunction='linear, linear, ease'>
           <Portal>
             <Box>
               <Navbar
@@ -73,12 +71,8 @@ export default function AdminLayout (props: DashboardLayoutProps) {
             p={{ base: '20px', md: '30px' }}
             pe='20px'
             minH='100vh'
-            pt='50px'
-          >
+            pt='50px'>
             {children}
-          </Box>
-          <Box>
-            <Footer />
           </Box>
         </Box>
       </SidebarContext.Provider>

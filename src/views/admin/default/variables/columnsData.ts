@@ -1,56 +1,82 @@
-import { Column } from "react-table";
-import tableDataCheck from "./tableDataCheck.json";
+import { Column } from 'react-table'
+import tableDataCheck from './tableDataCheck.json'
 
 export const columnsDataCheck = [
   {
-    Header: "NAME",
-    accessor: "name",
+    Header: 'NAME',
+    accessor: 'name',
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
+    Header: 'PROGRESS',
+    accessor: 'progress',
   },
   {
-    Header: "QUANTITY",
-    accessor: "quantity",
+    Header: 'QUANTITY',
+    accessor: 'quantity',
   },
   {
-    Header: "DATE",
-    accessor: "date",
+    Header: 'DATE',
+    accessor: 'date',
   },
-];
+]
 export const columnsDataComplex = [
   {
-    Header: "NAME",
-    accessor: "name",
+    Header: 'NAME',
+    accessor: 'name',
   },
   {
-    Header: "STATUS",
-    accessor: "status",
+    Header: 'STATUS',
+    accessor: 'status',
   },
   {
-    Header: "DATE",
-    accessor: "date",
+    Header: 'DATE',
+    accessor: 'date',
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
+    Header: 'PROGRESS',
+    accessor: 'progress',
   },
-];
+]
 
-export type ColumnData = Column[];
+export const columnsDataSurvey = [
+  // {
+  //   Header: 'ID',
+  //   accessor: 'id',
+  // },
+  {
+    Header: 'NAME',
+    accessor: 'name',
+  },
+  {
+    Header: 'DOWNLOAD',
+    accessor: 'download',
+  },
+  {
+    Header: 'DATE GENERATED',
+    accessor: 'date generated',
+  },
+  {
+    Header: 'ACTIONS',
+    accessor: 'actions',
+  },
+]
+
+export type ColumnData = Column[]
 
 export type TableData = Column<{
-  name: (string | boolean)[];
-  date: string;
-  progress: number;
-  quantity?: number;
-  status?: string;
-  artworks?: string;
-  rating?: number;
-}>;
+  // id?: string
+  name: (string | boolean)[]
+  date: string
+  progress?: number
+  download?: string
+  actions?: string
+  quantity?: number
+  status?: string
+  artworks?: string
+  rating?: number
+}>
 
 export type TableProps = {
-  columnsData: ColumnData;
-  tableData: TableData[];
-};
+  columnsData: ColumnData
+  tableData: TableData[]
+}

@@ -3,8 +3,9 @@ import {
   MdBarChart,
   MdPerson,
   MdHome,
-  MdLock,
-  MdOutlineShoppingCart
+  MdAdd,
+  MdOutlineAttachMoney,
+  MdOutlineShoppingCart,
 } from 'react-icons/md'
 
 // Admin Imports
@@ -20,11 +21,32 @@ import { IRoute } from 'types/navigation'
 
 const routes: IRoute[] = [
   {
-    name: 'Main Dashboard',
+    name: 'Generate Survey',
+    layout: '/admin',
+    path: '/default',
+    icon: <Icon as={MdAdd} width='20px' height='20px' color='inherit' />,
+    component: MainDashboard,
+  },
+  {
+    name: 'Home',
     layout: '/admin',
     path: '/default',
     icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
-    component: MainDashboard
+    component: MainDashboard,
+  },
+  {
+    name: 'Buy or renew License',
+    layout: '/admin',
+    path: '/default',
+    icon: (
+      <Icon
+        as={MdOutlineShoppingCart}
+        width='20px'
+        height='20px'
+        color='inherit'
+      />
+    ),
+    component: MainDashboard,
   },
   {
     name: 'NFT Marketplace',
@@ -39,36 +61,65 @@ const routes: IRoute[] = [
       />
     ),
     component: NFTMarketplace,
-    secondary: true
+    secondary: true,
   },
   {
-    name: 'Data Tables',
+    name: 'My Products',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
     path: '/data-tables',
-    component: DataTables
+    component: DataTables,
+    subRoutes: [
+      {
+        name: 'Product 1',
+        layout: '/admin',
+        icon: (
+          <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />
+        ),
+        path: '/data-tables',
+        component: DataTables,
+      },
+      {
+        name: 'Product 2',
+        layout: '/admin',
+        icon: (
+          <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />
+        ),
+        path: '/data-tables',
+        component: DataTables,
+      },
+      {
+        name: 'Product 3',
+        layout: '/admin',
+        icon: (
+          <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />
+        ),
+        path: '/data-tables',
+        component: DataTables,
+      },
+    ],
+  },
+  {
+    name: 'View Transactions',
+    layout: '/admin',
+    icon: (
+      <Icon
+        as={MdOutlineAttachMoney}
+        width='20px'
+        height='20px'
+        color='inherit'
+      />
+    ),
+    path: '/data-tables',
+    component: DataTables,
   },
   {
     name: 'Profile',
     layout: '/admin',
     path: '/profile',
     icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
-    component: Profile
+    component: Profile,
   },
-  {
-    name: 'Sign In',
-    layout: '/auth',
-    path: '/sign-in',
-    icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
-    component: SignInCentered
-  },
-  {
-    name: 'RTL Admin',
-    layout: '/rtl',
-    path: '/rtl-default',
-    icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
-    component: RTL
-  }
 ]
 
 export default routes

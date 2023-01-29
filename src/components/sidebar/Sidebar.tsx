@@ -11,13 +11,13 @@ import {
   DrawerOverlay,
   useDisclosure,
   DrawerContent,
-  DrawerCloseButton
+  DrawerCloseButton,
 } from '@chakra-ui/react'
 import Content from 'components/sidebar/components/Content'
 import {
   renderThumb,
   renderTrack,
-  renderView
+  renderView,
 } from 'components/scrollbar/Scrollbar'
 import { Scrollbars } from 'react-custom-scrollbars-2'
 
@@ -34,7 +34,7 @@ interface SidebarProps extends SidebarResponsiveProps {
   [x: string]: any
 }
 
-function Sidebar (props: SidebarProps) {
+function Sidebar(props: SidebarProps) {
   const { routes } = props
 
   let variantChange = '0.2s linear'
@@ -57,14 +57,12 @@ function Sidebar (props: SidebarProps) {
         m={sidebarMargins}
         minH='100%'
         overflowX='hidden'
-        boxShadow={shadow}
-      >
+        boxShadow={shadow}>
         <Scrollbars
           autoHide
           renderTrackVertical={renderTrack}
           renderThumbVertical={renderThumb}
-          renderView={renderView}
-        >
+          renderView={renderView}>
           <Content routes={routes} />
         </Scrollbars>
       </Box>
@@ -74,7 +72,7 @@ function Sidebar (props: SidebarProps) {
 
 // FUNCTIONS
 
-export function SidebarResponsive (props: SidebarResponsiveProps) {
+export function SidebarResponsive(props: SidebarResponsiveProps) {
   let sidebarBackgroundColor = useColorModeValue('white', 'navy.800')
   let menuColor = useColorModeValue('gray.400', 'white')
   // // SIDEBAR
@@ -106,8 +104,7 @@ export function SidebarResponsive (props: SidebarResponsiveProps) {
             ? 'right'
             : 'left'
         }
-        finalFocusRef={btnRef}
-      >
+        finalFocusRef={btnRef}>
         <DrawerOverlay />
         <DrawerContent w='285px' maxW='285px' bg={sidebarBackgroundColor}>
           <DrawerCloseButton
@@ -121,8 +118,7 @@ export function SidebarResponsive (props: SidebarResponsiveProps) {
               autoHide
               renderTrackVertical={renderTrack}
               renderThumbVertical={renderThumb}
-              renderView={renderView}
-            >
+              renderView={renderView}>
               <Content routes={routes} />
             </Scrollbars>
           </DrawerBody>
