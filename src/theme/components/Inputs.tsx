@@ -17,6 +17,15 @@ const rounded = definePartsStyle({
       borderColor: 'gray.600',
       background: 'gray.800',
     },
+    _focus: {
+      borderColor: 'blue.500',
+    },
+    _active: {
+      borderColor: 'blue.500',
+    },
+    _hover: {
+      borderColor: 'blue.600',
+    },
   },
   addon: {
     border: '1px solid',

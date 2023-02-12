@@ -37,6 +37,8 @@ import Footer from '../layouts/home/Footer'
 import UserReports from './admin/default'
 import Navbar from 'components/navbar/Navbar'
 
+import { useSession, signIn, signOut } from 'next-auth/react'
+
 const slides = [
   {
     id: '1',
@@ -124,11 +126,12 @@ const MonthlyPricing = [
 ]
 
 export default function Home() {
+  const { data: session, status } = useSession()
   const [user, setUser] = useState(null)
   const router = useRouter()
-  if (user) {
+  if (status === 'authenticated') {
     // router.push('/admin/default')
-    console.log(user)
+    console.log(session)
     return <UserReports />
   }
 
@@ -306,7 +309,7 @@ export default function Home() {
                   platform. Creating an account is simple. Click on the button
                   below to create an account.
                 </Text>
-                <Button variant='homePrimary'>Get Started</Button>
+                <Button variant='homePrimary'> Get Started</Button>
               </Box>
               <Image src='/he_sitting_with_notebook.png' alt='me' width='670' />
             </SimpleGrid>

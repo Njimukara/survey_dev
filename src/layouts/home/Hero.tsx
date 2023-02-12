@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Button, Center, Heading, VStack, Text } from '@chakra-ui/react'
-import styles from '../../../styles/Hero.module.css'
 const Hero = () => {
   return (
     <Center

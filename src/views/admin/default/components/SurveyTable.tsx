@@ -31,6 +31,7 @@ import {
   MdOutlineError,
   MdDeleteOutline,
   MdEdit,
+  MdLink,
 } from 'react-icons/md'
 import { TableProps } from '../variables/columnsData'
 export default function ColumnsTable(props: TableProps) {
@@ -156,7 +157,7 @@ export default function ColumnsTable(props: TableProps) {
                           _focus={nullbtnbgfocus}
                           _active={nullbtnbgfocus}>
                           <Icon
-                            as={MdEdit}
+                            as={MdLink}
                             w={5}
                             h={5}
                             color={textColorSecondary}

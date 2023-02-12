@@ -9,14 +9,14 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import {
   useGlobalFilter,
   usePagination,
   useSortBy,
-  useTable
+  useTable,
 } from 'react-table'
 
 // Custom components
@@ -26,7 +26,7 @@ import Menu from 'components/menu/MainMenu'
 // Assets
 import { MdCheckCircle, MdCancel, MdOutlineError } from 'react-icons/md'
 import { TableProps } from '../variables/columnsData'
-export default function ColumnsTable (props: TableProps) {
+export default function ColumnsTable(props: TableProps) {
   const { columnsData, tableData } = props
 
   const columns = useMemo(() => columnsData, [columnsData])
@@ -35,7 +35,7 @@ export default function ColumnsTable (props: TableProps) {
   const tableInstance = useTable(
     {
       columns,
-      data
+      data,
     },
     useGlobalFilter,
     useSortBy,
@@ -48,7 +48,7 @@ export default function ColumnsTable (props: TableProps) {
     headerGroups,
     page,
     prepareRow,
-    initialState
+    initialState,
   } = tableInstance
   initialState.pageSize = 5
 
@@ -59,16 +59,14 @@ export default function ColumnsTable (props: TableProps) {
       flexDirection='column'
       w='100%'
       px='0px'
-      overflowX={{ sm: 'scroll', lg: 'hidden' }}
-    >
+      overflowX={{ sm: 'scroll', lg: 'hidden' }}>
       <Flex px='25px' justify='space-between' mb='10px' align='center'>
         <Text
           color={textColor}
           fontSize='22px'
           fontWeight='700'
-          lineHeight='100%'
-        >
-          Complex Table
+          lineHeight='100%'>
+          Recent Transactions
         </Text>
         <Menu />
       </Flex>
@@ -81,14 +79,12 @@ export default function ColumnsTable (props: TableProps) {
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                   pe='10px'
                   key={index}
-                  borderColor={borderColor}
-                >
+                  borderColor={borderColor}>
                   <Flex
                     justify='space-between'
                     align='center'
                     fontSize={{ sm: '10px', lg: '12px' }}
-                    color='gray.400'
-                  >
+                    color='gray.400'>
                     {column.render('Header')}
                   </Flex>
                 </Th>
@@ -103,7 +99,7 @@ export default function ColumnsTable (props: TableProps) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data
-                  if (cell.column.Header === 'NAME') {
+                  if (cell.column.Header === 'AMOUNT') {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
@@ -146,17 +142,11 @@ export default function ColumnsTable (props: TableProps) {
                         {cell.value}
                       </Text>
                     )
-                  } else if (cell.column.Header === 'PROGRESS') {
+                  } else if (cell.column.Header === 'PAYMENT') {
                     data = (
-                      <Flex align='center'>
-                        <Progress
-                          variant='table'
-                          colorScheme='brandScheme'
-                          h='8px'
-                          w='108px'
-                          value={cell.value}
-                        />
-                      </Flex>
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
                     )
                   }
                   return (
@@ -167,8 +157,7 @@ export default function ColumnsTable (props: TableProps) {
                       maxH='30px !important'
                       py='8px'
                       minW={{ sm: '150px', md: '200px', lg: 'auto' }}
-                      borderColor='transparent'
-                    >
+                      borderColor='transparent'>
                       {data}
                     </Td>
                   )

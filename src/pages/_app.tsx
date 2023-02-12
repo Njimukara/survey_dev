@@ -14,9 +14,16 @@ import Head from 'next/head'
 import '../../styles/globals.css'
 // import {theme} from '../theme/';
 import 'theme/styles.css'
-import Navbar from '../components/navbar/Navbar'
 
-function MyApp({ Component, pageProps }: AppProps) {
+import { SessionProvider } from 'next-auth/react'
+import { Session } from 'next-auth'
+
+function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session
+}>) {
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -24,7 +31,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <meta name='theme-color' content='#000000' />
       </Head>
-      <Component {...pageProps} />
+      <SessionProvider session={pageProps.session}>
+        <Component {...pageProps} />
+      </SessionProvider>
     </ChakraProvider>
   )
 }

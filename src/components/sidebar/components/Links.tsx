@@ -1,20 +1,36 @@
 /* eslint-disable */
 
 // chakra imports
-import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Collapse,
+  Flex,
+  HStack,
+  Text,
+  useColorModeValue,
+  VStack,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import Link from 'next/link'
 import { IRoute } from 'types/navigation'
+import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md'
 
 interface SidebarLinksProps {
   routes: IRoute[]
 }
 
-export function SidebarLinks (props: SidebarLinksProps) {
+export function SidebarLinks(props: SidebarLinksProps) {
   const { routes } = props
 
   //   Chakra color mode
   const router = useRouter()
+
+  const [show, setShow] = useState(true)
+  const toggleShow = () => {
+    setShow(!show)
+  }
 
   let activeColor = useColorModeValue('gray.700', 'white')
   let inactiveColor = useColorModeValue(
@@ -38,7 +54,113 @@ export function SidebarLinks (props: SidebarLinksProps) {
         route.layout === '/auth' ||
         route.layout === '/rtl'
       ) {
-        return (
+        return route.subRoutes ? (
+          <Box key={index}>
+            <HStack
+              spacing={activeRoute(route.path.toLowerCase()) ? '22px' : '26px'}
+              py='5px'
+              ps='10px'>
+              <Flex w='100%' alignItems='center' justifyContent='space'>
+                <Flex w='100%' alignItems='center' justifyContent='space'>
+                  <Box
+                    color={
+                      activeRoute(route.path.toLowerCase())
+                        ? activeIcon
+                        : textColor
+                    }
+                    me='18px'>
+                    {route.icon}
+                  </Box>
+                  <Text
+                    me='auto'
+                    color={
+                      activeRoute(route.path.toLowerCase())
+                        ? activeColor
+                        : textColor
+                    }
+                    fontWeight={
+                      activeRoute(route.path.toLowerCase()) ? 'bold' : 'normal'
+                    }>
+                    {route.name}
+                  </Text>
+                </Flex>
+                <Box>
+                  <Button
+                    bg='none'
+                    _hover={{ bg: 'none' }}
+                    onClick={toggleShow}>
+                    {show ? <MdArrowDropDown /> : <MdArrowDropUp />}
+                  </Button>
+                </Box>
+              </Flex>
+              <Box
+                h='36px'
+                w='4px'
+                bg={
+                  activeRoute(route.path.toLowerCase())
+                    ? brandColor
+                    : 'transparent'
+                }
+                borderRadius='5px'
+              />
+            </HStack>
+            {route.subRoutes ? (
+              <Collapse in={show} animateOpacity>
+                <Box>
+                  {route.subRoutes.map(
+                    (routes: { path: string; name: any }) => (
+                      <Flex>
+                        <Link key={index} href={route.layout + routes.path}>
+                          <a style={{ width: '100%' }}>
+                            <Box w='100%'>
+                              <HStack
+                                spacing={
+                                  activeRoute(routes.path.toLowerCase())
+                                    ? '22px'
+                                    : '26px'
+                                }
+                                py='5px'
+                                ps='10px'>
+                                <Text
+                                  me='auto'
+                                  w='100%'
+                                  ml='3em'
+                                  color={
+                                    activeRoute(routes.path.toLowerCase())
+                                      ? activeColor
+                                      : inactiveColor
+                                  }
+                                  fontWeight={
+                                    activeRoute(routes.path.toLowerCase())
+                                      ? 'bold'
+                                      : 'normal'
+                                  }>
+                                  {routes.name}
+                                </Text>
+                                <Box
+                                  h='36px'
+                                  w='4px'
+                                  bg={
+                                    activeRoute(routes.path.toLowerCase())
+                                      ? brandColor
+                                      : 'transparent'
+                                  }
+                                  borderRadius='5px'
+                                />
+                              </HStack>
+                            </Box>
+                          </a>
+                        </Link>
+                      </Flex>
+                    )
+                  )}
+                </Box>
+              </Collapse>
+            ) : (
+              ''
+            )}
+          </Box>
+        ) : (
           <Link key={index} href={route.layout + route.path}>
             <a>
               {route.icon ? (
@@ -48,8 +170,7 @@ export function SidebarLinks (props: SidebarLinksProps) {
                       activeRoute(route.path.toLowerCase()) ? '22px' : '26px'
                     }
                     py='5px'
-                    ps='10px'
-                  >
+                    ps='10px'>
                     <Flex w='100%' alignItems='center' justifyContent='center'>
                       <Box
                         color={
@@ -57,8 +178,7 @@ export function SidebarLinks (props: SidebarLinksProps) {
                             ? activeIcon
                             : textColor
                         }
-                        me='18px'
-                      >
+                        me='18px'>
                         {route.icon}
                       </Box>
                       <Text
@@ -72,8 +192,7 @@ export function SidebarLinks (props: SidebarLinksProps) {
                           activeRoute(route.path.toLowerCase())
                             ? 'bold'
                             : 'normal'
-                        }
-                      >
+                        }>
                         {route.name}
                       </Text>
                     </Flex>
@@ -88,6 +207,15 @@ export function SidebarLinks (props: SidebarLinksProps) {
                       borderRadius='5px'
                     />
                   </HStack>
+                  {route.subRoutes ? (
+                    <Box>
+                      {route.subRoutes.map((routes: { name: any }) => (
+                        <Flex>{routes.name}</Flex>
+                      ))}
+                    </Box>
+                  ) : (
+                    ''
+                  )}
                 </Box>
               ) : (
                 <Box>
@@ -96,8 +224,7 @@ export function SidebarLinks (props: SidebarLinksProps) {
                       activeRoute(route.path.toLowerCase()) ? '22px' : '26px'
                     }
                     py='5px'
-                    ps='10px'
-                  >
+                    ps='10px'>
                     <Text
                       me='auto'
                       color={
@@ -109,8 +236,7 @@ export function SidebarLinks (props: SidebarLinksProps) {
                         activeRoute(route.path.toLowerCase())
                           ? 'bold'
                           : 'normal'
-                      }
-                    >
+                      }>
                       {route.name}
                     </Text>
                     <Box h='36px' w='4px' bg='brand.400' borderRadius='5px' />

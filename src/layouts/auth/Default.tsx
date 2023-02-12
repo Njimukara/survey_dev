@@ -24,58 +24,64 @@ function AuthIllustration(props: {
           xl: '100vh',
         }}
         w='100%'
-        maxW={{ md: '66%', lg: '1313px' }}
+        maxW={{ md: '50vh', lg: '80%' }}
         mx='auto'
         pt={{ sm: '50px', md: '0px' }}
         px={{ lg: '30px', xl: '0px' }}
         ps={{ xl: '70px' }}
         justifyContent='start'
+        alignItems='end'
         direction='column'>
-        <Link href='/admin'>
+        <Link href='/'>
           <a
             style={{
               width: 'fit-content',
-              marginTop: '40px',
+              paddingTop: '20px',
             }}>
-            <Flex
-              align='center'
-              ps={{ base: '25px', lg: '0px' }}
-              pt={{ lg: '0px', xl: '0px' }}
-              w='fit-content'>
-              <Icon
-                as={FaChevronLeft}
-                me='12px'
-                h='13px'
-                w='8px'
-                color='secondaryGray.600'
-              />
-              <Text ms='0px' fontSize='sm' color='secondaryGray.600'>
-                Back to Simmmple
-              </Text>
-            </Flex>
+            <Text ms='0px' fontSize='30px' fontWeight='bold'>
+              Survey Planner
+            </Text>
           </a>
         </Link>
         {children}
         <Box
           display={{ base: 'none', md: 'block' }}
           h='100%'
-          minH='100vh'
-          w={{ lg: '50vw', '2xl': '44vw' }}
+          maxH='95vh'
+          w={{ lg: '50vw' }}
           position='absolute'
-          right='0px'>
+          left='20px'
+          right='20px'
+          bottom='20px'>
           <Flex
-            style={{ backgroundImage: `url(${illustrationBackground})` }}
+            bgImg='linear-gradient(rgba(0, 76, 252, 0.43), rgba(0, 76, 252, 0.43)), url("/gnss.png")'
             justify='center'
-            align='end'
+            align='start'
             w='100%'
             h='100%'
             bgSize='cover'
             bgPosition='50%'
             position='absolute'
-            borderBottomLeftRadius={{ lg: '120px', xl: '200px' }}
+            borderRadius='15px'
           />
+          <Flex
+            flexDirection='column'
+            position='absolute'
+            color='white'
+            left='10%'
+            top='70%'>
+            <Text fontSize='30px' fontWeight='bold'>
+              Survey Planner
+            </Text>
+            <Text fontSize='20px' letterSpacing='wide' opacity='0.8'>
+              The Fastest solution to generate hydrographic surveys
+            </Text>
+          </Flex>
         </Box>
-        <Footer />
+
+        <Flex justifyContent='center' alignItems='center' w='100%' mt='100px'>
+          <Footer />
+        </Flex>
       </Flex>
       <FixedPlugin />
     </Flex>

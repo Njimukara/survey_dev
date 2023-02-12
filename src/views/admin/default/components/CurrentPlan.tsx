@@ -44,6 +44,7 @@ export default function CurrentPlan(props: { [x: string]: any }) {
 
   const [mounted, setMounted] = useState(false)
   const [active, setActive] = useState(true)
+  const [isActive, setIsActive] = useState(true)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -66,64 +67,79 @@ export default function CurrentPlan(props: { [x: string]: any }) {
           <Text color={textColorSecondary}>Current Plan</Text>
         </Flex>
       </Flex>
-      <Flex
-        w='100%'
-        justify='space-between'
-        flexDirection={{ base: 'column', lg: 'row' }}>
-        <Flex align='left' fontWeight='bold' flexDirection='column'>
-          <Text fontSize='larger'>Single Product Monthly</Text>
-          <Text
-            bg={boxBg}
-            px='2'
-            my='2'
-            py='1'
-            w='max-content'
-            borderRadius='10px'>
-            $40/Month
-          </Text>
-        </Flex>
-        <Flex align='center' flexDirection='column'>
-          <Button
-            mb='15px'
-            fontSize='small'
-            color={whiteText}
-            bg={bgButton}
-            _hover={bgHover}
-            _focus={bgFocus}
-            _active={bgFocus}>
-            Upgrade Plan
-          </Button>
-          <Button fontSize='small' color={textColor} bg={boxBg}>
-            Cancel
-          </Button>
-        </Flex>
-      </Flex>
+      {isActive ? (
+        <Box>
+          <Flex
+            w='100%'
+            justify='space-between'
+            flexDirection={{ base: 'column', lg: 'row' }}>
+            <Flex align='left' fontWeight='bold' flexDirection='column'>
+              <Text fontSize='larger'>Single Product Monthly</Text>
+              <Text
+                bg={boxBg}
+                px='2'
+                my='2'
+                py='1'
+                w='max-content'
+                borderRadius='10px'>
+                $40/Month
+              </Text>
+            </Flex>
+            <Flex align='center' flexDirection='column'>
+              <Button
+                mb='15px'
+                fontSize='small'
+                color={whiteText}
+                bg={bgButton}
+                _hover={bgHover}
+                _focus={bgFocus}
+                _active={bgFocus}>
+                Upgrade Plan
+              </Button>
+              <Button fontSize='small' color={textColor} bg={boxBg}>
+                Cancel
+              </Button>
+            </Flex>
+          </Flex>
 
-      <Flex align='left' flexDirection='column' color={textColorSecondary}>
-        <Text>Status</Text>
-        <Text
-          color={active ? 'green' : 'red'}
-          fontSize='large'
-          fontWeight='bold'>
-          Active
-        </Text>
-        <Text>Payment Method</Text>
-        <Text fontSize='large' fontWeight='bold' color={textColordark}>
-          Bank Payment
-        </Text>
-        <Text>
-          Licence bought on{' '}
-          <span style={{ color: textColordark, fontWeight: 'semi-bold' }}>
-            September 9, 2022
-          </span>
-        </Text>
-        <Text>
-          Renew licence by{' '}
-          <span style={{ color: textColordark, fontWeight: 'semi-bold' }}>
-            September 9, 2023
-          </span>
-        </Text>
-      </Flex>
+          <Flex align='left' flexDirection='column' color={textColorSecondary}>
+            <Text>Status</Text>
+            <Text
+              color={active ? 'green' : 'red'}
+              fontSize='large'
+              fontWeight='bold'>
+              Active
+            </Text>
+            <Text>Payment Method</Text>
+            <Text fontSize='large' fontWeight='bold' color={textColordark}>
+              Stripe
+            </Text>
+            <Text>
+              Licence bought on{' '}
+              <span style={{ color: textColordark, fontWeight: 'semi-bold' }}>
+                September 9, 2022
+              </span>
+            </Text>
+            <Text>
+              Renew licence by{' '}
+              <span style={{ color: textColordark, fontWeight: 'semi-bold' }}>
+                September 9, 2023
+              </span>
+            </Text>
+          </Flex>
+        </Box>
+      ) : (
+        <Box>
+          <Text my='4' fontWeight='bold' fontSize='lg' color={textColordark}>
+            No subscription plan
+          </Text>
+          <Text my='4'>
+            We are glad to have you here with us! Please complete your
+            subscription in order to use all products
+          </Text>
+          <Button variant='homePrimary'>Subscribe</Button>
+        </Box>
+      )}
     </Card>
   )
 }
