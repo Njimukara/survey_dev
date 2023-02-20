@@ -27,7 +27,8 @@ import { FaEthereum } from 'react-icons/fa'
 import routes from 'routes'
 import { Image } from 'components/image/Image'
 
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props
   const { colorMode, toggleColorMode } = useColorMode()
@@ -44,6 +45,16 @@ export default function HeaderLinks(props: { secondary: boolean }) {
     '14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
     '14px 17px 40px 4px rgba(112, 144, 176, 0.06)'
   )
+
+  // Variables
+  const [user, setUser] = useState({})
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    console.log(session)
+    setUser(session?.user)
+  }, [session])
+
   const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200')
   return (
     <Flex
@@ -152,63 +163,6 @@ export default function HeaderLinks(props: { secondary: boolean }) {
         </MenuList>
       </Menu>
 
-      <Menu>
-        <MenuButton p='0px'>
-          <Icon
-            mt='6px'
-            as={MdInfoOutline}
-            color={navbarIcon}
-            w='18px'
-            h='18px'
-            me='10px'
-          />
-        </MenuButton>
-        <MenuList
-          boxShadow={shadow}
-          p='20px'
-          me={{ base: '30px', md: 'unset' }}
-          borderRadius='20px'
-          bg={menuBg}
-          border='none'
-          mt='22px'
-          minW={{ base: 'unset' }}
-          maxW={{ base: '360px', md: 'unset' }}>
-          <Image src={navImage} borderRadius='16px' mb='28px' />
-          <Flex flexDirection='column'>
-            <Link w='100%' href='https://horizon-ui.com/pro'>
-              <Button w='100%' h='44px' mb='10px' variant='brand'>
-                Buy Horizon UI PRO
-              </Button>
-            </Link>
-            <Link
-              w='100%'
-              href='https://horizon-ui.com/documentation/docs/introduction'>
-              <Button
-                w='100%'
-                h='44px'
-                mb='10px'
-                border='1px solid'
-                bg='transparent'
-                borderColor={borderButton}>
-                See Documentation
-              </Button>
-            </Link>
-            <Link
-              w='100%'
-              href='https://github.com/horizon-ui/horizon-ui-chakra-nextjs'>
-              <Button
-                w='100%'
-                h='44px'
-                variant='no-hover'
-                color={textColor}
-                bg='transparent'>
-                Try Horizon Free
-              </Button>
-            </Link>
-          </Flex>
-        </MenuList>
-      </Menu>
-
       <Button
         variant='no-hover'
         bg='transparent'
@@ -231,12 +185,13 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           <Avatar
             _hover={{ cursor: 'pointer' }}
             color='white'
-            name='Adela Parkson'
+            name={user.name}
             bg='#11047A'
             size='sm'
             w='40px'
             h='40px'
           />
+          {/* <Image src={user.user_profile.avatar} alt={user.name} w={10} h={10} /> */}
         </MenuButton>
         <MenuList
           boxShadow={shadow}
@@ -256,7 +211,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               fontSize='sm'
               fontWeight='700'
               color={textColor}>
-              👋&nbsp; Hey, Adela
+              👋&nbsp; Hello, {user.name}
             </Text>
           </Flex>
           <Flex flexDirection='column' p='10px'>

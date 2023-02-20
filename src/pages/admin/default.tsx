@@ -49,12 +49,22 @@ import DailyTraffic from 'views/admin/default/components/DailyTraffic'
 import MiniCalendar from 'components/calendar/MiniCalendar'
 import MiniStatistics from 'components/card/MiniStatistics'
 import IconBox from 'components/icons/IconBox'
+import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 export default function UserReports() {
   // Chakra Color Mode
 
   const brandColor = useColorModeValue('primary.500', 'white')
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100')
+
+  const [user, setUser] = useState({})
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    console.log(session)
+    setUser(session?.user)
+  }, [session])
 
   return (
     <AdminLayout>
@@ -80,20 +90,24 @@ export default function UserReports() {
               name='Surveys'
               value='23'
             />
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w='56px'
-                  h='56px'
-                  bg={boxBg}
-                  icon={
-                    <Icon w='32px' h='32px' as={FaUsers} color={brandColor} />
-                  }
-                />
-              }
-              name='Company users'
-              value='3'
-            />
+            {user?.user_profile?.user_type == 2 ? (
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w='56px'
+                    h='56px'
+                    bg={boxBg}
+                    icon={
+                      <Icon w='32px' h='32px' as={FaUsers} color={brandColor} />
+                    }
+                  />
+                }
+                name='Company users'
+                value='3'
+              />
+            ) : (
+              ''
+            )}
             <MiniStatistics
               startContent={
                 <IconBox
@@ -121,10 +135,15 @@ export default function UserReports() {
             <MiniCalendar h='100%' minW='100%' selectRange={false} />
           </SimpleGrid>
 
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
-            <PieCard />
-            <Users />
-          </SimpleGrid>
+          {user?.user_profile?.user_type == 1 && (
+            <SimpleGrid
+              columns={{ base: 1, md: 2, xl: 2 }}
+              gap='20px'
+              mb='20px'>
+              <PieCard />
+              <Users />
+            </SimpleGrid>
+          )}
 
           <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
             <SurveyTable

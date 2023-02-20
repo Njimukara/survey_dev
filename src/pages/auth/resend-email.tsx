@@ -53,11 +53,11 @@ import DefaultAuthLayout from 'layouts/auth/Default'
 // Assets
 import { MdUpload, MdOutlineMail, MdOutlineArrowBack } from 'react-icons/md'
 
-// import { useRef } from 'react'
+import { useEffect } from 'react'
 import { getProviders, getSession, signIn } from 'next-auth/react'
 import axios from 'axios'
 
-export default function verifyEmail({ providers }: any) {
+export default function resendEmail({ providers }: any) {
   // Chakra color mode
   const btnbgColor = useColorModeValue('primary.500', 'white')
   const btnHover = useColorModeValue({ color: 'white' }, { color: 'white' })
@@ -76,24 +76,60 @@ export default function verifyEmail({ providers }: any) {
     { bg: 'whiteAlpha.200' }
   )
   const router = useRouter()
-  const [resend, setResend] = React.useState(false)
+  const [canResend, setCanResend] = React.useState(true)
+  const [time, setTime] = React.useState({
+    time: 1,
+    seconds: 0,
+  })
 
-  const toggleResend = () => {
-    setResend(!resend)
+  const countDown = () => {
+    if (canResend) {
+      console.log(canResend)
+      var minute = 1
+      var sec = 60
+      setInterval(function () {
+        var Time = {
+          time: minute,
+          seconds: sec,
+        }
+        setTime(Time)
+        sec--
+
+        if (sec == 0) {
+          minute--
+          sec = 60
+
+          if (minute == 0) {
+            setCanResend(!canResend)
+            console.log(canResend)
+
+            minute = 1
+          }
+        }
+      }, 1000)
+    }
   }
+
   const onSubmit = async (values: any, actions: any) => {
+    setCanResend(!canResend)
     console.log(values)
+    const options = {
+      headers: {
+        Accept: 'application/json;charset=UTF-8',
+      },
+    }
 
     const res = await axios
       .post(
         `https://surveyplanner.pythonanywhere.com/auth/users/resend_activation/`,
-        values
+        values,
+        options
       )
       .then((res) => {
         console.log(res)
       })
       .catch((error) => {
-        console.log(error.message)
+        console.log(error)
       })
   }
   const validationSchema = Yup.object().shape({
@@ -115,6 +151,10 @@ export default function verifyEmail({ providers }: any) {
     onSubmit,
   })
 
+  useEffect(() => {
+    countDown()
+  }, [])
+
   return (
     <DefaultAuthLayout illustrationBackground={'/img/auth/auth.png'}>
       <Flex
@@ -128,83 +168,65 @@ export default function verifyEmail({ providers }: any) {
         px={{ base: '25px', md: '0px' }}
         mt={{ base: '20vh', md: '30vh' }}
         flexDirection='column'>
-        {resend ? (
-          <Flex flexDirection='column' alignItems='center'>
-            <Text>Your almost there!</Text>
-            <Icon
-              my={4}
-              p={2}
-              borderRadius={'50%'}
-              bg='green.100'
-              as={MdOutlineMail}
-              w={12}
-              h={12}
-              boxSize={12}
-            />
-            <Text>
-              A link has ben sent to your email. Please click to activate your
-              account
-            </Text>
-            <Button onClick={toggleResend} my={4}>
-              Resend Link
-            </Button>
-            <Link href='/auth/signin'>
-              <a href='/auth/signin'>
-                <Flex alignItems='center'>
-                  <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
-                  <Text>Back to Login</Text>
-                </Flex>
-              </a>
-            </Link>
-          </Flex>
-        ) : (
-          <Flex mb='100px' alignItems='center'>
-            <form onSubmit={handleSubmit}>
-              <FormControl>
-                <FormLabel>Input the email you used to register</FormLabel>
-                <Input
-                  id='email'
-                  name='email'
-                  variant='rounded'
-                  fontSize='md'
-                  ms={{ base: '0px', md: '0px' }}
-                  type='text'
-                  placeholder='Email *'
-                  mr='2px'
-                  fontWeight='500'
-                  size='lg'
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.email && touched.email ? (
-                  <FormHelperText color='red.400' mt='0' mb='5px'>
-                    {errors.email}
-                  </FormHelperText>
-                ) : (
-                  ''
-                )}
-              </FormControl>
-              <Flex mt={6} w='100%'>
-                {!isSubmitting ? (
-                  <Button type='submit' w='100%' variant='homePrimary'>
-                    Resend Link
-                  </Button>
-                ) : (
-                  <Flex w='100%' alignItems='100%' justifyContent='center'>
-                    <Spinner thickness='4px' speed='0.9s' color='primary.500' />
-                  </Flex>
-                )}
-              </Flex>
-              <Flex justifyContent='center'>
-                <Button mt={8} onClick={toggleResend}>
-                  <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
-                  <Text>Cancel</Text>
+        <Flex mb='100px' mr='70px' w='100%'>
+          <form onSubmit={handleSubmit}>
+            <FormControl>
+              <FormLabel>Input the email you used to register</FormLabel>
+              <Input
+                id='email'
+                name='email'
+                variant='rounded'
+                fontSize='md'
+                ms={{ base: '0px', md: '0px' }}
+                type='text'
+                placeholder='Email *'
+                mr='2px'
+                fontWeight='500'
+                size='lg'
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.email && touched.email ? (
+                <FormHelperText color='red.400' mt='0' mb='5px'>
+                  {errors.email}
+                </FormHelperText>
+              ) : (
+                ''
+              )}
+            </FormControl>
+            <Flex mt={6} w='100%'>
+              {!isSubmitting ? (
+                <Button
+                  type='submit'
+                  w='100%'
+                  isDisabled={!canResend}
+                  variant='homePrimary'>
+                  Resend Link
                 </Button>
-              </Flex>
-            </form>
-          </Flex>
-        )}
+              ) : (
+                <Flex w='100%' alignItems='100%' justifyContent='center'>
+                  <Spinner thickness='4px' speed='0.9s' color='primary.500' />
+                </Flex>
+              )}
+            </Flex>
+            <Flex justifyContent='center' mt={2}>
+              {!canResend ? (
+                <Text>
+                  Resend link in {time.time} mins : {time.seconds} secs
+                </Text>
+              ) : (
+                ''
+              )}
+            </Flex>
+            <Flex justifyContent='center'>
+              <Button mt={8} onClick={() => router.push('/auth/signin')}>
+                <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
+                <Text>Cancel</Text>
+              </Button>
+            </Flex>
+          </form>
+        </Flex>
       </Flex>
     </DefaultAuthLayout>
   )

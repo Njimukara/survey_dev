@@ -108,8 +108,8 @@ export function SidebarLinks(props: SidebarLinksProps) {
               <Collapse in={show} animateOpacity>
                 <Box>
                   {route.subRoutes.map(
-                    (routes: { path: string; name: any }) => (
-                      <Flex>
+                    (routes: { path: string; name: any }, index: number) => (
+                      <Flex key={index}>
                         <Link key={index} href={route.layout + routes.path}>
                           <a style={{ width: '100%' }}>
                             <Box w='100%'>
@@ -209,9 +209,11 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   </HStack>
                   {route.subRoutes ? (
                     <Box>
-                      {route.subRoutes.map((routes: { name: any }) => (
-                        <Flex>{routes.name}</Flex>
-                      ))}
+                      {route.subRoutes.map(
+                        (routes: { name: any }, index: number) => (
+                          <Flex key={index}>{routes.name}</Flex>
+                        )
+                      )}
                     </Box>
                   ) : (
                     ''

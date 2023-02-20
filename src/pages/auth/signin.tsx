@@ -67,9 +67,7 @@ export default function SignIn({ providers }: any) {
   const btnbgColor = useColorModeValue('primary.500', 'white')
   const btnHover = useColorModeValue({ color: 'white' }, { color: 'white' })
   const textColor = useColorModeValue('navy.700', 'white')
-  const brandColor = useColorModeValue('brand.500', 'white')
   const textColorSecondary = 'gray.400'
-  // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
   const textColorBrand = useColorModeValue('brand.500', 'white')
   const googleBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.200')
   const googleHover = useColorModeValue(
@@ -83,15 +81,16 @@ export default function SignIn({ providers }: any) {
   const router = useRouter()
   const [show, setShow] = React.useState(false)
   const [login, setLogin] = React.useState(true)
+  const [submitting, setSubmitting] = React.useState(false)
+  const [error, setError] = React.useState('')
+
+  // varaibles used for login
   const [formData, setFormData] = React.useState({
     email: '',
     password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: '',
-    usertype: '',
   })
 
+  // Yup validation data schema
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .min(3, 'Name is too Short!')
@@ -109,57 +108,45 @@ export default function SignIn({ providers }: any) {
   })
 
   const handleClick = () => setShow(!show)
-  // }
   const toggleLogin = () => {
     setLogin(!login)
   }
 
   const Login = async () => {
-    // const res: any = signIn('Credentials', {
-    //   email: formData.email,
-    //   password: formData.password,
-    //   redirect: false,
-    //   callbackurl: `${window.location.origin}`,
-    // })
-    const options = {
-      // method: 'POST',
-      headers: {
-        // 'Content-Type': 'multipart/form-data',
-        Accept: 'application/json;charset=UTF-8',
-      },
+    if (formData.email == '' || formData.password == '') {
+      setError('Invalid Inputs')
     }
-
-    const res = await axios
-      .post(
-        'https://surveyplanner.pythonanywhere.com/auth/token/login/',
-        { email: formData.email, password: formData.password },
-        options
-        // options
-      )
+    setSubmitting(true)
+    setError('')
+    // nextauth login with credentials
+    const res: any = await signIn('Credentials', {
+      email: formData.email,
+      password: formData.password,
+      redirect: false,
+      // callbackurl: `${window.location.origin}`,
+    })
       .then((res) => {
-        console.log(res)
+        if (res.status == 200) {
+          console.log(res)
+          setSubmitting(false)
+          router.push('/admin')
+        }
       })
-      .catch((error) => {
-        console.log(error)
+      .catch((err) => {
+        console.log(err.error)
+        setSubmitting(false)
       })
-
-    // res.error ? console.log('this is the error', res.error) : console.log(res)
+    setSubmitting(false)
   }
 
   const onSubmit = async (values: any, actions: any) => {
-    const formData = new FormData()
-    formData.append('avatar', image)
-    const userData = {
-      name: values.name,
-      email: values.email,
-      user_type: values.usertype,
-      avatar: '',
-      password: values.password,
-      re_password: values.password,
-      // avartar: image,
-    }
-    console.log(userData)
-
+    var formdata = new FormData()
+    formdata.append('name', values.name)
+    formdata.append('email', values.email)
+    formdata.append('avatar', image, '[PROXY]')
+    formdata.append('user_type', values.usertype)
+    formdata.append('password', values.password)
+    formdata.append('re_password', values.password)
     const options = {
       // method: 'POST',
       headers: {
@@ -171,11 +158,12 @@ export default function SignIn({ providers }: any) {
     const res = await axios
       .post(
         'https://surveyplanner.pythonanywhere.com/auth/users/',
-        userData,
+        formdata,
         options
       )
       .then((res) => {
         console.log(res)
+        router.push('/auth/verifyemail')
       })
       .catch((error) => {
         console.log(error)
@@ -185,23 +173,24 @@ export default function SignIn({ providers }: any) {
   const [image, setImage] = React.useState(null)
   const [createObjectURL, setCreateObjectURL] = React.useState(null)
 
+  // display uploaded avatatar on fronend
   const uploadToClient = (event: any) => {
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0]
 
-      console.log(i)
       setImage(i)
       setCreateObjectURL(URL.createObjectURL(i))
     }
   }
 
+  // formik initialisation using yup validation schema
   const {
     values,
     isSubmitting,
     errors,
+    touched,
     handleChange,
     handleSubmit,
-    touched,
     handleBlur,
   } = useFormik({
     initialValues: {
@@ -308,6 +297,11 @@ export default function SignIn({ providers }: any) {
             </Text>
             <HSeparator />
           </Flex>
+          <Flex align='center' mb='25px'>
+            <Text color='gray.400' mx='14px'>
+              {error}
+            </Text>
+          </Flex>
           {login ? (
             <FormControl>
               <Input
@@ -378,17 +372,32 @@ export default function SignIn({ providers }: any) {
                   </a>
                 </Link>
               </Flex>
-              <Button
-                fontSize='sm'
-                variant='homePrimary'
-                fontWeight='500'
-                w='100%'
-                h='30'
-                mb='24px'
-                py='7'
-                onClick={Login}>
-                Sign in
-              </Button>
+              {submitting ? (
+                <Flex
+                  mt='10px'
+                  w='100%'
+                  alignItems='center'
+                  justifyContent='center'>
+                  <Spinner
+                    size='xl'
+                    thickness='7px'
+                    speed='0.9s'
+                    color='primary.500'
+                  />
+                </Flex>
+              ) : (
+                <Button
+                  fontSize='sm'
+                  type='submit'
+                  variant='homePrimary'
+                  fontWeight='500'
+                  w='100%'
+                  h='30'
+                  mb='24px'
+                  onClick={Login}>
+                  Sign in
+                </Button>
+              )}
             </FormControl>
           ) : (
             // Signup form begins
@@ -582,8 +591,7 @@ export default function SignIn({ providers }: any) {
                   variant='homePrimary'
                   fontWeight='500'
                   w='100%'
-                  h='30px'
-                  py='7'>
+                  h='30px'>
                   Sign Up
                 </Button>
               )}

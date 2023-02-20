@@ -130,9 +130,9 @@ export default function Home() {
   const [user, setUser] = useState(null)
   const router = useRouter()
   if (status === 'authenticated') {
-    // router.push('/admin/default')
-    console.log(session)
-    return <UserReports />
+    router.push('/admin/default')
+    // console.log(session)
+    // return <UserReports />
   }
 
   return (

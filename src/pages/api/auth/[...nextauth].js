@@ -1,3 +1,4 @@
+import axios from 'axios'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 export const authOptions = {
@@ -27,37 +28,62 @@ export const authOptions = {
 
       async authorize(credentials, req) {
         const { email, password } = credentials
-        const res = await fetch(
-          'https://surveyplanner.pythonanywhere.com/auth/token/login/',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email,
-              password,
-            }),
+        const body = {
+          email: email,
+          password: password,
+        }
+        let respond, error, user
+        await axios
+          .post(
+            'https://surveyplanner.pythonanywhere.com/auth/token/login/',
+            body
+          )
+          .then((res) => {
+            respond = res
+          })
+          .catch((err) => {
+            error = err
+          })
+        if (respond.statusText == 'OK') {
+          console.log(respond.data.auth_token)
+
+          const config = {
+            headers: { Authorization: `Token ${respond.data.auth_token}` },
           }
-        )
-        const user = await res.json()
-        if (user) {
+          await axios
+            .get(
+              'https://surveyplanner.pythonanywhere.com/auth/users/me/',
+              config
+            )
+            .then((res) => {
+              // console.log(res.data)
+              user = res.data
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          console.log(user)
           return user
-        } else return { error: 'erorr from api' }
+        }
+        return null
       },
     }),
     // ...add more providers here
   ],
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     return { ...token, ...user }
-  //   },
-  //   async session({ session, token, user }) {
-  //     // Send properties to the client, like an access_token from a provider.
-  //     session.user = token
-  //     return session
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user }
+    },
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token from a provider.
+      session.user = token
+      return session
+    },
+  },
+  session: {
+    // Set to jwt in order to CredentialsProvider works properly
+    strategy: 'jwt',
+  },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/signin',
