@@ -26,9 +26,11 @@ import { IoMdMoon, IoMdSunny } from 'react-icons/io'
 import { FaEthereum } from 'react-icons/fa'
 import routes from 'routes'
 import { Image } from 'components/image/Image'
+// import { AuthUser } from ''
 
 import { signOut, useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+// import { useRouter } from 'next/router'
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props
   const { colorMode, toggleColorMode } = useColorMode()
@@ -47,12 +49,18 @@ export default function HeaderLinks(props: { secondary: boolean }) {
   )
 
   // Variables
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState<any>()
   const { data: session, status } = useSession()
 
+  // functions
+  const logOut = async () => {
+    await signOut({ callbackUrl: 'http://localhost:3000/auth/signin' })
+  }
+
   useEffect(() => {
-    console.log(session)
-    setUser(session?.user)
+    setUser(session?.user?.data)
+    console.log(session?.user?.auth_token)
+    console.log(session?.user?.data)
   }, [session])
 
   const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200')
@@ -185,7 +193,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           <Avatar
             _hover={{ cursor: 'pointer' }}
             color='white'
-            name={user.name}
+            name={user?.name}
             bg='#11047A'
             size='sm'
             w='40px'
@@ -211,7 +219,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               fontSize='sm'
               fontWeight='700'
               color={textColor}>
-              👋&nbsp; Hello, {user.name}
+              👋&nbsp; Hello, {user?.name}
             </Text>
           </Flex>
           <Flex flexDirection='column' p='10px'>
@@ -235,10 +243,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               color='red.400'
               borderRadius='8px'>
               <Flex w='100$'>
-                <Button
-                  bg='none'
-                  _hover={{ bg: 'none' }}
-                  onClick={() => signOut()}>
+                <Button bg='none' _hover={{ bg: 'none' }} onClick={logOut}>
                   Log out
                 </Button>
               </Flex>

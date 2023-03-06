@@ -68,6 +68,8 @@ export type TableData = Column<{
   name: (string | boolean)[]
   date: string
   progress?: number
+  email?: number
+  isactive?: number
   download?: string
   actions?: string
   quantity?: number

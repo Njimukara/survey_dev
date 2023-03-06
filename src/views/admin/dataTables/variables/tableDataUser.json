@@ -1,0 +1,32 @@
+[
+  {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com",
+    "date": "12.Jan.2021",
+    "isactive": "true"
+  },
+  {
+    "name": "Jane Doe",
+    "email": "janedoe@gmail.com",
+    "date": "12.Jan.2021",
+    "isactive": "true"
+  },
+  {
+    "name": "John William",
+    "email": "johndoe@gmail.com",
+    "date": "12.Jan.2021",
+    "isactive": "false"
+  },
+  {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com",
+    "date": "12.Jan.2021",
+    "isactive": "false"
+  },
+  {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com",
+    "date": "12.Jan.2021",
+    "isactive": "true"
+  }
+]

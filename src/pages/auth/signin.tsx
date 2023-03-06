@@ -59,7 +59,7 @@ import styles from '../../../styles/Home.module.css'
 // import styles from '../../styles/Home.module.css'
 
 // import { useRef } from 'react'
-import { getProviders, getSession, signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import axios from 'axios'
 
 export default function SignIn({ providers }: any) {
@@ -82,7 +82,7 @@ export default function SignIn({ providers }: any) {
   const [show, setShow] = React.useState(false)
   const [login, setLogin] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
-  const [error, setError] = React.useState('')
+  const [error, setError] = React.useState(null)
 
   // varaibles used for login
   const [formData, setFormData] = React.useState({
@@ -117,7 +117,7 @@ export default function SignIn({ providers }: any) {
       setError('Invalid Inputs')
     }
     setSubmitting(true)
-    setError('')
+    // setError(null)
     // nextauth login with credentials
     const res: any = await signIn('Credentials', {
       email: formData.email,
@@ -125,17 +125,15 @@ export default function SignIn({ providers }: any) {
       redirect: false,
       // callbackurl: `${window.location.origin}`,
     })
-      .then((res) => {
-        if (res.status == 200) {
-          console.log(res)
-          setSubmitting(false)
-          router.push('/admin')
-        }
-      })
-      .catch((err) => {
-        console.log(err.error)
-        setSubmitting(false)
-      })
+
+    if (res.status == 200) {
+      console.log(res)
+      setSubmitting(false)
+      router.push('/admin')
+    } else if (res.status != 200) {
+      setError('Invalid Email or Password')
+      setSubmitting(false)
+    }
     setSubmitting(false)
   }
 
@@ -143,10 +141,13 @@ export default function SignIn({ providers }: any) {
     var formdata = new FormData()
     formdata.append('name', values.name)
     formdata.append('email', values.email)
-    formdata.append('avatar', image, '[PROXY]')
     formdata.append('user_type', values.usertype)
     formdata.append('password', values.password)
     formdata.append('re_password', values.password)
+    if (image != '') {
+      formdata.append('avatar', image)
+    }
+    formdata.append('avatar', '')
     const options = {
       // method: 'POST',
       headers: {
@@ -181,6 +182,12 @@ export default function SignIn({ providers }: any) {
       setImage(i)
       setCreateObjectURL(URL.createObjectURL(i))
     }
+  }
+
+  // remove user avatar
+  const removeAvatar = (event: any) => {
+    setImage(null)
+    setCreateObjectURL(null)
   }
 
   // formik initialisation using yup validation schema
@@ -297,11 +304,13 @@ export default function SignIn({ providers }: any) {
             </Text>
             <HSeparator />
           </Flex>
-          <Flex align='center' mb='25px'>
-            <Text color='gray.400' mx='14px'>
-              {error}
-            </Text>
-          </Flex>
+          {error && (
+            <Flex align='center' mb='25px'>
+              <Text color='red.400' fontWeight='semibold' mx='14px'>
+                {error}
+              </Text>
+            </Flex>
+          )}
           {login ? (
             <FormControl>
               <Input
@@ -360,7 +369,7 @@ export default function SignIn({ providers }: any) {
                     Keep me logged in
                   </FormLabel>
                 </FormControl>
-                <Link href='/auth/forgot-password'>
+                <Link href='/auth/reset-password'>
                   <a>
                     <Text
                       color={textColorBrand}
@@ -569,9 +578,14 @@ export default function SignIn({ providers }: any) {
                     name='myfile'
                   />
                 </Box>
+                {image ? (
+                  <Button onClick={removeAvatar} ml='10px' cursor='pointer'>
+                    Remove Avatar
+                  </Button>
+                ) : null}
               </Flex>
 
-              {isSubmitting ? (
+              {/* {isSubmitting ? (
                 <Flex
                   mt='10px'
                   w='100%'
@@ -584,17 +598,18 @@ export default function SignIn({ providers }: any) {
                     color='primary.500'
                   />
                 </Flex>
-              ) : (
-                <Button
-                  type='submit'
-                  fontSize='sm'
-                  variant='homePrimary'
-                  fontWeight='500'
-                  w='100%'
-                  h='30px'>
-                  Sign Up
-                </Button>
-              )}
+              ) : ( */}
+              <Button
+                type='submit'
+                isLoading={isSubmitting}
+                fontSize='sm'
+                variant='homePrimary'
+                fontWeight='500'
+                w='100%'
+                h='30px'>
+                Sign Up
+              </Button>
+              {/* )} */}
             </form>
           )}
         </Flex>

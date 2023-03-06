@@ -58,7 +58,9 @@ export default function UserReports() {
   const brandColor = useColorModeValue('primary.500', 'white')
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100')
 
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState<any>({})
+  const [companyUser, setCompanyUser] = useState(2)
+  const [individualUser, setIndividualUser] = useState(1)
   const { data: session, status } = useSession()
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function UserReports() {
               name='Surveys'
               value='23'
             />
-            {user?.user_profile?.user_type == 2 ? (
+            {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
                 startContent={
                   <IconBox
@@ -135,7 +137,7 @@ export default function UserReports() {
             <MiniCalendar h='100%' minW='100%' selectRange={false} />
           </SimpleGrid>
 
-          {user?.user_profile?.user_type == 1 && (
+          {user?.user_profile?.user_type == companyUser && (
             <SimpleGrid
               columns={{ base: 1, md: 2, xl: 2 }}
               gap='20px'

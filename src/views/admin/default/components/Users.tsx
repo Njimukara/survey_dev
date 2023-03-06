@@ -5,11 +5,12 @@ import { Box, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react'
 import Project1 from 'img/profile/Project1.png'
 import Project2 from 'img/profile/Project2.png'
 import Project3 from 'img/profile/Project3.png'
-import { MdAdd } from 'react-icons/md'
+import { MdAdd, MdArrowRight } from 'react-icons/md'
 
 // Custom components
 import Card from 'components/card/Card'
 import User from './User'
+import Link from 'next/link'
 
 export default function Users(props: { [x: string]: any }) {
   const { ...rest } = props
@@ -37,6 +38,12 @@ export default function Users(props: { [x: string]: any }) {
           </Text>
         </Box>
         <Flex>
+          <Link href={`/admin/company/users`}>
+            <Button color='primary.500'>
+              All Users
+              <MdArrowRight />
+            </Button>
+          </Link>
           <Button color='primary.500'>
             <MdAdd />
             Add User

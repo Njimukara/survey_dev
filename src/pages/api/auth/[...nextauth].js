@@ -32,7 +32,8 @@ export const authOptions = {
           email: email,
           password: password,
         }
-        let respond, error, user
+        let respond, error
+        let user = {}
         await axios
           .post(
             'https://surveyplanner.pythonanywhere.com/auth/token/login/',
@@ -44,9 +45,8 @@ export const authOptions = {
           .catch((err) => {
             error = err
           })
-        if (respond.statusText == 'OK') {
-          console.log(respond.data.auth_token)
-
+        console.log(error)
+        if (respond.status == 200) {
           const config = {
             headers: { Authorization: `Token ${respond.data.auth_token}` },
           }
@@ -56,16 +56,14 @@ export const authOptions = {
               config
             )
             .then((res) => {
-              // console.log(res.data)
-              user = res.data
+              user.data = res.data
+              user.auth_token = respond.data.auth_token
             })
-            .catch((err) => {
-              console.log(err)
-            })
-          console.log(user)
+            .catch((err) => {})
           return user
+        } else if (error.response.status) {
+          return null
         }
-        return null
       },
     }),
     // ...add more providers here
@@ -74,14 +72,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       return { ...token, ...user }
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
       session.user = token
       return session
     },
   },
   session: {
-    // Set to jwt in order to CredentialsProvider works properly
+    // Set to jwt in order for CredentialsProvider to work properly
     strategy: 'jwt',
   },
   pages: {
