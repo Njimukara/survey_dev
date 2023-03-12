@@ -21,81 +21,79 @@
 
 */
 
-import React from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import React from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 // Chakra imports
-import { Button, Flex, Icon, Text, useColorModeValue } from '@chakra-ui/react'
+import { Button, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 // Custom components
-import DefaultAuthLayout from 'layouts/auth/Default'
+import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
-import { MdOutlineMail, MdOutlineArrowBack } from 'react-icons/md'
+import { MdOutlineMail, MdOutlineArrowBack } from "react-icons/md";
 
-import { useEffect } from 'react'
-import axios from 'axios'
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function VerifyEmail(props: any) {
   // var state = props
   // Chakra color mode
-  const btnbgColor = useColorModeValue('primary.500', 'white')
-  const btnHover = useColorModeValue({ color: 'white' }, { color: 'white' })
-  const textColor = useColorModeValue('navy.700', 'white')
-  const brandColor = useColorModeValue('brand.500', 'white')
-  const textColorSecondary = 'gray.400'
+  const btnbgColor = useColorModeValue("primary.500", "white");
+  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
+  const textColor = useColorModeValue("navy.700", "white");
+  const brandColor = useColorModeValue("brand.500", "white");
+  const textColorSecondary = "gray.400";
   // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
-  const textColorBrand = useColorModeValue('brand.500', 'white')
-  const googleBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.200')
+  const textColorBrand = useColorModeValue("brand.500", "white");
+  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
   const googleHover = useColorModeValue(
-    { bg: 'gray.200' },
-    { bg: 'whiteAlpha.300' }
-  )
+    { bg: "gray.200" },
+    { bg: "whiteAlpha.300" }
+  );
   const googleActive = useColorModeValue(
-    { bg: 'secondaryGray.300' },
-    { bg: 'whiteAlpha.200' }
-  )
-  const router = useRouter()
+    { bg: "secondaryGray.300" },
+    { bg: "whiteAlpha.200" }
+  );
+  const router = useRouter();
 
-  useEffect(() => {}, [])
+  useEffect(() => {}, []);
 
   return (
-    <DefaultAuthLayout illustrationBackground={'/img/auth/auth.png'}>
+    <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
       <Flex
-        maxW={{ base: '100%', md: 'max-content' }}
-        w='100%'
-        mx={{ base: 'auto', lg: '0px' }}
-        h='100vh'
-        alignItems='center'
-        justifyContent='center'
-        mb={{ base: '30px', md: '130px' }}
-        px={{ base: '25px', md: '0px' }}
-        mt={{ base: '20vh', md: '30vh' }}
-        flexDirection='column'>
-        <Flex flexDirection='column' alignItems='center'>
+        maxW={{ base: "100%", md: "max-content" }}
+        w="100%"
+        mx={{ base: "auto", lg: "0px" }}
+        h="100vh"
+        alignItems="center"
+        justifyContent="center"
+        mb={{ base: "30px", md: "130px" }}
+        px={{ base: "25px", md: "0px" }}
+        mt={{ base: "20vh", md: "30vh" }}
+        flexDirection="column"
+      >
+        <Flex flexDirection="column" alignItems="center">
           <Text>You're almost there!</Text>
           <Icon
             my={4}
             p={2}
-            borderRadius={'50%'}
-            bg='green.100'
+            borderRadius={"50%"}
+            bg="green.100"
             as={MdOutlineMail}
             w={12}
             h={12}
             boxSize={12}
           />
-          <Text>
-            A link has ben sent to your email. Please click to activate your
-            account
-          </Text>
-          <Button onClick={() => router.push('/auth/resend-email')} my={4}>
+          <Text>A link has ben sent to your email. Follow it to continue.</Text>
+          <Button onClick={() => router.push("/auth/resend-email")} my={4}>
             Resend Link
           </Button>
-          <Link href='/auth/signin'>
-            <a href='/auth/signin'>
-              <Flex alignItems='center'>
+          <Link href="/auth/signin">
+            <a href="/auth/signin">
+              <Flex alignItems="center">
                 <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
                 <Text>Back to Login</Text>
               </Flex>
@@ -104,5 +102,5 @@ export default function VerifyEmail(props: any) {
         </Flex>
       </Flex>
     </DefaultAuthLayout>
-  )
+  );
 }

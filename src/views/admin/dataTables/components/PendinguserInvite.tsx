@@ -11,8 +11,16 @@ import {
   Tr,
   useColorModeValue,
   Button,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  useDisclosure,
+  Box,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -27,8 +35,11 @@ import Menu from "components/menu/MainMenu";
 // Assets
 import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
-export default function UserTableComplex(props: TableProps) {
+export default function PendingUserInvite(props: TableProps) {
   const { columnsData, tableData } = props;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -63,18 +74,34 @@ export default function UserTableComplex(props: TableProps) {
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
     >
-      {/* <Flex px='25px' justify='space-between' mb='20px' align='center'>
-        <Text
-          color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
-          Company Users
-        </Text>
-        <Flex>
-          <Button color='primary.500'>Add user</Button>
-        </Flex>
-      </Flex> */}
+      <Flex px="25px" justify="space-between" mb="20px" align="center">
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete Customer
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={onClose} ml={3}>
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
@@ -120,26 +147,23 @@ export default function UserTableComplex(props: TableProps) {
                         </Text>
                       </Flex>
                     );
-                  } else if (cell.column.Header === "DATE JOINED") {
+                  } else if (cell.column.Header === "RESEND") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Button variant="homePrimary" py="1" fontSize="sm">
                         {cell.value}
-                      </Text>
+                      </Button>
                     );
-                  } else if (cell.column.Header === "ISACTIVE") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "DELETE") {
+                  } else if (cell.column.Header === "REVOKE") {
                     data = (
                       <Button
-                        onClick={() => console.log(cell.row.values)}
-                        color={deleteTextColor}
-                        bgColor="transparent"
+                        onClick={onOpen}
+                        variant="homePrimary"
+                        bg="transparent"
+                        border="solid"
+                        color="red.300"
+                        borderColor="red.300"
+                        py="1"
                         fontSize="sm"
-                        fontWeight="700"
                       >
                         {cell.value}
                       </Button>

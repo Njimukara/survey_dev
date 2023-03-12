@@ -1,59 +1,83 @@
 // Chakra imports
-import { Box, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react'
-import axios from 'axios'
-import Card from 'components/card/Card'
-import Projects from 'views/admin/profile/components/Projects'
+import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import axios from "axios";
+import Card from "components/card/Card";
+import Projects from "views/admin/profile/components/CompanyUsers";
 
-import { NextAvatar } from 'components/image/Avatar'
+import { NextAvatar } from "components/image/Avatar";
 // import { signOut, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import RegisterCompany from './RegisterCompany'
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import RegisterCompany from "./RegisterCompany";
+import CompanyUsers from "views/admin/profile/components/CompanyUsers";
 
 export default function CompanyDetails(props: {
-  company: object
-  hasDetails: boolean
-  [x: string]: any
+  company: object;
+  hasDetails: boolean;
+  [x: string]: any;
 }) {
-  const { hasDetails, toggleHasDetails, company, ...rest } = props
+  const { hasDetails, toggleHasDetails, company, ...rest } = props;
 
   // Chakra Color Mode
-  const textColorPrimary = useColorModeValue('secondaryGray.900', 'white')
-  const textColorSecondary = 'gray.400'
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
+  const textColorSecondary = "gray.400";
   const borderColor = useColorModeValue(
-    'white !important',
-    '#111C44 !important'
-  )
+    "white !important",
+    "#111C44 !important"
+  );
 
   // Constant variables
   // const { data: session, status } = useSession()
 
   // const date = new Date(date_joined).toLocaleDateString()
-  const router = useRouter()
-  const [isOpen, setIsOpen] = useState(false)
-  // const [user, setUser] = useState<any>()
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [country, setCountry] = useState("");
 
+  // state for user invite
+  const [modalState, setModalState] = useState(false);
+
+  // toggle company user invite modal
+  const toggleCompanyUserModal = (state: boolean) => {
+    setModalState(state);
+  };
+
+  // toggle company Registration modal
   const toggleModal = (state: boolean) => {
-    setIsOpen(state)
-  }
+    setIsOpen(state);
+  };
 
   const toggleDetails = (state: boolean) => {
-    toggleHasDetails(state)
-  }
+    toggleHasDetails(state);
+  };
+
+  useEffect(() => {
+    // get country name from iso code
+    if (company != undefined) {
+      const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+        type: "region",
+      });
+      let tempCountry = company?.country;
+      tempCountry = regionNamesInEnglish.of(tempCountry);
+      setCountry(tempCountry);
+    }
+  }, [company]);
 
   if (!hasDetails) {
     return (
-      <Card mb={{ base: '0px', lg: '20px' }} {...rest}>
+      <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
         <Flex
-          flexDirection='column'
-          justifyContent='center'
-          alignItems='center'
-          py={15}>
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          py={15}
+        >
           <Text py={4}>No Company associated with this account yet</Text>
           <Button
             onClick={() => {
-              toggleModal(true)
-            }}>
+              toggleModal(true);
+            }}
+          >
             {/* // onClick={toggleModal}> */}
             Register Company
           </Button>
@@ -64,68 +88,74 @@ export default function CompanyDetails(props: {
           toggleDetails={toggleDetails}
         />
       </Card>
-    )
+    );
   }
 
   return (
-    <Card mb={{ base: '0px', lg: '20px' }} {...rest}>
+    <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
       <Flex>
         <Flex
           px={5}
-          w='30%'
-          justifyContent='center'
-          alignItems='center'
-          flexDirection='column'>
+          w="30%"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+        >
           <Flex
-            flexDirection='column'
-            justifyContent='center'
-            alignItems='center'>
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
             <Box>
               <NextAvatar
-                mx='auto'
+                mx="auto"
                 src={company?.logo}
-                h='87px'
-                w='87px'
-                border='4px solid'
+                h="87px"
+                w="87px"
+                border="4px solid"
                 borderColor={borderColor}
               />
             </Box>
-            <Text pb={4} fontWeight='bold' fontSize='23px' textAlign='center'>
+            <Text pb={4} fontWeight="bold" fontSize="23px" textAlign="center">
               {company?.name}
             </Text>
             <Box>
-              <Text color='gray.400' transform='capitalize'>
-                {company?.country}
+              <Text color="gray.400" transform="capitalize">
+                {country}
               </Text>
             </Box>
             <Box>
-              <Text color='gray.400' transform='capitalize'>
+              <Text color="gray.400" transform="capitalize">
                 {company?.city}
               </Text>
             </Box>
             <Box>
-              <Text color='gray.400' transform='capitalize'>
+              <Text color="gray.400" transform="capitalize">
                 {/* Admin: {company?.owner} */}
               </Text>
             </Box>
           </Flex>
-          <Flex pb={4} align='center' justify='space-between'></Flex>
+          <Flex pb={4} align="center" justify="space-between"></Flex>
 
           <Button
-            onClick={() => router.push('/auth/edit-user')}
+            onClick={() => router.push("/auth/edit-user")}
             mb={2}
             // variant='homePrimary'
-            bg='primary.500'
-            color='white'>
+            bg="primary.500"
+            color="white"
+          >
             Edit info
           </Button>
-          {/* <Button onClick={deleteAccount}>Delete Company</Button> */}
         </Flex>
-        <Flex w='70%'>
-          <Projects company={company} />
+        <Flex w="70%">
+          <CompanyUsers
+            toggleModal={toggleCompanyUserModal}
+            isOpen={modalState}
+            company={company}
+          />
         </Flex>
       </Flex>
       {/* toggleModal={openModal} */}
     </Card>
-  )
+  );
 }

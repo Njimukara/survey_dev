@@ -15,15 +15,16 @@ type ArrayObject = {
   name?: String;
 };
 
-type PricingProps = {
+type SubscriptionProps = {
   title?: String;
   price?: Number;
   period?: String;
   description?: String;
   advantages?: Array<ArrayObject>;
+  getplan?: any;
 };
 
-export const PricingCard = (props: PricingProps) => {
+export const SubscriptionCard = (props: SubscriptionProps) => {
   return (
     <Card
       transition="all .2s ease-in-out"
@@ -33,23 +34,23 @@ export const PricingCard = (props: PricingProps) => {
     >
       <Flex>
         <Box>
-          <Box ml="10px">
+          <Box>
             <Text mb="25px" fontSize="16px" fontWeight="600">
               {props.title}
             </Text>
             <Heading mb="20px" fontSize="16px">
-              <Text display="inline-block" fontSize="64px">
+              <Text display="inline-block" fontSize="44px">
                 ${props.price?.toString()}
               </Text>
               / {props.period}
             </Heading>
-            <Text mb="15px" fontWeight="400">
+            <Text mb="15px" fontSize="sm" fontWeight="400">
               {props.description}
             </Text>
             <Box>
               <List spacing={2}>
                 {props.advantages?.map((x) => (
-                  <ListItem key={""}>
+                  <ListItem key={""} fontSize="sm">
                     <ListIcon
                       key={""}
                       as={MdCheckCircle}
@@ -64,7 +65,17 @@ export const PricingCard = (props: PricingProps) => {
           </Box>
 
           <Center>
-            <Button variant="outline" mb="20px" mt="30px">
+            <Button
+              onClick={() => {
+                props.getplan(props);
+              }}
+              variant="outline"
+              bg="white"
+              px="7"
+              py="6"
+              mb="20px"
+              mt="30px"
+            >
               Get Licence
             </Button>
           </Center>

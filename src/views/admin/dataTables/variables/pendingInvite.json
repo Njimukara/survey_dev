@@ -1,0 +1,43 @@
+[
+    {
+      "name": "John Doe",
+      "email": "johndoe@gmail.com",
+      "resend": "resend invite",
+      "revoke": "revoke",
+      "delete": "Remove user"
+  
+    },
+    {
+      "name": "Jane Doe",
+      "email": "janedoe@gmail.com",
+      "resend": "resend invite",
+      "revoke": "revoke",
+      "delete": "Remove user"
+  
+    },
+    {
+      "name": "John William",
+      "email": "johndoe@gmail.com",
+      "resend": "resend invite",
+      "revoke": "revoke",
+      "delete": "Remove user"
+  
+    },
+    {
+      "name": "John Doe",
+      "email": "johndoe@gmail.com",
+      "resend": "resend invite",
+      "revoke": "revoke",
+      "delete": "Remove user"
+  
+    },
+    {
+      "name": "John Doe",
+      "email": "johndoe@gmail.com",
+      "resend": "resend invite",
+      "revoke": "revoke",
+      "delete": "Remove user"
+  
+    }
+  ]
+  

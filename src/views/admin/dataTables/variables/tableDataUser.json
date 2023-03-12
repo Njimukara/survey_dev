@@ -3,30 +3,40 @@
     "name": "John Doe",
     "email": "johndoe@gmail.com",
     "date": "12.Jan.2021",
-    "isactive": "true"
+    "isactive": "true",
+    "delete": "Remove user"
+
   },
   {
     "name": "Jane Doe",
     "email": "janedoe@gmail.com",
     "date": "12.Jan.2021",
-    "isactive": "true"
+    "isactive": "true",
+    "delete": "Remove user"
+
   },
   {
     "name": "John William",
     "email": "johndoe@gmail.com",
     "date": "12.Jan.2021",
-    "isactive": "false"
+    "isactive": "false",
+    "delete": "Remove user"
+
   },
   {
     "name": "John Doe",
     "email": "johndoe@gmail.com",
     "date": "12.Jan.2021",
-    "isactive": "false"
+    "isactive": "false",
+    "delete": "Remove user"
+
   },
   {
     "name": "John Doe",
     "email": "johndoe@gmail.com",
     "date": "12.Jan.2021",
-    "isactive": "true"
+    "isactive": "true",
+    "delete": "Remove user"
+
   }
 ]
