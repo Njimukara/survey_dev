@@ -81,6 +81,8 @@ export const authOptions = {
   session: {
     // Set to jwt in order for CredentialsProvider to work properly
     strategy: 'jwt',
+    // Seconds - How long until an idle session expires and is no longer valid.
+  maxAge: 10 * 60, // 10 mins
   },
   pages: {
     signIn: '/auth/signin',

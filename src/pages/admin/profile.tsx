@@ -77,7 +77,7 @@ export default function ProfileOverview() {
         config
       )
       .then((res) => {
-        // console.log(res)
+        console.log(res);
         setHasDetails(true);
         setCompany(res.data);
         // router.push('/auth/verifyemail')

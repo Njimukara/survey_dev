@@ -52,6 +52,7 @@ export default function InviteUser(props: { [x: string]: any }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const { data: session } = useSession();
+  const router = useRouter();
 
   // chakra toast
   const toast = useToast();
@@ -97,7 +98,7 @@ export default function InviteUser(props: { [x: string]: any }) {
       )
       .then((res) => {
         console.log(res);
-        // router.push('/auth/verifyemail')
+        router.push("/company/users");
         setSubmitting(false);
         closeModal();
         toast({
@@ -110,6 +111,7 @@ export default function InviteUser(props: { [x: string]: any }) {
       })
       .catch((error) => {
         console.log(error);
+        setError(error.response.data.error);
         setSubmitting(false);
         toast({
           position: "bottom-right",
@@ -126,6 +128,7 @@ export default function InviteUser(props: { [x: string]: any }) {
       mb={{ base: "0px", lg: "0px" }}
       mt="0"
       bgColor="transparent"
+      borderRadius={0}
       {...rest}
     >
       <Modal
@@ -144,7 +147,7 @@ export default function InviteUser(props: { [x: string]: any }) {
         />
         <ModalContent>
           <ModalHeader>Invite User</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={closeModal} />
           <ModalBody>
             <Card
               justifyContent="center"
@@ -217,13 +220,14 @@ export default function InviteUser(props: { [x: string]: any }) {
           <ModalFooter>
             <ButtonGroup variant="homePrimary" spacing="6">
               <Button
+                py="6"
                 isLoading={submitting}
                 colorScheme="blue"
                 onClick={onSubmit}
               >
                 Send Invite
               </Button>
-              <Button variant="outline" py="8" onClick={closeModal}>
+              <Button variant="outline" mt="1px" py="5" onClick={closeModal}>
                 Close
               </Button>
             </ButtonGroup>

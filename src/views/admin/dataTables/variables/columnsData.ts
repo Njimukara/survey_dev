@@ -92,11 +92,11 @@ export const columnsDataUsers: Columns = [
   },
   {
     Header: 'DATE JOINED',
-    accessor: 'date',
+    accessor: 'date_joined',
   },
   {
     Header: 'ISACTIVE',
-    accessor: 'isactive',
+    accessor: 'is_active',
   },
   {
     Header: 'DELETE',
@@ -106,12 +106,16 @@ export const columnsDataUsers: Columns = [
 
 export const PendingInvite: Columns = [
   {
-    Header: 'NAME',
-    accessor: 'name',
-  },
-  {
     Header: 'EMAIL',
     accessor: 'email',
+  },
+  {
+    Header: 'EXPIRY',
+    accessor: 'expires_on',
+  },
+  {
+    Header: 'COPY LINK',
+    accessor: 'invitation_url',
   },
   {
     Header: 'RESEND',

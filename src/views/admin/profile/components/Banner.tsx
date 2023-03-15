@@ -12,13 +12,14 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Banner(props: {
   avatar: string;
@@ -32,6 +33,11 @@ export default function Banner(props: {
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
+  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
+  const googleHover = useColorModeValue(
+    { bg: "gray.200" },
+    { bg: "whiteAlpha.300" }
+  );
   const borderColor = useColorModeValue(
     "primary.100 !important",
     "#111C44 !important"
@@ -44,16 +50,32 @@ export default function Banner(props: {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
 
+  const [deleting, setDeleting] = useState(false);
+  // const [error, setError] = useState()
+
+  // chakra toast
+  const toast = useToast();
+
   // delete user acount
   const deleteAccount = async () => {
+    setDeleting(true);
     await axios
       .delete(`https://surveyplanner.pythonanywhere.com/auth/users/me/`)
       .then(() => {
         signOut({ callbackUrl: "http://localhost:3000" });
+        setDeleting(false);
         onClose();
       })
       .catch(() => {
         console.log("error loggin out");
+        toast({
+          position: "bottom-right",
+          description: "Error logging out",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+        setDeleting(false);
       });
   };
 
@@ -101,11 +123,20 @@ export default function Banner(props: {
             onClick={() => router.push("/auth/edit-user")}
             mr={2}
             bg="primary.500"
+            variant="homePrimary"
+            py="5"
             color="white"
           >
             Edit info
           </Button>
-          <Button color="red.500" onClick={onOpen}>
+          <Button
+            color="red.500"
+            py="5"
+            variant="homePrimary"
+            bg={googleBg}
+            _hover={googleHover}
+            onClick={onOpen}
+          >
             Delete account
           </Button>
         </Box>
@@ -127,6 +158,8 @@ export default function Banner(props: {
               <AlertDialogFooter>
                 <Button
                   variant="homePrimary"
+                  isLoading={deleting}
+                  py="6"
                   bgColor="red"
                   onClick={deleteAccount}
                 >
@@ -134,7 +167,9 @@ export default function Banner(props: {
                 </Button>
                 <Button
                   variant="outline"
-                  py="8"
+                  py="5"
+                  px="7"
+                  mt="1px"
                   ref={cancelRef}
                   onClick={onClose}
                   ml={3}

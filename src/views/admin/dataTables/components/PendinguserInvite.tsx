@@ -19,6 +19,7 @@ import {
   AlertDialogFooter,
   useDisclosure,
   Box,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useRef } from "react";
 import {
@@ -33,7 +34,12 @@ import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdCopyAll,
+} from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
 export default function PendingUserInvite(props: TableProps) {
   const { columnsData, tableData } = props;
@@ -43,6 +49,9 @@ export default function PendingUserInvite(props: TableProps) {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
+
+  // chakra toast
+  const toast = useToast();
 
   const tableInstance = useTable(
     {
@@ -64,9 +73,34 @@ export default function PendingUserInvite(props: TableProps) {
   } = tableInstance;
   initialState.pageSize = 5;
 
+  // chakra colors
   const textColor = useColorModeValue("secondaryGray.900", "white");
-  const deleteTextColor = useColorModeValue("red.600", "red.600");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+  const btnBgHover = useColorModeValue(
+    { bg: "red.400", color: "white" },
+    { bg: "red.400", color: "white" }
+  );
+  const btnTransBgHover = useColorModeValue({ bg: "none" }, { bg: "none" });
+
+  // format date
+  const formatDate = (date: any) => {
+    let dateToFormat = new Date(date);
+    let joinedDate = dateToFormat.toLocaleDateString("en-US");
+    return joinedDate;
+  };
+
+  // copy to clipboard
+  const copyToClipboard = (data: any) => {
+    navigator.clipboard.writeText(data);
+    toast({
+      position: "bottom-right",
+      description: "Copied to clipboard",
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Card
       flexDirection="column"
@@ -133,39 +167,55 @@ export default function PendingUserInvite(props: TableProps) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data;
-                  if (cell.column.Header === "NAME") {
+                  if (cell.column.Header === "EMAIL") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "EMAIL") {
+                  } else if (cell.column.Header === "EXPIRY") {
                     data = (
                       <Flex align="center">
                         <Text color={textColor} fontSize="sm" fontWeight="700">
-                          {cell.value}
+                          {formatDate(cell.value)}
                         </Text>
                       </Flex>
                     );
+                  } else if (cell.column.Header === "COPY LINK") {
+                    data = (
+                      <Button
+                        bg="none"
+                        onClick={() => copyToClipboard(cell.value)}
+                        // onClick={() => console.log(cell.value)}
+                        _hover={btnTransBgHover}
+                        py="1"
+                        px="0"
+                        fontSize="sm"
+                      >
+                        <Icon as={MdCopyAll} boxSize={6} />
+                      </Button>
+                    );
                   } else if (cell.column.Header === "RESEND") {
                     data = (
-                      <Button variant="homePrimary" py="1" fontSize="sm">
-                        {cell.value}
+                      <Button variant="homePrimary" px="3" py="1" fontSize="sm">
+                        resend
                       </Button>
                     );
                   } else if (cell.column.Header === "REVOKE") {
                     data = (
                       <Button
                         onClick={onOpen}
+                        _hover={btnBgHover}
                         variant="homePrimary"
                         bg="transparent"
                         border="solid"
                         color="red.300"
                         borderColor="red.300"
                         py="1"
+                        px="3"
                         fontSize="sm"
                       >
-                        {cell.value}
+                        revoke
                       </Button>
                     );
                   }
@@ -173,7 +223,7 @@ export default function PendingUserInvite(props: TableProps) {
                     <Td
                       {...cell.getCellProps()}
                       key={index}
-                      fontSize={{ sm: "14px" }}
+                      fontSize="sm"
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
                       borderColor="gray.100"
                     >

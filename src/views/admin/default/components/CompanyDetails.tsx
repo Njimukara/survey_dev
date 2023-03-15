@@ -140,7 +140,8 @@ export default function CompanyDetails(props: {
           <Button
             onClick={() => router.push("/auth/edit-user")}
             mb={2}
-            // variant='homePrimary'
+            variant="homePrimary"
+            py="5"
             bg="primary.500"
             color="white"
           >

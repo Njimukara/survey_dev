@@ -11,8 +11,15 @@ import {
   Tr,
   useColorModeValue,
   Button,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -29,6 +36,9 @@ import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
 export default function UserTableComplex(props: TableProps) {
   const { columnsData, tableData } = props;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -53,9 +63,17 @@ export default function UserTableComplex(props: TableProps) {
   } = tableInstance;
   initialState.pageSize = 5;
 
+  // chakra colors
+  const btnBgHover = useColorModeValue({ bg: "none" }, { bg: "none" });
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const deleteTextColor = useColorModeValue("red.600", "red.600");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+  const formatDate = (date: any) => {
+    let dateToFormat = new Date(date);
+    let joinedDate = dateToFormat.toLocaleDateString("en-US");
+    return joinedDate;
+  };
   return (
     <Card
       flexDirection="column"
@@ -63,18 +81,34 @@ export default function UserTableComplex(props: TableProps) {
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
     >
-      {/* <Flex px='25px' justify='space-between' mb='20px' align='center'>
-        <Text
-          color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
-          Company Users
-        </Text>
-        <Flex>
-          <Button color='primary.500'>Add user</Button>
-        </Flex>
-      </Flex> */}
+      <Flex px="25px" justify="space-between" mb="20px" align="center">
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete Customer
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={onClose} ml={3}>
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
@@ -123,25 +157,28 @@ export default function UserTableComplex(props: TableProps) {
                   } else if (cell.column.Header === "DATE JOINED") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
+                        {formatDate(cell.value)}
                       </Text>
                     );
                   } else if (cell.column.Header === "ISACTIVE") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
+                        {cell.value.toString()}
                       </Text>
                     );
-                  } else if (cell.column.Header === "DELETE") {
+                  } else {
                     data = (
                       <Button
-                        onClick={() => console.log(cell.row.values)}
+                        onClick={() => {
+                          onOpen;
+                        }}
+                        _hover={btnBgHover}
                         color={deleteTextColor}
                         bgColor="transparent"
                         fontSize="sm"
                         fontWeight="700"
                       >
-                        {cell.value}
+                        Delete
                       </Button>
                     );
                   }

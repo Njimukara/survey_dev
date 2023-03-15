@@ -53,7 +53,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
             <Button
               mr="10px"
               onClick={() => {
-                router.push("/admin/company/users");
+                router.push("/company/users");
               }}
             >
               View all Users

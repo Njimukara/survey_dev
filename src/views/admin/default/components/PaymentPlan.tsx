@@ -73,7 +73,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       setTotal(plan.price);
       setPlanName(plan.title);
     }
-    console.log(plan);
+    // console.log(plan);
   }, []);
 
   return (
