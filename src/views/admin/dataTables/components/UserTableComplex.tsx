@@ -18,8 +18,9 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -32,8 +33,15 @@ import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdBlock,
+} from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 export default function UserTableComplex(props: TableProps) {
   const { columnsData, tableData } = props;
 
@@ -42,6 +50,14 @@ export default function UserTableComplex(props: TableProps) {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
+
+  const [isSending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [companyMembers, setCompanyMembers] = useState();
+  const [invitations, setInvitations] = useState();
+  const [pendingDelete, setPendingDelete] = useState<any>();
+  const [user, setUser] = useState();
+  const [companyUser] = useState(2);
 
   const tableInstance = useTable(
     {
@@ -69,11 +85,114 @@ export default function UserTableComplex(props: TableProps) {
   const deleteTextColor = useColorModeValue("red.600", "red.600");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
 
+  // chakra toast
+  const toast = useToast();
+
   const formatDate = (date: any) => {
     let dateToFormat = new Date(date);
     let joinedDate = dateToFormat.toLocaleDateString("en-US");
     return joinedDate;
   };
+
+  const { data: session, status } = useSession();
+
+  //   Block invitations
+  const blockUser = async (data: any) => {
+    // console.log(data);
+    setSending(true);
+    const id = data.user_id;
+    console.log(session?.user?.auth_token);
+
+    setSending(true);
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    await axios
+      .patch(
+        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
+        // body,
+        config
+      )
+      .then((res) => {
+        // setCompanyMembers(res.data.members);
+        console.log(res);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "User has been blocked successfully.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Unable to block user",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  //   delete invitations
+  const deleteUser = async (data: any) => {
+    setSending(true);
+    const id = data.user_id;
+
+    // console.log(body, id);
+    setSending(true);
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    let body = {};
+    await axios
+      .patch(
+        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/delete/`,
+        body,
+        config
+      )
+      .then((res) => {
+        // setCompanyMembers(res.data.members);
+        console.log(res);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "User has been deleted successfully.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Unable to delete user at this time",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  useEffect(() => {
+    if (session != null) {
+      // get user
+      setUser(session?.user?.data);
+    }
+  }, [session]);
+
   return (
     <Card
       flexDirection="column"
@@ -98,10 +217,31 @@ export default function UserTableComplex(props: TableProps) {
               </AlertDialogBody>
 
               <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onClose}>
+                <Button
+                  variant="homePrimary"
+                  bg="transparent"
+                  px="3"
+                  py="1"
+                  fontSize="sm"
+                  ref={cancelRef}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={onClose} ml={3}>
+                <Button
+                  colorScheme="red"
+                  variant="homePrimary"
+                  _hover={{ bg: "red.600" }}
+                  bg="red"
+                  px="3"
+                  py="1"
+                  fontSize="sm"
+                  onClick={() => {
+                    onClose();
+                    deleteUser(pendingDelete);
+                  }}
+                  ml={3}
+                >
                   Delete
                 </Button>
               </AlertDialogFooter>
@@ -160,17 +300,38 @@ export default function UserTableComplex(props: TableProps) {
                         {formatDate(cell.value)}
                       </Text>
                     );
-                  } else if (cell.column.Header === "ISACTIVE") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value.toString()}
-                      </Text>
-                    );
-                  } else {
+                  }
+                  // else if (cell.column.Header === "ISACTIVE") {
+                  //   data = (
+                  //     <Text color={textColor} fontSize="sm" fontWeight="700">
+                  //       {cell.value.toString()}
+                  //     </Text>
+                  //   );
+                  // }
+                  else if (
+                    cell.column.Header === "BLOCK" &&
+                    user?.user_profile?.user_type == companyUser
+                  ) {
                     data = (
                       <Button
                         onClick={() => {
-                          onOpen;
+                          blockUser(cell.row.original);
+                        }}
+                        _hover={btnBgHover}
+                        color={deleteTextColor}
+                        bgColor="transparent"
+                        fontSize="sm"
+                        fontWeight="700"
+                      >
+                        Block User
+                      </Button>
+                    );
+                  } else if (user?.user_profile?.user_type == companyUser) {
+                    data = (
+                      <Button
+                        onClick={() => {
+                          onOpen();
+                          setPendingDelete(cell.row.original);
                         }}
                         _hover={btnBgHover}
                         color={deleteTextColor}

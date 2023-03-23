@@ -24,8 +24,6 @@
 import {
   Box,
   Button,
-  Container,
-  Grid,
   SimpleGrid,
   Tab,
   TabList,
@@ -39,7 +37,6 @@ import { useState } from "react";
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
 import { TableData } from "views/admin/default/variables/columnsData";
-import Offers from "views/admin/default/components/Offers";
 import ComplexTable from "views/admin/default/components/ComplexTable";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
@@ -201,3 +198,4 @@ export default function Transactions() {
     </AdminLayout>
   );
 }
+Transactions.requireAuth = true;

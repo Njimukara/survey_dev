@@ -21,7 +21,7 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -41,6 +41,8 @@ import {
   MdCopyAll,
 } from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 export default function PendingUserInvite(props: TableProps) {
   const { columnsData, tableData } = props;
 
@@ -49,6 +51,14 @@ export default function PendingUserInvite(props: TableProps) {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
+
+  const [isSending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [companyMembers, setCompanyMembers] = useState();
+  const [invitations, setInvitations] = useState();
+  const [pendingRevoke, setPendingRevoke] = useState<any>();
+  const [user, setUser] = useState();
+  const [companyUser] = useState(2);
 
   // chakra toast
   const toast = useToast();
@@ -82,6 +92,8 @@ export default function PendingUserInvite(props: TableProps) {
   );
   const btnTransBgHover = useColorModeValue({ bg: "none" }, { bg: "none" });
 
+  const { data: session, status } = useSession();
+
   // format date
   const formatDate = (date: any) => {
     let dateToFormat = new Date(date);
@@ -101,6 +113,114 @@ export default function PendingUserInvite(props: TableProps) {
     });
   };
 
+  //   resend invitations
+  const resendInvite = async (data: any) => {
+    // console.log(data);
+    setSending(true);
+    const id = data.id;
+    const body = {
+      email: data.email,
+      company: data.company,
+      invited_by: data.invited_by,
+      token: data.token,
+      invitation_url: data.invitation_url,
+      expires_on: data.expires_on,
+      status: data.status,
+    };
+
+    // console.log(body, id);
+    setSending(true);
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    await axios
+      .put(
+        `https://surveyplanner.pythonanywhere.com/api/company/invitations/${id}/renew/`,
+        body,
+        config
+      )
+      .then((res) => {
+        // setCompanyMembers(res.data.members);
+        console.log(res);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Invite has been sent successfully.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Invite has not been sent",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
+  //   revoke invitations
+  const revokeInvite = async (data: any) => {
+    setSending(true);
+    const id = data.id;
+
+    const body = {
+      email: data.email,
+      company: data.company,
+      invited_by: data.invited_by,
+      token: data.token,
+      invitation_url: data.invitation_url,
+      expires_on: data.expires_on,
+      status: data.status,
+    };
+
+    // console.log(body, id);
+    setSending(true);
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    await axios
+      .put(
+        `https://surveyplanner.pythonanywhere.com/api/company/invitations/${id}/cancel/`,
+        body,
+        config
+      )
+      .then((res) => {
+        // setCompanyMembers(res.data.members);
+        console.log(res);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Invite has been cancelled successfully.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setSending(false);
+        toast({
+          position: "bottom-right",
+          description: "Unable to revoke invite at this time",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   return (
     <Card
       flexDirection="column"
@@ -117,7 +237,7 @@ export default function PendingUserInvite(props: TableProps) {
           <AlertDialogOverlay>
             <AlertDialogContent>
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Customer
+                Revoke Invite
               </AlertDialogHeader>
 
               <AlertDialogBody>
@@ -125,11 +245,31 @@ export default function PendingUserInvite(props: TableProps) {
               </AlertDialogBody>
 
               <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onClose}>
+                <Button
+                  variant="homePrimary"
+                  bg="gray.100"
+                  px="3"
+                  py="1"
+                  fontSize="sm"
+                  ref={cancelRef}
+                  onClick={onClose}
+                >
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={onClose} ml={3}>
-                  Delete
+                <Button
+                  variant="homePrimary"
+                  bg="red"
+                  _hover={{ bg: "red.600" }}
+                  px="3"
+                  py="1"
+                  fontSize="sm"
+                  onClick={() => {
+                    onClose();
+                    revokeInvite(pendingRevoke);
+                  }}
+                  ml={3}
+                >
+                  Revoke
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -186,7 +326,6 @@ export default function PendingUserInvite(props: TableProps) {
                       <Button
                         bg="none"
                         onClick={() => copyToClipboard(cell.value)}
-                        // onClick={() => console.log(cell.value)}
                         _hover={btnTransBgHover}
                         py="1"
                         px="0"
@@ -197,16 +336,30 @@ export default function PendingUserInvite(props: TableProps) {
                     );
                   } else if (cell.column.Header === "RESEND") {
                     data = (
-                      <Button variant="homePrimary" px="3" py="1" fontSize="sm">
+                      <Button
+                        onClick={() => {
+                          resendInvite(cell.row.original);
+                        }}
+                        isLoading={isSending}
+                        variant="homePrimary"
+                        px="3"
+                        py="1"
+                        fontSize="sm"
+                      >
                         resend
                       </Button>
                     );
                   } else if (cell.column.Header === "REVOKE") {
                     data = (
                       <Button
-                        onClick={onOpen}
+                        onClick={() => {
+                          onOpen();
+                          setPendingRevoke(cell.row.original);
+                        }}
                         _hover={btnBgHover}
+                        _active={{ bg: "white" }}
                         variant="homePrimary"
+                        isLoading={isSending}
                         bg="transparent"
                         border="solid"
                         color="red.300"

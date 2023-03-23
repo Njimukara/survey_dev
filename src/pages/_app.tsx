@@ -17,13 +17,16 @@ import "theme/styles.css";
 
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
+import { AuthGuard } from "layouts/auth/AuthGuard";
 
-function MyApp({
-  Component,
-  pageProps,
-}: AppProps<{
-  session: Session;
-}>) {
+// add requireAuth to AppProps
+type AppPropsWithAuth = AppProps<{ session?: Session }> & {
+  Component: {
+    requireAuth?: boolean;
+  };
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithAuth) {
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -38,7 +41,14 @@ function MyApp({
         // Re-fetches session when window is focused
         refetchOnWindowFocus={true}
       >
-        <Component {...pageProps} />
+        {Component.requireAuth ? (
+          <AuthGuard>
+            <Component {...pageProps} />
+          </AuthGuard>
+        ) : (
+          <Component {...pageProps} />
+        )}
+        {/* <Component {...pageProps} /> */}
       </SessionProvider>
     </ChakraProvider>
   );

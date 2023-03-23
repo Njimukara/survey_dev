@@ -16,24 +16,27 @@ import {
   columnsDataUsers,
   PendingInvite,
 } from "views/admin/dataTables/variables/columnsData";
-import tableDataUser from "views/admin/dataTables/variables/tableDataUser.json";
-import pendingInvite from "views/admin/dataTables/variables/pendingInvite.json";
+// import tableDataUser from "views/admin/dataTables/variables/tableDataUser.json";
+// import pendingInvite from "views/admin/dataTables/variables/pendingInvite.json";
 import UserTableComplex from "views/admin/dataTables/components/UserTableComplex";
 import PendingUserInvite from "views/admin/dataTables/components/PendinguserInvite";
 import { useEffect, useState } from "react";
 import InviteUser from "views/admin/profile/components/InviteUser";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Router from "next/router";
 
 export default function Users() {
   // component variables
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [companyMembers, setCompanyMembers] = useState();
-  const [invitations, setInvitations] = useState();
+  const [companyMembers, setCompanyMembers] = useState([]);
+  const [invitations, setInvitations] = useState([]);
   const [user, setUser] = useState();
   const [companyUser] = useState(2);
+  // const [companyUserLength, setCompanyUserLength] = useState(0);
+  // const [companyUser] = useState(2);
 
   // session hook
   const { data: session, status } = useSession();
@@ -54,11 +57,12 @@ export default function Users() {
     };
     await axios
       .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/my-company/`,
+        `https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/`,
         config
       )
       .then((res) => {
-        setCompanyMembers(res.data.members);
+        console.log(res);
+        setCompanyMembers(res.data);
         setFetching(false);
       })
       .catch((err) => {
@@ -66,6 +70,10 @@ export default function Users() {
         setFetching(false);
       });
   };
+
+  // function checkInviteStatus(age) {
+  //   return age >= 18;
+  // }
 
   //   get invitations
   const getInvitations = async () => {
@@ -82,8 +90,13 @@ export default function Users() {
         config
       )
       .then((res) => {
-        console.log(res.data);
-        setInvitations(res.data);
+        // console.log(res.data);
+
+        let result = res.data.filter((invite: any) => {
+          return invite.status == 1;
+        });
+        setInvitations(result);
+        console.log(result.length);
         setLoading(false);
       })
       .catch((err) => {
@@ -93,6 +106,9 @@ export default function Users() {
   };
 
   useEffect(() => {
+    // if (session?.user?.user_profile?.user_type == companyUser) {
+    //   Router.push("/admin/default");
+    // }
     if (session != null) {
       // get invitations and company members
       getInvitations();
@@ -101,9 +117,25 @@ export default function Users() {
     }
   }, [session]);
 
+  if (session == null || undefined) {
+    return (
+      <AdminLayout>
+        <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Flex>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
-      <Flex pt={{ base: "130px", md: "80px", xl: "80px" }} w="100%" gap={10}>
+      <Flex pt={{ md: "100px" }} px="50px" w="100%" gap={10}>
         <Flex w="30%">
           <Box>
             <Heading as="h3" size="md">
@@ -127,18 +159,18 @@ export default function Users() {
           </Box>
         </Flex>
         <Flex w="70%">
-          {companyMembers != undefined ? (
+          {companyMembers != undefined && companyMembers.length != 0 ? (
             <UserTableComplex
               columnsData={columnsDataUsers}
               tableData={companyMembers as unknown as TableData[]}
             />
           ) : isFetching ? (
-            <Card w="100%">
+            <Card w="100%" borderRadius={20}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                pt={20}
+                py={20}
               >
                 <Spinner
                   thickness="4px"
@@ -151,12 +183,12 @@ export default function Users() {
               </Flex>
             </Card>
           ) : (
-            <Card w="100%">
+            <Card w="100%" borderRadius={20}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                pt={24}
+                py={24}
               >
                 <Text>There are no company users</Text>
               </Flex>
@@ -165,7 +197,7 @@ export default function Users() {
         </Flex>
       </Flex>
       {/* pending invites */}
-      <Flex pt={{ base: "130px", md: "80px", xl: "80px" }} w="100%" gap={10}>
+      <Flex pt={{ md: "80px" }} px="50px" w="100%" gap={10}>
         <Flex w="30%">
           <Box>
             <Heading as="h3" size="md">
@@ -175,18 +207,18 @@ export default function Users() {
           </Box>
         </Flex>
         <Flex w="70%">
-          {invitations != undefined ? (
+          {invitations != undefined && invitations.length != 0 ? (
             <PendingUserInvite
               columnsData={PendingInvite}
               tableData={invitations as unknown as TableData[]}
             />
           ) : loading ? (
-            <Card w="100%">
+            <Card w="100%" borderRadius={20}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                pt={10}
+                py={20}
               >
                 <Spinner
                   thickness="4px"
@@ -199,12 +231,12 @@ export default function Users() {
               </Flex>
             </Card>
           ) : (
-            <Card w="100%">
+            <Card w="100%" borderRadius={20}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                pt={20}
+                py={24}
               >
                 <Text>There are no pending invites in this company</Text>
               </Flex>
@@ -215,3 +247,5 @@ export default function Users() {
     </AdminLayout>
   );
 }
+
+Users.requireAuth = true;

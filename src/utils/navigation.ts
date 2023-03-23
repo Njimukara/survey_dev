@@ -14,9 +14,18 @@ export const findCurrentRoute = (routes: IRoute[]): IRoute => {
   return foundRoute;
 };
 
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export const getActiveRoute = (routes: IRoute[]): string => {
   const route = findCurrentRoute(routes);
-  return route?.name || "Default Brand Text";
+  var brandName = ''
+  if (isWindowAvailable()) {
+    brandName = (window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1));
+    brandName = capitalizeFirstLetter(brandName)
+  }
+  return route?.name || brandName;
 };
 
 export const getActiveNavbar = (routes: IRoute[]): boolean => {

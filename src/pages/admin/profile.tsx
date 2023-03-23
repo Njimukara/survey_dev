@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Flex, Grid } from "@chakra-ui/react";
+import { Box, Flex, Grid, Spinner } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
 
 // Custom components
@@ -87,6 +87,24 @@ export default function ProfileOverview() {
         // console.log(error)
       });
   }, [hasDetails, session]);
+
+  // Loader if the user session has not been loaded
+  if (session == null || undefined) {
+    return (
+      <AdminLayout>
+        <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Flex>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -168,3 +186,5 @@ export default function ProfileOverview() {
     </AdminLayout>
   );
 }
+
+ProfileOverview.requireAuth = true;

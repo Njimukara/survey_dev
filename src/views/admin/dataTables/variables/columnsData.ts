@@ -94,9 +94,13 @@ export const columnsDataUsers: Columns = [
     Header: 'DATE JOINED',
     accessor: 'date_joined',
   },
+  // {
+  //   Header: 'ISACTIVE',
+  //   accessor: 'is_active',
+  // },
   {
-    Header: 'ISACTIVE',
-    accessor: 'is_active',
+    Header: 'BLOCK',
+    accessor: 'block',
   },
   {
     Header: 'DELETE',

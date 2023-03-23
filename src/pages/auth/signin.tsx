@@ -54,9 +54,6 @@ import DefaultAuthLayout from "layouts/auth/Default";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
-import { MdUpload } from "react-icons/md";
-import styles from "../../../styles/Home.module.css";
-// import styles from '../../styles/Home.module.css'
 
 // import { useRef } from 'react'
 import { signIn } from "next-auth/react";
@@ -168,6 +165,11 @@ export default function SignIn({ providers }: any) {
       })
       .catch((error) => {
         console.log(error);
+        let err = error.response.data.email;
+        if (err != "") {
+          setError(err);
+        }
+        setError("Server error, please try again later");
       });
   };
 
@@ -312,7 +314,7 @@ export default function SignIn({ providers }: any) {
             <HSeparator />
           </Flex>
           {error && (
-            <Flex align="center" mb="25px">
+            <Flex w="100%" justifyContent="center" mb="5px">
               <Text color="red.400" fontWeight="semibold" mx="14px">
                 {error}
               </Text>

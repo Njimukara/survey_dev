@@ -20,6 +20,9 @@ import {
   ButtonGroup,
   FormHelperText,
   useToast,
+  InputGroup,
+  InputRightElement,
+  Icon,
 } from "@chakra-ui/react";
 import axios from "axios";
 import * as Yup from "yup";
@@ -34,8 +37,10 @@ import Select from "react-select";
 
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
+import { RiEyeCloseLine } from "react-icons/ri";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 
-export default function InviteUser(props: { [x: string]: any }) {
+export default function SetPassword(props: { [x: string]: any }) {
   let { toggleModal, opened, ...rest } = props;
 
   // Chakra Color Mode
@@ -47,12 +52,15 @@ export default function InviteUser(props: { [x: string]: any }) {
     "#111C44 !important"
   );
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [show, setShow] = useState(false);
   const [error, setError] = useState(null);
   const { data: session } = useSession();
   const router = useRouter();
+
+  const handleClick = () => setShow(!show);
 
   // chakra toast
   const toast = useToast();
@@ -61,22 +69,22 @@ export default function InviteUser(props: { [x: string]: any }) {
 
   const closeModal = () => {
     toggleModal(false);
-    setName("");
-    setEmail("");
+    setCurrentPassword("");
+    setNewPassword("");
     setError("");
   };
 
   const onSubmit = async () => {
-    if (name == "" || email == "") {
-      setError("Name and Email are required");
+    if (currentPassword == "" || newPassword == "") {
+      setError("New and Current passwords are required");
       return;
     }
     setError("");
     setSubmitting(true);
 
     const body = {
-      name: name,
-      email: email,
+      new_password: newPassword,
+      current_password: currentPassword,
     };
 
     // console.log(body);
@@ -92,20 +100,19 @@ export default function InviteUser(props: { [x: string]: any }) {
 
     const res = await axios
       .post(
-        "https://surveyplanner.pythonanywhere.com/api/company/send-invitation/",
+        "https://surveyplanner.pythonanywhere.com/auth/users/set_password/",
         body,
         config
       )
       .then((res) => {
         console.log(res);
-        router.push("/company/users");
         setSubmitting(false);
         closeModal();
         toast({
           position: "bottom-right",
-          description: "Invite has been sent successfully.",
+          description: "Password has been changed successfully.",
           status: "info",
-          duration: 5000,
+          duration: 4000,
           isClosable: true,
         });
       })
@@ -124,13 +131,7 @@ export default function InviteUser(props: { [x: string]: any }) {
   };
 
   return (
-    <Card
-      mb={{ base: "0px", lg: "0px" }}
-      mt="0"
-      bgColor="transparent"
-      borderRadius={0}
-      {...rest}
-    >
+    <Card mb={{ base: "0px", lg: "0px" }} mt="0" bgColor="none" {...rest}>
       <Modal
         onClose={() => toggleModal(false)}
         isOpen={opened}
@@ -146,7 +147,7 @@ export default function InviteUser(props: { [x: string]: any }) {
           backdropBlur="2px"
         />
         <ModalContent>
-          <ModalHeader>Invite User</ModalHeader>
+          <ModalHeader>Set New Password</ModalHeader>
           <ModalCloseButton onClick={closeModal} />
           <ModalBody>
             <Card
@@ -170,46 +171,68 @@ export default function InviteUser(props: { [x: string]: any }) {
                     </Text>
                   )}
                   <form>
-                    <FormControl>
+                    <FormControl mr="4px">
                       <FormLabel fontSize="sm" color={textColorSecondary}>
-                        Name *
+                        Current Password
                       </FormLabel>
-                      <Input
-                        id="name"
-                        name="name"
-                        isRequired={true}
-                        variant="rounded"
-                        fontSize="sm"
-                        ms={{ base: "0px", md: "0px" }}
-                        mb="5px"
-                        type="text"
-                        placeholder="Name"
-                        fontWeight="400"
-                        size="md"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
+                      <InputGroup size="md">
+                        <Input
+                          id="current_password"
+                          name="current_password"
+                          fontSize="sm"
+                          placeholder="Password*(Min. 8 characters)"
+                          size="md"
+                          mb="5px"
+                          type={show ? "text" : "password"}
+                          variant="rounded"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                        />
+                        <InputRightElement
+                          display="flex"
+                          alignItems="center"
+                          mt="7px"
+                        >
+                          <Icon
+                            color={textColorSecondary}
+                            _hover={{ cursor: "pointer" }}
+                            as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                            onClick={handleClick}
+                          />
+                        </InputRightElement>
+                      </InputGroup>
                     </FormControl>
                     <Flex w="100%">
-                      <FormControl>
+                      <FormControl mr="4px">
                         <FormLabel fontSize="sm" color={textColorSecondary}>
-                          Email *
+                          New Password
                         </FormLabel>
-                        <Input
-                          id="email"
-                          name="email"
-                          isRequired={true}
-                          variant="rounded"
-                          fontSize="sm"
-                          ms={{ base: "0px", md: "0px" }}
-                          mb="5px"
-                          type="text"
-                          placeholder="email"
-                          fontWeight="400"
-                          size="md"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
+                        <InputGroup size="md">
+                          <Input
+                            id="new_password"
+                            name="new_password"
+                            fontSize="sm"
+                            placeholder="Password*(Min. 8 characters)"
+                            size="md"
+                            mb="5px"
+                            type={show ? "text" : "password"}
+                            variant="rounded"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                          />
+                          <InputRightElement
+                            display="flex"
+                            alignItems="center"
+                            mt="7px"
+                          >
+                            <Icon
+                              color={textColorSecondary}
+                              _hover={{ cursor: "pointer" }}
+                              as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                              onClick={handleClick}
+                            />
+                          </InputRightElement>
+                        </InputGroup>
                       </FormControl>
                     </Flex>
                   </form>
@@ -225,7 +248,7 @@ export default function InviteUser(props: { [x: string]: any }) {
                 colorScheme="blue"
                 onClick={onSubmit}
               >
-                Send Invite
+                Set Password
               </Button>
               <Button variant="outline" mt="1px" py="5" onClick={closeModal}>
                 Close
