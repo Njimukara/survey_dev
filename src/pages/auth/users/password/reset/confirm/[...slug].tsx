@@ -39,6 +39,7 @@ import {
   InputRightElement,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 
 import { useFormik } from "formik";
@@ -97,16 +98,20 @@ export default function SetPassword(props: any) {
       .required("Required"),
   });
 
+  // chakra toast
+  const toast = useToast();
+
   // submit email for password reset
   const onSubmit = async (values: any) => {
     setSubmitting(true);
+    setError(null);
     let url: array = router.query.slug;
     let uid, token;
     for (let i in url) {
-      uid = url[1];
-      token = url[2];
+      uid = url[0];
+      token = url[1];
     }
-    console.log(uid, token);
+    // console.log(uid, token);
 
     // request body
     const data = {
@@ -114,6 +119,7 @@ export default function SetPassword(props: any) {
       token: token,
       new_password: values.password,
     };
+
     // headers
     const config = {
       headers: {
@@ -128,14 +134,28 @@ export default function SetPassword(props: any) {
         config
       )
       .then((res) => {
-        console.log(res);
-        // router.push('/auth/verifyemail')
+        router.push("/auth/signin");
         setSubmitting(false);
+        toast({
+          position: "bottom-right",
+          description: "Password reset successful",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
       })
-      .catch((error) => {
-        console.log(error);
-        setError(error);
+      .catch((err) => {
+        // console.log(err);
+        setError(err.response.data.token[0]);
+        // setError(err.response.data.uid);
         setSubmitting(false);
+        toast({
+          position: "bottom-right",
+          description: "Password reset failed",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
@@ -185,6 +205,14 @@ export default function SetPassword(props: any) {
           <Text my={4} fontSize="md" textAlign="center">
             Your new password must be different from the previous one.
           </Text>
+
+          {error != null ? (
+            <Text my={3} fontSize="sm" color="red.400" textAlign="center">
+              {error}
+            </Text>
+          ) : (
+            ""
+          )}
           <form onSubmit={handleSubmit}>
             <FormControl>
               <FormLabel fontSize="sm" color={textColorSecondary}>
@@ -232,7 +260,7 @@ export default function SetPassword(props: any) {
                 fontSize="sm"
                 ms={{ base: "0px", md: "0px" }}
                 mb="5px"
-                type="email"
+                type={show ? "text" : "password"}
                 placeholder="name@mail.com"
                 fontWeight="400"
                 size="md"

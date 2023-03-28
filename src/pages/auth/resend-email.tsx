@@ -28,33 +28,25 @@ import Link from "next/link";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormHelperText,
   FormLabel,
   Icon,
-  Image,
   Input,
-  InputGroup,
-  InputRightElement,
-  Select,
-  Spinner,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 
-import { Formik, Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 
 // Custom components
-import { HSeparator } from "components/separator/Separator";
 import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
-import { MdUpload, MdOutlineMail, MdOutlineArrowBack } from "react-icons/md";
+import { MdOutlineArrowBack } from "react-icons/md";
 
 import { useEffect } from "react";
-import { getProviders, getSession, signIn } from "next-auth/react";
 import axios from "axios";
 
 export default function resendEmail({ providers }: any) {
@@ -77,6 +69,7 @@ export default function resendEmail({ providers }: any) {
   );
   const router = useRouter();
   const [canResend, setCanResend] = React.useState("true");
+  const [error, setError] = React.useState("");
   const [time, setTime] = React.useState({
     time: 1,
     seconds: 0,
@@ -85,27 +78,27 @@ export default function resendEmail({ providers }: any) {
   const countDown = () => {
     if (canResend == "false") {
       console.log("from outer if", canResend);
-      // var minute = 1;
-      // var sec = 60;
-      // setInterval(function () {
-      //   var Time = {
-      //     time: minute,
-      //     seconds: sec,
-      //   };
-      //   setTime(Time);
-      //   sec--;
+      var minute = 1;
+      var sec = 60;
+      setInterval(function () {
+        var Time = {
+          time: minute,
+          seconds: sec,
+        };
+        setTime(Time);
+        sec--;
 
-      //   if (sec == 0) {
-      //     minute--;
-      //     sec = 60;
+        if (sec == 0) {
+          minute--;
+          sec = 60;
 
-      //     if (minute == 0) {
-      //       setCanResend(true);
-      //       console.log("from inner fnction", canResend);
-      //       minute = 1;
-      //     }
-      //   }
-      // }, 1000);
+          if (minute == 0) {
+            setCanResend("true");
+            console.log("from inner fnction", canResend);
+            minute = 1;
+          }
+        }
+      }, 1000);
     }
   };
 
@@ -127,10 +120,11 @@ export default function resendEmail({ providers }: any) {
       )
       .then((res) => {
         router.push("/auth/verifyemail");
-        console.log(res);
+        setError("");
       })
       .catch((error) => {
         console.log(error);
+        setError("This user already has an account");
         setCanResend("true");
       });
   };
@@ -160,19 +154,28 @@ export default function resendEmail({ providers }: any) {
   return (
     <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
       <Flex
-        maxW={{ base: "100%", md: "max-content" }}
+        maxW="max-content"
         w="100%"
         mx={{ base: "auto", lg: "0px" }}
         h="100vh"
         alignItems="center"
         justifyContent="center"
-        mb={{ base: "30px", md: "130px" }}
-        px={{ base: "25px", md: "0px" }}
-        mt={{ base: "20vh", md: "30vh" }}
+        mb="130px"
+        px="0px"
+        mt="30vh"
         flexDirection="column"
       >
         <Flex mb="100px" mr="70px" w="100%">
           <form onSubmit={handleSubmit}>
+            {error != "" ? (
+              <Flex justifyContent="center" mb="5">
+                <Text fontSize="sm" color="red.400">
+                  {error}
+                </Text>
+              </Flex>
+            ) : (
+              ""
+            )}
             <FormControl>
               <FormLabel>Input the email you used to register</FormLabel>
               <Input
@@ -180,7 +183,7 @@ export default function resendEmail({ providers }: any) {
                 name="email"
                 variant="rounded"
                 fontSize="md"
-                ms={{ base: "0px", md: "0px" }}
+                ms="0px"
                 type="text"
                 placeholder="Email *"
                 mr="2px"
@@ -198,21 +201,16 @@ export default function resendEmail({ providers }: any) {
                 ""
               )}
             </FormControl>
-            <Flex mt={6} w="100%">
-              {!isSubmitting ? (
-                <Button
-                  type="submit"
-                  w="100%"
-                  isDisabled={!canResend}
-                  variant="homePrimary"
-                >
-                  Resend Link
-                </Button>
-              ) : (
-                <Flex w="100%" alignItems="100%" justifyContent="center">
-                  <Spinner thickness="4px" speed="0.9s" color="primary.500" />
-                </Flex>
-              )}
+            <Flex mt={6} w="100%" justifyContent="center">
+              <Button
+                type="submit"
+                isLoading={isSubmitting}
+                isDisabled={!canResend}
+                variant="homePrimary"
+                py="5"
+              >
+                Resend Link
+              </Button>
             </Flex>
             <Flex justifyContent="center" mt={2}>
               {canResend == "false" ? (
@@ -224,8 +222,15 @@ export default function resendEmail({ providers }: any) {
               )}
             </Flex>
             <Flex justifyContent="center">
-              <Button mt={8} onClick={() => router.push("/auth/signin")}>
-                <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
+              <Button
+                variant="outline"
+                py="5"
+                px="4"
+                border="none"
+                mt={8}
+                onClick={() => router.push("/auth/signin")}
+              >
+                <Icon mr={1} as={MdOutlineArrowBack} boxSize={6} />
                 <Text>Cancel</Text>
               </Button>
             </Flex>

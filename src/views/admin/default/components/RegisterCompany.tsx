@@ -18,21 +18,13 @@ import {
   VStack,
   FormControl,
   ButtonGroup,
-  FormHelperText,
 } from "@chakra-ui/react";
 import axios from "axios";
-import * as Yup from "yup";
 import Card from "components/card/Card";
-import Projects from "views/admin/profile/components/CompanyUsers";
-
-import { NextAvatar } from "components/image/Avatar";
-import { useRouter } from "next/router";
-import { useState, useMemo, SetStateAction } from "react";
+import { useState, useMemo } from "react";
 import countryList from "react-select-country-list";
 import Select from "react-select";
 
-import Company from "./Company";
-import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
 
 export default function RegisterCompany(props: { [x: string]: any }) {
@@ -41,11 +33,6 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
-  const textColorPrimary = useColorModeValue("primary.500", "white");
-  const borderColor = useColorModeValue(
-    "white !important",
-    "#111C44 !important"
-  );
 
   const [companyCountry, setCompanyCountry] = useState(null);
   const [iso, setIso] = useState(null);
@@ -89,7 +76,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     if (!image) {
       setSubmitting(false);
       setImageError("please upload your ompany logo");
-      return null;
+      return;
     }
     setImageError(null);
     setSubmitting(true);
@@ -111,7 +98,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
       },
     };
 
-    const res = await axios
+    await axios
       .post(
         "https://surveyplanner.pythonanywhere.com/api/company/create/",
         formdata,
@@ -284,6 +271,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           opacity="0"
                           type="file"
                           name="myfile"
+                          accept="image/*"
                         />
                       </Box>
                     </Flex>

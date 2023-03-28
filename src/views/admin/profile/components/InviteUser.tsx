@@ -36,7 +36,7 @@ import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
 
 export default function InviteUser(props: { [x: string]: any }) {
-  let { toggleModal, opened, ...rest } = props;
+  let { getInvitations, toggleModal, opened, ...rest } = props;
 
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
@@ -97,14 +97,15 @@ export default function InviteUser(props: { [x: string]: any }) {
         config
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         router.push("/company/users");
+        getInvitations();
         setSubmitting(false);
         closeModal();
         toast({
           position: "bottom-right",
           description: "Invite has been sent successfully.",
-          status: "info",
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
@@ -124,116 +125,116 @@ export default function InviteUser(props: { [x: string]: any }) {
   };
 
   return (
-    <Card
-      mb={{ base: "0px", lg: "0px" }}
-      mt="0"
-      bgColor="transparent"
-      borderRadius={0}
-      {...rest}
+    // <Card
+    //   mb={{ base: "0px", lg: "0px" }}
+    //   mt="0"
+    //   bgColor="transparent"
+    //   borderRadius={0}
+    //   {...rest}
+    // >
+    <Modal
+      onClose={() => toggleModal(false)}
+      isOpen={opened}
+      motionPreset="slideInBottom"
+      size="xl"
+      isCentered
+      closeOnOverlayClick={false}
     >
-      <Modal
-        onClose={() => toggleModal(false)}
-        isOpen={opened}
-        motionPreset="slideInBottom"
-        size="xl"
-        isCentered
-        closeOnOverlayClick={false}
-      >
-        <ModalOverlay
-          bg="none"
-          backdropFilter="auto"
-          backdropInvert="30%"
-          backdropBlur="2px"
-        />
-        <ModalContent>
-          <ModalHeader>Invite User</ModalHeader>
-          <ModalCloseButton onClick={closeModal} />
-          <ModalBody>
-            <Card
-              justifyContent="center"
-              flexDirection="column"
-              w="100%"
-              mb="0px"
-              {...rest}
-            >
-              <Flex>
-                <VStack flex="1">
-                  {error != "" && (
-                    <Text
-                      w="100%"
-                      textAlign="center"
-                      fontWeight="bold"
+      <ModalOverlay
+        bg="none"
+        backdropFilter="auto"
+        backdropInvert="30%"
+        backdropBlur="2px"
+      />
+      <ModalContent>
+        <ModalHeader>Invite User</ModalHeader>
+        <ModalCloseButton onClick={closeModal} />
+        <ModalBody>
+          <Card
+            justifyContent="center"
+            flexDirection="column"
+            w="100%"
+            mb="0px"
+            {...rest}
+          >
+            <Flex>
+              <VStack flex="1">
+                {error != "" && (
+                  <Text
+                    w="100%"
+                    textAlign="center"
+                    fontWeight="bold"
+                    fontSize="sm"
+                    color="red.500"
+                  >
+                    {error}
+                  </Text>
+                )}
+                <form>
+                  <FormControl>
+                    <FormLabel fontSize="sm" color={textColorSecondary}>
+                      Name *
+                    </FormLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      isRequired={true}
+                      variant="rounded"
                       fontSize="sm"
-                      color="red.500"
-                    >
-                      {error}
-                    </Text>
-                  )}
-                  <form>
+                      ms={{ base: "0px", md: "0px" }}
+                      mb="5px"
+                      type="text"
+                      placeholder="Name"
+                      fontWeight="400"
+                      size="md"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </FormControl>
+                  <Flex w="100%">
                     <FormControl>
                       <FormLabel fontSize="sm" color={textColorSecondary}>
-                        Name *
+                        Email *
                       </FormLabel>
                       <Input
-                        id="name"
-                        name="name"
+                        id="email"
+                        name="email"
                         isRequired={true}
                         variant="rounded"
                         fontSize="sm"
                         ms={{ base: "0px", md: "0px" }}
                         mb="5px"
                         type="text"
-                        placeholder="Name"
+                        placeholder="email"
                         fontWeight="400"
                         size="md"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </FormControl>
-                    <Flex w="100%">
-                      <FormControl>
-                        <FormLabel fontSize="sm" color={textColorSecondary}>
-                          Email *
-                        </FormLabel>
-                        <Input
-                          id="email"
-                          name="email"
-                          isRequired={true}
-                          variant="rounded"
-                          fontSize="sm"
-                          ms={{ base: "0px", md: "0px" }}
-                          mb="5px"
-                          type="text"
-                          placeholder="email"
-                          fontWeight="400"
-                          size="md"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </FormControl>
-                    </Flex>
-                  </form>
-                </VStack>
-              </Flex>
-            </Card>
-          </ModalBody>
-          <ModalFooter>
-            <ButtonGroup variant="homePrimary" spacing="6">
-              <Button
-                py="6"
-                isLoading={submitting}
-                colorScheme="blue"
-                onClick={onSubmit}
-              >
-                Send Invite
-              </Button>
-              <Button variant="outline" mt="1px" py="5" onClick={closeModal}>
-                Close
-              </Button>
-            </ButtonGroup>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Card>
+                  </Flex>
+                </form>
+              </VStack>
+            </Flex>
+          </Card>
+        </ModalBody>
+        <ModalFooter>
+          <ButtonGroup variant="homePrimary" spacing="6">
+            <Button
+              py="6"
+              isLoading={submitting}
+              colorScheme="blue"
+              onClick={onSubmit}
+            >
+              Send Invite
+            </Button>
+            <Button variant="outline" mt="1px" py="5" onClick={closeModal}>
+              Close
+            </Button>
+          </ButtonGroup>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+    // </Card>
   );
 }

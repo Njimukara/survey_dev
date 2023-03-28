@@ -103,6 +103,8 @@ export default function CurrentPlan(props: { [x: string]: any }) {
                 w="150px"
                 mb="15px"
                 fontSize="small"
+                variant="homePrimary"
+                py="6"
                 color={whiteText}
                 bg={bgButton}
                 _hover={bgHover}
@@ -111,7 +113,14 @@ export default function CurrentPlan(props: { [x: string]: any }) {
               >
                 Upgrade Plan
               </Button>
-              <Button w="150px" fontSize="small" color={textColor} bg={boxBg}>
+              <Button
+                variant="outline"
+                py="5"
+                w="150px"
+                fontSize="small"
+                color={textColor}
+                bg={boxBg}
+              >
                 Cancel
               </Button>
             </Flex>

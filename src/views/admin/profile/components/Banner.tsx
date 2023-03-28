@@ -131,10 +131,12 @@ export default function Banner(props: {
           </Button>
           <Button
             color="red.500"
-            py="5"
-            variant="homePrimary"
-            bg={googleBg}
-            _hover={googleHover}
+            py="4"
+            px="4"
+            borderColor="red.500"
+            variant="outline"
+            bg="white"
+            _hover={{ bg: "red.400", color: "white" }}
             onClick={onOpen}
           >
             Delete account

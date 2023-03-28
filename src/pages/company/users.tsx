@@ -32,8 +32,10 @@ export default function Users() {
   const [isFetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [companyMembers, setCompanyMembers] = useState([]);
+  const [company, setCompany] = useState(null);
+  const [hasDetails, setHasDetails] = useState(false);
   const [invitations, setInvitations] = useState([]);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
   // const [companyUserLength, setCompanyUserLength] = useState(0);
   // const [companyUser] = useState(2);
@@ -47,7 +49,7 @@ export default function Users() {
   };
 
   //   get invitations
-  const getCompany = async () => {
+  const getCompanyMembers = async () => {
     setFetching(true);
     const config = {
       headers: {
@@ -61,19 +63,17 @@ export default function Users() {
         config
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
+        // getInvitations();
         setCompanyMembers(res.data);
+        console.log(res.data);
         setFetching(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         setFetching(false);
       });
   };
-
-  // function checkInviteStatus(age) {
-  //   return age >= 18;
-  // }
 
   //   get invitations
   const getInvitations = async () => {
@@ -96,12 +96,38 @@ export default function Users() {
           return invite.status == 1;
         });
         setInvitations(result);
-        console.log(result.length);
+        // console.log(result.length);
         setLoading(false);
+      })
+      .catch((err) => {
+        // console.log(err);
+        setLoading(false);
+      });
+  };
+
+  const getCompany = async () => {
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        `https://surveyplanner.pythonanywhere.com/api/company/my-company/`,
+        config
+      )
+      .then((res) => {
+        console.log(res.data);
+        setCompany(res.data);
+        setLoading(false);
+        setHasDetails(true);
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
+        setHasDetails(false);
       });
   };
 
@@ -112,7 +138,7 @@ export default function Users() {
     if (session != null) {
       // get invitations and company members
       getInvitations();
-      getCompany();
+      getCompanyMembers();
       setUser(session?.user?.data);
     }
   }, [session]);
@@ -136,7 +162,7 @@ export default function Users() {
   return (
     <AdminLayout>
       <Flex pt={{ md: "100px" }} px="50px" w="100%" gap={10}>
-        <Flex w="30%">
+        <Flex w="25%">
           <Box>
             <Heading as="h3" size="md">
               Company Users
@@ -144,24 +170,30 @@ export default function Users() {
             <Text>
               All users in this company are listed in the adjacent table.
             </Text>
-            {user?.user_profile.user_type == companyUser && (
+            {user?.user_profile?.user_type == companyUser && (
               <Button
                 mt="5"
                 py="5"
                 variant="homePrimary"
                 onClick={() => toggleModal(true)}
+                isDisabled={hasDetails}
               >
                 {" "}
                 Invite User
               </Button>
             )}
-            <InviteUser opened={isOpen} toggleModal={toggleModal} />
+            <InviteUser
+              getInvitations={getInvitations}
+              opened={isOpen}
+              toggleModal={toggleModal}
+            />
           </Box>
         </Flex>
-        <Flex w="70%">
+        <Flex w="75%">
           {companyMembers != undefined && companyMembers.length != 0 ? (
             <UserTableComplex
               columnsData={columnsDataUsers}
+              getCompanyMembers={getCompanyMembers}
               tableData={companyMembers as unknown as TableData[]}
             />
           ) : isFetching ? (
@@ -198,7 +230,7 @@ export default function Users() {
       </Flex>
       {/* pending invites */}
       <Flex pt={{ md: "80px" }} px="50px" w="100%" gap={10}>
-        <Flex w="30%">
+        <Flex w="25%">
           <Box>
             <Heading as="h3" size="md">
               Pending Invites
@@ -206,10 +238,11 @@ export default function Users() {
             <Text>All unattended invites are shown in the table</Text>
           </Box>
         </Flex>
-        <Flex w="70%">
+        <Flex w="75%">
           {invitations != undefined && invitations.length != 0 ? (
             <PendingUserInvite
               columnsData={PendingInvite}
+              getInvitations={getInvitations}
               tableData={invitations as unknown as TableData[]}
             />
           ) : loading ? (

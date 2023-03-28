@@ -10,9 +10,17 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import RegisterCompany from "./RegisterCompany";
 import CompanyUsers from "views/admin/profile/components/CompanyUsers";
+import { string } from "yup";
+
+interface Company {
+  name: string;
+  logo: string;
+  country: string;
+  city: string;
+}
 
 export default function CompanyDetails(props: {
-  company: object;
+  company: Company;
   hasDetails: boolean;
   [x: string]: any;
 }) {
@@ -51,21 +59,28 @@ export default function CompanyDetails(props: {
     toggleHasDetails(state);
   };
 
+  // get country name from iso code
+  const countryNameFromIso = (countryCode: any) => {
+    const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+      type: "region",
+    });
+    let tempCountry = countryCode;
+    tempCountry = regionNamesInEnglish.of(tempCountry);
+    return tempCountry;
+  };
+
   useEffect(() => {
     // get country name from iso code
     if (company != undefined) {
-      const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-        type: "region",
-      });
       let tempCountry = company?.country;
-      tempCountry = regionNamesInEnglish.of(tempCountry);
+      tempCountry = countryNameFromIso(tempCountry);
       setCountry(tempCountry);
     }
   }, [company]);
 
   if (!hasDetails) {
     return (
-      <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
+      <Card mb="20px" {...rest}>
         <Flex
           flexDirection="column"
           justifyContent="center"
@@ -74,11 +89,13 @@ export default function CompanyDetails(props: {
         >
           <Text py={4}>No Company associated with this account yet</Text>
           <Button
+            variant="outline"
+            py="6"
+            px="4"
             onClick={() => {
               toggleModal(true);
             }}
           >
-            {/* // onClick={toggleModal}> */}
             Register Company
           </Button>
         </Flex>
@@ -138,7 +155,7 @@ export default function CompanyDetails(props: {
           <Flex pb={4} align="center" justify="space-between"></Flex>
 
           <Button
-            onClick={() => router.push("/auth/edit-user")}
+            onClick={() => router.push("/company/edit-company")}
             mb={2}
             variant="homePrimary"
             py="5"
@@ -156,7 +173,6 @@ export default function CompanyDetails(props: {
           />
         </Flex>
       </Flex>
-      {/* toggleModal={openModal} */}
     </Card>
   );
 }
