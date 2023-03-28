@@ -45,25 +45,32 @@ export const authOptions = {
           .catch((err) => {
             error = err
           })
-        console.log(error)
-        if (respond.status == 200) {
-          const config = {
-            headers: { Authorization: `Token ${respond.data.auth_token}` },
+
+          if (respond != undefined) {
+            if (respond.status == 200) {
+              const config = {
+                headers: { Authorization: `Token ${respond.data.auth_token}` },
+              }
+              await axios
+                .get(
+                  'https://surveyplanner.pythonanywhere.com/auth/users/me/',
+                  config
+                )
+                .then((res) => {
+                  user.data = res.data
+                  user.auth_token = respond.data.auth_token
+                  return user
+                })
+                .catch((err) => {
+                  throw new Error( JSON.stringify({ errors: 'Server error, please try again later', status: false }))
+                })
+              }
+              else {
+                throw new Error( JSON.stringify({ errors: 'Server error, please try again later', status: false }))
+              }
+              return user
           }
-          await axios
-            .get(
-              'https://surveyplanner.pythonanywhere.com/auth/users/me/',
-              config
-            )
-            .then((res) => {
-              user.data = res.data
-              user.auth_token = respond.data.auth_token
-            })
-            .catch((err) => {})
-          return user
-        } else if (error.response.status) {
-          return null
-        }
+          throw new Error( JSON.stringify({ errors: 'Incorrect Email or Password', status: false }))
       },
     }),
     // ...add more providers here

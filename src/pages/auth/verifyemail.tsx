@@ -64,15 +64,15 @@ export default function VerifyEmail(props: any) {
   return (
     <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
       <Flex
-        maxW={{ base: "100%", md: "max-content" }}
+        maxW="max-content"
         w="100%"
-        mx={{ base: "auto", lg: "0px" }}
+        mx="0px"
         h="100vh"
         alignItems="center"
         justifyContent="center"
-        mb={{ base: "30px", md: "130px" }}
-        px={{ base: "25px", md: "0px" }}
-        mt={{ base: "20vh", md: "30vh" }}
+        mb="130px"
+        px="0px"
+        mt="30vh"
         flexDirection="column"
       >
         <Flex flexDirection="column" alignItems="center">
@@ -87,14 +87,30 @@ export default function VerifyEmail(props: any) {
             h={12}
             boxSize={12}
           />
-          <Text>A link has ben sent to your email. Follow it to continue.</Text>
-          <Button onClick={() => router.push("/auth/resend-email")} my={4}>
+          <Text>
+            A link has ben sent to{" "}
+            <a
+              style={{ color: "blue", textDecoration: "underline" }}
+              href="https://mail.google.com/mail/u/0/#inbox"
+              target="_blank"
+            >
+              your email.
+            </a>{" "}
+            Follow it to complete registration
+          </Text>
+          <Button
+            variant="outline"
+            py="5"
+            px="4"
+            onClick={() => router.push("/auth/resend-email")}
+            my={4}
+          >
             Resend Link
           </Button>
           <Link href="/auth/signin">
             <a href="/auth/signin">
               <Flex alignItems="center">
-                <Icon mr={1} as={MdOutlineArrowBack} boxSize={8} />
+                <Icon mr={1} as={MdOutlineArrowBack} boxSize={6} />
                 <Text>Back to Login</Text>
               </Flex>
             </a>

@@ -43,7 +43,7 @@ import { TableProps } from "views/admin/default/variables/columnsData";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 export default function UserTableComplex(props: TableProps) {
-  const { columnsData, tableData } = props;
+  const { getCompanyMembers, columnsData, tableData } = props;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -56,7 +56,7 @@ export default function UserTableComplex(props: TableProps) {
   const [companyMembers, setCompanyMembers] = useState();
   const [invitations, setInvitations] = useState();
   const [pendingDelete, setPendingDelete] = useState<any>();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
 
   const tableInstance = useTable(
@@ -96,13 +96,58 @@ export default function UserTableComplex(props: TableProps) {
 
   const { data: session, status } = useSession();
 
-  //   Block invitations
+  //   Block User
   const blockUser = async (data: any) => {
     // console.log(data);
-    setSending(true);
     const id = data.user_id;
-    console.log(session?.user?.auth_token);
 
+    // check if user has been blocked already
+    if (data.is_active) {
+      setSending(true);
+      setSending(true);
+      // headers
+      const config = {
+        headers: {
+          Accept: "application/json;charset=UTF-8",
+          Authorization: `Token ${session?.user?.auth_token}`,
+        },
+      };
+
+      let body = {};
+      await axios
+        .patch(
+          `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
+          body,
+          config
+        )
+        .then((res) => {
+          // refresh the table to show recent updates
+          getCompanyMembers();
+          setSending(false);
+          toast({
+            position: "bottom-right",
+            description: "User blocked successfully.",
+            status: "info",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          setSending(false);
+          toast({
+            position: "bottom-right",
+            description: "Unable to block user",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+      return;
+    }
+
+    // else unblock User
+    console.log("unblock user please");
     setSending(true);
     const config = {
       headers: {
@@ -110,19 +155,21 @@ export default function UserTableComplex(props: TableProps) {
         Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
+
+    let body = {};
     await axios
       .patch(
-        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
-        // body,
+        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/unblock/`,
+        body,
         config
       )
       .then((res) => {
-        // setCompanyMembers(res.data.members);
-        console.log(res);
+        // refresh the table to show recent updates
+        getCompanyMembers();
         setSending(false);
         toast({
           position: "bottom-right",
-          description: "User has been blocked successfully.",
+          description: "User unblocked successfully.",
           status: "info",
           duration: 5000,
           isClosable: true,
@@ -133,7 +180,7 @@ export default function UserTableComplex(props: TableProps) {
         setSending(false);
         toast({
           position: "bottom-right",
-          description: "Unable to block user",
+          description: "Unable to unblock user",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -143,11 +190,9 @@ export default function UserTableComplex(props: TableProps) {
 
   //   delete invitations
   const deleteUser = async (data: any) => {
-    setSending(true);
+    setLoading(true);
     const id = data.user_id;
 
-    // console.log(body, id);
-    setSending(true);
     const config = {
       headers: {
         Accept: "application/json;charset=UTF-8",
@@ -163,11 +208,12 @@ export default function UserTableComplex(props: TableProps) {
       )
       .then((res) => {
         // setCompanyMembers(res.data.members);
-        console.log(res);
-        setSending(false);
+        // console.log(res);
+        getCompanyMembers();
+        setLoading(false);
         toast({
           position: "bottom-right",
-          description: "User has been deleted successfully.",
+          description: "User deleted successfully.",
           status: "info",
           duration: 5000,
           isClosable: true,
@@ -175,10 +221,10 @@ export default function UserTableComplex(props: TableProps) {
       })
       .catch((err) => {
         console.log(err);
-        setSending(false);
+        setLoading(false);
         toast({
           position: "bottom-right",
-          description: "Unable to delete user at this time",
+          description: "Unable to delete user",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -319,11 +365,15 @@ export default function UserTableComplex(props: TableProps) {
                         }}
                         _hover={btnBgHover}
                         color={deleteTextColor}
+                        isLoading={isSending}
+                        px={0}
                         bgColor="transparent"
                         fontSize="sm"
                         fontWeight="700"
                       >
-                        Block User
+                        {cell.row.original?.is_active
+                          ? "Block User"
+                          : "UnBlock User"}
                       </Button>
                     );
                   } else if (user?.user_profile?.user_type == companyUser) {
@@ -335,6 +385,8 @@ export default function UserTableComplex(props: TableProps) {
                         }}
                         _hover={btnBgHover}
                         color={deleteTextColor}
+                        isLoading={loading}
+                        px={0}
                         bgColor="transparent"
                         fontSize="sm"
                         fontWeight="700"

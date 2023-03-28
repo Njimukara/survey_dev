@@ -27,30 +27,36 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("members", company?.members);
+    // console.log("members", company?.members);
     setCompanyMembers(company?.members);
   }, [company]);
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} {...rest}>
-      <InviteUser opened={isOpen} toggleModal={toggleModal} />
-
-      <Text
-        color={textColorPrimary}
-        fontWeight="bold"
-        fontSize="large"
-        mt="10px"
-        mb="4px"
-      >
-        Company Users
-      </Text>
-      <Flex flexDirection="column" alignItems="center" justifyContent="center">
-        <Flex justifyContent="space-between" alignItems="center" mb="20px">
-          <Text color={textColorSecondary} fontSize="md" me="26px">
-            Get a glimse of the different users in your company
-          </Text>
+      <Flex flexDirection="column" alignItems="center">
+        <Flex
+          w="100%"
+          justifyContent="space-between"
+          alignItems="center"
+          mb="20px"
+        >
+          <Flex>
+            <Text
+              color={textColorPrimary}
+              fontWeight="bold"
+              fontSize="2xl"
+              mt="10px"
+              mb="4px"
+            >
+              Company Users
+            </Text>
+          </Flex>
           <Flex>
             <Button
+              variant="homePrimary"
+              py="5"
+              px="3"
+              fontSize="sm"
               mr="10px"
               onClick={() => {
                 router.push("/company/users");
@@ -59,6 +65,10 @@ export default function CompanyUsers(props: { [x: string]: any }) {
               View all Users
             </Button>
             <Button
+              variant="outline"
+              py="4"
+              px="4"
+              fontSize="sm"
               onClick={() => {
                 toggleModal(!isOpen);
               }}
@@ -88,6 +98,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           })} */}
         </Box>
       </Flex>
+      <InviteUser opened={isOpen} toggleModal={toggleModal} />
     </Card>
   );
 }

@@ -63,7 +63,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
-import SignIn from "pages/auth/signin";
 import { useRouter } from "next/router";
 
 export default function UserReports() {
@@ -75,39 +74,40 @@ export default function UserReports() {
   const [user, setUser] = useState<any>();
   const [companyUser, setCompanyUser] = useState(2);
   const [companyMembers, setCompanyMembers] = useState([]);
-  const [individualUser, setIndividualUser] = useState(1);
+  // const [individualUser, setIndividualUser] = useState(1);
   const { data: session, status } = useSession();
 
   const router = useRouter();
 
   useEffect(() => {
+    console.log(session?.user?.data);
     setUser(session?.user?.data);
-    // console.log(session?.user?.data)
-    // headers
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
+    if (session?.user?.data?.user_profile?.user_type == companyUser) {
+      // headers
+      const config = {
+        headers: {
+          "Content-Type": "json",
+          Accept: "application/json;charset=UTF-8",
+          Authorization: `Token ${session?.user?.auth_token}`,
+        },
+      };
 
-    axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
-        config
-      )
-      .then((res) => {
-        console.log(res);
-        setCompanyUser(2);
-        setCompanyMembers(res.data);
-        // router.push('/auth/verifyemail')
-        console.log(res);
-      })
-      .catch((error) => {
-        setCompanyUser(1);
-        // console.log(error)
-      });
+      axios
+        .get(
+          "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
+          config
+        )
+        .then((res) => {
+          setCompanyUser(2);
+          setCompanyMembers(res.data);
+          // router.push('/auth/verifyemail')
+          // console.log(res);
+        })
+        .catch((error) => {
+          setCompanyUser(1);
+          // console.log(error)
+        });
+    }
   }, [session]);
 
   const X = [{ name: "brian" }];
@@ -214,7 +214,7 @@ export default function UserReports() {
               mb="20px"
             >
               <PieCard />
-              <Users />
+              <Users members={companyMembers} />
             </SimpleGrid>
           )}
 

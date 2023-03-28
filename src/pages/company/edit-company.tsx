@@ -39,15 +39,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Select,
   Text,
   useColorModeValue,
   HStack,
   useToast,
+  Heading,
 } from "@chakra-ui/react";
-
-import { Formik, Form, useFormik } from "formik";
-import * as Yup from "yup";
 
 // Custom components
 import Card from "components/card/Card";
@@ -55,12 +52,16 @@ import Card from "components/card/Card";
 // Assets
 
 // import { useRef } from 'react'
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import AdminLayout from "layouts/admin";
-import SetPassword from "views/admin/profile/components/SetPassword";
 
-export default function EditUser({ providers }: any) {
+// react select
+import { useState, useMemo, SetStateAction } from "react";
+import countryList from "react-select-country-list";
+import Select from "react-select";
+
+export default function EditCompany({ providers }: any) {
   // Chakra color mode
   const btnbgColor = useColorModeValue("primary.500", "white");
   const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
@@ -77,15 +78,16 @@ export default function EditUser({ providers }: any) {
     { bg: "whiteAlpha.200" }
   );
   const router = useRouter();
-  const [submitting, setSubmitting] = React.useState(false);
-  const [user, setUser] = React.useState<any>();
-  const [error, setError] = React.useState(null);
-  const [canEdit, setCanEdit] = React.useState(true);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [image, setImage] = React.useState(null);
-  const [createObjectURL, setCreateObjectURL] = React.useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [company, setCompany] = useState<any>();
+  const [error, setError] = useState(null);
+  const [canEdit, setCanEdit] = useState(true);
+  const [name, setName] = useState("");
+  const [country, setCountry] = useState<any>(null);
+  const [city, setCity] = useState("");
+  const [iso, setIso] = useState(null);
+  const [image, setImage] = useState(null);
+  const [createObjectURL, setCreateObjectURL] = useState(null);
 
   const { data: session, status } = useSession();
 
@@ -96,38 +98,51 @@ export default function EditUser({ providers }: any) {
     setCanEdit(!canEdit);
   };
 
-  // open password reset modal
-  const toggleModal = (state: boolean | ((prevState: boolean) => boolean)) => {
-    setIsOpen(state);
+  //   react-select
+  const options = useMemo(() => countryList().getData(), []);
+
+  const changeHandler = (value: any) => {
+    setCountry(value);
+    setIso(value.value);
+    console.log(country);
   };
 
-  // function to upddate user
-  const updateUser = async () => {
+  // css styling for react select
+  const reactSelectStyles = {
+    control: (defaultStyles: any) => ({
+      ...defaultStyles,
+      backgroundColor: "transparent",
+      borderColor: "grey.200",
+      color: "black",
+      padding: "6px",
+      borderRadius: "15px",
+      boxShadow: "none",
+    }),
+    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+  };
+
+  // function to upddate company
+  const updateCompany = async () => {
+    setError(null);
+    if (image == "") {
+      return;
+    }
     setSubmitting(true);
     let formdata = new FormData();
     formdata.append("name", name);
-    formdata.append("email", email);
-    formdata.append("user_type", user?.user_profile?.user_type);
-    if (image != "") {
-      formdata.append("avatar", image);
+    formdata.append("country", iso || company.country);
+    formdata.append("city", city);
+    if (image) {
+      formdata.append("logo", image);
     }
-    formdata.append("avatar", "");
-    // let user = {
+    // let body = {
     //   name: name,
-    //   email: email,
-    //   user_profile: {
-    //     user_type: 3,
-    //     // user_type: user?.user_profile?.user_type,
-    //     avatar: "",
-    //   },
+    //   country: iso,
+    //   city: city,
+    //   logo: image,
     // };
-
-    // if (image != "") {
-    //   body.user_profile.avatar = image;
-    // }
-    console.log(formdata);
-
-    const options = {
+    // console.log(body);
+    const headerOptions = {
       // method: 'POST',
       headers: {
         "Content-Type": "multipart/form-data",
@@ -138,12 +153,12 @@ export default function EditUser({ providers }: any) {
 
     await axios
       .patch(
-        `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
+        `https://surveyplanner.pythonanywhere.com/api/company/update-company/${company.id}/`,
         formdata,
-        options
+        headerOptions
       )
       .then((res) => {
-        getUser();
+        getCompany();
         toggleEdit();
         setSubmitting(false);
         toast({
@@ -155,8 +170,8 @@ export default function EditUser({ providers }: any) {
         });
       })
       .catch((err) => {
-        console.log(err);
-        // setError(err);
+        // console.log(err);
+        setError(err.response.data.logo[0]);
         setSubmitting(false);
         toast({
           position: "bottom-right",
@@ -178,14 +193,18 @@ export default function EditUser({ providers }: any) {
     }
   };
 
-  // remove user avatar
-  const removeAvatar = (event: any) => {
-    setImage(null);
-    setCreateObjectURL(null);
+  // get country name from iso code
+  const countryNameFromIso = (countryCode: any) => {
+    const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+      type: "region",
+    });
+    let tempCountry = regionNamesInEnglish.of(countryCode);
+    return tempCountry;
   };
 
-  const getUser = async () => {
-    const options = {
+  const getCompany = async () => {
+    const headerOptions = {
+      // method: 'POST',
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json;charset=UTF-8",
@@ -194,22 +213,28 @@ export default function EditUser({ providers }: any) {
     };
 
     await axios
-      .get(`https://surveyplanner.pythonanywhere.com/auth/users/me/`, options)
+      .get(
+        `https://surveyplanner.pythonanywhere.com/api/company/my-company/`,
+        headerOptions
+      )
       .then((res) => {
-        console.log(res);
-        setUser(res?.data);
+        // console.log(res);
+        setCompany(res?.data);
         setName(res?.data?.name);
-        setEmail(res?.data?.email);
-        setCreateObjectURL(res?.data?.user_profile?.avatar);
-        // router.push("/auth/verifyemail");
+        let tempcountry = countryNameFromIso(res?.data?.country);
+        let tempIso = res?.data?.country;
+        setCountry({ value: tempIso, label: tempcountry });
+
+        setCity(res?.data?.city);
+        setCreateObjectURL(res?.data?.logo);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
   useEffect(() => {
-    getUser();
+    getCompany();
   }, [session]);
 
   return (
@@ -230,7 +255,7 @@ export default function EditUser({ providers }: any) {
               <Box position="relative" overflow="hidden" my="3">
                 {!canEdit && (
                   <Button ml="10px" cursor="pointer">
-                    {image ? image.name : "Upload Avatar (optional)"}
+                    {image ? image.name : "Upload Avatar"}
                   </Button>
                 )}
                 <Input
@@ -243,22 +268,20 @@ export default function EditUser({ providers }: any) {
                   accept="image/x-png,image/gif,image/jpeg,image/avif"
                 />
               </Box>
-              {image || (createObjectURL && !canEdit) ? (
-                <Button onClick={removeAvatar} ml="10px" cursor="pointer">
-                  Remove Avatar
-                </Button>
-              ) : null}
             </Flex>
 
-            {/* user details */}
+            {/* Company details */}
             <Flex
               w="100%"
               mx={{ base: "auto", lg: "0px" }}
-              alignItems="center"
+              //   alignItems="center"
               justifyContent="center"
               mb={{ base: "30px", md: "60px" }}
               flexDirection="column"
             >
+              <Heading as="h3" fontSize="lg" mb={5}>
+                Company Details
+              </Heading>
               {error && (
                 <Flex align="center" mb="25px">
                   <Text color="red.400" fontWeight="semibold" mx="14px">
@@ -269,7 +292,7 @@ export default function EditUser({ providers }: any) {
               {/* Edit form begins */}
               <FormControl pb="3">
                 <HStack spacing="10px">
-                  <FormLabel w="150px">Your name *</FormLabel>
+                  <FormLabel w="160px">Company Name *</FormLabel>
                   <Input
                     id="name"
                     name="name"
@@ -277,49 +300,51 @@ export default function EditUser({ providers }: any) {
                     fontSize="sm"
                     ms={{ base: "0px", md: "0px" }}
                     type="text"
-                    placeholder="Your name*"
+                    placeholder="Company name*"
                     mr="2px"
                     w="100%"
                     fontWeight="500"
                     size="lg"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    // onBlur={handleBlur}
-                    isDisabled={canEdit}
-                  />
-                </HStack>
-              </FormControl>
-              <FormControl pb="3">
-                <HStack spacing="10px">
-                  <FormLabel w="150px">Email *</FormLabel>
-                  <Input
-                    id="email"
-                    name="email"
-                    variant="rounded"
-                    fontSize="sm"
-                    ms={{ base: "0px", md: "0px" }}
-                    type="email"
-                    placeholder="Email*"
-                    fontWeight="500"
-                    size="lg"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     isDisabled={canEdit}
                   />
                 </HStack>
               </FormControl>
 
               <FormControl pb="3">
-                <Flex alignItems="center">
-                  <FormLabel w="120px">Password</FormLabel>
-                  <Button
-                    bg="none"
-                    _hover={{ bg: "none", color: "primary.300" }}
-                    onClick={() => toggleModal(true)}
-                  >
-                    Reset Password
-                  </Button>
-                </Flex>
+                <HStack spacing="10px">
+                  <FormLabel w="160px">City *</FormLabel>
+                  <Input
+                    id="city"
+                    name="city"
+                    variant="rounded"
+                    fontSize="sm"
+                    type="country"
+                    placeholder="City*"
+                    fontWeight="500"
+                    size="lg"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    isDisabled={canEdit}
+                  />
+                </HStack>
+              </FormControl>
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="160px">Country</FormLabel>
+                  <Box w="100%">
+                    <Select
+                      isDisabled={canEdit}
+                      styles={reactSelectStyles}
+                      options={options}
+                      placeholder="select country"
+                      value={country}
+                      onChange={changeHandler}
+                    />
+                  </Box>
+                </HStack>
               </FormControl>
 
               {canEdit ? (
@@ -348,7 +373,7 @@ export default function EditUser({ providers }: any) {
                 <Flex w="100%" gap="20px" alignItems="center" pl="150px" mt={5}>
                   <Button
                     isLoading={submitting}
-                    onClick={updateUser}
+                    onClick={updateCompany}
                     fontSize="sm"
                     variant="homePrimary"
                     fontWeight="500"
@@ -357,7 +382,6 @@ export default function EditUser({ providers }: any) {
                     Save
                   </Button>
                   <Button
-                    // isLoading={isSubmitting}
                     onClick={toggleEdit}
                     fontSize="sm"
                     variant="outline"
@@ -372,10 +396,9 @@ export default function EditUser({ providers }: any) {
             </Flex>
           </Flex>
         </form>
-        <SetPassword toggleModal={toggleModal} opened={isOpen} />
       </Card>
     </AdminLayout>
   );
 }
 
-EditUser.requireAuth = true;
+EditCompany.requireAuth = true;

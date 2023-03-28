@@ -91,7 +91,7 @@ export default function SignIn({ providers }: any) {
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .min(3, "Name is too Short!")
-      .max(25, "Name is too Long!")
+      .max(17, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
     password: Yup.string()
@@ -112,6 +112,7 @@ export default function SignIn({ providers }: any) {
   const Login = async () => {
     if (formData.email == "" || formData.password == "") {
       setError("Invalid Inputs");
+      return;
     }
     setSubmitting(true);
     // setError(null)
@@ -124,11 +125,13 @@ export default function SignIn({ providers }: any) {
     });
 
     if (res.status == 200) {
-      console.log(res);
+      // console.log(res);
       setSubmitting(false);
       router.push("/admin");
     } else if (res.status != 200) {
-      setError("Invalid Email or Password");
+      let error = JSON.parse(res.error);
+      setError(error.errors);
+      // console.log(res);
       setSubmitting(false);
     }
     setSubmitting(false);
@@ -160,11 +163,11 @@ export default function SignIn({ providers }: any) {
         options
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         router.push("/auth/verifyemail");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         let err = error.response.data.email;
         if (err != "") {
           setError(err);
@@ -207,7 +210,7 @@ export default function SignIn({ providers }: any) {
       email: "",
       password: "",
       confirmPassword: "",
-      usertype: "",
+      usertype: "1",
       avatar: "",
     },
     validationSchema: validationSchema,
@@ -578,6 +581,7 @@ export default function SignIn({ providers }: any) {
                     opacity="0"
                     type="file"
                     name="myfile"
+                    accept="image/*"
                   />
                 </Box>
                 {image ? (

@@ -30,6 +30,7 @@ import { Image } from "components/image/Image";
 
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import axios from "axios";
 // import { useRouter } from 'next/router'
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props;
@@ -54,11 +55,28 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 
   // functions
   const logOut = async () => {
-    await signOut({ callbackUrl: "http://localhost:3000/auth/signin" });
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    let body = {};
+    // await axios
+    //   .post(
+    //     `https://surveyplanner.pythonanywhere.com/auth/token/logout/`,
+    //     body,
+    //     config
+    //   )
+    //   .then((res) => {
+    signOut({ callbackUrl: "http://localhost:3000/auth/signin" });
+    // })
+    // .catch((err) => {});
   };
 
   useEffect(() => {
     setUser(session?.user?.data);
+    console.log(session);
   }, [session]);
 
   const borderButton = useColorModeValue("secondaryGray.500", "whiteAlpha.200");
@@ -200,6 +218,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           <Avatar
             _hover={{ cursor: "pointer" }}
             color="white"
+            src={user?.user_profile?.avatar}
             name={user?.name}
             bg="#11047A"
             size="sm"

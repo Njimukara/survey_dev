@@ -99,10 +99,10 @@ export default function PlanDetails(props: {
                     w="150px"
                     fontSize="small"
                     py="4"
-                    variant="homePrimary"
+                    variant="outline"
                     color={textColor}
-                    bg={boxBg}
-                    _hover={{ bg: bgHover, color: textColor }}
+                    bg={"white"}
+                    _hover={{ bg: boxBg, color: textColor }}
                   >
                     Cancel
                   </Button>

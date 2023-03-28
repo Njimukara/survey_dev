@@ -63,29 +63,31 @@ export default function ProfileOverview() {
     setUser(session?.user?.data);
     // console.log(session?.user?.data)
     // headers
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
+    if (session?.user?.data?.user_profile?.user_type == companyUser) {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json;charset=UTF-8",
+          Authorization: `Token ${session?.user?.auth_token}`,
+        },
+      };
 
-    const res = axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
-        config
-      )
-      .then((res) => {
-        console.log(res);
-        setHasDetails(true);
-        setCompany(res.data);
-        // router.push('/auth/verifyemail')
-      })
-      .catch((error) => {
-        setHasDetails(false);
-        // console.log(error)
-      });
+      const res = axios
+        .get(
+          "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
+          config
+        )
+        .then((res) => {
+          console.log(res);
+          setHasDetails(true);
+          setCompany(res.data);
+          // router.push('/auth/verifyemail')
+        })
+        .catch((error) => {
+          setHasDetails(false);
+          // console.log(error)
+        });
+    }
   }, [hasDetails, session]);
 
   // Loader if the user session has not been loaded
@@ -122,7 +124,7 @@ export default function ProfileOverview() {
         >
           <Banner
             gridArea="1 / 1 / 2 / 2"
-            avatar={avatar}
+            avatar={user?.user_profile?.avatar}
             name={user?.name}
             email={user?.email}
             date_joined={user?.date_joined}
@@ -158,15 +160,6 @@ export default function ProfileOverview() {
           )}
         </Grid>
         <Flex gap="4">
-          {/* <Projects
-            banner={banner}
-            avatar={avatar}
-            name={"user.name"}
-            job="Product Designer"
-            posts="17"
-            followers="9.7k"
-            following="274"
-          /> */}
           <General
             gridArea={{ base: "2 / 1 / 3 / 2", lg: "1 / 2 / 2 / 3" }}
             minH="365px"

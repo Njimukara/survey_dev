@@ -44,7 +44,7 @@ import { TableProps } from "views/admin/default/variables/columnsData";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 export default function PendingUserInvite(props: TableProps) {
-  const { columnsData, tableData } = props;
+  const { getInvitations, columnsData, tableData } = props;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -95,10 +95,18 @@ export default function PendingUserInvite(props: TableProps) {
   const { data: session, status } = useSession();
 
   // format date
-  const formatDate = (date: any) => {
+  const formatDate = (date: string) => {
     let dateToFormat = new Date(date);
     let joinedDate = dateToFormat.toLocaleDateString("en-US");
     return joinedDate;
+  };
+
+  // check expiry
+  const checkExpiry = (data: any) => {
+    let newDate = new Date();
+    let today = newDate.toLocaleDateString("en-US");
+    let expiry = formatDate(data?.expires_on);
+    return expiry != today;
   };
 
   // copy to clipboard
@@ -119,13 +127,13 @@ export default function PendingUserInvite(props: TableProps) {
     setSending(true);
     const id = data.id;
     const body = {
-      email: data.email,
-      company: data.company,
-      invited_by: data.invited_by,
-      token: data.token,
-      invitation_url: data.invitation_url,
-      expires_on: data.expires_on,
-      status: data.status,
+      // email: data.email,
+      // company: data.company,
+      // invited_by: data.invited_by,
+      // token: data.token,
+      // invitation_url: data.invitation_url,
+      // expires_on: data.expires_on,
+      // status: data.status,
     };
 
     // console.log(body, id);
@@ -144,7 +152,8 @@ export default function PendingUserInvite(props: TableProps) {
       )
       .then((res) => {
         // setCompanyMembers(res.data.members);
-        console.log(res);
+        // console.log(res);
+        getInvitations();
         setSending(false);
         toast({
           position: "bottom-right",
@@ -198,7 +207,8 @@ export default function PendingUserInvite(props: TableProps) {
       )
       .then((res) => {
         // setCompanyMembers(res.data.members);
-        console.log(res);
+        // console.log(res);
+        getInvitations();
         setSending(false);
         toast({
           position: "bottom-right",
@@ -229,6 +239,7 @@ export default function PendingUserInvite(props: TableProps) {
       overflowX={{ sm: "scroll", lg: "hidden" }}
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
+        {/* Alert user on invite cancellation */}
         <AlertDialog
           isOpen={isOpen}
           leastDestructiveRef={cancelRef}
@@ -341,6 +352,7 @@ export default function PendingUserInvite(props: TableProps) {
                           resendInvite(cell.row.original);
                         }}
                         isLoading={isSending}
+                        isDisabled={checkExpiry(cell.row.original)}
                         variant="homePrimary"
                         px="3"
                         py="1"

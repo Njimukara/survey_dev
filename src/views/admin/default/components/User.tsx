@@ -15,9 +15,7 @@ import { MdEdit } from "react-icons/md";
 
 export default function User(props: {
   name: string;
-  priveledge?: string;
-  link?: string;
-  image?: string;
+  // priveledge?: string;
   [x: string]: any;
 }) {
   const { name, priveledge, link, image, ...rest } = props;
@@ -29,14 +27,6 @@ export default function User(props: {
   return (
     <Card bg={bg} {...rest} p="14px">
       <Flex align="center" direction={{ base: "column", md: "row" }}>
-        <Image
-          h="50px"
-          w="50px"
-          src={image}
-          borderRadius="8px"
-          me="20px"
-          alt={image}
-        />
         <Box mt={{ base: "10px", md: "0" }}>
           <Text
             color={textColorPrimary}
@@ -52,18 +42,9 @@ export default function User(props: {
             fontSize="md"
             mb="4px"
           >
-            {priveledge}
+            {/* {priveledge} */}
           </Text>
         </Box>
-        <Link
-          href={link}
-          variant="no-hover"
-          me="16px"
-          ms="auto"
-          p="0px !important"
-        >
-          <Icon as={MdEdit} color="secondaryGray.500" h="18px" w="18px" />
-        </Link>
       </Flex>
     </Card>
   );
