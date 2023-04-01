@@ -104,28 +104,15 @@ export default function EditUser({ providers }: any) {
   // function to upddate user
   const updateUser = async () => {
     setSubmitting(true);
-    let formdata = new FormData();
-    formdata.append("name", name);
-    formdata.append("email", email);
-    formdata.append("user_type", user?.user_profile?.user_type);
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("user_type", session?.user?.data?.user_profile?.user_type);
+    formData.set("avatar", "");
     if (image != "") {
-      formdata.append("avatar", image);
+      formData.set("avatar", image);
     }
-    formdata.append("avatar", "");
-    // let user = {
-    //   name: name,
-    //   email: email,
-    //   user_profile: {
-    //     user_type: 3,
-    //     // user_type: user?.user_profile?.user_type,
-    //     avatar: "",
-    //   },
-    // };
 
-    // if (image != "") {
-    //   body.user_profile.avatar = image;
-    // }
-    console.log(formdata);
+    console.log(session?.user?.data?.user_profile?.user_type);
 
     const options = {
       // method: 'POST',
@@ -139,7 +126,7 @@ export default function EditUser({ providers }: any) {
     await axios
       .patch(
         `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
-        formdata,
+        formData,
         options
       )
       .then((res) => {
@@ -148,7 +135,7 @@ export default function EditUser({ providers }: any) {
         setSubmitting(false);
         toast({
           position: "bottom-right",
-          description: "Proile update successful",
+          description: "Profile update successful",
           status: "success",
           duration: 7000,
           isClosable: true,
@@ -221,10 +208,10 @@ export default function EditUser({ providers }: any) {
             <Flex alignItems="center" flexDirection="column">
               <Image
                 src={createObjectURL ? createObjectURL : "/profile.png"}
-                objectFit="fill"
+                objectFit="contain"
                 bg="transparent"
-                width="350px"
-                height="250px"
+                width="370px"
+                height="230px"
                 borderRadius="lg"
               />
               <Box position="relative" overflow="hidden" my="3">

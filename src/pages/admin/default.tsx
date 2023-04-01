@@ -56,7 +56,7 @@ import tableDataComplex from "views/admin/default/variables/tableDataComplex.jso
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import Users from "views/admin/default/components/Users";
 import DailyTraffic from "views/admin/default/components/DailyTraffic";
-import MiniCalendar from "components/calendar/MiniCalendar";
+// import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
 import { useEffect, useState } from "react";
@@ -80,7 +80,6 @@ export default function UserReports() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(session?.user?.data);
     setUser(session?.user?.data);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       // headers
@@ -108,7 +107,7 @@ export default function UserReports() {
           // console.log(error)
         });
     }
-  }, [session]);
+  }, [session, companyUser]);
 
   const X = [{ name: "brian" }];
 
@@ -213,7 +212,7 @@ export default function UserReports() {
               gap="20px"
               mb="20px"
             >
-              <PieCard />
+              <PieCard members={companyMembers} />
               <Users members={companyMembers} />
             </SimpleGrid>
           )}

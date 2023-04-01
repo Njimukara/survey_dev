@@ -12,6 +12,7 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import Card from "./Card";
 type ArrayObject = {
+  id?: number;
   name?: String;
 };
 
@@ -49,9 +50,9 @@ export const PricingCard = (props: PricingProps) => {
             <Box>
               <List spacing={2}>
                 {props.advantages?.map((x) => (
-                  <ListItem key={""}>
+                  <ListItem key={x.id}>
                     <ListIcon
-                      key={""}
+                      key={x.id}
                       as={MdCheckCircle}
                       color="primary.500"
                       fontSize="18px"

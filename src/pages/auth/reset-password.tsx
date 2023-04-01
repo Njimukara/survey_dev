@@ -76,6 +76,8 @@ export default function ResetPassword(props: any) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  const { data: session, status } = useSession();
+
   // Yup validation data schema
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Email is Invalid").required("Required"),
@@ -89,6 +91,7 @@ export default function ResetPassword(props: any) {
     const config = {
       headers: {
         Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
 

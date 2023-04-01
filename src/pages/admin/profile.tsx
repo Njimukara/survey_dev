@@ -29,20 +29,16 @@ import Banner from "views/admin/profile/components/Banner";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import General from "views/admin/profile/components/General";
 import Notifications from "views/admin/profile/components/Notifications";
-import Projects from "views/admin/profile/components/CompanyUsers";
-import Storage from "views/admin/profile/components/Storage";
-import Upload from "views/admin/profile/components/Upload";
 
 // types
 import { AuthUser } from "types/user";
 
 // Assets
-import banner from "img/auth/banner.png";
 import avatar from "img/avatars/avatar4.png";
 
 // react imports
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
 import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import axios from "axios";
@@ -53,7 +49,7 @@ export default function ProfileOverview() {
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
   // const [individualUser, setIndividualUser] = useState(1)
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const toggleHasDetails = (state: boolean) => {
     setHasDetails(state);
@@ -61,7 +57,7 @@ export default function ProfileOverview() {
 
   useEffect(() => {
     setUser(session?.user?.data);
-    // console.log(session?.user?.data)
+    // console.log(user?.user_profile?.avatar);
     // headers
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       const config = {
@@ -88,7 +84,7 @@ export default function ProfileOverview() {
           // console.log(error)
         });
     }
-  }, [hasDetails, session]);
+  }, [hasDetails, session, companyUser]);
 
   // Loader if the user session has not been loaded
   if (session == null || undefined) {
@@ -143,7 +139,6 @@ export default function ProfileOverview() {
         >
           <PlanDetails
             gridArea="1 / 1 / 2 / 2"
-            avatar={avatar}
             name={user?.name}
             email={user?.email}
             date_joined={user?.date_joined}
@@ -179,5 +174,33 @@ export default function ProfileOverview() {
     </AdminLayout>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   const session = await getSession(context);
+//   let companyUser = 2;
+//   let response = null;
+
+//   if (session?.user?.data?.user_profile?.user_type == companyUser) {
+//     const config = {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//         Accept: "application/json;charset=UTF-8",
+//         Authorization: `Token ${session?.user?.auth_token}`,
+//       },
+//     };
+
+//     response = axios.get(
+//       "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
+//       config
+//     );
+//   }
+
+//   return {
+//     props: {
+//       session: session,
+//       companyDetails: response,
+//     },
+//   };
+// }
 
 ProfileOverview.requireAuth = true;

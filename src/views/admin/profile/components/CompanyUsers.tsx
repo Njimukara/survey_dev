@@ -87,15 +87,6 @@ export default function CompanyUsers(props: { [x: string]: any }) {
             position="Owner"
             name={company?.owner}
           />
-          {/* {companyMembers?.length != 0 &&
-          companyMembers.map((member) => {
-            <Project
-              boxShadow={cardShadow}
-              mb='20px'
-              name={member.name}
-              position={'member'}
-            />
-          })} */}
         </Box>
       </Flex>
       <InviteUser opened={isOpen} toggleModal={toggleModal} />

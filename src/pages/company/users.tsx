@@ -141,7 +141,7 @@ export default function Users() {
       getCompanyMembers();
       setUser(session?.user?.data);
     }
-  }, [session]);
+  }, [session, getCompanyMembers, getInvitations]);
 
   if (session == null || undefined) {
     return (

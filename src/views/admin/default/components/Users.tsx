@@ -1,5 +1,6 @@
 // react imports
 import React from "react";
+import Link from "next/link";
 
 // Chakra imports
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
@@ -12,7 +13,6 @@ import { MdAdd, MdArrowRight } from "react-icons/md";
 // Custom components
 import Card from "components/card/Card";
 import User from "./User";
-import Link from "next/link";
 
 export default function Users(props: { [x: string]: any }) {
   const { members, ...rest } = props;
@@ -24,7 +24,24 @@ export default function Users(props: { [x: string]: any }) {
     "unset"
   );
 
-  const X = ["brian", "kevin", "jordan"];
+  if (members.length == 0) {
+    return (
+      <Card
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        py="8"
+        {...rest}
+      >
+        <Text color={textColorPrimary} mb="4" fontWeight="bold" fontSize="2xl">
+          No company users yet.
+        </Text>
+        <Button variant="homePrimary" py="6">
+          <Link href="/admin/profile">Add New user</Link>
+        </Button>
+      </Card>
+    );
+  }
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} {...rest}>
@@ -54,7 +71,9 @@ export default function Users(props: { [x: string]: any }) {
           </Flex>
         </Flex>
         {members?.map((member: any) => {
-          return <User boxShadow={cardShadow} name={member.name} />;
+          return (
+            <User key={member.name} boxShadow={cardShadow} name={member.name} />
+          );
           // console.log(y);
         })}
       </>

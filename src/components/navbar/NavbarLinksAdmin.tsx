@@ -51,7 +51,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 
   // Variables
   const [user, setUser] = useState<any>();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // functions
   const logOut = async () => {
@@ -76,7 +76,6 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 
   useEffect(() => {
     setUser(session?.user?.data);
-    console.log(session);
   }, [session]);
 
   const borderButton = useColorModeValue("secondaryGray.500", "whiteAlpha.200");
@@ -257,15 +256,9 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               borderRadius="8px"
               px="14px"
             >
-              <Text fontSize="sm">Profile Settings</Text>
-            </MenuItem>
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              borderRadius="8px"
-              px="14px"
-            >
-              <Text fontSize="sm">Newsletter Settings</Text>
+              <Link href="/admin/profile" fontSize="sm">
+                Profile Settings
+              </Link>
             </MenuItem>
             <MenuItem
               _hover={{ bg: "none" }}
