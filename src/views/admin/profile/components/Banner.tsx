@@ -81,12 +81,10 @@ export default function Banner(props: {
     };
 
     console.log(session?.user?.data.id);
-    let data = {};
 
     await axios
       .delete(
         `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
-        data,
         config
       )
       .then(() => {
