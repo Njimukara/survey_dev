@@ -97,14 +97,16 @@ export default function ProfileOverview() {
         // router.push('/auth/verifyemail')
       })
       .catch((error) => {
-        setHasDetails(false);
+        // setHasDetails(false);
         // console.log(error)
       });
   }, [company]);
 
   useEffect(() => {
     secondSession();
-    getCompany();
+    if (session?.user?.data?.user_profile?.user_type == companyUser) {
+      getCompany();
+    }
   }, []);
 
   // Loader if the user session has not been loaded

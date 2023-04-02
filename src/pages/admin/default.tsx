@@ -67,18 +67,30 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 export default function UserReports() {
-  // Chakra Color Mode
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+    date_joined: string;
+    user_profile: {
+      user_type: number;
+      avatar: string;
+    };
+  }
 
+  // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
 
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<User>();
   const [companyUser, setCompanyUser] = useState(2);
   const [companyMembers, setCompanyMembers] = useState([]);
   // const [individualUser, setIndividualUser] = useState(1);
   var { data: session, status } = useSession();
 
   const router = useRouter();
+
+  // console.log(session);
 
   const sessionUpdate = useCallback(async () => {
     await getSession()
@@ -116,15 +128,11 @@ export default function UserReports() {
           // console.log(res);
         })
         .catch((error) => {
-          setCompanyUser(1);
+          // setCompanyUser(1);
           // console.log(error)
         });
     }
   }, [session, companyUser]);
-
-  if (status === "unauthenticated") {
-    router.push("/auth/signin");
-  }
 
   return (
     <AdminLayout>
