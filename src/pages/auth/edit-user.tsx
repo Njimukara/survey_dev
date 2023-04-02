@@ -55,10 +55,11 @@ import Card from "components/card/Card";
 // Assets
 
 // import { useRef } from 'react'
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import axios from "axios";
 import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
+import defaultImage from "./../../../public/profile.png";
 
 export default function EditUser({ providers }: any) {
   // Chakra color mode
@@ -85,6 +86,7 @@ export default function EditUser({ providers }: any) {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
+  const [defaulimage, setDefaultImage] = React.useState(null);
   const [createObjectURL, setCreateObjectURL] = React.useState(null);
 
   const { data: session, status } = useSession();
@@ -104,15 +106,16 @@ export default function EditUser({ providers }: any) {
   // function to upddate user
   const updateUser = async () => {
     setSubmitting(true);
+    getDefaultImage();
     let formData = new FormData();
     formData.append("name", name);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
-    formData.set("avatar", "");
-    if (image != "") {
+    formData.set("avatar", defaulimage);
+    if (image != null) {
       formData.set("avatar", image);
     }
 
-    console.log(session?.user?.data?.user_profile?.user_type);
+    console.log("avatar", formData.get("avatar"));
 
     const options = {
       // method: 'POST',
@@ -130,6 +133,7 @@ export default function EditUser({ providers }: any) {
         options
       )
       .then((res) => {
+        axios.get("/api/auth/session?update");
         getUser();
         toggleEdit();
         setSubmitting(false);
@@ -137,12 +141,12 @@ export default function EditUser({ providers }: any) {
           position: "bottom-right",
           description: "Profile update successful",
           status: "success",
-          duration: 7000,
+          duration: 10000,
           isClosable: true,
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         // setError(err);
         setSubmitting(false);
         toast({
@@ -153,6 +157,13 @@ export default function EditUser({ providers }: any) {
           isClosable: true,
         });
       });
+  };
+
+  // display uploaded avatatar on frontend
+  const getDefaultImage = () => {
+    const i = new Blob([defaultImage]);
+    console.log(i);
+    setDefaultImage(i);
   };
 
   // display uploaded avatatar on frontend
@@ -183,7 +194,6 @@ export default function EditUser({ providers }: any) {
     await axios
       .get(`https://surveyplanner.pythonanywhere.com/auth/users/me/`, options)
       .then((res) => {
-        console.log(res);
         setUser(res?.data);
         setName(res?.data?.name);
         setEmail(res?.data?.email);
@@ -217,7 +227,7 @@ export default function EditUser({ providers }: any) {
               <Box position="relative" overflow="hidden" my="3">
                 {!canEdit && (
                   <Button ml="10px" cursor="pointer">
-                    {image ? image.name : "Upload Avatar (optional)"}
+                    {image ? image.name : "Upload Avatar"}
                   </Button>
                 )}
                 <Input
@@ -328,7 +338,8 @@ export default function EditUser({ providers }: any) {
                     px="5"
                     fontWeight="500"
                   >
-                    Return
+                    {/* <Link href="/admin/profile">Profile</Link> */}
+                    Profile
                   </Button>
                 </Flex>
               ) : (

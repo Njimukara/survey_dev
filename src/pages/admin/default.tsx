@@ -29,6 +29,7 @@ import {
   Heading,
   Text,
   Image,
+  Spinner,
 } from "@chakra-ui/react";
 // Assets
 // Custom components
@@ -59,8 +60,8 @@ import DailyTraffic from "views/admin/default/components/DailyTraffic";
 // import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -75,11 +76,23 @@ export default function UserReports() {
   const [companyUser, setCompanyUser] = useState(2);
   const [companyMembers, setCompanyMembers] = useState([]);
   // const [individualUser, setIndividualUser] = useState(1);
-  const { data: session, status } = useSession();
+  var { data: session, status } = useSession();
 
   const router = useRouter();
 
+  const sessionUpdate = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
+  }, [session]);
+
   useEffect(() => {
+    sessionUpdate();
     setUser(session?.user?.data);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       // headers
@@ -108,12 +121,6 @@ export default function UserReports() {
         });
     }
   }, [session, companyUser]);
-
-  const X = [{ name: "brian" }];
-
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
 
   if (status === "unauthenticated") {
     router.push("/auth/signin");

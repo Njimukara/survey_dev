@@ -116,6 +116,7 @@ export default function SignIn({ providers }: any) {
       return;
     }
     setSubmitting(true);
+    // console.log()
     // setError(null)
     // nextauth login with credentials
     const res: any = await signIn("Credentials", {

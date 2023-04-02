@@ -237,6 +237,8 @@ export default function PendingUserInvite(props: TableProps) {
       w="100%"
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
+      h="max-content"
+      max-h="500"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         {/* Alert user on invite cancellation */}

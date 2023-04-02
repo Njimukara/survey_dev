@@ -137,7 +137,7 @@ export default function Home() {
 
   return (
     <>
-      (<Navbar />
+      <Navbar />
       <Box p={0}>
         <Hero />
         {/* How it works section  */}

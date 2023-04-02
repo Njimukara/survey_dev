@@ -20,7 +20,13 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, {
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -97,15 +103,59 @@ export default function UserTableComplex(props: TableProps) {
   const { data: session, status } = useSession();
 
   //   Block User
-  const blockUser = async (data: any) => {
-    // console.log(data);
-    const id = data.user_id;
+  const blockUser = useCallback(
+    async (data: any) => {
+      // console.log(data);
+      const id = data.user_id;
 
-    // check if user has been blocked already
-    if (data.is_active) {
+      // check if user has been blocked already
+      if (data.is_active) {
+        setSending(true);
+        setSending(true);
+        // headers
+        const config = {
+          headers: {
+            Accept: "application/json;charset=UTF-8",
+            Authorization: `Token ${session?.user?.auth_token}`,
+          },
+        };
+
+        let body = {};
+        await axios
+          .patch(
+            `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
+            body,
+            config
+          )
+          .then((res) => {
+            // refresh the table to show recent updates
+            getCompanyMembers();
+            setSending(false);
+            toast({
+              position: "bottom-right",
+              description: "User blocked successfully.",
+              status: "info",
+              duration: 5000,
+              isClosable: true,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            setSending(false);
+            toast({
+              position: "bottom-right",
+              description: "Unable to block user",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          });
+        return;
+      }
+
+      // else unblock User
+      console.log("unblock user please");
       setSending(true);
-      setSending(true);
-      // headers
       const config = {
         headers: {
           Accept: "application/json;charset=UTF-8",
@@ -116,7 +166,7 @@ export default function UserTableComplex(props: TableProps) {
       let body = {};
       await axios
         .patch(
-          `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
+          `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/unblock/`,
           body,
           config
         )
@@ -126,7 +176,7 @@ export default function UserTableComplex(props: TableProps) {
           setSending(false);
           toast({
             position: "bottom-right",
-            description: "User blocked successfully.",
+            description: "User unblocked successfully.",
             status: "info",
             duration: 5000,
             isClosable: true,
@@ -137,56 +187,15 @@ export default function UserTableComplex(props: TableProps) {
           setSending(false);
           toast({
             position: "bottom-right",
-            description: "Unable to block user",
+            description: "Unable to unblock user",
             status: "error",
             duration: 5000,
             isClosable: true,
           });
         });
-      return;
-    }
-
-    // else unblock User
-    console.log("unblock user please");
-    setSending(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    let body = {};
-    await axios
-      .patch(
-        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/unblock/`,
-        body,
-        config
-      )
-      .then((res) => {
-        // refresh the table to show recent updates
-        getCompanyMembers();
-        setSending(false);
-        toast({
-          position: "bottom-right",
-          description: "User unblocked successfully.",
-          status: "info",
-          duration: 5000,
-          isClosable: true,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        setSending(false);
-        toast({
-          position: "bottom-right",
-          description: "Unable to unblock user",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-  };
+    },
+    [getCompanyMembers]
+  );
 
   //   delete invitations
   const deleteUser = async (data: any) => {
@@ -199,11 +208,9 @@ export default function UserTableComplex(props: TableProps) {
         Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
-    let body = {};
     await axios
-      .patch(
+      .delete(
         `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/delete/`,
-        body,
         config
       )
       .then((res) => {
@@ -245,6 +252,8 @@ export default function UserTableComplex(props: TableProps) {
       w="100%"
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
+      h="max-content"
+      max-h="500"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         <AlertDialog

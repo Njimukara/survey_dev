@@ -103,7 +103,6 @@ const Navbar = (): JSX.Element => {
         bg={show ? "#1C121F" : ""}
       >
         <Flex
-          // align="center"
           justify={["center", "space-between", "flex-end", "flex-end"]}
           direction={["column", "column", "column", "row"]}
           pt={[4, 4, 0, 0]}
@@ -125,7 +124,6 @@ const Navbar = (): JSX.Element => {
               Login
             </Text>
           </Link>
-          {/* <MenuItem to="/search"> */}
           <Button
             ml={[0, 0, 4, 8]}
             mt={10}
@@ -135,7 +133,6 @@ const Navbar = (): JSX.Element => {
           >
             Try It Now
           </Button>
-          {/* </MenuItem> */}
         </Flex>
       </Box>
     </Flex>

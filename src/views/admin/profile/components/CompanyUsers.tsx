@@ -29,6 +29,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   useEffect(() => {
     // console.log("members", company?.members);
     setCompanyMembers(company?.members);
+    console.log(company);
   }, [company]);
 
   return (
@@ -81,12 +82,31 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           </Flex>
         </Flex>
         <Box w="100%">
-          <Project
-            boxShadow={cardShadow}
-            mb="20px"
-            position="Owner"
-            name={company?.owner}
-          />
+          <>
+            {/* <Project
+              boxShadow={cardShadow}
+              mb="20px"
+              position="Owner"
+              name={company?.owner}
+            /> */}
+            {companyMembers.length != 0 ? (
+              companyMembers.map((member, index) => {
+                return (
+                  <Project
+                    key={index}
+                    boxShadow={cardShadow}
+                    mb="20px"
+                    position={member?.email}
+                    name={member?.name}
+                  />
+                );
+              })
+            ) : (
+              <Flex justifyContent="center" alignItems="center">
+                <Text>No users yet</Text>
+              </Flex>
+            )}
+          </>
         </Box>
       </Flex>
       <InviteUser opened={isOpen} toggleModal={toggleModal} />

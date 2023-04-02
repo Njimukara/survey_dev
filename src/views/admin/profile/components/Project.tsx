@@ -36,18 +36,10 @@ export default function Project(props: {
             mb="4px"
           >
             {name}&nbsp;&nbsp;
-            <span
-              style={{
-                fontWeight: "500",
-                color: "blue",
-                fontSize: "sm",
-                margin: "o 4px",
-              }}
-            >
-              {position}
-            </span>
           </Text>
-          <Text></Text>
+          <Text fontWeight="500" color={brandColor} fontSize="sm" mx="4px">
+            {position}
+          </Text>
         </Box>
         {/* <Link
           href={"#"}

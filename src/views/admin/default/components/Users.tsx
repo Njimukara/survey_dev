@@ -72,7 +72,13 @@ export default function Users(props: { [x: string]: any }) {
         </Flex>
         {members?.map((member: any) => {
           return (
-            <User key={member.name} boxShadow={cardShadow} name={member.name} />
+            <User
+              key={member.name}
+              boxShadow={cardShadow}
+              my="1"
+              name={member.name}
+              email={member.email}
+            />
           );
           // console.log(y);
         })}
