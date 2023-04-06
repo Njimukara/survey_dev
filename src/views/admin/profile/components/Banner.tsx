@@ -119,6 +119,7 @@ export default function Banner(props: {
           <NextAvatar
             mx="auto"
             src={userAvatar ? "/profile.png" : avatar}
+            alt="user avatar"
             h="100px"
             w="100px"
             border="10px solid"

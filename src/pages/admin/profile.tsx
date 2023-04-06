@@ -60,7 +60,7 @@ export default function ProfileOverview() {
   const secondSession = useCallback(async () => {
     await getSession()
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         session = res;
         setUser(res?.user?.data);
       })

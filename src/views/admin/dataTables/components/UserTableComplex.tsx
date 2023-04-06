@@ -39,15 +39,18 @@ import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 
 // Assets
-import {
-  MdCheckCircle,
-  MdCancel,
-  MdOutlineError,
-  MdBlock,
-} from "react-icons/md";
 import { TableProps } from "views/admin/default/variables/columnsData";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+
+interface user {
+  date_joined?: string;
+  email?: string;
+  is_active?: boolean;
+  name?: string;
+  user_id?: number;
+}
+
 export default function UserTableComplex(props: TableProps) {
   const { getCompanyMembers, columnsData, tableData } = props;
 
@@ -59,7 +62,7 @@ export default function UserTableComplex(props: TableProps) {
 
   const [isSending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [companyMembers, setCompanyMembers] = useState();
+  const [blocked, setBlocked] = useState();
   const [invitations, setInvitations] = useState();
   const [pendingDelete, setPendingDelete] = useState<any>();
   const [user, setUser] = useState<any>();
@@ -98,6 +101,14 @@ export default function UserTableComplex(props: TableProps) {
     let dateToFormat = new Date(date);
     let joinedDate = dateToFormat.toLocaleDateString("en-US");
     return joinedDate;
+  };
+
+  const getBlockedState = (data: user) => {
+    if (data.is_active == true) {
+      return "Block User";
+    } else {
+      return "Unblock User";
+    }
   };
 
   const { data: session, status } = useSession();
@@ -380,9 +391,10 @@ export default function UserTableComplex(props: TableProps) {
                         fontSize="sm"
                         fontWeight="700"
                       >
-                        {cell.row.original?.is_active
+                        {/* {cell.row.original?.is_active
                           ? "Block User"
-                          : "UnBlock User"}
+                          : "UnBlock User"} */}
+                        {getBlockedState(cell.row.original)}
                       </Button>
                     );
                   } else if (user?.user_profile?.user_type == companyUser) {

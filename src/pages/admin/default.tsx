@@ -30,6 +30,7 @@ import {
   Text,
   Image,
   Spinner,
+  useToast,
 } from "@chakra-ui/react";
 // Assets
 // Custom components
@@ -66,30 +67,6 @@ import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-// export async function getServerSideProps(context: any) {
-//   interface companyMembers {
-//     user_id: number;
-//     name: string;
-//     email: string;
-//     date_joined: string;
-//     is_active: boolean;
-//   }
-//   let allCompanyMembers: companyMembers = null;
-//   await fetch("/api/auth/getcompany",  )
-//     .then((res) => res.json())
-//     .then((data) => {
-//       console.log("from getserversideprops", data);
-//       allCompanyMembers = data;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-
-//   return {
-//     props: { allCompanyMembers }, // will be passed to the page component as props
-//   };
-// }
-
 export default function UserReports(props: { [x: string]: any }) {
   interface User {
     id: number;
@@ -114,7 +91,37 @@ export default function UserReports(props: { [x: string]: any }) {
 
   const router = useRouter();
 
+  // chakra toast
+  const toast = useToast();
+
   // console.log(session);
+  const getCompanyMembers = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "json",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
+        config
+      )
+      .then((response) => {
+        setCompanyMembers(response.data);
+      })
+      .catch((err) => {
+        toast({
+          position: "bottom-right",
+          description: "Error getting company users",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      });
+  };
 
   const sessionUpdate = useCallback(async () => {
     await getSession()
@@ -131,21 +138,7 @@ export default function UserReports(props: { [x: string]: any }) {
     sessionUpdate();
     setUser(session?.user?.data);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      fetch("/api/auth/getcompany", {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Token $${session?.user?.auth_token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setCompanyUser(2);
-          console.log(data);
-          setCompanyMembers(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      getCompanyMembers();
     } else {
       setCompanyUser(1);
     }

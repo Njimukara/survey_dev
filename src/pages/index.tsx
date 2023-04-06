@@ -131,8 +131,8 @@ export default function Home() {
   const router = useRouter();
   if (status === "authenticated") {
     router.push("/admin/default");
-    console.log(session);
-    // return <UserReports />
+    // console.log(session);
+    // return <UserReports />;
   }
 
   return (
