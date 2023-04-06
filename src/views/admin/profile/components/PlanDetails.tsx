@@ -8,13 +8,12 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 export default function PlanDetails(props: {
-  avatar: string;
   name: string;
   email: string;
   date_joined: number | string;
   [x: string]: any;
 }) {
-  const { avatar, name, email, date_joined, ...rest } = props;
+  const { name, email, date_joined, ...rest } = props;
 
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");

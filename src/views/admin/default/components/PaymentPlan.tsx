@@ -12,55 +12,56 @@ import {
   Input,
   InputGroup,
   InputRightAddon,
+  InputRightElement,
   Select,
   Text,
   useColorModeValue,
-  VStack,
+  // VStack,
 } from "@chakra-ui/react";
 
 // import CurrencyFormat from "react-currency-format";
 
 // Custom components
 import Card from "components/card/Card";
-import LineChart from "components/charts/LineChart";
-import dynamic from "next/dynamic";
+// import LineChart from "components/charts/LineChart";
+// import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { IoCheckmarkCircle } from "react-icons/io5";
+// import { IoCheckmarkCircle } from "react-icons/io5";
 import {
-  MdBarChart,
-  MdOutlineCalendarToday,
+  // MdBarChart,
+  // MdOutlineCalendarToday,
   MdOutlineCreditCard,
 } from "react-icons/md";
 // Assets
-import { RiArrowUpSFill } from "react-icons/ri";
-import {
-  lineChartDataTotalSpent,
-  lineChartOptionsTotalSpent,
-} from "variables/charts";
+// import { RiArrowUpSFill } from "react-icons/ri";
+// import {
+//   lineChartDataTotalSpent,
+//   lineChartOptionsTotalSpent,
+// } from "variables/charts";
 
 export default function PaymentPlan(props: { [x: string]: any }) {
   const { plan, getplan, ...rest } = props;
 
   // Chakra Color Mode
 
-  const textColor = useColorModeValue("navy.500", "white");
-  const whiteText = useColorModeValue("white", "white");
+  // const textColor = useColorModeValue("navy.500", "white");
+  // const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const iconColor = useColorModeValue("brand.500", "white");
-  const brandColor = useColorModeValue("brand.500", "white");
-  const bgButton = useColorModeValue("primary.500", "blue.300");
-  const bgHover = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.50" }
-  );
-  const bgFocus = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.100" }
-  );
+  // const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  // const iconColor = useColorModeValue("brand.500", "white");
+  // const brandColor = useColorModeValue("brand.500", "white");
+  // const bgButton = useColorModeValue("primary.500", "blue.300");
+  // const bgHover = useColorModeValue(
+  //   { bg: "primary.600" },
+  //   { bg: "whiteAlpha.50" }
+  // );
+  // const bgFocus = useColorModeValue(
+  //   { bg: "primary.600" },
+  //   { bg: "whiteAlpha.100" }
+  // );
 
-  const [active, setActive] = useState(true);
+  // const [active, setActive] = useState(true);
   const [country, setCountry] = useState("");
   const [cardnumber, setCardnumber] = useState(0);
   const [planName, setPlanName] = useState("");
@@ -74,7 +75,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       setPlanName(plan.title);
     }
     // console.log(plan);
-  }, []);
+  }, [plan]);
 
   return (
     <Card
@@ -107,7 +108,10 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 value={cardnumber}
                 onChange={(e) => setCardnumber(parseFloat(e.target.value))}
               />
-              <InputRightAddon children={<Icon as={MdOutlineCreditCard} />} />
+              <InputRightElement>
+                {" "}
+                <Icon as={MdOutlineCreditCard} />{" "}
+              </InputRightElement>
             </InputGroup>
           </FormControl>
           <Flex w="100%">

@@ -91,7 +91,7 @@ export default function SignIn({ providers }: any) {
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .min(3, "Name is too Short!")
-      .max(17, "Name is too Long!")
+      .max(30, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
     password: Yup.string()
@@ -107,6 +107,7 @@ export default function SignIn({ providers }: any) {
   const handleClick = () => setShow(!show);
   const toggleLogin = () => {
     setLogin(!login);
+    setError(null);
   };
 
   const Login = async () => {
@@ -115,6 +116,7 @@ export default function SignIn({ providers }: any) {
       return;
     }
     setSubmitting(true);
+    // console.log()
     // setError(null)
     // nextauth login with credentials
     const res: any = await signIn("Credentials", {
@@ -144,10 +146,10 @@ export default function SignIn({ providers }: any) {
     formdata.append("user_type", values.usertype);
     formdata.append("password", values.password);
     formdata.append("re_password", values.password);
+    formdata.set("avatar", "");
     if (image != "") {
-      formdata.append("avatar", image);
+      formdata.set("avatar", image);
     }
-    formdata.append("avatar", "");
     const options = {
       // method: 'POST',
       headers: {
@@ -169,10 +171,10 @@ export default function SignIn({ providers }: any) {
       .catch((error) => {
         // console.log(error);
         let err = error.response.data.email;
+        setError("Server error, please try again later");
         if (err != "") {
           setError(err);
         }
-        setError("Server error, please try again later");
       });
   };
 
@@ -251,6 +253,7 @@ export default function SignIn({ providers }: any) {
               bgColor={login ? btnbgColor : "transparent"}
               color={login ? "white" : "black"}
               _hover={{ color: "inherit" }}
+              _active={{ color: "#fff" }}
               flex="1"
               borderRadius="5px"
               onClick={toggleLogin}
@@ -261,6 +264,7 @@ export default function SignIn({ providers }: any) {
               bgColor={!login ? btnbgColor : "transparent"}
               color={!login ? "white" : "black"}
               _hover={{ color: "inherit" }}
+              _active={{ color: "#fff" }}
               flex="1"
               borderRadius="5px"
               onClick={toggleLogin}
@@ -291,6 +295,7 @@ export default function SignIn({ providers }: any) {
           mx={{ base: "auto", lg: "unset" }}
           me="auto"
           mb={{ base: "20px", md: "auto" }}
+          // my={{xl: ''}}
         >
           <Button
             fontSize="sm"

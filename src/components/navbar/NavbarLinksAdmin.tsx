@@ -18,7 +18,7 @@ import { ItemContent } from "components/menu/ItemContent";
 import { SearchBar } from "components/navbar/searchBar/SearchBar";
 import { SidebarResponsive } from "components/sidebar/Sidebar";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useCallback } from "react";
 // Assets
 import navImage from "img/layout/Navbar.png";
 import { MdNotificationsNone, MdInfoOutline } from "react-icons/md";
@@ -28,7 +28,7 @@ import routes from "routes";
 import { Image } from "components/image/Image";
 // import { AuthUser } from ''
 
-import { signOut, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 // import { useRouter } from 'next/router'
@@ -51,7 +51,18 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 
   // Variables
   const [user, setUser] = useState<any>();
-  const { data: session, status } = useSession();
+  var { data: session } = useSession();
+
+  const sessionUpdate = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [session]);
 
   // functions
   const logOut = async () => {
@@ -75,8 +86,8 @@ export default function HeaderLinks(props: { secondary: boolean }) {
   };
 
   useEffect(() => {
+    sessionUpdate();
     setUser(session?.user?.data);
-    console.log(session);
   }, [session]);
 
   const borderButton = useColorModeValue("secondaryGray.500", "whiteAlpha.200");
@@ -257,15 +268,9 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               borderRadius="8px"
               px="14px"
             >
-              <Text fontSize="sm">Profile Settings</Text>
-            </MenuItem>
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              borderRadius="8px"
-              px="14px"
-            >
-              <Text fontSize="sm">Newsletter Settings</Text>
+              <Link href="/admin/profile" fontSize="sm">
+                Profile Settings
+              </Link>
             </MenuItem>
             <MenuItem
               _hover={{ bg: "none" }}

@@ -17,9 +17,9 @@ import {
 import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Banner(props: {
   avatar: string;
@@ -51,26 +51,52 @@ export default function Banner(props: {
   const cancelRef = useRef();
 
   const [deleting, setDeleting] = useState(false);
-  // const [error, setError] = useState()
+  const [userAvatar, setUserAvatar] = useState(false);
+
+  const { data: session, status } = useSession();
 
   // chakra toast
   const toast = useToast();
 
+  const checkAvatar = () => {
+    // console.log("avatar", avatar);
+    if (avatar) {
+      let pathname = new URL(avatar).pathname;
+      // console.log("checkavatar result", pathname.includes("null"));
+      return pathname.includes("null");
+    }
+    return true;
+  };
+
   // delete user acount
   const deleteAccount = async () => {
     setDeleting(true);
+
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    console.log(session?.user?.data.id);
+
     await axios
-      .delete(`https://surveyplanner.pythonanywhere.com/auth/users/me/`)
+      .delete(
+        `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
+        config
+      )
       .then(() => {
         signOut({ callbackUrl: "http://localhost:3000" });
         setDeleting(false);
         onClose();
       })
-      .catch(() => {
-        console.log("error loggin out");
+      .catch((err) => {
+        // console.log(err);
         toast({
           position: "bottom-right",
-          description: "Error logging out",
+          description: ["Account delete unsuccessful"],
           status: "error",
           duration: 4000,
           isClosable: true,
@@ -79,16 +105,22 @@ export default function Banner(props: {
       });
   };
 
+  useEffect(() => {
+    // console.log(user?.user_profile?.avatar);
+    // headers
+    let result = checkAvatar();
+    setUserAvatar(result);
+  }, [avatar]);
+
   return (
     <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
       <Flex>
         <Flex align="center" justify="space-between" w="20%">
           <NextAvatar
             mx="auto"
-            src={avatar}
+            src={userAvatar ? "/profile.png" : avatar}
             h="100px"
             w="100px"
-            // mt='-43px'
             border="10px solid"
             borderColor={borderColor}
           />
@@ -133,6 +165,7 @@ export default function Banner(props: {
             color="red.500"
             py="4"
             px="4"
+            isDisabled
             borderColor="red.500"
             variant="outline"
             bg="white"

@@ -55,10 +55,12 @@ import Card from "components/card/Card";
 // Assets
 
 // import { useRef } from 'react'
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import axios from "axios";
 import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
+import defaultImage from "./../../../public/profile.png";
+import SetEmail from "views/admin/profile/components/SetEmail";
 
 export default function EditUser({ providers }: any) {
   // Chakra color mode
@@ -82,9 +84,11 @@ export default function EditUser({ providers }: any) {
   const [error, setError] = React.useState(null);
   const [canEdit, setCanEdit] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
+  const [emailModal, setEmailModal] = React.useState(false);
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
+  const [defaulimage, setDefaultImage] = React.useState(null);
   const [createObjectURL, setCreateObjectURL] = React.useState(null);
 
   const { data: session, status } = useSession();
@@ -101,31 +105,28 @@ export default function EditUser({ providers }: any) {
     setIsOpen(state);
   };
 
+  // open Email reset modal
+  const toggleEmailModal = (
+    state: boolean | ((prevState: boolean) => boolean)
+  ) => {
+    setEmailModal(state);
+  };
+
+  toggleEmailModal;
+
   // function to upddate user
   const updateUser = async () => {
     setSubmitting(true);
-    let formdata = new FormData();
-    formdata.append("name", name);
-    formdata.append("email", email);
-    formdata.append("user_type", user?.user_profile?.user_type);
-    if (image != "") {
-      formdata.append("avatar", image);
+    getDefaultImage();
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("user_type", session?.user?.data?.user_profile?.user_type);
+    formData.set("avatar", defaulimage);
+    if (image != null) {
+      formData.set("avatar", image);
     }
-    formdata.append("avatar", "");
-    // let user = {
-    //   name: name,
-    //   email: email,
-    //   user_profile: {
-    //     user_type: 3,
-    //     // user_type: user?.user_profile?.user_type,
-    //     avatar: "",
-    //   },
-    // };
 
-    // if (image != "") {
-    //   body.user_profile.avatar = image;
-    // }
-    console.log(formdata);
+    console.log("avatar", formData.get("avatar"));
 
     const options = {
       // method: 'POST',
@@ -139,23 +140,24 @@ export default function EditUser({ providers }: any) {
     await axios
       .patch(
         `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
-        formdata,
+        formData,
         options
       )
       .then((res) => {
+        axios.get("/api/auth/session?update");
         getUser();
         toggleEdit();
         setSubmitting(false);
         toast({
           position: "bottom-right",
-          description: "Proile update successful",
+          description: "Profile update successful",
           status: "success",
-          duration: 7000,
+          duration: 10000,
           isClosable: true,
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         // setError(err);
         setSubmitting(false);
         toast({
@@ -166,6 +168,13 @@ export default function EditUser({ providers }: any) {
           isClosable: true,
         });
       });
+  };
+
+  // display uploaded avatatar on frontend
+  const getDefaultImage = () => {
+    const i = new Blob([defaultImage]);
+    console.log(i);
+    setDefaultImage(i);
   };
 
   // display uploaded avatatar on frontend
@@ -196,7 +205,6 @@ export default function EditUser({ providers }: any) {
     await axios
       .get(`https://surveyplanner.pythonanywhere.com/auth/users/me/`, options)
       .then((res) => {
-        console.log(res);
         setUser(res?.data);
         setName(res?.data?.name);
         setEmail(res?.data?.email);
@@ -221,16 +229,16 @@ export default function EditUser({ providers }: any) {
             <Flex alignItems="center" flexDirection="column">
               <Image
                 src={createObjectURL ? createObjectURL : "/profile.png"}
-                objectFit="fill"
+                objectFit="contain"
                 bg="transparent"
-                width="350px"
-                height="250px"
+                width="370px"
+                height="230px"
                 borderRadius="lg"
               />
               <Box position="relative" overflow="hidden" my="3">
                 {!canEdit && (
                   <Button ml="10px" cursor="pointer">
-                    {image ? image.name : "Upload Avatar (optional)"}
+                    {image ? image.name : "Upload Avatar"}
                   </Button>
                 )}
                 <Input
@@ -289,7 +297,8 @@ export default function EditUser({ providers }: any) {
                   />
                 </HStack>
               </FormControl>
-              <FormControl pb="3">
+
+              {/* <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="150px">Email *</FormLabel>
                   <Input
@@ -307,6 +316,40 @@ export default function EditUser({ providers }: any) {
                     isDisabled={canEdit}
                   />
                 </HStack>
+              </FormControl> */}
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="150px">Email *</FormLabel>
+                  <InputGroup size="md">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      fontSize="sm"
+                      placeholder="Confirm Password"
+                      size="lg"
+                      mt="12px"
+                      // type={show ? "text" : "password"}
+                      variant="rounded"
+                      value={email}
+                      // onChange={handleChange}
+                      isDisabled={canEdit}
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="15px"
+                      w="max-content"
+                    >
+                      <Button
+                        _hover={{ bg: "none", color: "primary.500" }}
+                        onClick={() => toggleEmailModal(true)}
+                      >
+                        Reset Email
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                </HStack>
               </FormControl>
 
               <FormControl pb="3">
@@ -314,7 +357,7 @@ export default function EditUser({ providers }: any) {
                   <FormLabel w="120px">Password</FormLabel>
                   <Button
                     bg="none"
-                    _hover={{ bg: "none", color: "primary.300" }}
+                    _hover={{ bg: "none", color: "primary.500" }}
                     onClick={() => toggleModal(true)}
                   >
                     Reset Password
@@ -341,7 +384,8 @@ export default function EditUser({ providers }: any) {
                     px="5"
                     fontWeight="500"
                   >
-                    Return
+                    {/* <Link href="/admin/profile">Profile</Link> */}
+                    Profile
                   </Button>
                 </Flex>
               ) : (
@@ -373,6 +417,7 @@ export default function EditUser({ providers }: any) {
           </Flex>
         </form>
         <SetPassword toggleModal={toggleModal} opened={isOpen} />
+        <SetEmail toggleEmailModal={toggleModal} opened={emailModal} />
       </Card>
     </AdminLayout>
   );

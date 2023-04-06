@@ -53,12 +53,12 @@ export default function PendingUserInvite(props: TableProps) {
   const data = useMemo(() => tableData, [tableData]);
 
   const [isSending, setSending] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [companyMembers, setCompanyMembers] = useState();
-  const [invitations, setInvitations] = useState();
+  // const [loading, setLoading] = useState(false);
+  // const [companyMembers, setCompanyMembers] = useState();
+  // const [invitations, setInvitations] = useState();
   const [pendingRevoke, setPendingRevoke] = useState<any>();
-  const [user, setUser] = useState();
-  const [companyUser] = useState(2);
+  // const [user, setUser] = useState();
+  // const [companyUser] = useState(2);
 
   // chakra toast
   const toast = useToast();
@@ -157,7 +157,7 @@ export default function PendingUserInvite(props: TableProps) {
         setSending(false);
         toast({
           position: "bottom-right",
-          description: "Invite has been sent successfully.",
+          description: "Invite sent successfully.",
           status: "info",
           duration: 5000,
           isClosable: true,
@@ -212,7 +212,7 @@ export default function PendingUserInvite(props: TableProps) {
         setSending(false);
         toast({
           position: "bottom-right",
-          description: "Invite has been cancelled successfully.",
+          description: "Invite cancelled successfully.",
           status: "info",
           duration: 5000,
           isClosable: true,
@@ -237,6 +237,8 @@ export default function PendingUserInvite(props: TableProps) {
       w="100%"
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
+      h="max-content"
+      max-h="500"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         {/* Alert user on invite cancellation */}

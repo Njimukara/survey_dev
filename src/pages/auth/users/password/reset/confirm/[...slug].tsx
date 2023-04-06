@@ -105,7 +105,7 @@ export default function SetPassword(props: any) {
   const onSubmit = async (values: any) => {
     setSubmitting(true);
     setError(null);
-    let url: array = router.query.slug;
+    let url: any = router.query.slug;
     let uid, token;
     for (let i in url) {
       uid = url[0];
