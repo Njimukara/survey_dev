@@ -29,6 +29,7 @@ import {
   Heading,
   Text,
   Image,
+  Spinner,
 } from "@chakra-ui/react";
 // Assets
 // Custom components
@@ -56,69 +57,99 @@ import tableDataComplex from "views/admin/default/variables/tableDataComplex.jso
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import Users from "views/admin/default/components/Users";
 import DailyTraffic from "views/admin/default/components/DailyTraffic";
-import MiniCalendar from "components/calendar/MiniCalendar";
+// import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function UserReports() {
-  // Chakra Color Mode
+// export async function getServerSideProps(context: any) {
+//   interface companyMembers {
+//     user_id: number;
+//     name: string;
+//     email: string;
+//     date_joined: string;
+//     is_active: boolean;
+//   }
+//   let allCompanyMembers: companyMembers = null;
+//   await fetch("/api/auth/getcompany",  )
+//     .then((res) => res.json())
+//     .then((data) => {
+//       console.log("from getserversideprops", data);
+//       allCompanyMembers = data;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
 
+//   return {
+//     props: { allCompanyMembers }, // will be passed to the page component as props
+//   };
+// }
+
+export default function UserReports(props: { [x: string]: any }) {
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+    date_joined: string;
+    user_profile: {
+      user_type: number;
+      avatar: string;
+    };
+  }
+
+  // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
 
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<User>();
   const [companyUser, setCompanyUser] = useState(2);
   const [companyMembers, setCompanyMembers] = useState([]);
   // const [individualUser, setIndividualUser] = useState(1);
-  const { data: session, status } = useSession();
+  var { data: session, status } = useSession();
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log(session?.user?.data);
-    setUser(session?.user?.data);
-    if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      // headers
-      const config = {
-        headers: {
-          "Content-Type": "json",
-          Accept: "application/json;charset=UTF-8",
-          Authorization: `Token ${session?.user?.auth_token}`,
-        },
-      };
+  // console.log(session);
 
-      axios
-        .get(
-          "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
-          config
-        )
-        .then((res) => {
-          setCompanyUser(2);
-          setCompanyMembers(res.data);
-          // router.push('/auth/verifyemail')
-          // console.log(res);
-        })
-        .catch((error) => {
-          setCompanyUser(1);
-          // console.log(error)
-        });
-    }
+  const sessionUpdate = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
   }, [session]);
 
-  const X = [{ name: "brian" }];
-
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/auth/signin");
-  }
+  useEffect(() => {
+    sessionUpdate();
+    setUser(session?.user?.data);
+    if (session?.user?.data?.user_profile?.user_type == companyUser) {
+      fetch("/api/auth/getcompany", {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Token $${session?.user?.auth_token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setCompanyUser(2);
+          console.log(data);
+          setCompanyMembers(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setCompanyUser(1);
+    }
+  }, [session, companyUser]);
 
   return (
     <AdminLayout>
@@ -213,7 +244,7 @@ export default function UserReports() {
               gap="20px"
               mb="20px"
             >
-              <PieCard />
+              <PieCard members={companyMembers} />
               <Users members={companyMembers} />
             </SimpleGrid>
           )}

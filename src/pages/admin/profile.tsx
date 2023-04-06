@@ -23,72 +23,91 @@
 // Chakra imports
 import { Box, Flex, Grid, Spinner } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 
 // Custom components
 import Banner from "views/admin/profile/components/Banner";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import General from "views/admin/profile/components/General";
 import Notifications from "views/admin/profile/components/Notifications";
-import Projects from "views/admin/profile/components/CompanyUsers";
-import Storage from "views/admin/profile/components/Storage";
-import Upload from "views/admin/profile/components/Upload";
 
 // types
 import { AuthUser } from "types/user";
 
 // Assets
-import banner from "img/auth/banner.png";
 import avatar from "img/avatars/avatar4.png";
 
 // react imports
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useSession, getSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
 import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { getServerSession } from "next-auth";
 
 export default function ProfileOverview() {
   const [user, setUser] = useState<any>();
   const [company, setCompany] = useState();
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
+  const [updatedSession, setUpdatedSession] = useState<any>();
+
+  // const cachedValue = useMemo(secondSession(), session)
   // const [individualUser, setIndividualUser] = useState(1)
-  const { data: session, status } = useSession();
+  var { data: session } = useSession();
+
+  const secondSession = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        console.log(res);
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [session]);
+
+  // const cachedValue = useMemo(getCompany(), [session)
 
   const toggleHasDetails = (state: boolean) => {
     setHasDetails(state);
   };
 
-  useEffect(() => {
-    setUser(session?.user?.data);
-    // console.log(session?.user?.data)
-    // headers
-    if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "application/json;charset=UTF-8",
-          Authorization: `Token ${session?.user?.auth_token}`,
-        },
-      };
+  // get company
+  const getCompany = useCallback(async () => {
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
 
-      const res = axios
-        .get(
-          "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
-          config
-        )
-        .then((res) => {
-          console.log(res);
-          setHasDetails(true);
-          setCompany(res.data);
-          // router.push('/auth/verifyemail')
-        })
-        .catch((error) => {
-          setHasDetails(false);
-          // console.log(error)
-        });
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
+        config
+      )
+      .then((res) => {
+        // console.log(res);
+        setHasDetails(true);
+        setCompany(res.data);
+        // router.push('/auth/verifyemail')
+      })
+      .catch((error) => {
+        // setHasDetails(false);
+        // console.log(error)
+      });
+  }, [company]);
+
+  useEffect(() => {
+    secondSession();
+    if (session?.user?.data?.user_profile?.user_type == companyUser) {
+      getCompany();
     }
-  }, [hasDetails, session]);
+  }, []);
 
   // Loader if the user session has not been loaded
   if (session == null || undefined) {
@@ -143,7 +162,6 @@ export default function ProfileOverview() {
         >
           <PlanDetails
             gridArea="1 / 1 / 2 / 2"
-            avatar={avatar}
             name={user?.name}
             email={user?.email}
             date_joined={user?.date_joined}
@@ -180,4 +198,21 @@ export default function ProfileOverview() {
   );
 }
 
+// export async function getServerSideProps(context: any) {
+//   const session = await getSession();
+
+//   if (!session) {
+//     return {
+//       props: {
+//         session: "No session",
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       session,
+//     },
+//   };
+// }
 ProfileOverview.requireAuth = true;

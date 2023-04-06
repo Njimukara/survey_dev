@@ -89,13 +89,14 @@ export default function SuccesVerifyEmail({ providers }: any) {
 
   const display = async () => {
     setLoading(true);
-    let url: array = router.query.slug;
+    let url: any = router.query.slug;
+    // console.log(url);
     let uid, token;
     for (let i in url) {
       uid = url[1];
       token = url[2];
     }
-    console.log(uid, token);
+    // console.log(uid, token);
     const data = {
       uid: uid,
       token: token,
@@ -109,7 +110,7 @@ export default function SuccesVerifyEmail({ providers }: any) {
         )
         .then((res) => {
           respond = res;
-          console.log(res);
+          // console.log(res);
           setLoading(false);
           setError("");
         })

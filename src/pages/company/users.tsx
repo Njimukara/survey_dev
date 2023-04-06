@@ -20,7 +20,7 @@ import {
 // import pendingInvite from "views/admin/dataTables/variables/pendingInvite.json";
 import UserTableComplex from "views/admin/dataTables/components/UserTableComplex";
 import PendingUserInvite from "views/admin/dataTables/components/PendinguserInvite";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import InviteUser from "views/admin/profile/components/InviteUser";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -49,7 +49,7 @@ export default function Users() {
   };
 
   //   get invitations
-  const getCompanyMembers = async () => {
+  const getCompanyMembers = useCallback(async () => {
     setFetching(true);
     const config = {
       headers: {
@@ -66,17 +66,17 @@ export default function Users() {
         // console.log(res);
         // getInvitations();
         setCompanyMembers(res.data);
-        console.log(res.data);
+        // console.log(res.data);
         setFetching(false);
       })
       .catch((err) => {
         // console.log(err);
         setFetching(false);
       });
-  };
+  }, [companyMembers]);
 
   //   get invitations
-  const getInvitations = async () => {
+  const getInvitations = useCallback(async () => {
     setLoading(true);
     const config = {
       headers: {
@@ -103,7 +103,7 @@ export default function Users() {
         // console.log(err);
         setLoading(false);
       });
-  };
+  }, [invitations]);
 
   const getCompany = async () => {
     const config = {
