@@ -60,6 +60,7 @@ import axios from "axios";
 import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
 import defaultImage from "./../../../public/profile.png";
+import SetEmail from "views/admin/profile/components/SetEmail";
 
 export default function EditUser({ providers }: any) {
   // Chakra color mode
@@ -83,6 +84,7 @@ export default function EditUser({ providers }: any) {
   const [error, setError] = React.useState(null);
   const [canEdit, setCanEdit] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
+  const [emailModal, setEmailModal] = React.useState(false);
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
@@ -102,6 +104,15 @@ export default function EditUser({ providers }: any) {
   const toggleModal = (state: boolean | ((prevState: boolean) => boolean)) => {
     setIsOpen(state);
   };
+
+  // open Email reset modal
+  const toggleEmailModal = (
+    state: boolean | ((prevState: boolean) => boolean)
+  ) => {
+    setEmailModal(state);
+  };
+
+  toggleEmailModal;
 
   // function to upddate user
   const updateUser = async () => {
@@ -286,7 +297,8 @@ export default function EditUser({ providers }: any) {
                   />
                 </HStack>
               </FormControl>
-              <FormControl pb="3">
+
+              {/* <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="150px">Email *</FormLabel>
                   <Input
@@ -304,6 +316,40 @@ export default function EditUser({ providers }: any) {
                     isDisabled={canEdit}
                   />
                 </HStack>
+              </FormControl> */}
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="150px">Email *</FormLabel>
+                  <InputGroup size="md">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      fontSize="sm"
+                      placeholder="Confirm Password"
+                      size="lg"
+                      mt="12px"
+                      // type={show ? "text" : "password"}
+                      variant="rounded"
+                      value={email}
+                      // onChange={handleChange}
+                      isDisabled={canEdit}
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="15px"
+                      w="max-content"
+                    >
+                      <Button
+                        _hover={{ bg: "none", color: "primary.500" }}
+                        onClick={() => toggleEmailModal(true)}
+                      >
+                        Reset Email
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                </HStack>
               </FormControl>
 
               <FormControl pb="3">
@@ -311,7 +357,7 @@ export default function EditUser({ providers }: any) {
                   <FormLabel w="120px">Password</FormLabel>
                   <Button
                     bg="none"
-                    _hover={{ bg: "none", color: "primary.300" }}
+                    _hover={{ bg: "none", color: "primary.500" }}
                     onClick={() => toggleModal(true)}
                   >
                     Reset Password
@@ -371,6 +417,7 @@ export default function EditUser({ providers }: any) {
           </Flex>
         </form>
         <SetPassword toggleModal={toggleModal} opened={isOpen} />
+        <SetEmail toggleEmailModal={toggleModal} opened={emailModal} />
       </Card>
     </AdminLayout>
   );

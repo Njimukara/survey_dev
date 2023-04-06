@@ -66,7 +66,31 @@ import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function UserReports() {
+// export async function getServerSideProps(context: any) {
+//   interface companyMembers {
+//     user_id: number;
+//     name: string;
+//     email: string;
+//     date_joined: string;
+//     is_active: boolean;
+//   }
+//   let allCompanyMembers: companyMembers = null;
+//   await fetch("/api/auth/getcompany",  )
+//     .then((res) => res.json())
+//     .then((data) => {
+//       console.log("from getserversideprops", data);
+//       allCompanyMembers = data;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+//   return {
+//     props: { allCompanyMembers }, // will be passed to the page component as props
+//   };
+// }
+
+export default function UserReports(props: { [x: string]: any }) {
   interface User {
     id: number;
     name: string;
@@ -107,30 +131,23 @@ export default function UserReports() {
     sessionUpdate();
     setUser(session?.user?.data);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      // headers
-      const config = {
+      fetch("/api/auth/getcompany", {
         headers: {
-          "Content-Type": "json",
-          Accept: "application/json;charset=UTF-8",
-          Authorization: `Token ${session?.user?.auth_token}`,
+          Accept: "application/json",
+          Authorization: `Token $${session?.user?.auth_token}`,
         },
-      };
-
-      axios
-        .get(
-          "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
-          config
-        )
-        .then((res) => {
+      })
+        .then((res) => res.json())
+        .then((data) => {
           setCompanyUser(2);
-          setCompanyMembers(res.data);
-          // router.push('/auth/verifyemail')
-          // console.log(res);
+          console.log(data);
+          setCompanyMembers(data);
         })
-        .catch((error) => {
-          // setCompanyUser(1);
-          // console.log(error)
+        .catch((err) => {
+          console.log(err);
         });
+    } else {
+      setCompanyUser(1);
     }
   }, [session, companyUser]);
 
