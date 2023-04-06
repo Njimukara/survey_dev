@@ -6,9 +6,9 @@ const Hero = () => {
       as="header"
       bgImg='linear-gradient(to right bottom, rgba(57, 101, 255, 0.90), rgba(115, 83, 255, 0.9)), url("/background-hero-3.jpg")'
       backgroundSize="cover"
-      backgroundPosition= "bottom"
+      backgroundPosition="bottom"
       h="100vh"
-      w="100vw"
+      w="100%"
     >
       <VStack w="60rem" textAlign="center" mt="8rem" spacing="9">
         <Heading

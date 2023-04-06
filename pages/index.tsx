@@ -22,7 +22,7 @@ import {
   FormLabel,
   FormHelperText,
   Input,
-  Textarea
+  Textarea,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -73,9 +73,9 @@ const MonthlyPricing = [
     description:
       "Keep it simple, This licence gives you access to one product of your choice",
     advantages: [
-      { name: "Access to a single product " },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
+      { id: 1, name: "Access to a single product " },
+      { id: 2, name: "Unlimited Generation of surveys" },
+      { id: 3, name: "Customer Support" },
     ],
   },
   {
@@ -86,9 +86,9 @@ const MonthlyPricing = [
     description:
       "In need of more, This licence gives you access to two product of your choice",
     advantages: [
-      { name: "Access to two producta" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
+      { id: 1, name: "Access to two producta" },
+      { id: 2, name: "Unlimited Generation of surveys" },
+      { id: 3, name: "Customer Support" },
     ],
   },
   {
@@ -99,9 +99,9 @@ const MonthlyPricing = [
     description:
       "Make it flexible, This licence gives you access to three product of your choice",
     advantages: [
-      { name: "Access to a three producta" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
+      { id: 1, name: "Access to a three producta" },
+      { id: 2, name: "Unlimited Generation of surveys" },
+      { id: 3, name: "Customer Support" },
     ],
   },
   {
@@ -112,9 +112,9 @@ const MonthlyPricing = [
     description:
       "No stressing, No limits, This licence gives you access to all our products",
     advantages: [
-      { name: "Access to all products" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
+      { id: 1, name: "Access to all products" },
+      { id: 2, name: "Unlimited Generation of surveys" },
+      { id: 3, name: "Customer Support" },
     ],
   },
 ];
@@ -198,6 +198,7 @@ const Home: NextPage = () => {
             >
               <Image
                 src={slide.image}
+                alt={slide.name}
                 w="400px"
                 h="250px"
                 _hover={{
@@ -222,7 +223,7 @@ const Home: NextPage = () => {
         title="A simple and transaparent pricing just for you"
       >
         <Tabs variant="unstyled" w="full">
-          <TabList as="Flex" justifyContent="center" mb="70px">
+          <TabList justifyContent="center" mb="70px">
             <Tab
               bg="white"
               borderLeftRadius="20px"
@@ -260,6 +261,7 @@ const Home: NextPage = () => {
               <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
                 {MonthlyPricing.map((x) => (
                   <PricingCard
+                    key={x.id}
                     title={x.title}
                     price={x.price}
                     period={x.period}
@@ -280,13 +282,18 @@ const Home: NextPage = () => {
 
       {/* Get started Section ; */}
       <Box pb="430px">
-        <Container maxW='container.xl' centerContent py="150px">
+        <Container maxW="container.xl" centerContent py="150px">
           <SimpleGrid columns={2} spacing={100} minChildWidth="570px">
             <Box w="570px" mt="100px" mx="50px">
-              <Heading as="h2" lineHeight="50px" mb="23px" >
+              <Heading as="h2" lineHeight="50px" mb="23px">
                 Fast, Secured and Easy Access to our platform
               </Heading>
-              <Text lineHeight="35px" color="gray.600" mb="23px" fontSize="20px">
+              <Text
+                lineHeight="35px"
+                color="gray.600"
+                mb="23px"
+                fontSize="20px"
+              >
                 You need a to have an active account to get access to our
                 platform. Creating an account is simple. Click on the button
                 below to create an account.
@@ -300,48 +307,81 @@ const Home: NextPage = () => {
 
       {/* Contect section  */}
       <Footer>
-               {/* Contact us section  */}
-      <Box mt="-450px">
-      <Container maxW='container.xl' centerContent >
-        <Stack divider={<VSeparator />} boxShadow='2xl' bg="white" direction={['column', 'row'] } >
-          <Box width="600px" px="95px" mt="50px" >
-            <Heading as="h2" my="30px">Lets get in touch</Heading>
-            <Text>Morbi non quam nec dui luctus rutrum.</Text>
-            <Box as="form" mt="25px" mb="100px">
-              <FormControl isRequired mb="25px">
-                <FormLabel >Name</FormLabel>
-                <Input height="50px" variant="rounded" type='text'/>
-              </FormControl>
-              <FormControl isRequired mb="25px">
-                <FormLabel>Email address</FormLabel>
-                <Input height="50px" variant="rounded" type='email'/>
-              </FormControl>
-              <FormControl mb="25px">
-                <FormLabel>Telephone number</FormLabel>
-                <Input height="50px" variant="rounded" type='tel' placeholder="+1(567)123-4567"/>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Your messages</FormLabel>
-                <Textarea height="50px" placeholder="Say what you want here"/>
-              </FormControl>
+        {/* Contact us section  */}
+        <Box mt="-450px">
+          <Container maxW="container.xl" centerContent>
+            <Stack
+              divider={<VSeparator />}
+              boxShadow="2xl"
+              bg="white"
+              direction={["column", "row"]}
+            >
+              <Box width="600px" px="95px" mt="50px">
+                <Heading as="h2" my="30px">
+                  Lets get in touch
+                </Heading>
+                <Text>Morbi non quam nec dui luctus rutrum.</Text>
+                <Box as="form" mt="25px" mb="100px">
+                  <FormControl isRequired mb="25px">
+                    <FormLabel>Name</FormLabel>
+                    <Input height="50px" variant="rounded" type="text" />
+                  </FormControl>
+                  <FormControl isRequired mb="25px">
+                    <FormLabel>Email address</FormLabel>
+                    <Input height="50px" variant="rounded" type="email" />
+                  </FormControl>
+                  <FormControl mb="25px">
+                    <FormLabel>Telephone number</FormLabel>
+                    <Input
+                      height="50px"
+                      variant="rounded"
+                      type="tel"
+                      placeholder="+1(567)123-4567"
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Your messages</FormLabel>
+                    <Textarea
+                      height="50px"
+                      placeholder="Say what you want here"
+                    />
+                  </FormControl>
 
-              <Button my="25px" width="full" variant="homePrimary">Contact us</Button>
+                  <Button my="25px" width="full" variant="homePrimary">
+                    Contact us
+                  </Button>
 
-              <Text>We will reply as soon as possible we promise</Text>
-            </Box>
-          </Box>
-          
-          <Box width="600px" px="95px" mt="60px">
-            <Image src="/contact-us.jpg" width="450px" height="330px" borderRadius="16px"/>
-            <Heading as="h3" fontSize="64px" mt="40px">Do you have a question ?</Heading>
-            <Text mt="20px" mb="30px">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat. Dolor ipsum amet sin iquarum tempea</Text>
-            <Text mb="12px">Feel free to contact us here</Text>
-            <Text fontSize="22px">Call: <Text as="span" color="primary.500">+1 (555) 123-4567</Text></Text>
-          </Box>
+                  <Text>We will reply as soon as possible we promise</Text>
+                </Box>
+              </Box>
 
-        </Stack>
-        </Container>
-      </Box>
+              <Box width="600px" px="95px" mt="60px">
+                <Image
+                  alt="contact-us"
+                  src="/contact-us.jpg"
+                  width="450px"
+                  height="330px"
+                  borderRadius="16px"
+                />
+                <Heading as="h3" fontSize="64px" mt="40px">
+                  Do you have a question ?
+                </Heading>
+                <Text mt="20px" mb="30px">
+                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
+                  amet sint. Velit officia consequat. Dolor ipsum amet sin
+                  iquarum tempea
+                </Text>
+                <Text mb="12px">Feel free to contact us here</Text>
+                <Text fontSize="22px">
+                  Call:{" "}
+                  <Text as="span" color="primary.500">
+                    +1 (555) 123-4567
+                  </Text>
+                </Text>
+              </Box>
+            </Stack>
+          </Container>
+        </Box>
       </Footer>
     </Box>
   );
