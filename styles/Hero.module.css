@@ -1,0 +1,44 @@
+.animateHeading {
+  animation: typing;
+}
+
+.animateHeading {
+  overflow: hidden;
+  white-space: no-wrap;
+  display: inline-block;
+  position: relative;
+  animation-duration: 25s;
+  animation-timing-function: steps(25, end);
+  animation-iteration-count: infinite;
+}
+
+.animateHeading::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  animation: caret infinite;
+  animation-duration: 1s;
+  animation-timing-function: steps(1, end);
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  25%,
+  50%,
+  75%,
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
