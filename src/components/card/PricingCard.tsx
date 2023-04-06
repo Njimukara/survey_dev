@@ -50,15 +50,7 @@ export const PricingCard = (props: PricingProps) => {
             <Box>
               <List spacing={2}>
                 {props.advantages?.map((x) => (
-<<<<<<< HEAD
-<<<<<<< HEAD:components/PricingCard.tsx
                   <ListItem key={x.id}>
-=======
-                  <ListItem key={""}>
->>>>>>> f65d8be62c37d8e563ea92be31946f74ce61e7ec:src/components/card/PricingCard.tsx
-=======
-                  <ListItem key={x.id}>
->>>>>>> bbc32d296093ce577c6cb31ab28637bd6aaed92f
                     <ListIcon
                       key={x.id}
                       as={MdCheckCircle}
