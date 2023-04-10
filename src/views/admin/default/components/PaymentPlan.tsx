@@ -13,20 +13,21 @@ import {
   InputGroup,
   InputRightAddon,
   InputRightElement,
-  Select,
+  // Select,
   Text,
   useColorModeValue,
   // VStack,
 } from "@chakra-ui/react";
 
+// react select
+import countryList from "react-select-country-list";
+import Select from "react-select";
+
 // import CurrencyFormat from "react-currency-format";
 
 // Custom components
 import Card from "components/card/Card";
-// import LineChart from "components/charts/LineChart";
-// import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-// import { IoCheckmarkCircle } from "react-icons/io5";
+import { useEffect, useMemo, useState } from "react";
 import {
   // MdBarChart,
   // MdOutlineCalendarToday,
@@ -61,6 +62,29 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   //   { bg: "whiteAlpha.100" }
   // );
 
+  //   react-select
+  const options = useMemo(() => countryList().getData(), []);
+
+  const changeHandler = (value: any) => {
+    setCountry(value);
+    // setIso(value.value);
+    console.log(country);
+  };
+
+  // css styling for react select
+  const reactSelectStyles = {
+    control: (defaultStyles: any) => ({
+      ...defaultStyles,
+      backgroundColor: "transparent",
+      borderColor: "grey.200",
+      color: "black",
+      padding: "6px",
+      borderRadius: "15px",
+      boxShadow: "none",
+    }),
+    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+  };
+
   // const [active, setActive] = useState(true);
   const [country, setCountry] = useState("");
   const [cardnumber, setCardnumber] = useState(0);
@@ -70,11 +94,12 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    console.log(plan);
+    setTotal(plan?.price);
     if (plan == "") {
       setTotal(plan.price);
       setPlanName(plan.title);
     }
-    // console.log(plan);
   }, [plan]);
 
   return (
@@ -83,7 +108,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       flexDirection="column"
       w="100%"
       py="10"
-      mb="10"
+      mb="20"
       {...rest}
     >
       <Flex gap="5">
@@ -140,7 +165,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               />
             </FormControl>
           </Flex>
-          <FormControl>
+          {/* <FormControl>
             <FormLabel fontSize="sm" color={textColorSecondary}>
               Country
             </FormLabel>
@@ -157,13 +182,31 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               value={country}
               onChange={(e) => setCountry(e.target.value)}
             />
+          </FormControl> */}
+
+          <FormControl pb="3">
+            <FormLabel w="160px" fontSize="sm" color={textColorSecondary}>
+              Country
+            </FormLabel>
+            <Box w="100%">
+              <Select
+                // isDisabled={canEdit}
+                styles={reactSelectStyles}
+                options={options}
+                placeholder="country"
+                value={country}
+                onChange={changeHandler}
+              />
+            </Box>
           </FormControl>
+
           <FormControl>
             <FormLabel fontSize="sm" color={textColorSecondary}>
               Total
             </FormLabel>
             <Input
               type="number"
+              isDisabled
               variant="rounded"
               placeholder="$23232"
               value={total}

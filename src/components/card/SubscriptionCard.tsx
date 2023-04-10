@@ -12,7 +12,9 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import Card from "./Card";
 type ArrayObject = {
+  id?: number;
   name?: String;
+  description?: string;
 };
 
 type SubscriptionProps = {
@@ -28,11 +30,12 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
   return (
     <Card
       transition="all .2s ease-in-out"
+      width="100%"
       _hover={{
         transform: "scale(1.05)",
       }}
     >
-      <Flex>
+      <Flex width="100%">
         <Box>
           <Box>
             <Text mb="25px" fontSize="16px" fontWeight="600">
@@ -50,14 +53,14 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
             <Box>
               <List spacing={2}>
                 {props.advantages?.map((x) => (
-                  <ListItem key={""} fontSize="sm">
+                  <ListItem key={x.id} fontSize="sm">
                     <ListIcon
-                      key={""}
+                      key={x.id}
                       as={MdCheckCircle}
                       color="primary.500"
                       fontSize="18px"
                     />
-                    {x.name}
+                    {x.description}
                   </ListItem>
                 ))}
               </List>

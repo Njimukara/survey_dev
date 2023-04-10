@@ -246,7 +246,7 @@ export default function EditCompany({ providers }: any) {
             <Flex alignItems="center" flexDirection="column">
               <Image
                 src={createObjectURL ? createObjectURL : "/profile.png"}
-                objectFit="fill"
+                objectFit="contain"
                 bg="transparent"
                 width="350px"
                 height="250px"

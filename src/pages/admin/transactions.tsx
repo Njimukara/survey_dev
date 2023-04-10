@@ -24,15 +24,18 @@
 import {
   Box,
   Button,
+  Flex,
   SimpleGrid,
+  Spinner,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  useToast,
 } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
@@ -41,6 +44,8 @@ import ComplexTable from "views/admin/default/components/ComplexTable";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
+import { getSession, useSession } from "next-auth/react";
+import axios from "axios";
 
 const MonthlyPricing = [
   {
@@ -109,18 +114,96 @@ export default function Transactions() {
     description?: String;
     advantages?: Array<ArrayObject>;
   }
-  const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
 
+  // component variables
+  const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [plans, setPlans] = useState([]);
+
+  // chakra toast
+  const toast = useToast();
+
+  // Get selected plan by user
   const getSelectedPlan = (plan: subsciptionPlan) => {
     setSelectedPlan(plan);
   };
+
+  // initial user session
+  var { data: session } = useSession();
+
+  // updated user session
+  const secondSession = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        // console.log(res);
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {});
+  }, [session]);
+
+  // get subscription plans from database
+  const getPlans = useCallback(async () => {
+    setLoading(true);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/plans/list-with-price",
+        config
+      )
+      .then((res) => {
+        // console.log(res);
+        setPlans(res.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        // console.log(error);
+        toast({
+          position: "bottom-right",
+          description: "Srror getting plans",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    secondSession();
+    getPlans();
+  }, []);
 
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <>
-          {selectedPlan == null ? (
-            <Box>
+          {loading ? (
+            <Flex
+              h="100vh"
+              w="100%"
+              justifyContent="center"
+              alignItems="center"
+            >
+              {/* <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              /> */}
+              Loading plans ...
+            </Flex>
+          ) : !loading && selectedPlan == null ? (
+            <Box pb="50px">
               <Tabs variant="unstyled" w="full">
                 <TabList justifyContent="center" mb="50px">
                   <Tab
@@ -160,16 +243,16 @@ export default function Transactions() {
                     <SimpleGrid
                       columns={4}
                       spacing="20px"
-                      minChildWidth="150px"
+                      minChildWidth="250px"
                     >
-                      {MonthlyPricing.map((x) => (
+                      {plans.map((plan) => (
                         <SubscriptionCard
-                          key={x.id}
-                          title={x.title}
-                          price={x.price}
-                          period={x.period}
-                          description={x.description}
-                          advantages={x.advantages}
+                          key={plan.id}
+                          title={plan.name}
+                          price={plan.amount}
+                          period={plan?.stripe_plan_id?.interval}
+                          description={plan?.stripe_plan_id?.description}
+                          advantages={plan.features}
                           getplan={getSelectedPlan}
                         ></SubscriptionCard>
                       ))}
@@ -187,6 +270,7 @@ export default function Transactions() {
             // payment
             <PaymentPlan plan={selectedPlan} getplan={getSelectedPlan} />
           )}
+
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
             <ComplexTable
               columnsData={columnsDataComplex}
