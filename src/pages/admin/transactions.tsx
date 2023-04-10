@@ -32,6 +32,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
@@ -160,7 +161,7 @@ export default function Transactions() {
         config
       )
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setPlans(res.data);
         setLoading(false);
       })
@@ -168,7 +169,7 @@ export default function Transactions() {
         // console.log(error);
         toast({
           position: "bottom-right",
-          description: "Srror getting plans",
+          description: "Error getting plans",
           status: "error",
           duration: 4000,
           isClosable: true,
@@ -200,7 +201,7 @@ export default function Transactions() {
                 color="blue.500"
                 size="xl"
               /> */}
-              Loading plans ...
+              <Text>Loading ...</Text>
             </Flex>
           ) : !loading && selectedPlan == null ? (
             <Box pb="50px">
@@ -247,7 +248,7 @@ export default function Transactions() {
                     >
                       {plans.map((plan) => (
                         <SubscriptionCard
-                          key={plan.id}
+                          id={plan.id}
                           title={plan.name}
                           price={plan.amount}
                           period={plan?.stripe_plan_id?.interval}

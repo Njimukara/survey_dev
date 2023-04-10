@@ -13,26 +13,29 @@ import {
   InputGroup,
   InputRightAddon,
   InputRightElement,
-  // Select,
+  Select,
   Text,
   useColorModeValue,
+  useToast,
   // VStack,
 } from "@chakra-ui/react";
 
 // react select
 import countryList from "react-select-country-list";
-import Select from "react-select";
+// import Select from "react-select";
 
 // import CurrencyFormat from "react-currency-format";
 
 // Custom components
 import Card from "components/card/Card";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   // MdBarChart,
   // MdOutlineCalendarToday,
   MdOutlineCreditCard,
 } from "react-icons/md";
+import { getSession, useSession } from "next-auth/react";
+import axios from "axios";
 // Assets
 // import { RiArrowUpSFill } from "react-icons/ri";
 // import {
@@ -85,7 +88,8 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
   };
 
-  // const [active, setActive] = useState(true);
+  // component variables
+  const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState("");
   const [cardnumber, setCardnumber] = useState(0);
   const [planName, setPlanName] = useState("");
@@ -93,13 +97,116 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const [cvc, setCvc] = useState(0);
   const [total, setTotal] = useState(0);
 
+  // subscription variables
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [couponCode, setCouponCode] = useState("COUPON123");
+  const [customerLivemode, setCustomerLivemode] = useState(true);
+  const [trialPeriodDays, setTrialPeriodDays] = useState(7);
+  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(true);
+  const [description, setDescription] = useState("");
+  const [collectionMethod, setCollectionMethod] = useState("send_invoice");
+  const [cancelAt, setCancelAt] = useState<Date>();
+  const [daysUntilDue, setDaysUntilDue] = useState<number>(7);
+  const [currency, setCurrency] = useState<string>("usd");
+  const [planID, setPlanID] = useState<number>();
+
+  // get user session
+  var { data: session } = useSession();
+
+  // chakra toast
+  const toast = useToast();
+
+  const secondSession = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        // console.log(res);
+        session = res;
+        setCustomerName(res?.user?.data?.name);
+        setCustomerEmail(res?.user?.data?.email);
+      })
+      .catch((err) => {});
+  }, [session]);
+
+  // get cancellation date
+  const getCancelDate = (days: number) => {
+    let today = new Date();
+    let cancelDate = today.setDate(today.getDate() + days);
+    let formatedCancelDate = new Date(cancelDate);
+    return formatedCancelDate;
+  };
+
+  // subscribe to plan
+  const subscribe = async () => {
+    setLoading(true);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    setDescription(
+      `Invoice for ${customerName} subscriping to the ${plan.title}`
+    );
+
+    let subscription_data = {
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone_no: customerPhone,
+      coupon_code: couponCode,
+      customer_livemode: customerLivemode,
+      trial_period_days: trialPeriodDays,
+      cancel_at_period_end: cancelAtPeriodEnd,
+      description: description,
+      collection_method: collectionMethod,
+      cancel_at: cancelAt,
+      days_until_due: daysUntilDue,
+      currency: currency,
+      plan_id: planID,
+    };
+
+    console.log(subscription_data);
+
+    await axios
+      .post(
+        `https://surveyplanner.pythonanywhere.com/api/plans/create-subscription`,
+        subscription_data,
+        config
+      )
+      .then((res) => {
+        console.log(res);
+        setLoading(false);
+        toast({
+          position: "bottom-right",
+          description: "Plan subscripton successful",
+          status: "info",
+          duration: 4000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          position: "bottom-right",
+          description: "Error subscriping to plan",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
-    console.log(plan);
+    // console.log(plan);
+    let cancelDate = getCancelDate(7);
+    setCancelAt(cancelDate);
+    secondSession();
     setTotal(plan?.price);
-    if (plan == "") {
-      setTotal(plan.price);
-      setPlanName(plan.title);
-    }
+    setPlanID(plan.id);
   }, [plan]);
 
   return (
@@ -117,87 +224,75 @@ export default function PaymentPlan(props: { [x: string]: any }) {
             w="100%"
             textAlign="left"
             fontWeight="bold"
+            py="10px"
             color={textColordark}
           >
             Stripe Payment
           </Text>
-          <FormControl>
+          <FormControl pb="10px">
             <FormLabel fontSize="sm" color={textColorSecondary}>
-              Card number
+              Name
             </FormLabel>
-            <InputGroup size="lg">
-              <Input
-                type="number"
-                variant="rounded"
-                placeholder="123 454 231 123 122"
-                value={cardnumber}
-                onChange={(e) => setCardnumber(parseFloat(e.target.value))}
-              />
-              <InputRightElement>
+            {/* <InputGroup size="lg"> */}
+            <Input
+              type="text"
+              variant="rounded"
+              // placeholder="123 454 231 123 122"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+            />
+            {/* <InputRightElement>
                 {" "}
                 <Icon as={MdOutlineCreditCard} />{" "}
-              </InputRightElement>
-            </InputGroup>
+              </InputRightElement> */}
+            {/* </InputGroup> */}
           </FormControl>
-          <Flex w="100%">
+          <Flex w="100%" pb="10px">
             <FormControl mr="4">
               <FormLabel fontSize="sm" color={textColorSecondary}>
-                Expiry
+                Email
               </FormLabel>
               <Input
-                type="month"
+                type="email"
                 variant="rounded"
-                placeholder="MM / YY"
-                value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
+                placeholder=""
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
               />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm" color={textColorSecondary}>
-                CVC
+                Phone Number
               </FormLabel>
               <Input
-                type="number"
+                type="text"
+                size="sm"
                 variant="rounded"
-                placeholder="CVC"
-                value={cvc}
-                onChange={(e) => setCvc(parseFloat(e.target.value))}
+                placeholder=""
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
               />
             </FormControl>
           </Flex>
-          {/* <FormControl>
-            <FormLabel fontSize="sm" color={textColorSecondary}>
-              Country
-            </FormLabel>
-            <Input
-              isRequired={true}
-              variant="rounded"
-              fontSize="sm"
-              ms={{ base: "0px", md: "0px" }}
-              mb="5px"
-              type="text"
-              placeholder="United states"
-              fontWeight="400"
-              size="md"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-          </FormControl> */}
 
-          <FormControl pb="3">
-            <FormLabel w="160px" fontSize="sm" color={textColorSecondary}>
-              Country
+          <FormControl>
+            <FormLabel fontSize="sm" color={textColorSecondary}>
+              Select Currency
             </FormLabel>
-            <Box w="100%">
-              <Select
-                // isDisabled={canEdit}
-                styles={reactSelectStyles}
-                options={options}
-                placeholder="country"
-                value={country}
-                onChange={changeHandler}
-              />
-            </Box>
+            <Select
+              variant="outline"
+              // border={{ border: "0.5px purple" }}
+              size="lg"
+              borderRadius="2xl"
+              fontSize="sm"
+              _hover={{ border: "0.5px purple" }}
+              _focus={{ border: "0.5px purple" }}
+              onChange={(e) => setCurrency(e.target.value)}
+              value={currency}
+            >
+              <option value="usd">usd - default</option>
+              <option value="eur">eur</option>
+            </Select>
           </FormControl>
 
           <FormControl>
@@ -217,7 +312,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
 
         <Flex
           flexDirection="column"
-          w="30%"
+          w={{ base: "280px", md: "280px", xl: "280px" }}
           justifyContent="center"
           alignItems="center"
         >
@@ -233,8 +328,13 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               Order Summary
             </Heading>
             <Text>Plan: {plan?.title}</Text>
-            <Text>Total: {plan.price}</Text>
+            <Text mb="5">Total: $ {plan.price}</Text>
+            <Text wordBreak="break-word">
+              You'll have a 7 day free trial before completing your payment
+            </Text>
             <Button
+              onClick={subscribe}
+              isLoading={loading}
               fontSize="sm"
               variant="homeWhite"
               fontWeight="800"
@@ -261,3 +361,5 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     </Card>
   );
 }
+
+PaymentPlan.requireAuth = true;

@@ -18,6 +18,7 @@ type ArrayObject = {
 };
 
 type SubscriptionProps = {
+  id?: number;
   title?: String;
   price?: Number;
   period?: String;
