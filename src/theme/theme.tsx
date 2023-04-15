@@ -14,9 +14,6 @@ import { CardStyles as Card } from "./components/Card";
 import { inputTheme } from "./components/Inputs";
 
 import { globalStyles } from "./styles";
-
-import { MultiSelectTheme } from "chakra-multiselect";
-
 export default extendTheme(
   {
     breakpoints,
@@ -57,7 +54,6 @@ export default extendTheme(
       Button,
       Card,
       Input: inputTheme,
-      MultiSelect: MultiSelectTheme,
       Progress: {
         baseStyle: {
           filledTrack: {},
