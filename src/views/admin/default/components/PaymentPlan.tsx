@@ -2,49 +2,48 @@
 import {
   Box,
   Button,
+  Checkbox,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
-  Heading,
   HStack,
+  Heading,
   Icon,
-  Image,
   Input,
   InputGroup,
-  InputRightAddon,
-  InputRightElement,
+  InputLeftElement,
   Select,
+  Stack,
   Text,
   useColorModeValue,
+  useRadioGroup,
   useToast,
   // VStack,
 } from "@chakra-ui/react";
 
-// react select
-import countryList from "react-select-country-list";
-// import Select from "react-select";
-
-// import CurrencyFormat from "react-currency-format";
-
 // Custom components
 import Card from "components/card/Card";
-import { useEffect, useMemo, useState, useCallback } from "react";
-import {
-  // MdBarChart,
-  // MdOutlineCalendarToday,
-  MdOutlineCreditCard,
-} from "react-icons/md";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { MdOutlineCreditCard } from "react-icons/md";
 import { getSession, useSession } from "next-auth/react";
 import axios from "axios";
+import RadioCard from "components/Radio";
+import { PhoneIcon } from "@chakra-ui/icons";
+import { HiCurrencyDollar } from "react-icons/hi2";
+import { FaDollarSign, FaEuroSign } from "react-icons/fa";
+import { Formik, Form, useFormik } from "formik";
+import * as Yup from "yup";
+
 // Assets
-// import { RiArrowUpSFill } from "react-icons/ri";
-// import {
-//   lineChartDataTotalSpent,
-//   lineChartOptionsTotalSpent,
-// } from "variables/charts";
+// import { MultiSelect } from "chakra-multiselect";
 
 export default function PaymentPlan(props: { [x: string]: any }) {
-  const { plan, getplan, ...rest } = props;
+  const { plan, getplan, changeStep, ...rest } = props;
+
+  type subscriptionData = {
+    [key: string]: any; //  variable key
+  };
 
   // Chakra Color Mode
 
@@ -66,51 +65,43 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   // );
 
   //   react-select
-  const options = useMemo(() => countryList().getData(), []);
+  const options = [
+    { label: "product one", value: "product one" },
+    { label: "product two", value: "product two" },
+    { label: "product three", value: "product three" },
+  ];
 
-  const changeHandler = (value: any) => {
-    setCountry(value);
-    // setIso(value.value);
-    console.log(country);
-  };
+  const surveys = [
+    { value: 1, name: "multibeam survey" },
+    { value: 2, name: "Lydar survey" },
+    { value: 3, name: "Acoustic survey" },
+    { value: 4, name: "Echo survey" },
+  ];
 
-  // css styling for react select
-  const reactSelectStyles = {
-    control: (defaultStyles: any) => ({
-      ...defaultStyles,
-      backgroundColor: "transparent",
-      borderColor: "grey.200",
-      color: "black",
-      padding: "6px",
-      borderRadius: "15px",
-      boxShadow: "none",
-    }),
-    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
-  };
+  const radioOptions = ["USD", "EUR"];
+  // const options = useMemo(() => optionsArray, []);
 
   // component variables
   const [loading, setLoading] = useState(false);
-  const [country, setCountry] = useState("");
-  const [cardnumber, setCardnumber] = useState(0);
-  const [planName, setPlanName] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCvc] = useState(0);
+  const [error, setError] = useState("");
+  const [serverError, setServerError] = useState("");
   const [total, setTotal] = useState(0);
+
+  // var value: any = useMemo(() => handleCheckBox(item), [item]);
 
   // subscription variables
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [couponCode, setCouponCode] = useState("COUPON123");
-  const [customerLivemode, setCustomerLivemode] = useState(true);
-  const [trialPeriodDays, setTrialPeriodDays] = useState(7);
-  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(true);
+  const [customerLivemode] = useState(true);
+  const [trialPeriodDays] = useState(7);
+  const [cancelAtPeriodEnd] = useState(true);
   const [description, setDescription] = useState("");
-  const [collectionMethod, setCollectionMethod] = useState("send_invoice");
+  const [collectionMethod] = useState("send_invoice");
   const [cancelAt, setCancelAt] = useState<Date>();
-  const [daysUntilDue, setDaysUntilDue] = useState<number>(7);
+  const [daysUntilDue] = useState<number>(7);
   const [currency, setCurrency] = useState<string>("usd");
   const [planID, setPlanID] = useState<number>();
+  const [value, setValue] = useState<number[]>([]);
 
   // get user session
   var { data: session } = useSession();
@@ -118,10 +109,33 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   // chakra toast
   const toast = useToast();
 
+  const changeRadio = (data: string) => {
+    setCurrency(data.toLocaleLowerCase());
+  };
+
+  // Return true based on whether item is checked
+  const isChecked = (item: number) => value.includes(item);
+
+  const handleCheckedState = (e: any) => {
+    var updatedList = [...value];
+    if (e.target.checked) {
+      updatedList = [...value, parseInt(e.target.value)];
+    } else {
+      updatedList.splice(value.indexOf(parseInt(e.target.value)), 1);
+    }
+    setValue(updatedList);
+  };
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "currency",
+    defaultValue: "USD",
+    onChange: changeRadio,
+  });
+  const group = getRootProps();
+
   const secondSession = useCallback(async () => {
     await getSession()
       .then((res) => {
-        // console.log(res);
         session = res;
         setCustomerName(res?.user?.data?.name);
         setCustomerEmail(res?.user?.data?.email);
@@ -137,12 +151,31 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     return formatedCancelDate;
   };
 
+  // Yup validation data schema
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(3, "Name is too Short!")
+      .max(30, "Name is too Long!")
+      .required("Required"),
+    email: Yup.string().email("Email is Invalid").required("Required"),
+    phone: Yup.number().required("Required"),
+    coupon: Yup.string(),
+  });
+
   // subscribe to plan
-  const subscribe = async () => {
+  const onSubmit = async (values: any, actions: any) => {
+    if (value.length < plan.max_products) {
+      setError(`Please select up to ${plan.max_products} survey(s)`);
+      return;
+    } else if (value.length > plan.max_products) {
+      setError(`Only a max of ${plan.max_products} survey(s) for this plan `);
+      return;
+    }
+
+    setError(null);
     setLoading(true);
     const config = {
       headers: {
-        "Content-Type": "multipart/form-data",
         Accept: "application/json;charset=UTF-8",
         Authorization: `Token ${session?.user?.auth_token}`,
       },
@@ -152,11 +185,10 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       `Invoice for ${customerName} subscriping to the ${plan.title}`
     );
 
-    let subscription_data = {
-      customer_name: customerName,
-      customer_email: customerEmail,
-      customer_phone_no: customerPhone,
-      coupon_code: couponCode,
+    let subscription_data: subscriptionData = {
+      customer_name: values.name,
+      customer_email: values.email,
+      customer_phone_no: values.phone,
       customer_livemode: customerLivemode,
       trial_period_days: trialPeriodDays,
       cancel_at_period_end: cancelAtPeriodEnd,
@@ -166,9 +198,13 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       days_until_due: daysUntilDue,
       currency: currency,
       plan_id: planID,
+      assigned_surveys: value,
+      coupon_code: values.coupon,
     };
 
-    console.log(subscription_data);
+    if (values.coupon == "") {
+      delete subscription_data["coupon_code"];
+    }
 
     await axios
       .post(
@@ -177,21 +213,21 @@ export default function PaymentPlan(props: { [x: string]: any }) {
         config
       )
       .then((res) => {
-        console.log(res);
         setLoading(false);
         toast({
           position: "bottom-right",
-          description: "Plan subscripton successful",
+          description: res?.data?.message,
           status: "info",
           duration: 4000,
           isClosable: true,
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
+        setServerError(err?.response?.data?.error);
         toast({
           position: "bottom-right",
-          description: "Error subscriping to plan",
+          description: err?.response?.data?.error,
           status: "error",
           duration: 4000,
           isClosable: true,
@@ -200,11 +236,31 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       });
   };
 
+  // formik initialisation using yup validation schema
+  const {
+    values,
+    isSubmitting,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    handleBlur,
+  } = useFormik({
+    initialValues: {
+      name: customerName,
+      email: customerEmail,
+      phone: "",
+      coupon: "",
+    },
+    enableReinitialize: true,
+    validationSchema: validationSchema,
+    onSubmit,
+  });
+
   useEffect(() => {
-    // console.log(plan);
     let cancelDate = getCancelDate(7);
-    setCancelAt(cancelDate);
     secondSession();
+    setCancelAt(cancelDate);
     setTotal(plan?.price);
     setPlanID(plan.id);
   }, [plan]);
@@ -218,64 +274,145 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       mb="20"
       {...rest}
     >
-      <Flex gap="5">
-        <Flex flexDirection="column" flex="1" w="70%">
-          <Text
-            w="100%"
-            textAlign="left"
-            fontWeight="bold"
-            py="10px"
-            color={textColordark}
-          >
-            Stripe Payment
-          </Text>
-          <FormControl pb="10px">
-            <FormLabel fontSize="sm" color={textColorSecondary}>
-              Name
-            </FormLabel>
-            {/* <InputGroup size="lg"> */}
-            <Input
-              type="text"
-              variant="rounded"
-              // placeholder="123 454 231 123 122"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-            {/* <InputRightElement>
-                {" "}
-                <Icon as={MdOutlineCreditCard} />{" "}
-              </InputRightElement> */}
-            {/* </InputGroup> */}
-          </FormControl>
-          <Flex w="100%" pb="10px">
-            <FormControl mr="4">
+      <form onSubmit={handleSubmit}>
+        <Flex gap="5">
+          <Flex flexDirection="column" flex="1" w="70%">
+            <Text
+              w="100%"
+              textAlign="left"
+              fontWeight="bold"
+              pb="10px"
+              fontSize="lg"
+              color={textColordark}
+            >
+              License Subscription
+            </Text>
+            <Text
+              w="100%"
+              textAlign="left"
+              fontWeight="bold"
+              py="15px"
+              fontSize="sm"
+              color={textColordark}
+            >
+              User Details
+            </Text>
+            <FormControl pb="10px">
               <FormLabel fontSize="sm" color={textColorSecondary}>
-                Email
+                Name
               </FormLabel>
               <Input
-                type="email"
-                variant="rounded"
-                placeholder=""
-                value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm" color={textColorSecondary}>
-                Phone Number
-              </FormLabel>
-              <Input
+                id="name"
+                name="name"
                 type="text"
-                size="sm"
                 variant="rounded"
-                placeholder=""
-                value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
+                required
+                // placeholder="123 454 231 123 122"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                // value={customerName}
+                // onChange={(e) => setCustomerName(e.target.value)}
               />
+              {errors.name && touched.name ? (
+                <FormHelperText color="red.400" mt="0" mb="5px">
+                  {errors.name}
+                </FormHelperText>
+              ) : (
+                ""
+              )}
             </FormControl>
-          </Flex>
+            <Flex w="100%" pb="10px">
+              <FormControl mr="4">
+                <FormLabel fontSize="sm" color={textColorSecondary}>
+                  Email
+                </FormLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  variant="rounded"
+                  placeholder=""
+                  required
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  // value={customerEmail}
+                  // onChange={(e) => setCustomerEmail(e.target.value)}
+                />
+                {errors.email && touched.email ? (
+                  <FormHelperText color="red.400" mt="0" mb="5px">
+                    {errors.email}
+                  </FormHelperText>
+                ) : (
+                  ""
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm" color={textColorSecondary}>
+                  Phone Number
+                </FormLabel>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  size="sm"
+                  required
+                  variant="rounded"
+                  placeholder=""
+                  value={values.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  // value={customerPhone}
+                  // onChange={(e) => setCustomerPhone(e.target.value)}
+                />
+                {errors.phone && touched.phone ? (
+                  <FormHelperText color="red.400" mt="0" mb="5px">
+                    {errors.phone}
+                  </FormHelperText>
+                ) : (
+                  ""
+                )}
+              </FormControl>
+            </Flex>
 
-          <FormControl>
+            <Text
+              w="100%"
+              textAlign="left"
+              fontWeight="bold"
+              py="15px"
+              fontSize="sm"
+              color={textColordark}
+            >
+              Plan Details
+            </Text>
+
+            <FormControl py="2" mb="2">
+              <FormLabel fontSize="sm" color={textColorSecondary}>
+                Select Survey(s). max {plan.max_products}
+              </FormLabel>
+              <Stack spacing={5} direction="row">
+                {surveys.map((survey) => {
+                  return (
+                    <Checkbox
+                      key={survey.value}
+                      colorScheme="primary"
+                      value={survey.value}
+                      onChange={handleCheckedState}
+                      isDisabled={
+                        !isChecked(survey.value) &&
+                        value.length == plan.max_products
+                      }
+                    >
+                      {survey.name}
+                    </Checkbox>
+                  );
+                })}
+              </Stack>
+              <FormHelperText color="red.400">{error}</FormHelperText>
+            </FormControl>
+
+            {/* <FormControl>
             <FormLabel fontSize="sm" color={textColorSecondary}>
               Select Currency
             </FormLabel>
@@ -293,71 +430,176 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               <option value="usd">usd - default</option>
               <option value="eur">eur</option>
             </Select>
-          </FormControl>
+          </FormControl> */}
 
-          <FormControl>
+            {/* <MultiSelect
+            options={options}
+            value={value}
+            label="Choose an item"
+            onChange={setValue}
+            bg="red.500"
+          /> */}
+
+            {/* <FormControl>
             <FormLabel fontSize="sm" color={textColorSecondary}>
-              Total
+              Select Surveys
             </FormLabel>
-            <Input
-              type="number"
-              isDisabled
-              variant="rounded"
-              placeholder="$23232"
-              value={total}
-              onChange={(e) => setTotal(parseFloat(e.target.value))}
-            />
-          </FormControl>
-        </Flex>
-
-        <Flex
-          flexDirection="column"
-          w={{ base: "280px", md: "280px", xl: "280px" }}
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Box
-            bgGradient="linear(to-b, primary.500, brand.700)"
-            px="5"
-            py="3"
-            h="max-content"
-            color="white"
-            borderRadius={10}
-          >
-            <Heading as="h4" size="lg" py="3">
-              Order Summary
-            </Heading>
-            <Text>Plan: {plan?.title}</Text>
-            <Text mb="5">Total: $ {plan.price}</Text>
-            <Text wordBreak="break-word">
-              You'll have a 7 day free trial before completing your payment
-            </Text>
-            <Button
-              onClick={subscribe}
-              isLoading={loading}
+            <Select
+              variant="outline"
+              // border={{ border: "0.5px purple" }}
+              size="lg"
+              borderRadius="2xl"
               fontSize="sm"
-              variant="homeWhite"
-              fontWeight="800"
-              color="primary.500"
-              w="100%"
-              h="30"
-              my="24px"
-              py="7"
+              _hover={{ border: "0.5px purple" }}
+              _focus={{ border: "0.5px purple" }}
+              onChange={(e) => setCurrency(e.target.value)}
+              value={currency}
             >
-              Make payment
-            </Button>
-          </Box>
-          <Button
-            w="85%"
-            variant="outline"
-            py="7"
-            my="3"
-            onClick={() => getplan(null)}
+              <option value="usd">usd - default</option>
+              <option value="eur">eur</option>
+            </Select>
+          </FormControl> */}
+
+            <FormControl>
+              <FormLabel fontSize="sm" color={textColorSecondary}>
+                Have a coupon code?
+              </FormLabel>
+              <Input
+                id="coupon"
+                name="coupon"
+                type="text"
+                variant="rounded"
+                placeholder=""
+                value={values.coupon}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                // value={couponCode}
+                // onChange={(e) => setCouponCode(e.target.value)}
+              />
+              {errors.coupon && touched.coupon ? (
+                <FormHelperText color="red.400" mt="0" mb="5px">
+                  {errors.coupon}
+                </FormHelperText>
+              ) : (
+                ""
+              )}
+            </FormControl>
+
+            <HStack my="3">
+              <FormControl w="20%">
+                <FormLabel fontSize="sm" color={textColorSecondary}>
+                  Select Currency
+                </FormLabel>
+                <HStack>
+                  {radioOptions.map((value) => {
+                    const radio = getRadioProps({ value });
+                    return (
+                      <RadioCard key={value} {...radio}>
+                        {value}
+                      </RadioCard>
+                    );
+                  })}
+                </HStack>
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm" color={textColorSecondary}>
+                  Total
+                </FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon
+                      as={currency == "usd" ? FaDollarSign : FaEuroSign}
+                      color="gray.300"
+                      bg="none"
+                      mt="2"
+                      boxSize={5}
+                    />
+                  </InputLeftElement>
+
+                  <Input
+                    type="number"
+                    isDisabled
+                    variant="rounded"
+                    placeholder="$23232"
+                    value={total}
+                    _disabled={{
+                      bg: "gray.100",
+                      color: "primary.500",
+                      weight: "bold",
+                      border: "none",
+                    }}
+                    onChange={(e) => setTotal(parseFloat(e.target.value))}
+                  />
+                </InputGroup>
+              </FormControl>
+            </HStack>
+          </Flex>
+
+          <Flex
+            flexDirection="column"
+            w={{ base: "280px", md: "280px", xl: "280px" }}
+            justifyContent="center"
+            alignItems="center"
           >
-            cancel
-          </Button>
+            <Box
+              bgGradient="linear(to-b, primary.500, brand.700)"
+              px="5"
+              py="3"
+              h="max-content"
+              color="white"
+              borderRadius={10}
+            >
+              <Heading as="h4" size="lg" py="3">
+                Order Summary
+              </Heading>
+              <Text>Plan: {plan?.title}</Text>
+              <Text mb="5">Total: $ {plan.price}</Text>
+              <Text wordBreak="break-word">
+                You'll have a 7 day free trial before completing your payment
+              </Text>
+              <Button
+                // onClick={subscribe}
+                type="submit"
+                isLoading={loading}
+                fontSize="sm"
+                variant="homeWhite"
+                fontWeight="800"
+                color="primary.500"
+                w="100%"
+                h="30"
+                my="24px"
+                py="7"
+                _focus={{ bg: "white" }}
+              >
+                Make payment
+              </Button>
+            </Box>
+            <Flex w="100%" gap="5">
+              {/* <Button
+              variant="outline"
+              py="7"
+              my="3"
+              onClick={() => {
+                changeStep(2);
+              }}
+            >
+              Back
+            </Button> */}
+              <Button
+                variant="outline"
+                py="7"
+                my="3"
+                onClick={() => {
+                  getplan(null);
+                  changeStep(1);
+                }}
+              >
+                cancel
+              </Button>
+            </Flex>
+          </Flex>
         </Flex>
-      </Flex>
+      </form>
     </Card>
   );
 }

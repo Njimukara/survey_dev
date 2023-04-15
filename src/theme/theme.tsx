@@ -1,48 +1,50 @@
-import { extendTheme, HTMLChakraProps, ThemingProps } from '@chakra-ui/react'
-import { CardComponent } from './additions/card/card'
-import { buttonStyles as Button } from './components/button'
-import { badgeStyles } from './components/badge'
-import { inputStyles } from './components/input'
-import { progressStyles } from './components/progress'
-import { sliderStyles } from './components/slider'
-import { textareaStyles } from './components/textarea'
-import { switchStyles } from './components/switch'
-import { linkStyles } from './components/link'
-import { breakpoints } from './foundations/breakpoints'
+import { extendTheme, HTMLChakraProps, ThemingProps } from "@chakra-ui/react";
+import { CardComponent } from "./additions/card/card";
+import { buttonStyles as Button } from "./components/button";
+import { badgeStyles } from "./components/badge";
+import { inputStyles } from "./components/input";
+import { progressStyles } from "./components/progress";
+import { sliderStyles } from "./components/slider";
+import { textareaStyles } from "./components/textarea";
+import { switchStyles } from "./components/switch";
+import { linkStyles } from "./components/link";
+import { breakpoints } from "./foundations/breakpoints";
 // import { buttonStyles as Button } from './components/Button'
-import { CardStyles as Card } from './components/Card'
-import { inputTheme } from './components/Inputs'
+import { CardStyles as Card } from "./components/Card";
+import { inputTheme } from "./components/Inputs";
 
-import { globalStyles } from './styles'
+import { globalStyles } from "./styles";
+
+import { MultiSelectTheme } from "chakra-multiselect";
 
 export default extendTheme(
   {
     breakpoints,
     colors: {
       primary: {
-        100: '#ebe6ff',
-        200: '#c3b5ff',
-        300: '#9b84ff',
-        400: '#7353ff',
-        500: '#3203fc',
-        600: '#2706b3',
-        700: '#1c0580',
-        800: '#10034c',
-        900: '#050119',
+        100: "#ebe6ff",
+        200: "#c3b5ff",
+        300: "#9b84ff",
+        400: "#7353ff",
+        500: "#3203fc",
+        600: "#2706b3",
+        700: "#1c0580",
+        800: "#10034c",
+        900: "#050119",
       },
       secondary: {
-        500: '#F4F7FE',
+        500: "#F4F7FE",
       },
       secondaryGray: {
-        100: '#E0E5F2',
-        200: '#E1E9F8',
-        300: '#F4F7FE',
-        400: '#E9EDF7',
-        500: '#8F9BBA',
-        600: '#A3AED0',
-        700: '#707EAE',
-        800: '#707EAE',
-        900: '#1B2559',
+        100: "#E0E5F2",
+        200: "#E1E9F8",
+        300: "#F4F7FE",
+        400: "#E9EDF7",
+        500: "#8F9BBA",
+        600: "#A3AED0",
+        700: "#707EAE",
+        800: "#707EAE",
+        900: "#1B2559",
       },
       // primary_dark: "#B16B0D",
       // red: "#D53F5B",
@@ -55,6 +57,7 @@ export default extendTheme(
       Button,
       Card,
       Input: inputTheme,
+      MultiSelect: MultiSelectTheme,
       Progress: {
         baseStyle: {
           filledTrack: {},
@@ -72,6 +75,6 @@ export default extendTheme(
   textareaStyles, // textarea styles
   switchStyles, // switch styles
   CardComponent // card component
-)
+);
 
-export interface CustomCardProps extends HTMLChakraProps<'div'>, ThemingProps {}
+export interface CustomCardProps extends HTMLChakraProps<"div">, ThemingProps {}

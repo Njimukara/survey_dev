@@ -24,7 +24,9 @@ type SubscriptionProps = {
   period?: String;
   description?: String;
   advantages?: Array<ArrayObject>;
+  max_products: Number;
   getplan?: any;
+  changeStep: (newStep: number) => void;
 };
 
 export const SubscriptionCard = (props: SubscriptionProps) => {
@@ -48,7 +50,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
               </Text>
               / {props.period}
             </Heading>
-            <Text mb="15px" fontSize="sm" fontWeight="400">
+            <Text mb="15px" fontSize="sm" px-3 fontWeight="400">
               {props.description}
             </Text>
             <Box>
@@ -72,6 +74,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
             <Button
               onClick={() => {
                 props.getplan(props);
+                props.changeStep(2);
               }}
               variant="outline"
               bg="white"

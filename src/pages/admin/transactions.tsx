@@ -120,6 +120,7 @@ export default function Transactions() {
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState(1);
   const [plans, setPlans] = useState([]);
 
   // chakra toast
@@ -128,6 +129,11 @@ export default function Transactions() {
   // Get selected plan by user
   const getSelectedPlan = (plan: subsciptionPlan) => {
     setSelectedPlan(plan);
+  };
+
+  // Get step
+  const changeStep = (newStep: number) => {
+    setStep(newStep);
   };
 
   // initial user session
@@ -161,7 +167,6 @@ export default function Transactions() {
         config
       )
       .then((res) => {
-        console.log(res);
         setPlans(res.data);
         setLoading(false);
       })
@@ -187,23 +192,7 @@ export default function Transactions() {
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <>
-          {loading ? (
-            <Flex
-              h="100vh"
-              w="100%"
-              justifyContent="center"
-              alignItems="center"
-            >
-              {/* <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-              /> */}
-              <Text>Loading ...</Text>
-            </Flex>
-          ) : !loading && selectedPlan == null ? (
+          {step == 1 ? (
             <Box pb="50px">
               <Tabs variant="unstyled" w="full">
                 <TabList justifyContent="center" mb="50px">
@@ -239,37 +228,71 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                <TabPanels>
-                  <TabPanel>
-                    <SimpleGrid
-                      columns={4}
-                      spacing="20px"
-                      minChildWidth="250px"
-                    >
-                      {plans.map((plan) => (
-                        <SubscriptionCard
-                          id={plan.id}
-                          title={plan.name}
-                          price={plan.amount}
-                          period={plan?.stripe_plan_id?.interval}
-                          description={plan?.stripe_plan_id?.description}
-                          advantages={plan.features}
-                          getplan={getSelectedPlan}
-                        ></SubscriptionCard>
-                      ))}
-                    </SimpleGrid>
-                  </TabPanel>
-                  <TabPanel>
-                    <Button variant="homePrimary" size="lg">
-                      Annually!
-                    </Button>
-                  </TabPanel>
-                </TabPanels>
+                {loading ? (
+                  <Flex
+                    h="200"
+                    w="100%"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Spinner
+                      thickness="2px"
+                      speed="0.95s"
+                      emptyColor="gray.200"
+                      color="blue.500"
+                      size="sm"
+                    />
+                  </Flex>
+                ) : (
+                  <TabPanels>
+                    <TabPanel>
+                      <SimpleGrid
+                        columns={4}
+                        spacing="20px"
+                        minChildWidth="250px"
+                      >
+                        {plans.map((plan) => (
+                          <SubscriptionCard
+                            key={plan.id}
+                            id={plan.id}
+                            title={plan.name}
+                            price={plan.amount}
+                            period={plan?.stripe_plan_id?.interval}
+                            description={plan?.stripe_plan_id?.description}
+                            advantages={plan.features}
+                            max_products={plan.max_products}
+                            getplan={getSelectedPlan}
+                            changeStep={changeStep}
+                          ></SubscriptionCard>
+                        ))}
+                      </SimpleGrid>
+                    </TabPanel>
+                    <TabPanel>
+                      <Button variant="homePrimary" size="lg">
+                        Annually!
+                      </Button>
+                    </TabPanel>
+                  </TabPanels>
+                )}
               </Tabs>
             </Box>
           ) : (
-            // payment
-            <PaymentPlan plan={selectedPlan} getplan={getSelectedPlan} />
+            // : step == 2 ? (
+            //   <div>
+            //     <Text>Select the survey you'ld like to access </Text>
+            //     <Button onClick={() => setStep(1)} variant="homePrimary" py-5>
+            //       Back
+            //     </Button>
+            //     <Button onClick={() => setStep(3)} variant="homePrimary" py-5>
+            //       Proceed
+            //     </Button>
+            //   </div>
+            // )
+            <PaymentPlan
+              plan={selectedPlan}
+              getplan={getSelectedPlan}
+              changeStep={changeStep}
+            />
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
