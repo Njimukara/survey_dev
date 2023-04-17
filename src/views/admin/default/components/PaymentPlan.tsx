@@ -272,6 +272,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       w="100%"
       py="10"
       mb="20"
+      mt="5"
       {...rest}
     >
       <form onSubmit={handleSubmit}>
@@ -574,7 +575,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 Make payment
               </Button>
             </Box>
-            <Flex w="100%" gap="5">
+            <Flex w="100%">
               {/* <Button
               variant="outline"
               py="7"
@@ -587,6 +588,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
             </Button> */}
               <Button
                 variant="outline"
+                w="full"
                 py="7"
                 my="3"
                 onClick={() => {

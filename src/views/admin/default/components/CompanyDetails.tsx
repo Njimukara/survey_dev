@@ -76,7 +76,7 @@ export default function CompanyDetails(props: {
       tempCountry = countryNameFromIso(tempCountry);
       setCountry(tempCountry);
     }
-  }, [company]);
+  }, [company, hasDetails]);
 
   if (!hasDetails) {
     return (
@@ -166,11 +166,13 @@ export default function CompanyDetails(props: {
           </Button>
         </Flex>
         <Flex w="70%">
-          <CompanyUsers
-            toggleModal={toggleCompanyUserModal}
-            isOpen={modalState}
-            company={company}
-          />
+          {hasDetails && (
+            <CompanyUsers
+              toggleModal={toggleCompanyUserModal}
+              isOpen={modalState}
+              company={company}
+            />
+          )}
         </Flex>
       </Flex>
     </Card>

@@ -66,6 +66,10 @@ import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useSubscriptionContext } from "contexts/SubscriptionContext";
+import PlanDetails from "views/admin/profile/components/PlanDetails";
+
+// const stripe = require("stripe")();
 
 export default function UserReports(props: { [x: string]: any }) {
   interface User {
@@ -88,11 +92,51 @@ export default function UserReports(props: { [x: string]: any }) {
   const [companyMembers, setCompanyMembers] = useState([]);
   // const [individualUser, setIndividualUser] = useState(1);
   var { data: session, status } = useSession();
+  const { store, addToStore } = useSubscriptionContext();
 
   const router = useRouter();
 
   // chakra toast
   const toast = useToast();
+
+  // try getting payment inten
+
+  const getPaymentIntent = () => {};
+
+  // const paymentIntents = await stripe.paymentIntents.list({
+  //   limit: 3,
+  // });
+
+  // get subscription
+  const getSubscriptionData = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "json",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
+        config
+      )
+      .then((response) => {
+        // Add it to the context
+        addToStore(response.data);
+        console.log(response.data);
+      })
+      .catch((err) => {
+        toast({
+          position: "bottom-right",
+          description: "Error getting company users",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      });
+  };
 
   // console.log(session);
   const getCompanyMembers = async () => {
@@ -136,6 +180,7 @@ export default function UserReports(props: { [x: string]: any }) {
 
   useEffect(() => {
     sessionUpdate();
+    getSubscriptionData();
     setUser(session?.user?.data);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       getCompanyMembers();
@@ -223,7 +268,13 @@ export default function UserReports(props: { [x: string]: any }) {
 
           <Flex gap="20px" mb="20px">
             <Flex w="70%">
-              <CurrentPlan />
+              {/* <CurrentPlan /> */}
+              <PlanDetails
+                gridArea="1 / 1 / 2 / 2"
+                name={user?.name}
+                email={user?.email}
+                date_joined={user?.date_joined}
+              />
             </Flex>
             <Flex w="30%">
               <Offers />

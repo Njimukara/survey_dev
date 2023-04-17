@@ -36,8 +36,10 @@ import { PricingCard } from "../components/card/PricingCard";
 import Footer from "../layouts/home/Footer";
 // import UserReports from './admin/default'
 import Navbar from "components/navbar/Navbar";
+import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
 import { useSession, signIn, signOut } from "next-auth/react";
+import axios from "axios";
 
 const slides = [
   {
@@ -127,12 +129,39 @@ const MonthlyPricing = [
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const { addToStore } = useSubscriptionContext();
   const [user, setUser] = useState(null);
   const router = useRouter();
+
+  const getSubscriptionData = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
+        config
+      )
+      .then((res) => {
+        console.log(res);
+        addToStore(res.data);
+        // router.push('/auth/verifyemail')
+      })
+      .catch((error) => {
+        // setHasDetails(false);
+        console.log(error);
+      });
+  };
+
   if (status === "authenticated") {
     router.push("/admin/default");
+    getSubscriptionData();
     // console.log(session);
-    // return <UserReports />;
   }
 
   return (

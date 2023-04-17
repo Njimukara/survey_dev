@@ -100,14 +100,14 @@ export default function ProfileOverview() {
         // setHasDetails(false);
         // console.log(error)
       });
-  }, [company]);
+  }, [hasDetails]);
 
   useEffect(() => {
     secondSession();
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       getCompany();
     }
-  }, []);
+  }, [hasDetails]);
 
   // Loader if the user session has not been loaded
   if (session == null || undefined) {

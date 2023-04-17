@@ -55,7 +55,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     setIso(null);
     setImageError(null);
   };
-  // display uploaded logo on fronend
+  // display uploaded logo on frontend
   const uploadToClient = (event: any) => {
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
@@ -75,7 +75,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const onSubmit = async () => {
     if (!image) {
       setSubmitting(false);
-      setImageError("please upload your ompany logo");
+      setImageError("please upload your company logo");
       return;
     }
     setImageError(null);
@@ -86,7 +86,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     formdata.append("city", companyCity);
     formdata.append("country", iso);
 
-    console.log(formdata);
+    // console.log(formdata);
     // setSubmitting(false)
 
     // headers
@@ -105,14 +105,14 @@ export default function RegisterCompany(props: { [x: string]: any }) {
         config
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         // router.push('/auth/verifyemail')
         toggleDetails(true);
         setSubmitting(false);
         closeModal();
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toggleDetails(false);
         setSubmitting(false);
       });

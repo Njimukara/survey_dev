@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
-const stripePromise = loadStripe("pk_test_qblFNYngBkEdjEZ16jxxoWSM");
+const stripePromise = loadStripe(process.env.stripe_public_key);
 
 export default function Payment() {
   const { data: session, status } = useSession();

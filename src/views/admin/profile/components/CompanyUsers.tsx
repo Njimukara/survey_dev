@@ -29,7 +29,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   useEffect(() => {
     // console.log("members", company?.members);
     setCompanyMembers(company?.members);
-    console.log(company);
+    // console.log(company);
   }, [company]);
 
   return (
@@ -102,7 +102,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
                 );
               })
             ) : (
-              <Flex justifyContent="center" alignItems="center">
+              <Flex justifyContent="center" alignItems="center" pt={10}>
                 <Text>No users yet</Text>
               </Flex>
             )}

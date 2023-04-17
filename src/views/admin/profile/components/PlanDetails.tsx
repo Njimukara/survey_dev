@@ -4,8 +4,9 @@ import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useSubscriptionContext } from "contexts/SubscriptionContext";
 
 export default function PlanDetails(props: {
   name: string;
@@ -32,12 +33,21 @@ export default function PlanDetails(props: {
     { bg: "whiteAlpha.100" }
   );
 
+  const { store, setStore, addToStore } = useSubscriptionContext();
+  const [subscriptions] = useState(store);
+
   const [mounted, setMounted] = useState(false);
   const [active, setActive] = useState(true);
   const [isActive, setIsActive] = useState(true);
 
   const date = new Date(date_joined).toLocaleDateString();
   const router = useRouter();
+
+  const formatDate = (date: any) => {
+    let newDate = new Date(date).toDateString();
+    console.log(newDate);
+    return newDate;
+  };
 
   // delete user acount
   const deleteAccount = async () => {
@@ -51,6 +61,9 @@ export default function PlanDetails(props: {
       });
   };
 
+  useEffect(() => {
+    console.log(store);
+  });
   return (
     <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
       <Flex justifyContent="space-between" alignItems="center" p={2}>
@@ -77,7 +90,8 @@ export default function PlanDetails(props: {
                     w="max-content"
                     borderRadius="10px"
                   >
-                    $40/Month
+                    $ {subscriptions[0]?.subscription_data[0]?.plan?.amount}/
+                    {subscriptions[0]?.subscription_data[0]?.plan?.interval}
                   </Text>
                 </Flex>
                 <Flex align="center" flexDirection="column">
@@ -111,10 +125,12 @@ export default function PlanDetails(props: {
               <Flex align="left" flexDirection="column" color={whiteText}>
                 <Text>Status</Text>
                 <Text color={whiteText} fontSize="large" fontWeight="bold">
-                  Active
+                  {subscriptions[0]?.subscription_data[0]?.status == "trialing"
+                    ? "Trial Plan"
+                    : subscriptions[0]?.subscription_data[0]?.status}
                 </Text>
                 <Text>
-                  Payment Method : <span color={whiteText}>Stripe</span>
+                  Payment Method : <span color={whiteText}>Stripe Invoice</span>
                 </Text>
                 {/* <Text fontSize='larger' fontWeight='extrabold'>
                   Stripe
@@ -122,13 +138,15 @@ export default function PlanDetails(props: {
                 <Text>
                   Licence bought on{" "}
                   <span style={{ color: whiteText, fontWeight: "bold" }}>
-                    September 9, 2022
+                    <>{formatDate(subscriptions[0]?.start_date)}</>
                   </span>
                 </Text>
                 <Text>
-                  Renew licence by{" "}
+                  {subscriptions[0]?.subscription_data[0]?.status == "trialing"
+                    ? "Confirm License by"
+                    : "Renew License by"}{" "}
                   <span style={{ color: whiteText, fontWeight: "bold" }}>
-                    September 9, 2023
+                    <>{formatDate(subscriptions[0]?.end_date)}</>
                   </span>
                 </Text>
               </Flex>

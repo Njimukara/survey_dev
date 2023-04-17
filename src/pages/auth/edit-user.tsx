@@ -112,7 +112,7 @@ export default function EditUser({ providers }: any) {
     setEmailModal(state);
   };
 
-  toggleEmailModal;
+  // toggleEmailModal;
 
   // function to upddate user
   const updateUser = async () => {
@@ -121,7 +121,6 @@ export default function EditUser({ providers }: any) {
     let formData = new FormData();
     formData.append("name", name);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
-    formData.set("avatar", defaulimage);
     if (image != null) {
       formData.set("avatar", image);
     }
@@ -417,7 +416,7 @@ export default function EditUser({ providers }: any) {
           </Flex>
         </form>
         <SetPassword toggleModal={toggleModal} opened={isOpen} />
-        <SetEmail toggleEmailModal={toggleModal} opened={emailModal} />
+        <SetEmail toggleEmailModal={toggleEmailModal} opened={emailModal} />
       </Card>
     </AdminLayout>
   );

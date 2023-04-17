@@ -19,6 +19,7 @@ import "theme/styles.css";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { AuthGuard } from "layouts/auth/AuthGuard";
+import { SubscriptionContextProvider } from "contexts/SubscriptionContext";
 
 // add requireAuth to AppProps
 type AppPropsWithAuth = AppProps<{ session?: Session }> & {
@@ -44,10 +45,14 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
       >
         {Component.requireAuth ? (
           <AuthGuard>
-            <Component {...pageProps} />
+            <SubscriptionContextProvider>
+              <Component {...pageProps} />
+            </SubscriptionContextProvider>
           </AuthGuard>
         ) : (
-          <Component {...pageProps} />
+          <SubscriptionContextProvider>
+            <Component {...pageProps} />
+          </SubscriptionContextProvider>
         )}
         {/* <Component {...pageProps} /> */}
       </SessionProvider>
