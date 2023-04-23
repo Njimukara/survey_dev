@@ -40,6 +40,7 @@ import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
+import { usePlanContext } from "contexts/PlanContext";
 
 const slides = [
   {
@@ -128,28 +129,29 @@ const MonthlyPricing = [
 ];
 
 export default function Home() {
+  const [plans, setPlans] = useState([]);
   const { data: session, status } = useSession();
-  const { addToStore } = useSubscriptionContext();
+  const { addToStore } = usePlanContext();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
-  const getSubscriptionData = async () => {
+  const getPlanData = async () => {
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
 
     await axios
       .get(
-        "https://surveyplanner.pythonanywhere.com/api/company/my-company/",
+        "https://surveyplanner.pythonanywhere.com/api/plans/list-with-price",
         config
       )
       .then((res) => {
         console.log(res);
         addToStore(res.data);
+        setPlans(res.data);
         // router.push('/auth/verifyemail')
       })
       .catch((error) => {
@@ -160,9 +162,13 @@ export default function Home() {
 
   if (status === "authenticated") {
     router.push("/admin/default");
-    getSubscriptionData();
+    // getSubscriptionData();
     // console.log(session);
   }
+
+  useEffect(() => {
+    getPlanData();
+  }, []);
 
   return (
     <>
@@ -308,14 +314,14 @@ export default function Home() {
             <TabPanels>
               <TabPanel>
                 <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
-                  {MonthlyPricing.map((x) => (
+                  {plans.map((x) => (
                     <PricingCard
                       key={x.id}
-                      title={x.title}
-                      price={x.price}
-                      period={x.period}
-                      description={x.description}
-                      advantages={x.advantages}
+                      title={x.name}
+                      price={x.amount}
+                      period={x?.stripe_plan_id?.interval}
+                      description={x?.stripe_plan_id?.description}
+                      advantages={x.features}
                     ></PricingCard>
                   ))}
                 </SimpleGrid>

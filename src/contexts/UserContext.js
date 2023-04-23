@@ -2,15 +2,15 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
 
-export const subscriptionContext = React.createContext();
+export const CurrentUserContext = React.createContext();
 
-export const SubscriptionProvider = ({ children }) => {
-  const [subscription, setSubscription] = React.useState([]);
+export const CurrentUserProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   const { data: session } = useSession();
 
-  const fetchSubscription = async () => {
+  const fetchCurrentUser = async () => {
     const config = {
       headers: {
         "Content-Type": "json",
@@ -20,28 +20,24 @@ export const SubscriptionProvider = ({ children }) => {
     };
 
     await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
+      .get("https://surveyplanner.pythonanywhere.com/auth/users/me/", config)
       .then((response) => {
         // Add it to the context
-        setSubscription(response.data);
+        setCurrentUser(response.data);
         setLoading(false);
       })
       .catch((err) => {
-        setSubscription([]);
         setLoading(false);
       });
   };
 
   return (
-    <subscriptionContext.Provider
-      value={{ loading, subscription, fetchSubscription }}
+    <CurrentUserContext.Provider
+      value={{ loading, currentUser, fetchCurrentUser }}
     >
       {children}
-    </subscriptionContext.Provider>
+    </CurrentUserContext.Provider>
   );
 };
 
-export const useSubscription = () => React.useContext(subscriptionContext);
+export const useCurrentUser = () => React.useContext(CurrentUserContext);

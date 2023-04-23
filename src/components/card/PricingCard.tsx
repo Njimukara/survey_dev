@@ -14,11 +14,12 @@ import Card from "./Card";
 type ArrayObject = {
   id?: number;
   name?: String;
+  description?: String;
 };
 
 type PricingProps = {
   title?: String;
-  price?: Number;
+  price?: number;
   period?: String;
   description?: String;
   advantages?: Array<ArrayObject>;
@@ -40,7 +41,7 @@ export const PricingCard = (props: PricingProps) => {
             </Text>
             <Heading mb="20px" fontSize="16px">
               <Text display="inline-block" fontSize="64px">
-                ${props.price?.toString()}
+                ${Math.round(props.price)}
               </Text>
               / {props.period}
             </Heading>
@@ -57,7 +58,7 @@ export const PricingCard = (props: PricingProps) => {
                       color="primary.500"
                       fontSize="18px"
                     />
-                    {x.name}
+                    {x?.description}
                   </ListItem>
                 ))}
               </List>

@@ -54,30 +54,43 @@ const routes: IRoute[] = [
     component: DataTables,
     subRoutes: [
       {
-        name: "Product 1",
+        id: 1,
+        name: "Echo Sounder",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_1",
+        path: "/echo-sounder",
         component: DataTables,
       },
       {
-        name: "Product 2",
+        id: 2,
+        name: "Dynamic Lyder",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_2",
+        path: "/dynamic-lyder",
         component: DataTables,
       },
       {
-        name: "Product 3",
+        id: 3,
+        name: "Multibeam EchoSounder",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_3",
+        path: "/multibbeam-echosounder",
+        component: DataTables,
+      },
+      {
+        id: 4,
+        name: "2D Acoustic Sonar",
+        layout: "/admin",
+        icon: (
+          <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
+        ),
+        path: "/acoustic-sonar",
         component: DataTables,
       },
     ],

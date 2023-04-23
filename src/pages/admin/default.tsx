@@ -66,8 +66,9 @@ import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useSubscriptionContext } from "contexts/SubscriptionContext";
+import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
+import { useCurrentUser } from "contexts/UserContext";
 
 // const stripe = require("stripe")();
 
@@ -83,60 +84,24 @@ export default function UserReports(props: { [x: string]: any }) {
     };
   }
 
+  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
+  // const { subscription, fetchSubscription } = useCurrentUser();
+  // console.log(subscription);
+
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
 
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
+  const [individualUser, setIndividualUser] = useState(1);
   const [companyMembers, setCompanyMembers] = useState([]);
-  // const [individualUser, setIndividualUser] = useState(1);
-  var { data: session, status } = useSession();
-  const { store, addToStore } = useSubscriptionContext();
+  const { data: session, status } = useSession();
 
-  const router = useRouter();
+  // const router = useRouter();
 
   // chakra toast
   const toast = useToast();
-
-  // try getting payment inten
-
-  const getPaymentIntent = () => {};
-
-  // const paymentIntents = await stripe.paymentIntents.list({
-  //   limit: 3,
-  // });
-
-  // get subscription
-  const getSubscriptionData = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
-      .then((response) => {
-        // Add it to the context
-        addToStore(response.data);
-        console.log(response.data);
-      })
-      .catch((err) => {
-        toast({
-          position: "bottom-right",
-          description: "Error getting company users",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
-      });
-  };
 
   // console.log(session);
   const getCompanyMembers = async () => {
@@ -167,27 +132,26 @@ export default function UserReports(props: { [x: string]: any }) {
       });
   };
 
-  const sessionUpdate = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {
-        // console.log(err);
-      });
-  }, [session]);
+  // const sessionUpdate = useCallback(async () => {
+  //   await getSession()
+  //     .then((res) => {
+  //       session = res;
+  //       setUser(res?.user?.data);
+  //     })
+  //     .catch((err) => {
+  //       // console.log(err);
+  //     });
+  // }, [session]);
 
   useEffect(() => {
-    sessionUpdate();
-    getSubscriptionData();
-    setUser(session?.user?.data);
-    if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      getCompanyMembers();
+    fetchCurrentUser();
+    setUser(currentUser);
+    if (session?.user?.data?.user_profile?.user_type != companyUser) {
+      return;
     } else {
-      setCompanyUser(1);
+      getCompanyMembers();
     }
-  }, [session, companyUser]);
+  }, [loading]);
 
   return (
     <AdminLayout>
@@ -267,18 +231,21 @@ export default function UserReports(props: { [x: string]: any }) {
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
-            <Flex w="70%">
-              {/* <CurrentPlan /> */}
-              <PlanDetails
-                gridArea="1 / 1 / 2 / 2"
-                name={user?.name}
-                email={user?.email}
-                date_joined={user?.date_joined}
-              />
-            </Flex>
-            <Flex w="30%">
-              <Offers />
-            </Flex>
+            {user?.user_profile?.user_type == companyUser ||
+            user?.user_profile?.user_type == individualUser ? (
+              <>
+                <Flex w="70%">
+                  <PlanDetails />
+                </Flex>
+                <Flex w="30%">
+                  <Offers />
+                </Flex>
+              </>
+            ) : (
+              <Flex w="100%">
+                <Offers />
+              </Flex>
+            )}
             {/* <MiniCalendar h='100%' minW='100%' selectRange={false} /> */}
           </Flex>
 
@@ -300,12 +267,20 @@ export default function UserReports(props: { [x: string]: any }) {
             />
             <DailyTraffic />
           </SimpleGrid>
-          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <ComplexTable
-              columnsData={columnsDataComplex}
-              tableData={tableDataComplex as unknown as TableData[]}
-            />
-          </SimpleGrid>
+
+          {user?.user_profile?.user_type == companyUser ||
+            (user?.user_profile?.user_type == individualUser && (
+              <SimpleGrid
+                columns={{ base: 1, md: 1, xl: 1 }}
+                gap="20px"
+                mb="20px"
+              >
+                <ComplexTable
+                  columnsData={columnsDataComplex}
+                  tableData={tableDataComplex as unknown as TableData[]}
+                />
+              </SimpleGrid>
+            ))}
         </>
       </Box>
     </AdminLayout>

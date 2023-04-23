@@ -13,6 +13,7 @@ import {
 import Footer from "../layouts/home/Footer";
 
 export default function Custom404() {
+  const router = useRouter();
   return (
     <Card h="100vh" bg="white">
       <Heading pt="10" pl="20">
@@ -32,8 +33,13 @@ export default function Custom404() {
             We searched high and low but couldn't find what you're looking for
           </Text>
           <Text mb="4">Let's find a better place for you to go</Text>
-          <Button w="50%" variant="homePrimary" py="6">
-            <Link href="/">Take me home</Link>
+          <Button
+            w="50%"
+            variant="homePrimary"
+            py="6"
+            onClick={() => router.push("/")}
+          >
+            <Link href="/admin/default">Take me home</Link>
           </Button>
         </Flex>
         <Flex

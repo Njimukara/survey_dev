@@ -4,17 +4,12 @@ import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
 import { signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import { useSubscriptionContext } from "contexts/SubscriptionContext";
+import { useSubscription } from "contexts/SubscriptionContext";
 
-export default function PlanDetails(props: {
-  name: string;
-  email: string;
-  date_joined: number | string;
-  [x: string]: any;
-}) {
-  const { name, email, date_joined, ...rest } = props;
+export default function PlanDetails(props: { [x: string]: any }) {
+  const { ...rest } = props;
 
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");
@@ -33,19 +28,23 @@ export default function PlanDetails(props: {
     { bg: "whiteAlpha.100" }
   );
 
-  const { store, setStore, addToStore } = useSubscriptionContext();
-  const [subscriptions] = useState(store);
+  // const { store } = useSubscriptionContext();
+  const { loading, subscription, fetchSubscription } = useSubscription();
 
-  const [mounted, setMounted] = useState(false);
-  const [active, setActive] = useState(true);
-  const [isActive, setIsActive] = useState(true);
+  const [subscriptions, setSubscriptions] = useState([]);
+  // const calculation = useMemo(() => getSubscriptions(count), [subscription]);
 
-  const date = new Date(date_joined).toLocaleDateString();
+  // const [mounted, setMounted] = useState(false);
+  // const [active, setActive] = useState(true);
+  // const [isActive, setIsActive] = useState(true);
+  // console.log(loading);
+
+  // const date = new Date(date_joined).toLocaleDateString();
   const router = useRouter();
 
   const formatDate = (date: any) => {
     let newDate = new Date(date).toDateString();
-    console.log(newDate);
+    // console.log(newDate);
     return newDate;
   };
 
@@ -62,95 +61,129 @@ export default function PlanDetails(props: {
   };
 
   useEffect(() => {
-    console.log(store);
-  });
+    fetchSubscription();
+    setSubscriptions(subscription);
+  }, [loading]);
   return (
     <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
       <Flex justifyContent="space-between" alignItems="center" p={2}>
         <Flex flexDirection="column" w="100%">
-          <Card bgGradient="linear(to-b, primary.500, brand.700)">
-            <Text mb={2} color={whiteText}>
+          <Card
+            bgGradient={
+              subscriptions.length == 0
+                ? "white"
+                : "linear(to-b, primary.500, brand.700)"
+            }
+          >
+            <Text
+              mb={2}
+              color={subscriptions.length == 0 ? textColorSecondary : whiteText}
+            >
               Subscirption Details
             </Text>
-            <Box>
-              <Flex
-                w="100%"
-                justify="space-between"
-                flexDirection={{ base: "column", lg: "row" }}
-              >
-                <Flex align="left" fontWeight="bold" flexDirection="column">
-                  <Text fontSize="larger" fontWeight="bold" color={whiteText}>
-                    Single Product Monthly
-                  </Text>
-                  <Text
-                    bg={boxBg}
-                    px="2"
-                    my="2"
-                    py="1"
-                    w="max-content"
-                    borderRadius="10px"
-                  >
-                    $ {subscriptions[0]?.subscription_data[0]?.plan?.amount}/
-                    {subscriptions[0]?.subscription_data[0]?.plan?.interval}
-                  </Text>
-                </Flex>
-                <Flex align="center" flexDirection="column">
-                  <Button
-                    mb="15px"
-                    w="150px"
-                    fontSize="small"
-                    variant="homePrimary"
-                    py="5"
-                    color={whiteText}
-                    _hover={bgHover}
-                    _focus={bgFocus}
-                    _active={bgFocus}
-                  >
-                    Upgrade Plan
-                  </Button>
-                  <Button
-                    w="150px"
-                    fontSize="small"
-                    py="4"
-                    variant="outline"
-                    color={textColor}
-                    bg={"white"}
-                    _hover={{ bg: boxBg, color: textColor }}
-                  >
-                    Cancel
-                  </Button>
-                </Flex>
-              </Flex>
 
-              <Flex align="left" flexDirection="column" color={whiteText}>
-                <Text>Status</Text>
-                <Text color={whiteText} fontSize="large" fontWeight="bold">
-                  {subscriptions[0]?.subscription_data[0]?.status == "trialing"
-                    ? "Trial Plan"
-                    : subscriptions[0]?.subscription_data[0]?.status}
-                </Text>
-                <Text>
-                  Payment Method : <span color={whiteText}>Stripe Invoice</span>
-                </Text>
-                {/* <Text fontSize='larger' fontWeight='extrabold'>
+            {!loading && subscriptions.length == 0 ? (
+              <Box py="5">
+                <Text mb="4">You do not have any subscription</Text>
+                <Button
+                  variant="homePrimary"
+                  py="5"
+                  onClick={() => {
+                    router.push("/admin/transactions");
+                  }}
+                >
+                  Subscribe
+                </Button>
+              </Box>
+            ) : !loading && subscriptions.length != 0 ? (
+              <Box>
+                <Flex
+                  w="100%"
+                  justify="space-between"
+                  flexDirection={{ base: "column", lg: "row" }}
+                >
+                  <Flex align="left" fontWeight="bold" flexDirection="column">
+                    <Text fontSize="larger" fontWeight="bold" color={whiteText}>
+                      {subscriptions[0]?.plan?.name}
+                    </Text>
+                    <Text
+                      bg={boxBg}
+                      px="2"
+                      my="2"
+                      py="1"
+                      w="max-content"
+                      borderRadius="10px"
+                    >
+                      $ {subscriptions[0]?.subscription_data?.plan?.amount}
+                      {/* spaces and forward slash */}
+                      &nbsp;/&nbsp;
+                      {subscriptions[0]?.subscription_data?.plan?.interval}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" flexDirection="column">
+                    <Button
+                      mb="15px"
+                      w="150px"
+                      fontSize="small"
+                      variant="homePrimary"
+                      py="5"
+                      color={whiteText}
+                      _hover={bgHover}
+                      _focus={bgFocus}
+                      _active={bgFocus}
+                    >
+                      Upgrade Plan
+                    </Button>
+                    <Button
+                      w="150px"
+                      fontSize="small"
+                      py="4"
+                      variant="outline"
+                      color={textColor}
+                      bg={"white"}
+                      _hover={{ bg: boxBg, color: textColor }}
+                    >
+                      Cancel
+                    </Button>
+                  </Flex>
+                </Flex>
+
+                <Flex align="left" flexDirection="column" color={whiteText}>
+                  <Text>Status</Text>
+                  <Text color={whiteText} fontSize="large" fontWeight="bold">
+                    {subscriptions[0]?.subscription_data?.status == "trialing"
+                      ? "Trial Plan"
+                      : subscriptions[0]?.subscription_data?.status}
+                  </Text>
+                  <Text>
+                    Payment Method :{" "}
+                    <span color={whiteText}>Stripe Invoice</span>
+                  </Text>
+                  {/* <Text fontSize='larger' fontWeight='extrabold'>
                   Stripe
                 </Text> */}
-                <Text>
-                  Licence bought on{" "}
-                  <span style={{ color: whiteText, fontWeight: "bold" }}>
-                    <>{formatDate(subscriptions[0]?.start_date)}</>
-                  </span>
-                </Text>
-                <Text>
-                  {subscriptions[0]?.subscription_data[0]?.status == "trialing"
-                    ? "Confirm License by"
-                    : "Renew License by"}{" "}
-                  <span style={{ color: whiteText, fontWeight: "bold" }}>
-                    <>{formatDate(subscriptions[0]?.end_date)}</>
-                  </span>
-                </Text>
-              </Flex>
-            </Box>
+                  <Text>
+                    Licence bought on{" "}
+                    <span style={{ color: whiteText, fontWeight: "bold" }}>
+                      <>{formatDate(subscriptions[0]?.start_date)}</>
+                    </span>
+                  </Text>
+                  <Text>
+                    {subscriptions[0]?.subscription_data[0]?.status ==
+                    "trialing"
+                      ? "Confirm License by"
+                      : "Renew License by"}{" "}
+                    <span style={{ color: whiteText, fontWeight: "bold" }}>
+                      <>{formatDate(subscriptions[0]?.end_date)}</>
+                    </span>
+                  </Text>
+                </Flex>
+              </Box>
+            ) : (
+              <Box alignItems="center">
+                <Text>Loading</Text>
+              </Box>
+            )}
           </Card>
         </Flex>
         {/* <Flex>Payment Details</Flex> */}

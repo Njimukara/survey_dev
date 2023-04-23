@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Flex, Grid, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Grid, Spinner, useToast } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 
@@ -41,39 +41,40 @@ import avatar from "img/avatars/avatar4.png";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSession, getSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
-import RegisterCompany from "views/admin/default/components/RegisterCompany";
+// import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import axios from "axios";
-import { useRouter } from "next/router";
-import { getServerSession } from "next-auth";
+import { useCurrentUser } from "contexts/UserContext";
 
 export default function ProfileOverview() {
+  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
   const [user, setUser] = useState<any>();
   const [company, setCompany] = useState();
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
-  const [updatedSession, setUpdatedSession] = useState<any>();
+  // const [updatedSession, setUpdatedSession] = useState<any>();
+  const [individualUser, setIndividualUser] = useState(1);
 
   // const cachedValue = useMemo(secondSession(), session)
-  // const [individualUser, setIndividualUser] = useState(1)
   var { data: session } = useSession();
 
-  const secondSession = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        // console.log(res);
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [session]);
-
-  // const cachedValue = useMemo(getCompany(), [session)
+  // const secondSession = useCallback(async () => {
+  //   await getSession()
+  //     .then((res) => {
+  //       // console.log(res);
+  //       session = res;
+  //       setUser(res?.user?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, [session]);
 
   const toggleHasDetails = (state: boolean) => {
     setHasDetails(state);
   };
+
+  // chakra toast
+  const toast = useToast();
 
   // get company
   const getCompany = useCallback(async () => {
@@ -91,23 +92,28 @@ export default function ProfileOverview() {
         config
       )
       .then((res) => {
-        // console.log(res);
         setHasDetails(true);
         setCompany(res.data);
-        // router.push('/auth/verifyemail')
       })
       .catch((error) => {
-        // setHasDetails(false);
-        // console.log(error)
+        toast({
+          position: "bottom-right",
+          description: "Error getting company details",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
   }, [hasDetails]);
 
   useEffect(() => {
-    secondSession();
+    // secondSession();
+    fetchCurrentUser();
+    setUser(currentUser);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       getCompany();
     }
-  }, [hasDetails]);
+  }, [hasDetails, loading]);
 
   // Loader if the user session has not been loaded
   if (session == null || undefined) {
@@ -144,29 +150,27 @@ export default function ProfileOverview() {
           <Banner
             gridArea="1 / 1 / 2 / 2"
             avatar={user?.user_profile?.avatar}
-            name={user?.name}
-            email={user?.email}
-            date_joined={user?.date_joined}
+            name={user?.name || "loading"}
+            email={user?.email || "loading"}
+            date_joined={user?.date_joined || "loading"}
           />
         </Grid>
-        <Grid
-          templateColumns={{
-            base: "1fr",
-            lg: "1fr",
-          }}
-          templateRows={{
-            base: "repeat(3, 1fr)",
-            lg: "1fr",
-          }}
-          gap={{ base: "20px", xl: "20px" }}
-        >
-          <PlanDetails
-            gridArea="1 / 1 / 2 / 2"
-            name={user?.name}
-            email={user?.email}
-            date_joined={user?.date_joined}
-          />
-        </Grid>
+        {(user?.user_profile?.user_type == companyUser ||
+          user?.user_profile?.user_type == individualUser) && (
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              lg: "1fr",
+            }}
+            templateRows={{
+              base: "repeat(3, 1fr)",
+              lg: "1fr",
+            }}
+            gap={{ base: "20px", xl: "20px" }}
+          >
+            <PlanDetails />
+          </Grid>
+        )}
         <Grid>
           {user?.user_profile?.user_type == companyUser && (
             <CompanyDetails

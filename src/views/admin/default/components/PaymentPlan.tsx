@@ -39,7 +39,7 @@ import * as Yup from "yup";
 // import { MultiSelect } from "chakra-multiselect";
 
 export default function PaymentPlan(props: { [x: string]: any }) {
-  const { plan, getplan, changeStep, ...rest } = props;
+  const { plan, getplan, changeStep, handleUpgrade, ...rest } = props;
 
   type subscriptionData = {
     [key: string]: any; //  variable key
@@ -98,7 +98,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
   const [cancelAt, setCancelAt] = useState<Date>();
-  const [daysUntilDue] = useState<number>(7);
+  const [daysUntilDue] = useState<number>(0);
   const [currency, setCurrency] = useState<string>("usd");
   const [planID, setPlanID] = useState<number>();
   const [value, setValue] = useState<number[]>([]);
@@ -192,7 +192,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       customer_livemode: customerLivemode,
       trial_period_days: trialPeriodDays,
       cancel_at_period_end: cancelAtPeriodEnd,
-      description: description,
+      description: `Invoice for ${customerName} subscriping to the ${plan.title}`,
       collection_method: collectionMethod,
       cancel_at: cancelAt,
       days_until_due: daysUntilDue,
@@ -258,7 +258,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   });
 
   useEffect(() => {
-    let cancelDate = getCancelDate(7);
+    let cancelDate = getCancelDate(daysUntilDue);
     secondSession();
     setCancelAt(cancelDate);
     setTotal(plan?.price);
@@ -594,6 +594,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 onClick={() => {
                   getplan(null);
                   changeStep(1);
+                  handleUpgrade(false);
                 }}
               >
                 cancel

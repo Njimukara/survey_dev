@@ -80,8 +80,6 @@ export default function Banner(props: {
       },
     };
 
-    console.log(session?.user?.data.id);
-
     await axios
       .delete(
         `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
@@ -148,7 +146,7 @@ export default function Banner(props: {
               <Text color="gray.400" transform="capitalize">
                 Joined Since
               </Text>
-              <Text>{date}</Text>
+              <Text>{date == "Invalid Date" ? "loading" : date}</Text>
             </Box>
           </Flex>
 

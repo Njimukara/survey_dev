@@ -47,81 +47,79 @@ import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
 import { getSession, useSession } from "next-auth/react";
 import axios from "axios";
+import { Plan, subsciptionPlan } from "../../../types/data";
+import { useSubscriptionContext } from "contexts/SubscriptionContext";
+import PlanDetails from "views/admin/profile/components/PlanDetails";
+import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
 
-const MonthlyPricing = [
-  {
-    id: 1,
-    title: "Single Product Licence",
-    price: 48,
-    period: "Month",
-    description:
-      "Keep it simple, This licence gives you access to one product of your choice",
-    advantages: [
-      { name: "Access to a single product " },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Double Product Licence",
-    price: 98,
-    period: "Month",
-    description:
-      "In need of more, This licence gives you access to two product of your choice",
-    advantages: [
-      { name: "Access to two producta" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
-    ],
-  },
-  {
-    id: 3,
-    title: "Triple Product Licence",
-    price: 158,
-    period: "Month",
-    description:
-      "Make it flexible, This licence gives you access to three product of your choice",
-    advantages: [
-      { name: "Access to a three producta" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
-    ],
-  },
-  {
-    id: 4,
-    title: "Complete Product Licence",
-    price: 48,
-    period: "Month",
-    description:
-      "No stressing, No limits, This licence gives you access to all our products",
-    advantages: [
-      { name: "Access to all products" },
-      { name: "Unlimited Generation of surveys" },
-      { name: "Customer Support" },
-    ],
-  },
-];
+// mock data
+// const MonthlyPricing = [
+//   {
+//     id: 1,
+//     title: "Single Product Licence",
+//     price: 48,
+//     period: "Month",
+//     description:
+//       "Keep it simple, This licence gives you access to one product of your choice",
+//     advantages: [
+//       { name: "Access to a single product " },
+//       { name: "Unlimited Generation of surveys" },
+//       { name: "Customer Support" },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     title: "Double Product Licence",
+//     price: 98,
+//     period: "Month",
+//     description:
+//       "In need of more, This licence gives you access to two product of your choice",
+//     advantages: [
+//       { name: "Access to two producta" },
+//       { name: "Unlimited Generation of surveys" },
+//       { name: "Customer Support" },
+//     ],
+//   },
+//   {
+//     id: 3,
+//     title: "Triple Product Licence",
+//     price: 158,
+//     period: "Month",
+//     description:
+//       "Make it flexible, This licence gives you access to three product of your choice",
+//     advantages: [
+//       { name: "Access to a three producta" },
+//       { name: "Unlimited Generation of surveys" },
+//       { name: "Customer Support" },
+//     ],
+//   },
+//   {
+//     id: 4,
+//     title: "Complete Product Licence",
+//     price: 48,
+//     period: "Month",
+//     description:
+//       "No stressing, No limits, This licence gives you access to all our products",
+//     advantages: [
+//       { name: "Access to all products" },
+//       { name: "Unlimited Generation of surveys" },
+//       { name: "Customer Support" },
+//     ],
+//   },
+// ];
 
 export default function Transactions() {
-  type ArrayObject = {
-    name?: String;
-  };
-
-  interface subsciptionPlan {
-    title?: String;
-    price?: Number;
-    period?: String;
-    description?: String;
-    advantages?: Array<ArrayObject>;
-  }
-
   // component variables
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [user, setUser] = useState(null);
+  const [upgrade, setUpgrade] = useState(false);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(1);
   const [plans, setPlans] = useState([]);
+
+  // get user subscription from store
+  const { store } = useSubscriptionContext();
+  const [subscriptions, setSubscriptions] = useState(store);
 
   // chakra toast
   const toast = useToast();
@@ -149,6 +147,11 @@ export default function Transactions() {
       })
       .catch((err) => {});
   }, [session]);
+
+  const handleUpgrade = (state: boolean) => {
+    setUpgrade(state);
+    // setStep(newstep);
+  };
 
   // get subscription plans from database
   const getPlans = useCallback(async () => {
@@ -186,21 +189,35 @@ export default function Transactions() {
   useEffect(() => {
     secondSession();
     getPlans();
+    setSubscriptions(store);
   }, []);
 
-  return (
-    <AdminLayout>
-      <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-        <>
-          {step == 1 ? (
+  if (subscriptions.length != 0) {
+    return (
+      <AdminLayout>
+        <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+          {/* {
+            if upgrade and step == 2{show payment}
+            else (upgrade) and step ==1 {show plans}
+            else show subscirpiton
+          } */}
+
+          {upgrade && step == 2 ? (
+            <PaymentPlan
+              plan={selectedPlan}
+              getplan={getSelectedPlan}
+              changeStep={changeStep}
+              handleUpgrade={handleUpgrade}
+            />
+          ) : upgrade && step == 1 ? (
             <Box pb="50px">
               <Tabs variant="unstyled" w="full">
-                <TabList justifyContent="center" mb="50px">
+                <TabList justifyContent="center" mb="30px">
                   <Tab
                     bg="white"
                     borderLeftRadius="20px"
-                    pt="9"
-                    pb="8"
+                    pt="5"
+                    pb="5"
                     px="20"
                     fontSize="20px"
                     fontWeight="semibold"
@@ -215,8 +232,8 @@ export default function Transactions() {
                   <Tab
                     bg="white"
                     borderRightRadius="20px"
-                    pt="9"
-                    pb="8"
+                    pt="5"
+                    pb="5"
                     px="20"
                     fontSize="20px"
                     fontWeight="semibold"
@@ -251,7 +268,7 @@ export default function Transactions() {
                         spacing="20px"
                         minChildWidth="250px"
                       >
-                        {plans.map((plan) => (
+                        {plans.map((plan: Plan) => (
                           <SubscriptionCard
                             key={plan.id}
                             id={plan.id}
@@ -277,17 +294,113 @@ export default function Transactions() {
               </Tabs>
             </Box>
           ) : (
-            // : step == 2 ? (
-            //   <div>
-            //     <Text>Select the survey you'ld like to access </Text>
-            //     <Button onClick={() => setStep(1)} variant="homePrimary" py-5>
-            //       Back
-            //     </Button>
-            //     <Button onClick={() => setStep(3)} variant="homePrimary" py-5>
-            //       Proceed
-            //     </Button>
-            //   </div>
-            // )
+            <SubscirptionDetails upgrade={handleUpgrade} />
+          )}
+
+          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
+            <ComplexTable
+              columnsData={columnsDataComplex}
+              tableData={tableDataComplex as unknown as TableData[]}
+            />
+          </SimpleGrid>
+        </Box>
+      </AdminLayout>
+    );
+  }
+  return (
+    <AdminLayout>
+      <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+        <>
+          {/* {subscriptions.length != 0 && !upgrade && (
+              <Box>
+                <SubscirptionDetails />
+              </Box>
+            )} */}
+          {step == 1 ? (
+            <Box pb="50px">
+              <Tabs variant="unstyled" w="full">
+                <TabList justifyContent="center" mb="30px">
+                  <Tab
+                    bg="white"
+                    borderLeftRadius="20px"
+                    pt="5"
+                    pb="5"
+                    px="20"
+                    fontSize="20px"
+                    fontWeight="semibold"
+                    _selected={{
+                      bg: "primary.500",
+                      color: "white",
+                      borderLeftRadius: "20px",
+                    }}
+                  >
+                    Monthly
+                  </Tab>
+                  <Tab
+                    bg="white"
+                    borderRightRadius="20px"
+                    pt="5"
+                    pb="5"
+                    px="20"
+                    fontSize="20px"
+                    fontWeight="semibold"
+                    _selected={{
+                      bg: "primary.500",
+                      color: "white",
+                    }}
+                  >
+                    Annually
+                  </Tab>
+                </TabList>
+                {loading ? (
+                  <Flex
+                    h="200"
+                    w="100%"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Spinner
+                      thickness="2px"
+                      speed="0.95s"
+                      emptyColor="gray.200"
+                      color="blue.500"
+                      size="sm"
+                    />
+                  </Flex>
+                ) : (
+                  <TabPanels>
+                    <TabPanel>
+                      <SimpleGrid
+                        columns={4}
+                        spacing="20px"
+                        minChildWidth="250px"
+                      >
+                        {plans.map((plan: Plan) => (
+                          <SubscriptionCard
+                            key={plan.id}
+                            id={plan.id}
+                            title={plan.name}
+                            price={plan.amount}
+                            period={plan?.stripe_plan_id?.interval}
+                            description={plan?.stripe_plan_id?.description}
+                            advantages={plan.features}
+                            max_products={plan.max_products}
+                            getplan={getSelectedPlan}
+                            changeStep={changeStep}
+                          ></SubscriptionCard>
+                        ))}
+                      </SimpleGrid>
+                    </TabPanel>
+                    <TabPanel>
+                      <Button variant="homePrimary" size="lg">
+                        Annually!
+                      </Button>
+                    </TabPanel>
+                  </TabPanels>
+                )}
+              </Tabs>
+            </Box>
+          ) : (
             <PaymentPlan
               plan={selectedPlan}
               getplan={getSelectedPlan}
@@ -306,4 +419,5 @@ export default function Transactions() {
     </AdminLayout>
   );
 }
+
 Transactions.requireAuth = true;
