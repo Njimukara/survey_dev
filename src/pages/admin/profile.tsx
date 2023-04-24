@@ -73,8 +73,8 @@ export default function ProfileOverview() {
     setHasDetails(state);
   };
 
-  // chakra toast
-  const toast = useToast();
+  // // chakra toast
+  // const toast = useToast();
 
   // get company
   const getCompany = useCallback(async () => {

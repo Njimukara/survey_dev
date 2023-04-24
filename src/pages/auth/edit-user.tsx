@@ -211,7 +211,14 @@ export default function EditUser({ providers }: any) {
         // router.push("/auth/verifyemail");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
+        toast({
+          position: "bottom-right",
+          description: "Error getting user details",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
