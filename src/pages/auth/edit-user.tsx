@@ -216,7 +216,10 @@ export default function EditUser({ providers }: any) {
   };
 
   useEffect(() => {
-    getUser();
+    const fetchUser = async () => {
+      await getUser();
+    };
+    fetchUser();
   }, [session]);
 
   return (
@@ -384,7 +387,7 @@ export default function EditUser({ providers }: any) {
                     fontWeight="500"
                   >
                     {/* <Link href="/admin/profile">Profile</Link> */}
-                    Profile
+                    Back
                   </Button>
                 </Flex>
               ) : (

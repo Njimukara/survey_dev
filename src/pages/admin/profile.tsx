@@ -55,7 +55,7 @@ export default function ProfileOverview() {
   const [individualUser, setIndividualUser] = useState(1);
 
   // const cachedValue = useMemo(secondSession(), session)
-  var { data: session } = useSession();
+  const { data: session } = useSession();
 
   // const secondSession = useCallback(async () => {
   //   await getSession()
