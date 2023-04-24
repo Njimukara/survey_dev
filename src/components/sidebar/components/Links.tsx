@@ -12,17 +12,23 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { IRoute } from "types/navigation";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
 import { useSession } from "next-auth/react";
+import { useSubscription } from "contexts/SubscriptionContext";
+import axios from "axios";
 
 interface SidebarLinksProps {
   routes: IRoute[];
 }
 
 export function SidebarLinks(props: SidebarLinksProps) {
+  // const { subscription, fetchSubscription } = useSubscription();
+  const [subscriptions, setSubscriptions] = useState<any>([]);
+  const [loading, setLoading] = useState<any>(false);
+
   var { data: session, status } = useSession();
 
   const { routes } = props;
@@ -50,6 +56,39 @@ export function SidebarLinks(props: SidebarLinksProps) {
   const activeRoute = (routeName: string) => {
     return router.pathname.includes(routeName);
   };
+
+  // const subscripedSurveys = (routeID: number) => {
+  //   console.log(subscriptions?.assigned_surveys?.includes(routeID));
+  // };
+
+  const fetchSubscription = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "json",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
+        config
+      )
+      .then((response) => {
+        setSubscriptions(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setSubscriptions([]);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchSubscription();
+    // setSubscriptions(subscription);
+  }, []);
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
   const createLinks = (routes: IRoute[]) => {
@@ -117,8 +156,14 @@ export function SidebarLinks(props: SidebarLinksProps) {
               <Collapse in={show} animateOpacity>
                 <Box>
                   {route.subRoutes.map(
-                    (routes: { path: string; name: any }, index: number) => (
+                    (
+                      routes: { id: number; path: string; name: any },
+                      index: number
+                    ) => (
                       <Flex key={index}>
+                        {/* {subscriptions[
+                          subscriptions.length - 1
+                        ]?.assigned_surveys?.includes(routes.id) ? ( */}
                         <Link key={index} href={route.layout + routes.path}>
                           <a style={{ width: "100%" }}>
                             <Box w="100%">
@@ -162,6 +207,9 @@ export function SidebarLinks(props: SidebarLinksProps) {
                             </Box>
                           </a>
                         </Link>
+                        {/* // ) : (
+                        //   ""
+                        // )} */}
                       </Flex>
                     )
                   )}
@@ -224,7 +272,10 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   {route.subRoutes ? (
                     <Box>
                       {route.subRoutes.map(
-                        (routes: { name: any }, index: number) => (
+                        (
+                          routes: { id: number; name: string },
+                          index: number
+                        ) => (
                           <Flex key={index}>{routes.name}</Flex>
                         )
                       )}

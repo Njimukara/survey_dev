@@ -93,7 +93,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerLivemode] = useState(true);
-  const [trialPeriodDays] = useState(7);
+  const [trialPeriodDays] = useState(0);
   const [cancelAtPeriodEnd] = useState(true);
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
@@ -182,7 +182,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     };
 
     setDescription(
-      `Invoice for ${customerName} subscriping to the ${plan.title}`
+      `Subscription for ${customerName} subscriping to the ${plan.title}`
     );
 
     let subscription_data: subscriptionData = {
@@ -192,7 +192,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       customer_livemode: customerLivemode,
       trial_period_days: trialPeriodDays,
       cancel_at_period_end: cancelAtPeriodEnd,
-      description: `Invoice for ${customerName} subscriping to the ${plan.title}`,
+      description: `Subscription for ${customerName} subscriping to the ${plan.title}`,
       collection_method: collectionMethod,
       cancel_at: cancelAt,
       days_until_due: daysUntilDue,
@@ -205,6 +205,9 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     if (values.coupon == "") {
       delete subscription_data["coupon_code"];
     }
+
+    console.log(subscription_data);
+    // setLoading(false);
 
     await axios
       .post(
@@ -258,7 +261,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   });
 
   useEffect(() => {
-    let cancelDate = getCancelDate(daysUntilDue);
+    let cancelDate = getCancelDate(30);
     secondSession();
     setCancelAt(cancelDate);
     setTotal(plan?.price);

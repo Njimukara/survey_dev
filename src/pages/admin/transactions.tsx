@@ -48,7 +48,7 @@ import { SubscriptionCard } from "components/card/SubscriptionCard";
 import { getSession, useSession } from "next-auth/react";
 import axios from "axios";
 import { Plan, subsciptionPlan } from "../../../types/data";
-import { useSubscriptionContext } from "contexts/SubscriptionContext";
+import { useSubscription } from "contexts/SubscriptionContext";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
 
@@ -113,13 +113,14 @@ export default function Transactions() {
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [user, setUser] = useState(null);
   const [upgrade, setUpgrade] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(true);
   const [step, setStep] = useState(1);
   const [plans, setPlans] = useState([]);
 
   // get user subscription from store
-  const { store } = useSubscriptionContext();
-  const [subscriptions, setSubscriptions] = useState(store);
+  // const { store } = useSubscriptionContext();
+  const [subscriptions, setSubscriptions] = useState([]);
+  const { loading, subscription, fetchSubscription } = useSubscription();
 
   // chakra toast
   const toast = useToast();
@@ -155,7 +156,7 @@ export default function Transactions() {
 
   // get subscription plans from database
   const getPlans = useCallback(async () => {
-    setLoading(true);
+    setFetching(true);
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -171,7 +172,7 @@ export default function Transactions() {
       )
       .then((res) => {
         setPlans(res.data);
-        setLoading(false);
+        setFetching(false);
       })
       .catch((error) => {
         // console.log(error);
@@ -182,15 +183,16 @@ export default function Transactions() {
           duration: 4000,
           isClosable: true,
         });
-        setLoading(false);
+        setFetching(false);
       });
   }, []);
 
   useEffect(() => {
     secondSession();
     getPlans();
-    setSubscriptions(store);
-  }, []);
+    fetchSubscription();
+    setSubscriptions(subscription);
+  }, [loading]);
 
   if (subscriptions.length != 0) {
     return (
@@ -245,7 +247,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {loading ? (
+                {fetching ? (
                   <Flex
                     h="200"
                     w="100%"
@@ -352,7 +354,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {loading ? (
+                {fetching ? (
                   <Flex
                     h="200"
                     w="100%"

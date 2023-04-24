@@ -70,7 +70,7 @@ const routes: IRoute[] = [
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/dynamic-lyder",
+        path: "/dynamic-lydar",
         component: DataTables,
       },
       {
@@ -80,7 +80,7 @@ const routes: IRoute[] = [
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/multibbeam-echosounder",
+        path: "/multibeam-echosounder",
         component: DataTables,
       },
       {
