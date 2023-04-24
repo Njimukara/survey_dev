@@ -36,7 +36,7 @@ import { PricingCard } from "../components/card/PricingCard";
 import Footer from "../layouts/home/Footer";
 // import UserReports from './admin/default'
 import Navbar from "components/navbar/Navbar";
-import { useSubscriptionContext } from "../contexts/SubscriptionContext";
+// import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
@@ -149,14 +149,14 @@ export default function Home() {
         config
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         addToStore(res.data);
         setPlans(res.data);
         // router.push('/auth/verifyemail')
       })
       .catch((error) => {
         // setHasDetails(false);
-        console.log(error);
+        // console.log(error);
       });
   };
 
