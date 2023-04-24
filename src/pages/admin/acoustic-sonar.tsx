@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Card, Flex } from "@chakra-ui/react";
 import Spinner from "components/spinner";
 import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
@@ -7,38 +7,50 @@ import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 
 export default function AcousticSonar() {
   const [subscriptions, setSubscriptions] = useState<any>();
+  const [surveys, setSurveys] = useState([]);
   const [surveyID, setSurveyID] = useState(4);
   const { loading, subscription, fetchSubscription } = useSubscription();
   const [user, setUser] = useState(null);
 
-  const checkSubscription = () => {};
+  const checkSubscription = () => {
+    subscriptions?.assigned_surveys?.forEach((survey: any) => {
+      if (survey?.id == surveyID) {
+        setSurveys([survey?.id]);
+      }
+    });
+  };
 
   useEffect(() => {
-    fetchSubscription();
+    const sub = async () => {
+      await fetchSubscription();
+    };
     setSubscriptions(subscription[subscription.length - 1]);
-  }, [loading]);
+    checkSubscription();
+
+    sub();
+  }, [loading, subscriptions]);
 
   if (loading) {
     return (
       <AdminLayout>
         <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">
-          <Spinner />;
+          <Spinner />
         </Flex>
       </AdminLayout>
     );
   }
 
-  if (subscriptions?.assigned_surveys?.includes(surveyID)) {
-    return (
-      <AdminLayout>
-        <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-          Hello, and welcome to the Acoustic Sonar Survey
-        </Box>
-      </AdminLayout>
-    );
-  }
-
-  return <PurchaseLisence />;
+  return surveys.length > 0 ? (
+    <AdminLayout>
+      <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+        <Card py="10" px="4">
+          Hello, and welcome to the Dynamic Lydar
+        </Card>
+      </Box>
+    </AdminLayout>
+  ) : (
+    <PurchaseLisence />
+  );
 }
 
 AcousticSonar.requireAuth = true;

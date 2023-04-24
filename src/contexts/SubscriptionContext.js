@@ -28,10 +28,12 @@ export const SubscriptionProvider = ({ children }) => {
         // Add it to the context
         setSubscription(response.data);
         setLoading(false);
+        return;
       })
       .catch((err) => {
         setSubscription([]);
         setLoading(false);
+        return;
       });
   };
 

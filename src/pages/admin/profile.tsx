@@ -96,13 +96,14 @@ export default function ProfileOverview() {
         setCompany(res.data);
       })
       .catch((error) => {
-        toast({
-          position: "bottom-right",
-          description: "Error getting company details",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        // console.log(error);
+        // toast({
+        //   position: "bottom-right",
+        //   description: "Error getting company details",
+        //   status: "error",
+        //   duration: 5000,
+        //   isClosable: true,
+        // });
       });
   }, [hasDetails]);
 
@@ -116,21 +117,21 @@ export default function ProfileOverview() {
   }, [hasDetails, loading]);
 
   // Loader if the user session has not been loaded
-  if (session == null || undefined) {
-    return (
-      <AdminLayout>
-        <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
-      </AdminLayout>
-    );
-  }
+  // if (session == null || undefined) {
+  //   return (
+  //     <AdminLayout>
+  //       <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
+  //         <Spinner
+  //           thickness="4px"
+  //           speed="0.65s"
+  //           emptyColor="gray.200"
+  //           color="blue.500"
+  //           size="xl"
+  //         />
+  //       </Flex>
+  //     </AdminLayout>
+  //   );
+  // }
 
   return (
     <AdminLayout>

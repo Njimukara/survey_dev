@@ -61,8 +61,12 @@ export default function PlanDetails(props: { [x: string]: any }) {
   };
 
   useEffect(() => {
-    fetchSubscription();
+    const sub = async () => {
+      await fetchSubscription();
+    };
     setSubscriptions(subscription);
+
+    sub();
   }, [loading]);
   return (
     <Card mb={{ base: "0px", lg: "20px" }} {...rest}>

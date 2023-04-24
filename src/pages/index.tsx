@@ -156,7 +156,7 @@ export default function Home() {
       })
       .catch((error) => {
         // setHasDetails(false);
-        // console.log(error);
+        // console.log(error) ;
       });
   };
 
@@ -168,7 +168,7 @@ export default function Home() {
 
   useEffect(() => {
     getPlanData();
-  }, []);
+  });
 
   return (
     <>

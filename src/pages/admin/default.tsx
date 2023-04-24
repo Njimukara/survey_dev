@@ -29,7 +29,6 @@ import {
   Heading,
   Text,
   Image,
-  Spinner,
   useToast,
 } from "@chakra-ui/react";
 // Assets
@@ -69,6 +68,7 @@ import { useRouter } from "next/router";
 import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import { useCurrentUser } from "contexts/UserContext";
+import Spinner from "components/spinner";
 
 // const stripe = require("stripe")();
 
@@ -95,6 +95,7 @@ export default function UserReports(props: { [x: string]: any }) {
   const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
   const [individualUser, setIndividualUser] = useState(1);
+  const [fetching, setFetching] = useState(true);
   const [companyMembers, setCompanyMembers] = useState([]);
   const { data: session, status } = useSession();
 
@@ -144,14 +145,31 @@ export default function UserReports(props: { [x: string]: any }) {
   // }, [session]);
 
   useEffect(() => {
-    fetchCurrentUser();
-    setUser(currentUser);
+    const usr = async () => {
+      setFetching(true);
+      await fetchCurrentUser();
+      await setUser(currentUser);
+
+      setFetching(false);
+    };
     if (session?.user?.data?.user_profile?.user_type != companyUser) {
       return;
     } else {
       getCompanyMembers();
     }
+
+    usr();
   }, [loading]);
+
+  // if (fetching) {
+  //   return (
+  //     <AdminLayout>
+  //       <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">
+  //         <Spinner />
+  //       </Flex>
+  //     </AdminLayout>
+  //   );
+  // }
 
   return (
     <AdminLayout>
@@ -231,8 +249,19 @@ export default function UserReports(props: { [x: string]: any }) {
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
-            {user?.user_profile?.user_type == companyUser ||
-            user?.user_profile?.user_type == individualUser ? (
+            {user == null ? (
+              <Card py="10" px="4">
+                <Flex
+                  w="100%"
+                  h="50"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Spinner />
+                </Flex>
+              </Card>
+            ) : user?.user_profile?.user_type == companyUser ||
+              user?.user_profile?.user_type == individualUser ? (
               <>
                 <Flex w="70%">
                   <PlanDetails />
