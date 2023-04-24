@@ -9,23 +9,27 @@ import {
   Heading,
   Image,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Footer from "../layouts/home/Footer";
 
 export default function Custom404() {
+  const textColor = useColorModeValue("white", " secondaryGray.900");
   const router = useRouter();
   return (
     <Card h="100vh" bg="white">
-      <Heading pt="10" pl="20">
-        <Link href="/">Survey Planner</Link>
-      </Heading>
+      <Box w="100%" bg="primary.500">
+        <Heading py="8" pl="20" color={textColor}>
+          <Link href="/">Survey Planner</Link>
+        </Heading>
+      </Box>
       <Flex>
         <Flex
           w="50%"
           alignItems="left"
           justifyContent="center"
           flexDir="column"
-          px="20"
+          pl="60"
         >
           <Text>404 error</Text>
           <Heading my="2">Page not found...</Heading>
