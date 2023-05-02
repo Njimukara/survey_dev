@@ -28,8 +28,11 @@ export default function CompanyUsers(props: { [x: string]: any }) {
 
   useEffect(() => {
     // console.log("members", company?.members);
-    setCompanyMembers(company?.members);
-    // console.log(company);
+    if (!company?.members) {
+      return;
+    } else {
+      setCompanyMembers(company?.members);
+    }
   }, [company]);
 
   return (

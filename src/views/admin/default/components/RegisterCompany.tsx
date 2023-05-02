@@ -106,9 +106,8 @@ export default function RegisterCompany(props: { [x: string]: any }) {
       )
       .then((res) => {
         // console.log(res);
-        // router.push('/auth/verifyemail')
-        toggleDetails(true);
         setSubmitting(false);
+        toggleDetails(true);
         closeModal();
       })
       .catch((error) => {

@@ -36,7 +36,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
   //   Chakra color mode
   const router = useRouter();
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const toggleShow = () => {
     setShow(!show);
   };
@@ -119,6 +119,8 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   </Box>
                   <Text
                     me="auto"
+                    onClick={toggleShow}
+                    cursor="pointer"
                     color={
                       activeRoute(route.path.toLowerCase())
                         ? activeColor
@@ -161,9 +163,6 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       index: number
                     ) => (
                       <Flex key={index}>
-                        {/* {subscriptions[
-                          subscriptions.length - 1
-                        ]?.assigned_surveys?.includes(routes.id) ? ( */}
                         <Link key={index} href={route.layout + routes.path}>
                           <a style={{ width: "100%" }}>
                             <Box w="100%">

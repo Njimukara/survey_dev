@@ -37,7 +37,7 @@ export default function Users(props: { [x: string]: any }) {
           No company users yet.
         </Text>
         <Button variant="homePrimary" py="6">
-          <Link href="/admin/profile">Add New user</Link>
+          <Link href="/admin/profile/#registerCompany">Add New user</Link>
         </Button>
       </Card>
     );

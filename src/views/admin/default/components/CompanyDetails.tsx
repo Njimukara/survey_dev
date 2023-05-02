@@ -82,6 +82,7 @@ export default function CompanyDetails(props: {
     return (
       <Card mb="20px" {...rest}>
         <Flex
+          id="registerCompany"
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
@@ -127,6 +128,7 @@ export default function CompanyDetails(props: {
               <NextAvatar
                 mx="auto"
                 src={company?.logo}
+                alt={company?.name}
                 h="87px"
                 w="87px"
                 border="4px solid"

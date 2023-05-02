@@ -88,7 +88,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
             {!loading && subscriptions.length == 0 ? (
               <Box py="5">
-                <Text mb="4">You do not have any subscription</Text>
+                <Text mb="4">You do not have any subscription yet</Text>
                 <Button
                   variant="homePrimary"
                   py="5"
