@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function LidarCard(props: { [x: string]: any }) {
+export default function LidarResultCard(props: { [x: string]: any }) {
   const { index } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
@@ -22,97 +22,118 @@ export default function LidarCard(props: { [x: string]: any }) {
         LiDAR {index}
       </Text>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Maximum Range (m)*</FormLabel>
+        <FormLabel fontSize="sm">Swath Width (m)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           size="sm"
           type="text"
-          placeholder="Min 8 characers"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Beam Divergence (mrad)*</FormLabel>
+        <FormLabel fontSize="sm">Ratio swath/Height-distance</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           size="sm"
           type="text"
-          placeholder="Min 8 characers"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Signal to Noise Ratio (dB)*</FormLabel>
+        <FormLabel fontSize="sm">Max slant range (m)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           type="text"
           size="sm"
-          placeholder="Min 8 characers"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Uncertainty of divergence*</FormLabel>
+        <FormLabel fontSize="sm">Interprofit spacing (m)</FormLabel>
+        <Input
+          color={textColorSecondary}
+          borderRadius="10px"
+          fontSize="sm"
+          size="sm"
+          type="number"
+          placeholder="0.0"
+        />
+      </FormControl>
+      <FormControl mb="4">
+        <FormLabel fontSize="small">Diameter of a footprint</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
           size="sm"
           type="number"
-          placeholder="0001"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Pulse duration (ns)*</FormLabel>
+        <FormLabel fontSize="small">Range resolution</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
           size="sm"
           type="number"
-          placeholder="2"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Pulse repetition rate (KHz)*</FormLabel>
+        <FormLabel fontSize="small">
+          Horizontal uncertainty (cm) - 1lampda
+        </FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
           size="sm"
           type="number"
-          placeholder="150"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Range Uncertainty (mm)*</FormLabel>
+        <FormLabel fontSize="small">
+          Vertical uncertainty (cm) - 1lampda
+        </FormLabel>
+        <Input
+          color={textColorSecondary}
+          borderRadius="10px"
+          fontSize="small"
+          size="sm"
+          type="number"
+          placeholder="0.0"
+        />
+      </FormControl>
+      <FormControl mb="4">
+        <FormLabel fontSize="small">LiDAR points density (pts/m2)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
           type="number"
           size="sm"
-          placeholder="2"
+          placeholder="0.0"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">LIDAR scanning angle (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
-          <option value="option1">75</option>
-          <option value="option2">85</option>
-          <option value="option3">95</option>
-          <option value="option4">100</option>
-        </Select>
-      </FormControl>
-      <FormControl mb="4">
-        <FormLabel fontSize="small">Texture (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
-          <option value="option1">External</option>
-          <option value="option2">Internal</option>
-        </Select>
+        <FormLabel fontSize="small">Number of profiles in length</FormLabel>
+        <Input
+          color={textColorSecondary}
+          borderRadius="10px"
+          fontSize="small"
+          size="sm"
+          type="number"
+          placeholder="0.0"
+        />
       </FormControl>
     </Card>
   );

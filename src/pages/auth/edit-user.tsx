@@ -86,6 +86,7 @@ export default function EditUser({ providers }: any) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [emailModal, setEmailModal] = React.useState(false);
   const [name, setName] = React.useState("");
+  const [phone_number, setPhone_number] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
   const [defaulimage, setDefaultImage] = React.useState(null);
@@ -120,12 +121,13 @@ export default function EditUser({ providers }: any) {
     getDefaultImage();
     let formData = new FormData();
     formData.append("name", name);
+    formData.append("phone_number", phone_number);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
     if (image != null) {
       formData.set("avatar", image);
     }
 
-    console.log("avatar", formData.get("avatar"));
+    // console.log("avatar", formData.get("avatar"));
 
     const options = {
       // method: 'POST',
@@ -192,6 +194,7 @@ export default function EditUser({ providers }: any) {
     setCreateObjectURL(null);
   };
 
+  // get user
   const getUser = async () => {
     const options = {
       headers: {
@@ -207,6 +210,7 @@ export default function EditUser({ providers }: any) {
         setUser(res?.data);
         setName(res?.data?.name);
         setEmail(res?.data?.email);
+        setPhone_number(res?.data?.phone_number);
         setCreateObjectURL(res?.data?.user_profile?.avatar);
         // router.push("/auth/verifyemail");
       })
@@ -231,13 +235,13 @@ export default function EditUser({ providers }: any) {
 
   return (
     <AdminLayout>
-      <Card mt={20}>
+      <Card mt={20} borderRadius="10">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
             <Flex alignItems="center" flexDirection="column">
               <Image
-                src={createObjectURL ? createObjectURL : "/profile.png"}
+                src={createObjectURL != "" ? createObjectURL : "/profile.png"}
                 objectFit="contain"
                 bg="transparent"
                 width="370px"
@@ -307,25 +311,27 @@ export default function EditUser({ providers }: any) {
                 </HStack>
               </FormControl>
 
-              {/* <FormControl pb="3">
+              <FormControl pb="3">
                 <HStack spacing="10px">
-                  <FormLabel w="150px">Email *</FormLabel>
+                  <FormLabel w="150px">Your phone number</FormLabel>
                   <Input
-                    id="email"
-                    name="email"
+                    id="phone_number"
+                    name="phone_number"
                     variant="rounded"
                     fontSize="sm"
                     ms={{ base: "0px", md: "0px" }}
-                    type="email"
-                    placeholder="Email*"
+                    type="text"
+                    placeholder="Add phone number"
+                    mr="2px"
+                    w="100%"
                     fontWeight="500"
                     size="lg"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={phone_number}
+                    onChange={(e) => setName(e.target.value)}
                     isDisabled={canEdit}
                   />
                 </HStack>
-              </FormControl> */}
+              </FormControl>
 
               <FormControl pb="3">
                 <HStack spacing="10px">

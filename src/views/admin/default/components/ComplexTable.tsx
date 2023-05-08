@@ -117,6 +117,7 @@ export default function ColumnsTable(props: TableProps) {
       flexDirection="column"
       w="100%"
       px="0px"
+      borderRadius="10"
       overflowX={{ sm: "scroll", lg: "hidden" }}
     >
       <Flex px="25px" justify="space-between" mb="10px" align="center">

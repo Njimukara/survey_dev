@@ -67,7 +67,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
     setSubscriptions(subscription[subscription.length - 1]);
   }, [loading]);
   return (
-    <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
+    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
       <Flex justifyContent="space-between" alignItems="center" p={2}>
         <Flex flexDirection="column" w="100%">
           <Card>

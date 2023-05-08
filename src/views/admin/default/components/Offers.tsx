@@ -35,7 +35,7 @@ export default function Offers(props: { [x: string]: any }) {
   const [offers, setOffers] = useState(false);
 
   return offers ? (
-    <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
+    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
       <Flex align="center" w="100%" px="15px" py="10px">
         <Text
           me="auto"
@@ -77,6 +77,7 @@ export default function Offers(props: { [x: string]: any }) {
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
+      borderRadius="10"
     >
       <Text fontSize="large" fontWeight="bold">
         No offers currently available

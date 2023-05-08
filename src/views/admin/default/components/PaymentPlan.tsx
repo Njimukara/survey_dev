@@ -47,22 +47,8 @@ export default function PaymentPlan(props: { [x: string]: any }) {
 
   // Chakra Color Mode
 
-  // const textColor = useColorModeValue("navy.500", "white");
-  // const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
-  // const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  // const iconColor = useColorModeValue("brand.500", "white");
-  // const brandColor = useColorModeValue("brand.500", "white");
-  // const bgButton = useColorModeValue("primary.500", "blue.300");
-  // const bgHover = useColorModeValue(
-  //   { bg: "primary.600" },
-  //   { bg: "whiteAlpha.50" }
-  // );
-  // const bgFocus = useColorModeValue(
-  //   { bg: "primary.600" },
-  //   { bg: "whiteAlpha.100" }
-  // );
 
   //   react-select
   const options = [
@@ -276,6 +262,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       py="10"
       mb="20"
       mt="5"
+      borderRadius="10"
       {...rest}
     >
       <form onSubmit={handleSubmit}>

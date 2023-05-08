@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function LidarCard(props: { [x: string]: any }) {
+export default function ScanPerformanceSSS(props: { [x: string]: any }) {
   const { index } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
@@ -19,54 +19,56 @@ export default function LidarCard(props: { [x: string]: any }) {
   return (
     <Card borderRadius="10px" p="4" boxShadow="lg">
       <Text mb="4" fontWeight="bold">
-        LiDAR {index}
+        SL {index}
       </Text>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Maximum Range (m)*</FormLabel>
+        <FormLabel fontSize="sm">
+          User defined operating frequency (m)*
+        </FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           size="sm"
           type="text"
           placeholder="Min 8 characers"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Beam Divergence (mrad)*</FormLabel>
+        <FormLabel fontSize="sm">Horizontal field of view (*)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           size="sm"
           type="text"
           placeholder="Min 8 characers"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Signal to Noise Ratio (dB)*</FormLabel>
+        <FormLabel fontSize="sm">Vertical field of view (*)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           type="text"
           size="sm"
           placeholder="Min 8 characers"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Uncertainty of divergence*</FormLabel>
+        <FormLabel fontSize="sm">Pulse duration (us)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
-          fontSize="small"
+          fontSize="sm"
           size="sm"
           type="number"
           placeholder="0001"
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Pulse duration (ns)*</FormLabel>
+        <FormLabel fontSize="small">Beamwidth (*)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
@@ -77,7 +79,7 @@ export default function LidarCard(props: { [x: string]: any }) {
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Pulse repetition rate (KHz)*</FormLabel>
+        <FormLabel fontSize="small">Depression Angle (*)</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
@@ -88,7 +90,7 @@ export default function LidarCard(props: { [x: string]: any }) {
         />
       </FormControl>
       <FormControl mb="4">
-        <FormLabel fontSize="small">Range Uncertainty (mm)*</FormLabel>
+        <FormLabel fontSize="small">Max range of SSS (m)*</FormLabel>
         <Input
           color={textColorSecondary}
           borderRadius="10px"
@@ -97,22 +99,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           size="sm"
           placeholder="2"
         />
-      </FormControl>
-      <FormControl mb="4">
-        <FormLabel fontSize="small">LIDAR scanning angle (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
-          <option value="option1">75</option>
-          <option value="option2">85</option>
-          <option value="option3">95</option>
-          <option value="option4">100</option>
-        </Select>
-      </FormControl>
-      <FormControl mb="4">
-        <FormLabel fontSize="small">Texture (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
-          <option value="option1">External</option>
-          <option value="option2">Internal</option>
-        </Select>
       </FormControl>
     </Card>
   );

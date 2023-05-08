@@ -69,15 +69,22 @@ export default function PlanDetails(props: { [x: string]: any }) {
     sub();
   }, [loading]);
   return (
-    <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
+    <Card
+      mb={{ base: "0px", lg: "20px" }}
+      borderRadius="10"
+      bgGradient={
+        subscriptions.length == 0
+          ? "white"
+          : "linear(to-r, #3A2FB7, primary.100)"
+      }
+      {...rest}
+    >
       <Flex justifyContent="space-between" alignItems="center" p={2}>
         <Flex flexDirection="column" w="100%">
           <Card
-            bgGradient={
-              subscriptions.length == 0
-                ? "white"
-                : "linear(to-b, primary.500, brand.700)"
-            }
+            bg="transparent"
+            boxShadow="lg"
+            // background: linear-gradient(90.22deg, #3A2FB7 7.43%, rgba(118, 113, 183, 0) 81.71%)
           >
             <Text
               mb={2}
@@ -145,6 +152,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                       variant="outline"
                       color={textColor}
                       bg={"white"}
+                      border="none"
                       _hover={{ bg: boxBg, color: textColor }}
                     >
                       Cancel

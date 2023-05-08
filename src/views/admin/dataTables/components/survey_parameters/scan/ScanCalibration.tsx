@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function PerformanceInsCard(props: { [x: string]: any }) {
+export default function ScanCalibration(props: { [x: string]: any }) {
   const { ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
@@ -21,47 +21,46 @@ export default function PerformanceInsCard(props: { [x: string]: any }) {
   return (
     <Card borderRadius="10px" p="4" boxShadow="lg" w="100%" {...rest}>
       <Text mb="4" fontWeight="bold" textTransform="uppercase">
-        Performance INS/GNSS/USBL
+        Calibration Parameters
       </Text>
       <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
         <Flex flexDirection="column">
           <FormControl mb="4">
-            <FormLabel fontSize="sm">Yaw uncertainty (*)</FormLabel>
+            <FormLabel fontSize="sm">Pitch boresight (*)</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="0.01"
+              placeholder="0.8"
             />
           </FormControl>
           <FormControl mb="4">
-            <FormLabel fontSize="sm">Roll uncertainty (*)</FormLabel>
+            <FormLabel fontSize="sm">Roll boresight</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="0.01"
+              placeholder="0.05"
             />
           </FormControl>
           <FormControl mb="4">
-            <FormLabel fontSize="sm">Pitch uncertainty (*)</FormLabel>
+            <FormLabel fontSize="sm">Yaw boresight</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="0.01"
+              placeholder="480"
             />
           </FormControl>
+
           <FormControl mb="4">
-            <FormLabel fontSize="sm">
-              Positioning uncertainty in H (m)
-            </FormLabel>
+            <FormLabel fontSize="sm">Roll boresight uncertainty (*)</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
@@ -72,11 +71,21 @@ export default function PerformanceInsCard(props: { [x: string]: any }) {
             />
           </FormControl>
         </Flex>
-
         <Flex flexDirection="column">
           <FormControl mb="4">
+            <FormLabel fontSize="sm">Yaw boresight uncertainty (*)</FormLabel>
+            <Input
+              color={textColorSecondary}
+              borderRadius="10px"
+              fontSize="sm"
+              size="sm"
+              type="number"
+              placeholder="0.2"
+            />
+          </FormControl>
+          <FormControl mb="4">
             <FormLabel fontSize="sm">
-              Positioning uncertainty in V (m)
+              Latency GNSS/INS of the USBL (s)
             </FormLabel>
             <Input
               color={textColorSecondary}
@@ -84,44 +93,29 @@ export default function PerformanceInsCard(props: { [x: string]: any }) {
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="0.04"
+              placeholder="0.2"
             />
           </FormControl>
           <FormControl mb="4">
-            <FormLabel fontSize="sm">Heave uncertainty (*)</FormLabel>
+            <FormLabel fontSize="sm">Latency GNSS/USBL (s)</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="6"
+              placeholder="0.2"
             />
           </FormControl>
           <FormControl mb="4">
-            <FormLabel fontSize="sm">
-              Slant range Uncertainty of the USBL (m)
-            </FormLabel>
+            <FormLabel fontSize="sm">Pitch boresight uncertainty (*)</FormLabel>
             <Input
               color={textColorSecondary}
               borderRadius="10px"
               fontSize="sm"
               size="sm"
               type="number"
-              placeholder="6"
-            />
-          </FormControl>
-          <FormControl mb="4">
-            <FormLabel fontSize="sm">
-              Angle Uncertainty of the USBL (*)
-            </FormLabel>
-            <Input
-              color={textColorSecondary}
-              borderRadius="10px"
-              fontSize="sm"
-              size="sm"
-              type="number"
-              placeholder="6"
+              placeholder="0.002"
             />
           </FormControl>
         </Flex>

@@ -44,6 +44,8 @@ import CompanyDetails from "views/admin/default/components/CompanyDetails";
 // import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import axios from "axios";
 import { useCurrentUser } from "contexts/UserContext";
+import Users from "views/admin/default/components/Users";
+import CompanyUsers from "views/admin/profile/components/CompanyUsers";
 
 export default function ProfileOverview() {
   const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
@@ -52,6 +54,7 @@ export default function ProfileOverview() {
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
   // const [updatedSession, setUpdatedSession] = useState<any>();
+  const [companyMembers, setCompanyMembers] = useState();
   const [individualUser, setIndividualUser] = useState(1);
 
   // const cachedValue = useMemo(secondSession(), session)
@@ -94,6 +97,7 @@ export default function ProfileOverview() {
       .then((res) => {
         setHasDetails(true);
         setCompany(res.data);
+        setCompanyMembers(res?.data?.members);
       })
       .catch((error) => {
         // console.log(error);
@@ -111,6 +115,7 @@ export default function ProfileOverview() {
     // secondSession();
     fetchCurrentUser();
     setUser(currentUser);
+    // console.log(currentUser);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       getCompany();
     }
@@ -133,6 +138,13 @@ export default function ProfileOverview() {
   //   );
   // }
 
+  // state for user invite
+  const [modalState, setModalState] = useState(false);
+  // toggle company user invite modal
+  const toggleCompanyUserModal = (state: boolean) => {
+    setModalState(state);
+  };
+
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -149,11 +161,13 @@ export default function ProfileOverview() {
           gap={{ base: "20px", xl: "20px" }}
         >
           <Banner
+            borderRadius="10"
             gridArea="1 / 1 / 2 / 2"
             avatar={user?.user_profile?.avatar}
             name={user?.name || "loading"}
             email={user?.email || "loading"}
             date_joined={user?.date_joined || "loading"}
+            phoneNumber={user?.user_profile?.phone_number || "loading"}
           />
         </Grid>
         {(user?.user_profile?.user_type == companyUser ||
@@ -169,20 +183,41 @@ export default function ProfileOverview() {
             }}
             gap={{ base: "20px", xl: "20px" }}
           >
-            <PlanDetails />
+            <PlanDetails borderRadius="10" />
           </Grid>
         )}
         <Grid>
           {user?.user_profile?.user_type == companyUser && (
-            <CompanyDetails
-              // avatar={avatar}
-              hasDetails={hasDetails}
-              toggleHasDetails={toggleHasDetails}
-              company={company}
-            />
+            <Grid
+              templateColumns={{
+                base: "repeat(2, 1fr)",
+                lg: "repeat(2, 1fr)",
+              }}
+              // templateRows={{
+              //   base: "repeat(2, 1fr)",
+              //   lg: "1fr",
+              // }}
+              gap={{ base: "20px", xl: "20px" }}
+            >
+              <CompanyDetails
+                // avatar={avatar}
+                borderRadius="10"
+                hasDetails={hasDetails}
+                toggleHasDetails={toggleHasDetails}
+                company={company}
+              />
+              {hasDetails && (
+                <CompanyUsers
+                  borderRadius="10"
+                  toggleModal={toggleCompanyUserModal}
+                  isOpen={modalState}
+                  company={companyMembers}
+                />
+              )}
+            </Grid>
           )}
         </Grid>
-        <Flex gap="4">
+        {/* <Flex gap="4">
           <General
             gridArea={{ base: "2 / 1 / 3 / 2", lg: "1 / 2 / 2 / 3" }}
             minH="365px"
@@ -197,7 +232,7 @@ export default function ProfileOverview() {
               "2xl": "1 / 3 / 2 / 4",
             }}
           />
-        </Flex>
+        </Flex> */}
       </Box>
     </AdminLayout>
   );

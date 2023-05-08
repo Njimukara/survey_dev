@@ -91,6 +91,7 @@ export default function UserReports(props: { [x: string]: any }) {
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
 
   const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
@@ -133,17 +134,6 @@ export default function UserReports(props: { [x: string]: any }) {
       });
   };
 
-  // const sessionUpdate = useCallback(async () => {
-  //   await getSession()
-  //     .then((res) => {
-  //       session = res;
-  //       setUser(res?.user?.data);
-  //     })
-  //     .catch((err) => {
-  //       // console.log(err);
-  //     });
-  // }, [session]);
-
   useEffect(() => {
     const usr = async () => {
       setFetching(true);
@@ -161,35 +151,41 @@ export default function UserReports(props: { [x: string]: any }) {
     usr();
   }, [loading]);
 
-  // if (fetching) {
-  //   return (
-  //     <AdminLayout>
-  //       <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">
-  //         <Spinner />
-  //       </Flex>
-  //     </AdminLayout>
-  //   );
-  // }
-
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <>
-          <Flex>
-            <Card mb="20px" py="10">
-              <Flex gap={3} alignItems="center">
-                <Heading size="lg">Welcome Back {user?.name}</Heading>
-                <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon>
-              </Flex>
-              <Box pt="3">
-                <Text>
+          {/* <Flex> */}
+          <Card
+            mb="3%"
+            py="10"
+            borderRadius="10"
+            bgGradient="linear(to-r, #3A2FB7, primary.100)"
+          >
+            <Flex
+              gap={3}
+              alignItems="center"
+              justifyContent="space-between"
+              // position="relative"
+            >
+              {/* <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon> */}
+
+              <Box pt="3" color="white" pl="10">
+                <Heading size="lg" mb="8">
+                  Hello {user?.name}!
+                </Heading>
+                <Text w="50%">
                   This is your survey planner dashboard, where you can see an
                   overview of your account details
                 </Text>
               </Box>
-            </Card>
-          </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="20px">
+              <Box mb="-9">
+                <Image src="/hello.png" alt="hello" />
+              </Box>
+            </Flex>
+          </Card>
+          {/* </Flex> */}
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="3%">
             <MiniStatistics
               startContent={
                 <IconBox

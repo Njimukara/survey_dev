@@ -94,6 +94,7 @@ export default function SignIn({ providers }: any) {
       .max(30, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
+    phoneNumber: Yup.number().min(9, "Min of 9 digits").required("Required"),
     password: Yup.string()
       .min(8, "Min of 8 characters required")
       .required("Required"),
@@ -143,6 +144,7 @@ export default function SignIn({ providers }: any) {
     var formdata = new FormData();
     formdata.append("name", values.name);
     formdata.append("email", values.email);
+    formdata.append("phone_number", values.phoneNumber);
     formdata.append("user_type", values.usertype);
     formdata.append("password", values.password);
     formdata.append("re_password", values.password);
@@ -210,6 +212,7 @@ export default function SignIn({ providers }: any) {
     initialValues: {
       name: "",
       email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
       usertype: "1",
@@ -461,6 +464,30 @@ export default function SignIn({ providers }: any) {
                 {errors.email && touched.email ? (
                   <FormHelperText color="red.400" mt="0" mb="5px">
                     {errors.email}.
+                  </FormHelperText>
+                ) : (
+                  ""
+                )}
+              </FormControl>
+              <FormControl>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  variant="rounded"
+                  fontSize="sm"
+                  ms={{ base: "0px", md: "0px" }}
+                  type="text"
+                  placeholder="Phone Number*"
+                  mt="12px"
+                  fontWeight="500"
+                  size="lg"
+                  value={values.phoneNumber}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.phoneNumber && touched.phoneNumber ? (
+                  <FormHelperText color="red.400" mt="0" mb="5px">
+                    {errors.phoneNumber}.
                   </FormHelperText>
                 ) : (
                   ""

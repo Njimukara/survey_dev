@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function LidarCard(props: { [x: string]: any }) {
+export default function LidarParameterCard(props: { [x: string]: any }) {
   const { index } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
@@ -27,7 +27,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
-          size="sm"
           type="text"
           placeholder="Min 8 characers"
         />
@@ -38,7 +37,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
-          size="sm"
           type="text"
           placeholder="Min 8 characers"
         />
@@ -50,7 +48,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           borderRadius="10px"
           fontSize="small"
           type="text"
-          size="sm"
           placeholder="Min 8 characers"
         />
       </FormControl>
@@ -60,7 +57,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
-          size="sm"
           type="number"
           placeholder="0001"
         />
@@ -71,7 +67,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
-          size="sm"
           type="number"
           placeholder="2"
         />
@@ -82,7 +77,6 @@ export default function LidarCard(props: { [x: string]: any }) {
           color={textColorSecondary}
           borderRadius="10px"
           fontSize="small"
-          size="sm"
           type="number"
           placeholder="150"
         />
@@ -94,13 +88,12 @@ export default function LidarCard(props: { [x: string]: any }) {
           borderRadius="10px"
           fontSize="small"
           type="number"
-          size="sm"
           placeholder="2"
         />
       </FormControl>
       <FormControl mb="4">
         <FormLabel fontSize="small">LIDAR scanning angle (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
+        <Select borderRadius="10px" fontSize="small">
           <option value="option1">75</option>
           <option value="option2">85</option>
           <option value="option3">95</option>
@@ -109,7 +102,7 @@ export default function LidarCard(props: { [x: string]: any }) {
       </FormControl>
       <FormControl mb="4">
         <FormLabel fontSize="small">Texture (*)</FormLabel>
-        <Select borderRadius="10px" size="sm" fontSize="small">
+        <Select borderRadius="10px" fontSize="small">
           <option value="option1">External</option>
           <option value="option2">Internal</option>
         </Select>

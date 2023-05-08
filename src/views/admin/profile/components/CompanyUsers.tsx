@@ -105,7 +105,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
                 );
               })
             ) : (
-              <Flex justifyContent="center" alignItems="center" pt={10}>
+              <Flex justifyContent="center" alignItems="center" pt={32}>
                 <Text>No users yet</Text>
               </Flex>
             )}

@@ -1,8 +1,20 @@
-import { Box, Card, Flex } from "@chakra-ui/react";
+import { Box, Button, Card, Flex, SimpleGrid } from "@chakra-ui/react";
 import Spinner from "components/spinner";
 import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
+// import Calibrations from "views/admin/dataTables/components/Calibrations";
+// import CloudPoints from "views/admin/dataTables/components/CloudPoints";
+// import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
+// import OperationalConditionsCard from "views/admin/dataTables/components/OperationalConditionsCard";
+// import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
+// import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
+import ScanCalibration from "views/admin/dataTables/components/survey_parameters/scan/ScanCalibration";
+import ScanCondition from "views/admin/dataTables/components/survey_parameters/scan/ScanCondition";
+import ScanLeverarm from "views/admin/dataTables/components/survey_parameters/scan/ScanLeverarm";
+import ScanPerformanceCard from "views/admin/dataTables/components/survey_parameters/scan/ScanPerformancCard";
+import ScanPerformance from "views/admin/dataTables/components/survey_parameters/scan/ScanPerformance";
+import ScanResults from "views/admin/dataTables/components/survey_parameters/scan/ScanResults";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 
 interface Survey {
@@ -49,9 +61,48 @@ function EchoSounder() {
   return surveys.length > 0 ? (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-        <Card py="10" px="4">
-          Hello, and welcome to the Acoustic Sonar Survey
-        </Card>
+        {/* <Card
+          p="20px"
+          alignItems="center"
+          flexDirection="column"
+          w="100%"
+          mb="4"
+        >
+          <FormControl display="flex" alignItems="center">
+            <FormLabel
+              htmlFor="remember-settings"
+              mb="0"
+              fontWeight="normal"
+              color={brandColor}
+              fontSize="md"
+            >
+              Import last survey settings
+            </FormLabel>
+            <Checkbox
+              id="remember-settings"
+              isChecked={isChecked}
+              onChange={(e) => setIsChecked(!isChecked)}
+            />
+          </FormControl>
+        </Card> */}
+
+        <Flex mt="15px" gap="2">
+          <ScanPerformance />
+          <ScanCalibration />
+        </Flex>
+        <Flex mt="15px" mb="4" gap="2">
+          <ScanCondition />
+          <ScanLeverarm />
+        </Flex>
+        <ScanPerformanceCard />
+        <Flex mt="4">
+          <ScanResults />
+        </Flex>
+        <Flex mt="4" justifyContent="center" alignItems="center">
+          <Button variant="homePrimary" size="lg">
+            Plan Survey
+          </Button>
+        </Flex>
       </Box>
     </AdminLayout>
   ) : (

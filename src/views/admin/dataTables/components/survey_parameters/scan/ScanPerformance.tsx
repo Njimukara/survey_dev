@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function PerformanceInsCard(props: { [x: string]: any }) {
+export default function ScanPerformance(props: { [x: string]: any }) {
   const { ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",

@@ -260,6 +260,7 @@ export default function UserTableComplex(props: TableProps) {
   return (
     <Card
       flexDirection="column"
+      borderRadius="10"
       w="100%"
       px="0px"
       overflowX={{ sm: "scroll", lg: "hidden" }}
