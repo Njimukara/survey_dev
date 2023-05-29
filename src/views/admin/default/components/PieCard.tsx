@@ -23,6 +23,7 @@ export default function Conversion(props: { [x: string]: any }) {
         alignItems="center"
         justifyContent="center"
         flexDirection="column"
+        borderRadius="10"
         {...rest}
       >
         <Text color={textColorPrimary} mb="4" fontWeight="bold" fontSize="2xl">
@@ -38,6 +39,7 @@ export default function Conversion(props: { [x: string]: any }) {
       alignItems="center"
       flexDirection="column"
       w="100%"
+      borderRadius="10"
       {...rest}
     >
       <Flex

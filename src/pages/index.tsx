@@ -36,36 +36,39 @@ import { PricingCard } from "../components/card/PricingCard";
 import Footer from "../layouts/home/Footer";
 // import UserReports from './admin/default'
 import Navbar from "components/navbar/Navbar";
+// import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
 import { useSession, signIn, signOut } from "next-auth/react";
+import axios from "axios";
+import { usePlanContext } from "contexts/PlanContext";
 
 const slides = [
   {
     id: "1",
     name: "Multibeam Echosounder",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Our multibeam echo sounders deliver unparalleled accuracy and precision, ensuring that you have access to the most detailed and comprehensive data available.",
     image: "/multibeam-echosounder.jpeg",
   },
   {
     id: "2",
     name: "2D Acoustic Sonar",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Our 2D acoustic sonar technology provides you with accurate and reliable data on underwater structures, marine life, and environmental conditions",
     image: "/side-scan-sonar.jpeg",
   },
   {
     id: "3",
     name: "Echo sounder",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Whether you're a fisherman, marine biologist, oceanographer, environmental consultant, surveyor, or engineer, our Echo sounder technology is the perfect solution for your underwater mapping and data analysis needs",
     image: "/echo-sounder.jpeg",
   },
   {
     id: "4",
     name: "Dynamic Lydar",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Our Dynamic LIDAR technology provides you with precise and real-time data on the location and movement of objects in their surroundings",
     image: "/dynamic-lidar.jpeg",
   },
 ];
@@ -126,22 +129,68 @@ const MonthlyPricing = [
 ];
 
 export default function Home() {
+  const [plans, setPlans] = useState([]);
   const { data: session, status } = useSession();
+  const { addToStore } = usePlanContext();
   const [user, setUser] = useState(null);
   const router = useRouter();
+
+  const getPlanData = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json;charset=UTF-8",
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/plans/list-with-price",
+        config
+      )
+      .then((res) => {
+        // console.log(res);
+        addToStore(res.data);
+        setPlans(res.data);
+        // router.push('/auth/verifyemail')
+      })
+      .catch((error) => {
+        // setHasDetails(false);
+        // console.log(error) ;
+      });
+  };
+
   if (status === "authenticated") {
     router.push("/admin/default");
+    // getSubscriptionData();
     // console.log(session);
-    // return <UserReports />;
   }
+
+  useEffect(() => {
+    getPlanData();
+  });
 
   return (
     <>
       <Navbar />
       <Box p={0}>
         <Hero />
+
+        {/* Pattern design */}
+        <Box position="relative">
+          <Image
+            top="16"
+            right="32"
+            h="16"
+            w="32"
+            position="absolute"
+            src="/blue_pattern.png"
+            alt="patter"
+          />
+        </Box>
+
         {/* How it works section  */}
-        <Section title="How it Works ?">
+        <Section title="How it Works ?" bg="white">
           <SimpleGrid
             textAlign="center"
             minW="90%"
@@ -204,8 +253,28 @@ export default function Home() {
           </SimpleGrid>
         </Section>
 
+        <Box bg="primary.500" py="8" px="40">
+          <Heading color="white" py="2">
+            Introducing survey planner
+          </Heading>
+          <Text color="white" pt="4" pb="8">
+            Our company provides innovative software solutions for hydrographic
+            surveying, enabling users to easily collect and analyze high-quality
+            data for mapping underwater environments. Our user-friendly software
+            delivers powerful tools for real-time data analysis and
+            visualization, making it a valuable tool for a range of applications
+            in the marine industry.
+          </Text>
+          <Button _active={{ bg: "white" }} variant="homeWhite" py="3">
+            Read more
+          </Button>
+        </Box>
+
         {/* Our products section  */}
-        <Section title="All The Assitance You Need For Your Hydrolic Surveys Inspections">
+        <Section
+          title="All The Assitance You Need For Your Hydrolic Surveys Inspections"
+          bg="white"
+        >
           <SimpleGrid columns={2} spacing={10}>
             {slides.map((slide, sid) => (
               <Card
@@ -236,6 +305,19 @@ export default function Home() {
             ))}
           </SimpleGrid>
         </Section>
+
+        {/* Pattern design */}
+        <Box position="relative">
+          <Image
+            top="32"
+            left="32"
+            h="16"
+            w="32"
+            position="absolute"
+            src="/blue_pattern.png"
+            alt="patter"
+          />
+        </Box>
 
         {/* Pricing Plan Section  */}
         <Section
@@ -279,14 +361,14 @@ export default function Home() {
             <TabPanels>
               <TabPanel>
                 <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
-                  {MonthlyPricing.map((x) => (
+                  {plans.map((x) => (
                     <PricingCard
                       key={x.id}
-                      title={x.title}
-                      price={x.price}
-                      period={x.period}
-                      description={x.description}
-                      advantages={x.advantages}
+                      title={x.name}
+                      price={x.amount}
+                      period={x?.stripe_plan_id?.interval}
+                      description={x?.stripe_plan_id?.description}
+                      advantages={x.features}
                     ></PricingCard>
                   ))}
                 </SimpleGrid>
@@ -300,8 +382,21 @@ export default function Home() {
           </Tabs>
         </Section>
 
+        {/* Pattern design */}
+        <Box position="relative">
+          <Image
+            top="32"
+            right="32"
+            h="16"
+            w="32"
+            position="absolute"
+            src="/blue_pattern.png"
+            alt="patter"
+          />
+        </Box>
+
         {/* Get started Section ; */}
-        <Box pb="430px">
+        <Box pb="430px" bg="white">
           <Container maxW="container.xl" centerContent py="150px">
             <SimpleGrid columns={2} spacing={100} minChildWidth="570px">
               <Box w="570px" mt="100px" mx="50px">
@@ -404,7 +499,6 @@ export default function Home() {
           </Box>
         </Footer>
       </Box>
-      )
     </>
   );
 }

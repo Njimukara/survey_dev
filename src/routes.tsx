@@ -21,7 +21,7 @@ const routes: IRoute[] = [
   {
     name: "Generate Survey",
     layout: "/admin",
-    path: "/generate-survey",
+    path: "/generate",
     icon: <Icon as={MdAdd} width="20px" height="20px" color="inherit" />,
     component: MainDashboard,
   },
@@ -54,30 +54,43 @@ const routes: IRoute[] = [
     component: DataTables,
     subRoutes: [
       {
-        name: "Product 1",
+        id: 1,
+        name: "Side Scan Sonar",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_1",
+        path: "/side-scan-sonar",
         component: DataTables,
       },
       {
-        name: "Product 2",
+        id: 2,
+        name: "Dynamic Lydar",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_2",
+        path: "/dynamic-lydar",
         component: DataTables,
       },
       {
-        name: "Product 3",
+        id: 3,
+        name: "Multibeam EchoSounder",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/product_3",
+        path: "/multibeam-echosounder",
+        component: DataTables,
+      },
+      {
+        id: 4,
+        name: "2D Acoustic Sonar",
+        layout: "/admin",
+        icon: (
+          <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
+        ),
+        path: "/acoustic-sonar",
         component: DataTables,
       },
     ],

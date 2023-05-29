@@ -197,7 +197,7 @@ export default function Users() {
               tableData={companyMembers as unknown as TableData[]}
             />
           ) : isFetching ? (
-            <Card w="100%" borderRadius={20}>
+            <Card w="100%" borderRadius={10}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
@@ -215,7 +215,7 @@ export default function Users() {
               </Flex>
             </Card>
           ) : (
-            <Card w="100%" borderRadius={20}>
+            <Card w="100%" borderRadius={10}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
@@ -246,7 +246,7 @@ export default function Users() {
               tableData={invitations as unknown as TableData[]}
             />
           ) : loading ? (
-            <Card w="100%" borderRadius={20}>
+            <Card w="100%" borderRadius={10}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"
@@ -264,7 +264,7 @@ export default function Users() {
               </Flex>
             </Card>
           ) : (
-            <Card w="100%" borderRadius={20}>
+            <Card w="100%" borderRadius={10}>
               <Flex
                 flexDirection="column"
                 justifyContent="center"

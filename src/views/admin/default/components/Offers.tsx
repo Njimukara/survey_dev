@@ -6,62 +6,64 @@ import {
   Icon,
   Text,
   useColorModeValue,
-} from '@chakra-ui/react'
-import Card from 'components/card/Card'
+} from "@chakra-ui/react";
+import Card from "components/card/Card";
 // Custom components
-import BarChart from 'components/charts/BarChart'
-import React, { useState } from 'react'
+import BarChart from "components/charts/BarChart";
+import React, { useState } from "react";
 import {
   barChartDataConsumption,
   barChartOptionsConsumption,
-} from 'variables/charts'
-import { MdBarChart } from 'react-icons/md'
+} from "variables/charts";
+import { MdBarChart } from "react-icons/md";
 
 export default function Offers(props: { [x: string]: any }) {
-  const { ...rest } = props
+  const { ...rest } = props;
 
   // Chakra Color Mode
-  const textColor = useColorModeValue('secondaryGray.900', 'white')
-  const iconColor = useColorModeValue('brand.500', 'white')
-  const bgButton = useColorModeValue('secondaryGray.300', 'whiteAlpha.100')
+  const textColor = useColorModeValue("secondaryGray.900", "white");
+  const iconColor = useColorModeValue("brand.500", "white");
+  const bgButton = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
   const bgHover = useColorModeValue(
-    { bg: 'secondaryGray.400' },
-    { bg: 'whiteAlpha.50' }
-  )
+    { bg: "secondaryGray.400" },
+    { bg: "whiteAlpha.50" }
+  );
   const bgFocus = useColorModeValue(
-    { bg: 'secondaryGray.300' },
-    { bg: 'whiteAlpha.100' }
-  )
-  const [offers, setOffers] = useState(false)
+    { bg: "secondaryGray.300" },
+    { bg: "whiteAlpha.100" }
+  );
+  const [offers, setOffers] = useState(false);
 
   return offers ? (
-    <Card w='100%' {...rest}>
-      <Flex align='center' w='100%' px='15px' py='10px'>
+    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
+      <Flex align="center" w="100%" px="15px" py="10px">
         <Text
-          me='auto'
+          me="auto"
           color={textColor}
-          fontSize='xl'
-          fontWeight='700'
-          lineHeight='100%'>
+          fontSize="xl"
+          fontWeight="700"
+          lineHeight="100%"
+        >
           Weekly Revenue
         </Text>
         <Button
-          alignItems='center'
-          justifyContent='center'
+          alignItems="center"
+          justifyContent="center"
           bg={bgButton}
           _hover={bgHover}
           _focus={bgFocus}
           _active={bgFocus}
-          w='37px'
-          h='37px'
-          lineHeight='100%'
-          borderRadius='10px'
-          {...rest}>
-          <Icon as={MdBarChart} color={iconColor} w='24px' h='24px' />
+          w="37px"
+          h="37px"
+          lineHeight="100%"
+          borderRadius="10px"
+          {...rest}
+        >
+          <Icon as={MdBarChart} color={iconColor} w="24px" h="24px" />
         </Button>
       </Flex>
 
-      <Box h='240px' mt='auto'>
+      <Box h="240px" mt="auto">
         <BarChart
           chartData={barChartDataConsumption}
           chartOptions={barChartOptionsConsumption}
@@ -70,13 +72,16 @@ export default function Offers(props: { [x: string]: any }) {
     </Card>
   ) : (
     <Card
-      w='100%'
-      alignItems='center'
-      justifyContent='center'
-      flexDirection='column'>
-      <Text fontSize='large' fontWeight='bold'>
+      w="100%"
+      mb={{ base: "0px", lg: "20px" }}
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      borderRadius="10"
+    >
+      <Text fontSize="large" fontWeight="bold">
         No offers currently available
       </Text>
     </Card>
-  )
+  );
 }

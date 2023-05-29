@@ -1,42 +1,42 @@
-import { Column } from 'react-table'
-import tableDataCheck from './tableDataCheck.json'
+import { Column } from "react-table";
+import tableDataCheck from "./tableDataCheck.json";
 
 export const columnsDataCheck = [
   {
-    Header: 'NAME',
-    accessor: 'name',
+    Header: "NAME",
+    accessor: "name",
   },
   {
-    Header: 'PROGRESS',
-    accessor: 'progress',
+    Header: "PROGRESS",
+    accessor: "progress",
   },
   {
-    Header: 'QUANTITY',
-    accessor: 'quantity',
+    Header: "QUANTITY",
+    accessor: "quantity",
   },
   {
-    Header: 'DATE',
-    accessor: 'date',
+    Header: "DATE",
+    accessor: "date",
   },
-]
+];
 export const columnsDataComplex = [
   {
-    Header: 'AMOUNT',
-    accessor: 'amount',
+    Header: "AMOUNT",
+    accessor: "plan",
   },
   {
-    Header: 'STATUS',
-    accessor: 'status',
+    Header: "STATUS",
+    accessor: "status",
   },
   {
-    Header: 'DATE',
-    accessor: 'date',
+    Header: "DATE",
+    accessor: "start_date",
   },
   {
-    Header: 'PAYMENT',
-    accessor: 'payment',
+    Header: "PAYMENT",
+    accessor: "payment",
   },
-]
+];
 
 export const columnsDataSurvey = [
   // {
@@ -44,43 +44,43 @@ export const columnsDataSurvey = [
   //   accessor: 'id',
   // },
   {
-    Header: 'NAME',
-    accessor: 'name',
+    Header: "NAME",
+    accessor: "name",
   },
   {
-    Header: 'DOWNLOAD',
-    accessor: 'download',
+    Header: "DOWNLOAD",
+    accessor: "download",
   },
   {
-    Header: 'DATE GENERATED',
-    accessor: 'date generated',
+    Header: "DATE GENERATED",
+    accessor: "date generated",
   },
   {
-    Header: 'ACTIONS',
-    accessor: 'actions',
+    Header: "ACTIONS",
+    accessor: "actions",
   },
-]
+];
 
-export type ColumnData = Column[]
+export type ColumnData = Column[];
 
 export type TableData = Column<{
   // id?: string
-  name: (string | boolean)[]
-  date: string
-  progress?: number
-  email?: number
-  isactive?: number
-  download?: string
-  actions?: string
-  quantity?: number
-  status?: string
-  artworks?: string
-  rating?: number
-}>
+  name: (string | boolean)[];
+  date: string;
+  progress?: number;
+  email?: number;
+  isactive?: number;
+  download?: string;
+  actions?: string;
+  quantity?: number;
+  status?: string;
+  artworks?: string;
+  rating?: number;
+}>;
 
 export type TableProps = {
-  columnsData: ColumnData
-  tableData: TableData[]
-  getInvitations?: any
-  getCompanyMembers?: [] | any
-}
+  columnsData: ColumnData;
+  tableData: TableData[];
+  getInvitations?: any;
+  getCompanyMembers?: [] | any;
+};

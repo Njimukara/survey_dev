@@ -23,6 +23,7 @@ import axios from "axios";
 import Card from "components/card/Card";
 import { useState, useMemo } from "react";
 import countryList from "react-select-country-list";
+import { Country, City } from "country-state-city";
 import Select from "react-select";
 
 import { useSession } from "next-auth/react";
@@ -37,7 +38,11 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const [companyCountry, setCompanyCountry] = useState(null);
   const [iso, setIso] = useState(null);
   const [companyName, setCompanyName] = useState("");
-  const [companyCity, setCompanyCity] = useState("");
+  const [companyCity, setCompanyCity] = useState(null);
+  const [city, setCity] = useState(null);
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -55,7 +60,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     setIso(null);
     setImageError(null);
   };
-  // display uploaded logo on fronend
+  // display uploaded logo on frontend
   const uploadToClient = (event: any) => {
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
@@ -75,7 +80,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const onSubmit = async () => {
     if (!image) {
       setSubmitting(false);
-      setImageError("please upload your ompany logo");
+      setImageError("please upload your company logo");
       return;
     }
     setImageError(null);
@@ -85,8 +90,11 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     formdata.append("name", companyName);
     formdata.append("city", companyCity);
     formdata.append("country", iso);
+    formdata.append("state", state);
+    formdata.append("street_address", streetAddress);
+    formdata.append("zip_code", zipCode);
 
-    console.log(formdata);
+    // console.log(formdata);
     // setSubmitting(false)
 
     // headers
@@ -105,25 +113,24 @@ export default function RegisterCompany(props: { [x: string]: any }) {
         config
       )
       .then((res) => {
-        console.log(res);
-        // router.push('/auth/verifyemail')
-        toggleDetails(true);
+        // console.log(res);
         setSubmitting(false);
+        toggleDetails(true);
         closeModal();
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         toggleDetails(false);
         setSubmitting(false);
       });
   };
 
-  const options = useMemo(() => countryList().getData(), []);
+  // const options = useMemo(() => countryList().getData(), []);
 
-  const changeHandler = (value: any) => {
-    setCompanyCountry(value);
-    setIso(value.value);
-  };
+  // const changeHandler = (value: any) => {
+  //   setCompanyCountry(value);
+  //   setIso(value.value);
+  // };
 
   // css styling for react select
   const reactSelectStyles = {
@@ -137,6 +144,47 @@ export default function RegisterCompany(props: { [x: string]: any }) {
       boxShadow: "none",
     }),
     singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+  };
+
+  type option = {
+    value: {
+      latitude: string;
+      longitude: string;
+      isoCode: string;
+    };
+    label: string;
+  } | null;
+
+  type cityOption = {
+    value: {
+      latitude: string;
+      longitude: string;
+      name: string;
+      stateCode: string;
+      countryCode: string;
+    };
+    label: string;
+  } | null;
+
+  //   react-select
+  // const options = useMemo(() => countryList().getData(), []);
+  const options = Country.getAllCountries().map((country) => ({
+    value: {
+      latitude: country.latitude,
+      longitude: country.longitude,
+      isoCode: country.isoCode,
+    },
+    label: country.name,
+  }));
+
+  const changeHandler = (value: any) => {
+    setCompanyCountry(value);
+    setIso(value.value?.isoCode);
+  };
+
+  const handleSelectedCity = (option: any) => {
+    setCompanyCity(option?.value?.name);
+    setCity(option?.value?.name);
   };
 
   return (
@@ -218,32 +266,78 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                         />
                       </FormControl>
 
-                      <FormControl>
-                        <FormLabel fontSize="sm" color={textColorSecondary}>
-                          City
-                        </FormLabel>
+                      <FormControl pb="3">
+                        <FormLabel w="160px">City</FormLabel>
+                        <Box w="100%">
+                          <Select
+                            id="companyCity"
+                            name="companyCity"
+                            styles={reactSelectStyles}
+                            options={City.getCitiesOfCountry(iso)?.map(
+                              (state) => ({
+                                value: {
+                                  latitude: state.latitude,
+                                  longitude: state.longitude,
+                                  name: state.name,
+                                  stateCode: state.stateCode,
+                                  countryCode: state.countryCode,
+                                },
+                                label: state.name,
+                              })
+                            )}
+                            placeholder="select city"
+                            value={companyCity}
+                            onChange={handleSelectedCity}
+                          />
+                        </Box>
+                      </FormControl>
+
+                      <FormControl pb="3">
+                        <FormLabel w="160px">state</FormLabel>
                         <Input
-                          id="companyCity"
-                          name="companyCity"
-                          isRequired={true}
+                          id="state"
+                          name="state"
                           variant="rounded"
                           fontSize="sm"
-                          ms={{ base: "0px", md: "0px" }}
-                          mb="5px"
                           type="text"
-                          placeholder="City"
-                          fontWeight="400"
-                          size="md"
-                          value={companyCity}
-                          onChange={(e) => setCompanyCity(e.target.value)}
+                          placeholder="State"
+                          fontWeight="500"
+                          size="lg"
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
                         />
-                        {/* {errors.companyCity && touched.companyCity ? (
-                          <FormHelperText color='red.400' mt='0' mb='5px'>
-                            {errors.companyCity}
-                          </FormHelperText>
-                        ) : (
-                          ''
-                        )} */}
+                      </FormControl>
+
+                      <FormControl pb="3">
+                        <FormLabel w="160px">Zip Code</FormLabel>
+                        <Input
+                          id="zipCode"
+                          name="zipCode"
+                          variant="rounded"
+                          fontSize="sm"
+                          type="text"
+                          placeholder="Zip Code"
+                          fontWeight="500"
+                          size="lg"
+                          value={zipCode}
+                          onChange={(e) => setZipCode(e.target.value)}
+                        />
+                      </FormControl>
+
+                      <FormControl pb="3">
+                        <FormLabel w="160px">Street Address</FormLabel>
+                        <Input
+                          id="streetAddress"
+                          name="streetAddress"
+                          variant="rounded"
+                          fontSize="sm"
+                          type="text"
+                          placeholder="Street Address"
+                          fontWeight="500"
+                          size="lg"
+                          value={streetAddress}
+                          onChange={(e) => setStreetAddress(e.target.value)}
+                        />
                       </FormControl>
                     </Flex>
                     <Flex alignItems="center" w="100%">

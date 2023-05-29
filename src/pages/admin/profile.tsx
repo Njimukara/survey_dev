@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Flex, Grid, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Grid, Spinner, useToast } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 
@@ -41,39 +41,43 @@ import avatar from "img/avatars/avatar4.png";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSession, getSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
-import RegisterCompany from "views/admin/default/components/RegisterCompany";
+// import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import axios from "axios";
-import { useRouter } from "next/router";
-import { getServerSession } from "next-auth";
+import { useCurrentUser } from "contexts/UserContext";
+import Users from "views/admin/default/components/Users";
+import CompanyUsers from "views/admin/profile/components/CompanyUsers";
 
 export default function ProfileOverview() {
+  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
   const [user, setUser] = useState<any>();
   const [company, setCompany] = useState();
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
-  const [updatedSession, setUpdatedSession] = useState<any>();
+  // const [updatedSession, setUpdatedSession] = useState<any>();
+  const [companyMembers, setCompanyMembers] = useState();
+  const [individualUser, setIndividualUser] = useState(1);
 
   // const cachedValue = useMemo(secondSession(), session)
-  // const [individualUser, setIndividualUser] = useState(1)
-  var { data: session } = useSession();
+  const { data: session } = useSession();
 
-  const secondSession = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        // console.log(res);
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [session]);
-
-  // const cachedValue = useMemo(getCompany(), [session)
+  // const secondSession = useCallback(async () => {
+  //   await getSession()
+  //     .then((res) => {
+  //       // console.log(res);
+  //       session = res;
+  //       setUser(res?.user?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, [session]);
 
   const toggleHasDetails = (state: boolean) => {
     setHasDetails(state);
   };
+
+  // // chakra toast
+  // const toast = useToast();
 
   // get company
   const getCompany = useCallback(async () => {
@@ -91,40 +95,55 @@ export default function ProfileOverview() {
         config
       )
       .then((res) => {
-        // console.log(res);
         setHasDetails(true);
         setCompany(res.data);
-        // router.push('/auth/verifyemail')
+        setCompanyMembers(res?.data?.members);
       })
       .catch((error) => {
-        // setHasDetails(false);
-        // console.log(error)
+        // console.log(error);
+        // toast({
+        //   position: "bottom-right",
+        //   description: "Error getting company details",
+        //   status: "error",
+        //   duration: 5000,
+        //   isClosable: true,
+        // });
       });
-  }, [company]);
+  }, [hasDetails]);
 
   useEffect(() => {
-    secondSession();
+    // secondSession();
+    fetchCurrentUser();
+    setUser(currentUser);
+    // console.log(currentUser);
     if (session?.user?.data?.user_profile?.user_type == companyUser) {
       getCompany();
     }
-  }, []);
+  }, [hasDetails, loading]);
 
   // Loader if the user session has not been loaded
-  if (session == null || undefined) {
-    return (
-      <AdminLayout>
-        <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
-      </AdminLayout>
-    );
-  }
+  // if (session == null || undefined) {
+  //   return (
+  //     <AdminLayout>
+  //       <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
+  //         <Spinner
+  //           thickness="4px"
+  //           speed="0.65s"
+  //           emptyColor="gray.200"
+  //           color="blue.500"
+  //           size="xl"
+  //         />
+  //       </Flex>
+  //     </AdminLayout>
+  //   );
+  // }
+
+  // state for user invite
+  const [modalState, setModalState] = useState(false);
+  // toggle company user invite modal
+  const toggleCompanyUserModal = (state: boolean) => {
+    setModalState(state);
+  };
 
   return (
     <AdminLayout>
@@ -142,42 +161,63 @@ export default function ProfileOverview() {
           gap={{ base: "20px", xl: "20px" }}
         >
           <Banner
+            borderRadius="10"
             gridArea="1 / 1 / 2 / 2"
             avatar={user?.user_profile?.avatar}
-            name={user?.name}
-            email={user?.email}
-            date_joined={user?.date_joined}
+            name={user?.name || "loading"}
+            email={user?.email || "loading"}
+            date_joined={user?.date_joined || "loading"}
+            phoneNumber={user?.user_profile?.phone_number || "loading"}
           />
         </Grid>
-        <Grid
-          templateColumns={{
-            base: "1fr",
-            lg: "1fr",
-          }}
-          templateRows={{
-            base: "repeat(3, 1fr)",
-            lg: "1fr",
-          }}
-          gap={{ base: "20px", xl: "20px" }}
-        >
-          <PlanDetails
-            gridArea="1 / 1 / 2 / 2"
-            name={user?.name}
-            email={user?.email}
-            date_joined={user?.date_joined}
-          />
-        </Grid>
+        {(user?.user_profile?.user_type == companyUser ||
+          user?.user_profile?.user_type == individualUser) && (
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              lg: "1fr",
+            }}
+            templateRows={{
+              base: "repeat(3, 1fr)",
+              lg: "1fr",
+            }}
+            gap={{ base: "20px", xl: "20px" }}
+          >
+            <PlanDetails borderRadius="10" />
+          </Grid>
+        )}
         <Grid>
           {user?.user_profile?.user_type == companyUser && (
-            <CompanyDetails
-              // avatar={avatar}
-              hasDetails={hasDetails}
-              toggleHasDetails={toggleHasDetails}
-              company={company}
-            />
+            <Grid
+              templateColumns={{
+                base: "repeat(2, 1fr)",
+                lg: "repeat(2, 1fr)",
+              }}
+              // templateRows={{
+              //   base: "repeat(2, 1fr)",
+              //   lg: "1fr",
+              // }}
+              gap={{ base: "20px", xl: "20px" }}
+            >
+              <CompanyDetails
+                // avatar={avatar}
+                borderRadius="10"
+                hasDetails={hasDetails}
+                toggleHasDetails={toggleHasDetails}
+                company={company}
+              />
+              {hasDetails && (
+                <CompanyUsers
+                  borderRadius="10"
+                  toggleModal={toggleCompanyUserModal}
+                  isOpen={modalState}
+                  company={companyMembers}
+                />
+              )}
+            </Grid>
           )}
         </Grid>
-        <Flex gap="4">
+        {/* <Flex gap="4">
           <General
             gridArea={{ base: "2 / 1 / 3 / 2", lg: "1 / 2 / 2 / 3" }}
             minH="365px"
@@ -192,7 +232,7 @@ export default function ProfileOverview() {
               "2xl": "1 / 3 / 2 / 4",
             }}
           />
-        </Flex>
+        </Flex> */}
       </Box>
     </AdminLayout>
   );

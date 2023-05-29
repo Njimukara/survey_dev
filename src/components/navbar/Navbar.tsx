@@ -124,15 +124,20 @@ const Navbar = (): JSX.Element => {
               Login
             </Text>
           </Link>
-          <Button
-            ml={[0, 0, 4, 8]}
-            mt={10}
-            mb={4}
-            variant={navScroll ? "homePrimary" : "homeWhite"}
-            size="lg"
-          >
-            Try It Now
-          </Button>
+          <Link as={NextLink} href="/auth/signin">
+            <Button
+              ml={[0, 0, 4, 8]}
+              mt={10}
+              mb={4}
+              variant={navScroll ? "homePrimary" : "homeWhite"}
+              _active={{ bg: "white" }}
+              size="lg"
+            >
+              {/* <Link > */}
+              Try It Now
+              {/* </Link> */}
+            </Button>
+          </Link>
         </Flex>
       </Box>
     </Flex>

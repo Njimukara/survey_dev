@@ -31,20 +31,21 @@ export default function Users(props: { [x: string]: any }) {
         justifyContent="center"
         flexDirection="column"
         py="8"
+        borderRadius="10"
         {...rest}
       >
         <Text color={textColorPrimary} mb="4" fontWeight="bold" fontSize="2xl">
           No company users yet.
         </Text>
         <Button variant="homePrimary" py="6">
-          <Link href="/admin/profile">Add New user</Link>
+          <Link href="/admin/profile/#registerCompany">Add New user</Link>
         </Button>
       </Card>
     );
   }
 
   return (
-    <Card mb={{ base: "0px", "2xl": "20px" }} {...rest}>
+    <Card mb={{ base: "0px", "2xl": "20px" }} borderRadius="10" {...rest}>
       <>
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
@@ -74,7 +75,7 @@ export default function Users(props: { [x: string]: any }) {
           return (
             <User
               key={member.name}
-              boxShadow={cardShadow}
+              boxShadow="sm"
               my="1"
               name={member.name}
               email={member.email}

@@ -39,11 +39,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Select,
+  // Select,
   Text,
   useColorModeValue,
   HStack,
   useToast,
+  InputLeftElement,
 } from "@chakra-ui/react";
 
 import { Formik, Form, useFormik } from "formik";
@@ -61,6 +62,12 @@ import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
 import defaultImage from "./../../../public/profile.png";
 import SetEmail from "views/admin/profile/components/SetEmail";
+import PhoneInput from "react-phone-input-2";
+// import "react-phone-input-2/lib/style.css";
+// import styles from "../../../styles/PhoneNumbr.module.css";
+// import "../../styles/PhoneNumbr.module.css";
+import { Country, City } from "country-state-city";
+import Select from "react-select";
 
 export default function EditUser({ providers }: any) {
   // Chakra color mode
@@ -86,10 +93,13 @@ export default function EditUser({ providers }: any) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [emailModal, setEmailModal] = React.useState(false);
   const [name, setName] = React.useState("");
+  const [phone_number, setPhone_number] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
   const [defaulimage, setDefaultImage] = React.useState(null);
   const [createObjectURL, setCreateObjectURL] = React.useState(null);
+  const [phoneValue, setPhoneValue] = React.useState("");
+  const [companyCountry, setCompanyCountry] = React.useState(null);
 
   const { data: session, status } = useSession();
 
@@ -112,21 +122,29 @@ export default function EditUser({ providers }: any) {
     setEmailModal(state);
   };
 
-  toggleEmailModal;
+  // toggleEmailModal;
 
   // function to upddate user
   const updateUser = async () => {
     setSubmitting(true);
     getDefaultImage();
+    let contact;
+    if (!phoneValue.includes("+") && phone_number != null) {
+      contact = `+${phoneValue}${phone_number}`;
+    } else if (phoneValue.includes("+") && phone_number != null) {
+      contact = phoneValue + phone_number;
+    } else {
+      contact = "";
+    }
     let formData = new FormData();
     formData.append("name", name);
+    formData.append("phone_number", contact);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
-    formData.set("avatar", defaulimage);
     if (image != null) {
       formData.set("avatar", image);
     }
 
-    console.log("avatar", formData.get("avatar"));
+    // console.log("avatar", formData.get("avatar"));
 
     const options = {
       // method: 'POST',
@@ -193,6 +211,7 @@ export default function EditUser({ providers }: any) {
     setCreateObjectURL(null);
   };
 
+  // get user
   const getUser = async () => {
     const options = {
       headers: {
@@ -208,27 +227,83 @@ export default function EditUser({ providers }: any) {
         setUser(res?.data);
         setName(res?.data?.name);
         setEmail(res?.data?.email);
+        setPhone_number(res?.data?.phone_number);
         setCreateObjectURL(res?.data?.user_profile?.avatar);
         // router.push("/auth/verifyemail");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
+        toast({
+          position: "bottom-right",
+          description: "Error getting user details",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
   useEffect(() => {
-    getUser();
+    const fetchUser = async () => {
+      await getUser();
+    };
+    fetchUser();
   }, [session]);
+
+  // const containerStyles = {
+  //   width: "100%",
+  //   border: "1px blue",
+  //   borderRadius: "10px",
+  //   backgroundColor: "red",
+  // };
+
+  const reactSelectStyles = {
+    control: () => ({
+      // ...defaultStyles,
+      display: "flex",
+      backgroundColor: "transparent",
+      borderColor: "gray.200",
+      color: "black",
+      zIndex: "10",
+      padding: "6px",
+      borderRadius: "15px",
+      boxShadow: "none",
+      width: "120px",
+    }),
+    // singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+  };
+
+  type option = {
+    value: {
+      phoneCode: string;
+    };
+    label: string;
+  } | null;
+
+  //   react-select
+  // const options = useMemo(() => countryList().getData(), []);
+  const options = Country.getAllCountries().map((country) => ({
+    value: {
+      phoneCode: country.phonecode,
+    },
+    label: country.phonecode,
+  }));
+
+  const changeHandler = (value: any) => {
+    console.log(value);
+    setCompanyCountry(value);
+    setPhoneValue(value.value?.phoneCode);
+  };
 
   return (
     <AdminLayout>
-      <Card mt={20}>
+      <Card mt={20} borderRadius="10">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
             <Flex alignItems="center" flexDirection="column">
               <Image
-                src={createObjectURL ? createObjectURL : "/profile.png"}
+                src={createObjectURL != "" ? createObjectURL : "/profile.png"}
                 objectFit="contain"
                 bg="transparent"
                 width="370px"
@@ -298,25 +373,51 @@ export default function EditUser({ providers }: any) {
                 </HStack>
               </FormControl>
 
-              {/* <FormControl pb="3">
+              <FormControl pb="3">
                 <HStack spacing="10px">
-                  <FormLabel w="150px">Email *</FormLabel>
-                  <Input
-                    id="email"
-                    name="email"
-                    variant="rounded"
-                    fontSize="sm"
-                    ms={{ base: "0px", md: "0px" }}
-                    type="email"
-                    placeholder="Email*"
-                    fontWeight="500"
-                    size="lg"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    isDisabled={canEdit}
-                  />
+                  <FormLabel w="150px">Contact</FormLabel>
+                  <Flex flexDirection="column" w="100%" justifyContent="center">
+                    <Input
+                      // flex={1}
+                      id="phone_number"
+                      name="phone_number"
+                      variant="rounded"
+                      fontSize="sm"
+                      ms={{ base: "0px", md: "0px" }}
+                      type="text"
+                      placeholder="Add phone number"
+                      mr="2px"
+                      w="100%"
+                      fontWeight="500"
+                      size="lg"
+                      value={phone_number}
+                      onChange={(e) => setPhone_number(e.target.value)}
+                      isDisabled={canEdit}
+                    />
+                    <Text color="gray.400" fontSize="sm" mx="18px" mb="0">
+                      Make sure to add country code
+                    </Text>
+                    {/* </InputGroup> */}
+                  </Flex>
+                  {/* <PhoneInput
+                    // containerClass="container_class"
+                    // inputClass="input_class"
+                    buttonStyle={{
+                      backgroundColor: "none",
+                      border: "none",
+                      borderRadius: "5px",
+                      marginLeft: "0",
+                      padding: "0",
+                      // _hover:
+                    }}
+                    containerStyle={containerStyles}
+                    inputStyle={{ width: "100%", border: "none" }}
+                    placeholder="Add phone number"
+                    value={phoneValue}
+                    onChange={setPhoneValue}
+                  /> */}
                 </HStack>
-              </FormControl> */}
+              </FormControl>
 
               <FormControl pb="3">
                 <HStack spacing="10px">
@@ -385,7 +486,7 @@ export default function EditUser({ providers }: any) {
                     fontWeight="500"
                   >
                     {/* <Link href="/admin/profile">Profile</Link> */}
-                    Profile
+                    Back
                   </Button>
                 </Flex>
               ) : (
@@ -417,7 +518,7 @@ export default function EditUser({ providers }: any) {
           </Flex>
         </form>
         <SetPassword toggleModal={toggleModal} opened={isOpen} />
-        <SetEmail toggleEmailModal={toggleModal} opened={emailModal} />
+        <SetEmail toggleEmailModal={toggleEmailModal} opened={emailModal} />
       </Card>
     </AdminLayout>
   );

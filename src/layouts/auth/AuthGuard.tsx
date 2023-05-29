@@ -1,6 +1,7 @@
 // components/layouts/protectedLayouts.tsx
 
-import { Flex, Spinner } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
+import Spinner from "components/spinner";
 import AdminLayout from "layouts/admin";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -45,13 +46,7 @@ export const AuthGuard = ({ children }: Props): JSX.Element => {
     return (
       <AdminLayout>
         <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
+          <Spinner />
         </Flex>
       </AdminLayout>
     );
@@ -64,13 +59,7 @@ export const AuthGuard = ({ children }: Props): JSX.Element => {
   ) : (
     <>
       <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-          size="xl"
-        />
+        <Spinner />
       </Flex>
     </>
   );

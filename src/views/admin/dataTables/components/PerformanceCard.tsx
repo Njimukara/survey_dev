@@ -3,72 +3,364 @@ import {
   Box,
   Button,
   Flex,
+  FormLabel,
+  Grid,
+  GridItem,
   Icon,
   SimpleGrid,
   Text,
   useColorModeValue,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 // Custom components
-import Card from 'components/card/Card'
-import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
-import { MdBarChart, MdOutlineCalendarToday } from 'react-icons/md'
-import LidarCard from './LidarCard'
+import Card from "components/card/Card";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";
+import LidarCard from "./LidarCard";
+import PerformanceSurvey from "./PerformanceSurvey";
+
+const formFields = [
+  {
+    survey: "",
+    label: "",
+    name: "",
+  },
+];
 
 export default function PercormanceCard(props: { [x: string]: any }) {
-  const { ...rest } = props
+  const { surveyID, ...rest } = props;
+
+  // variables
+  const [lidar, setLidar] = useState(2);
+  const [multibeam, setMultibeam] = useState(1);
+  const [scan, setScan] = useState(3);
+  const [acoustic, setAcoustic] = useState(4);
 
   // Chakra Color Mode
-
-  const textColor = useColorModeValue('navy.500', 'white')
-  const whiteText = useColorModeValue('white', 'white')
-  const textColorSecondary = useColorModeValue('secondaryGray.600', 'white')
-  const textColordark = useColorModeValue('black', 'white')
-  const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100')
-  const iconColor = useColorModeValue('brand.500', 'white')
-  const bgButton = useColorModeValue('primary.500', 'blue.300')
+  const textColor = useColorModeValue("navy.500", "white");
+  const whiteText = useColorModeValue("white", "white");
+  const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
+  const textColordark = useColorModeValue("black", "white");
+  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const iconColor = useColorModeValue("brand.500", "white");
+  const bgButton = useColorModeValue("primary.500", "blue.300");
   const bgHover = useColorModeValue(
-    { bg: 'primary.600' },
-    { bg: 'whiteAlpha.50' }
-  )
+    { bg: "primary.600" },
+    { bg: "whiteAlpha.50" }
+  );
   const bgFocus = useColorModeValue(
-    { bg: 'primary.600' },
-    { bg: 'whiteAlpha.100' }
-  )
+    { bg: "primary.600" },
+    { bg: "whiteAlpha.100" }
+  );
 
-  const [mounted, setMounted] = useState(false)
-  const [active, setActive] = useState(true)
-  const array = [1, 2, 3, 4]
+  const [mounted, setMounted] = useState(false);
+  const [active, setActive] = useState(true);
+  const array = [1, 2, 3, 4];
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setMounted(true)
-    }, 3000)
+      setMounted(true);
+    }, 3000);
     return () => {
-      clearTimeout(timeout)
-    }
-  }, [])
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
     <Card
-      justifyContent='center'
-      flexDirection='column'
-      w='100%'
-      mb='0px'
-      p='6'
-      {...rest}>
-      <Text py='3' fontSize='large' fontWeight='bold' textTransform='uppercase'>
-        Performance of Lidars
-      </Text>
-      <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap='20px' mb='20px'>
-        {array.map((data, index) => {
-          return <LidarCard index={data} key={index} />
-        })}
-      </SimpleGrid>
-      <SimpleGrid
-        columns={{ base: 1, md: 2, xl: 2 }}
-        gap='20px'
-        mb='20px'></SimpleGrid>
+      justifyContent="center"
+      flexDirection="column"
+      w="100%"
+      mb="0px"
+      p="6"
+      borderRadius={10}
+      {...rest}
+    >
+      <Grid templateColumns="repeat(9, 1fr)" gap="1" py="3">
+        <GridItem colSpan={5} h="10">
+          <Text fontSize="large" fontWeight="bold" textTransform="uppercase">
+            Performance of{" "}
+            {surveyID == lidar
+              ? "Lidars"
+              : surveyID == multibeam
+              ? "MBESs  "
+              : surveyID == scan
+              ? "SSSs"
+              : "Cameras"}
+          </Text>
+        </GridItem>
+        {array.map((item, index) => (
+          <GridItem colSpan={1} h="10" key={index}>
+            <Text fontSize="sm" fontWeight="bold">
+              {surveyID == lidar
+                ? `Lidar ${item}`
+                : surveyID == multibeam
+                ? `MBES ${item}`
+                : surveyID == scan
+                ? `SL ${item}`
+                : `AC ${item}`}
+            </Text>
+          </GridItem>
+        ))}
+        {/* <GridItem colSpan={1} h="10">
+          <Text fontSize="sm" fontWeight="bold">
+            Lidar 2
+          </Text>
+        </GridItem>
+        <GridItem colSpan={1} h="10">
+          <Text fontSize="sm" fontWeight="bold">
+            Lidar 3
+          </Text>
+        </GridItem>
+        <GridItem colSpan={1} h="10">
+          <Text fontSize="sm" fontWeight="bold">
+            Lidar 4
+          </Text>
+        </GridItem> */}
+      </Grid>
+      {surveyID == lidar && (
+        <>
+          <PerformanceSurvey
+            label="Maximum Range (m)"
+            size="xs"
+            name="maxRange"
+            // value1={0.02}
+            // value2={0.2}
+            // value3={0.22}
+            // value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Beam Divergence (mrad)*"
+            size="xs"
+            // value1={0.02}
+            // value2={0.2}
+            // value3={0.22}
+            // value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Signal to Noise Ratio (dB)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Uncertainty of divergence*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Pulse duration (ns)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Pulse repetition rate (KHz)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Range Uncertainty (mm)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="LIDAR scanning angle (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+            type="select"
+            options={[1, 2, 2, 1]}
+          />
+          <PerformanceSurvey
+            label="Texture (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+            type="select"
+            options={["integrated", "external", "no texture"]}
+          />
+        </>
+      )}
+
+      {(surveyID == scan || surveyID == acoustic) && (
+        <>
+          {/* SCAN */}
+          <PerformanceSurvey
+            label="Defined operating frequency (Hz)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Horizontal field of view (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Vertical field of view (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Pulse duration (us)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Beamwidth (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Depression Angle (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
+
+      {surveyID == scan && (
+        <PerformanceSurvey
+          label="Max range of SSS (m)"
+          size="xs"
+          value1={0.02}
+          value2={0.2}
+          value3={0.22}
+          value4={0.32}
+        />
+      )}
+
+      {surveyID == multibeam && (
+        <>
+          {/* Multibeam */}
+          <PerformanceSurvey
+            label="Defined operating frequency (Hz)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Along track beamwidth (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Accross track beamwidth (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Beams number"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Depth resulotion (mm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Ping rate (Hz)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+
+          <PerformanceSurvey
+            label="User defined Swath coverage (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+            type="select"
+            options={[1, 2, 2, 1]}
+          />
+          <PerformanceSurvey
+            label="Shape of antenna"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+            type="select"
+            options={["Circular", "Rectangular"]}
+          />
+        </>
+      )}
+
+      {surveyID == acoustic && (
+        <>
+          {/* Acoustic */}
+          <PerformanceSurvey
+            label="Max range of camera (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <PerformanceSurvey
+            label="Inclination of the antenna/Horizontal (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
     </Card>
-  )
+  );
 }

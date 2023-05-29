@@ -29,7 +29,6 @@ import {
   Heading,
   Text,
   Image,
-  Spinner,
   useToast,
 } from "@chakra-ui/react";
 // Assets
@@ -66,6 +65,12 @@ import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { SubscriptionProvider } from "contexts/SubscriptionContext";
+import PlanDetails from "views/admin/profile/components/PlanDetails";
+import { useCurrentUser } from "contexts/UserContext";
+import Spinner from "components/spinner";
+
+// const stripe = require("stripe")();
 
 export default function UserReports(props: { [x: string]: any }) {
   interface User {
@@ -79,17 +84,23 @@ export default function UserReports(props: { [x: string]: any }) {
     };
   }
 
+  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
+  // const { subscription, fetchSubscription } = useCurrentUser();
+  // console.log(subscription);
+
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
 
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
+  const [individualUser, setIndividualUser] = useState(1);
+  const [fetching, setFetching] = useState(true);
   const [companyMembers, setCompanyMembers] = useState([]);
-  // const [individualUser, setIndividualUser] = useState(1);
-  var { data: session, status } = useSession();
+  const { data: session, status } = useSession();
 
-  const router = useRouter();
+  // const router = useRouter();
 
   // chakra toast
   const toast = useToast();
@@ -123,46 +134,58 @@ export default function UserReports(props: { [x: string]: any }) {
       });
   };
 
-  const sessionUpdate = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {
-        // console.log(err);
-      });
-  }, [session]);
-
   useEffect(() => {
-    sessionUpdate();
-    setUser(session?.user?.data);
-    if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      getCompanyMembers();
+    // const usr = async () => {
+    //   setFetching(true);
+    fetchCurrentUser();
+    setUser(currentUser);
+
+    // setFetching(false);
+    // };
+    if (session?.user?.data?.user_profile?.user_type != companyUser) {
+      return;
     } else {
-      setCompanyUser(1);
+      getCompanyMembers();
     }
-  }, [session, companyUser]);
+
+    // usr();
+  }, [loading]);
 
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <>
-          <Flex>
-            <Card mb="20px" py="10">
-              <Flex gap={3} alignItems="center">
-                <Heading size="lg">Welcome Back {user?.name}</Heading>
-                <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon>
-              </Flex>
-              <Box pt="3">
-                <Text>
+          {/* <Flex> */}
+          <Card
+            mb="3%"
+            py="10"
+            borderRadius="10"
+            bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
+          >
+            <Flex
+              gap={3}
+              alignItems="center"
+              justifyContent="space-between"
+              // position="relative"
+            >
+              {/* <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon> */}
+
+              <Box pt="3" color="white" pl="10">
+                <Heading size="lg" mb="8">
+                  Hello {user?.name}!
+                </Heading>
+                <Text w="50%">
                   This is your survey planner dashboard, where you can see an
                   overview of your account details
                 </Text>
               </Box>
-            </Card>
-          </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="20px">
+              <Box mb="-9">
+                <Image src="/hello.png" alt="hello" />
+              </Box>
+            </Flex>
+          </Card>
+          {/* </Flex> */}
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="3%">
             <MiniStatistics
               startContent={
                 <IconBox
@@ -222,12 +245,32 @@ export default function UserReports(props: { [x: string]: any }) {
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
-            <Flex w="70%">
-              <CurrentPlan />
-            </Flex>
-            <Flex w="30%">
-              <Offers />
-            </Flex>
+            {user == null ? (
+              <Card py="10" px="4">
+                <Flex
+                  w="100%"
+                  h="50"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Spinner />
+                </Flex>
+              </Card>
+            ) : user?.user_profile?.user_type == companyUser ||
+              user?.user_profile?.user_type == individualUser ? (
+              <>
+                <Flex w="70%">
+                  <PlanDetails />
+                </Flex>
+                <Flex w="30%">
+                  <Offers />
+                </Flex>
+              </>
+            ) : (
+              <Flex w="100%">
+                <Offers />
+              </Flex>
+            )}
             {/* <MiniCalendar h='100%' minW='100%' selectRange={false} /> */}
           </Flex>
 
@@ -249,12 +292,20 @@ export default function UserReports(props: { [x: string]: any }) {
             />
             <DailyTraffic />
           </SimpleGrid>
-          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <ComplexTable
-              columnsData={columnsDataComplex}
-              tableData={tableDataComplex as unknown as TableData[]}
-            />
-          </SimpleGrid>
+
+          {user?.user_profile?.user_type == companyUser ||
+            (user?.user_profile?.user_type == individualUser && (
+              <SimpleGrid
+                columns={{ base: 1, md: 1, xl: 1 }}
+                gap="20px"
+                mb="20px"
+              >
+                <ComplexTable
+                  columnsData={columnsDataComplex}
+                  tableData={tableDataComplex as unknown as TableData[]}
+                />
+              </SimpleGrid>
+            ))}
         </>
       </Box>
     </AdminLayout>

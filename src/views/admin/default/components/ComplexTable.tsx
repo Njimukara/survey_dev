@@ -10,27 +10,85 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-} from '@chakra-ui/react'
-import { useMemo } from 'react'
+  useToast,
+} from "@chakra-ui/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
   useSortBy,
   useTable,
-} from 'react-table'
+} from "react-table";
 
 // Custom components
-import Card from 'components/card/Card'
-import Menu from 'components/menu/MainMenu'
+import Card from "components/card/Card";
+import Menu from "components/menu/MainMenu";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from 'react-icons/md'
-import { TableProps } from '../variables/columnsData'
+import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import { TableProps } from "../variables/columnsData";
+import { getSession, useSession } from "next-auth/react";
+import axios from "axios";
 export default function ColumnsTable(props: TableProps) {
-  const { columnsData, tableData } = props
+  const { columnsData, tableData } = props;
 
-  const columns = useMemo(() => columnsData, [columnsData])
-  const data = useMemo(() => tableData, [tableData])
+  const columns = useMemo(() => columnsData, [columnsData]);
+  const data = useMemo(() => tableData, [tableData]);
+
+  const [user, setUser] = useState(null);
+  const [subscriptions, setSubscriptions] = useState(null);
+
+  // chakra toast
+  const toast = useToast();
+
+  var { data: session, status } = useSession();
+
+  const sessionUpdate = useCallback(async () => {
+    await getSession()
+      .then((res) => {
+        session = res;
+        setUser(res?.user?.data);
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
+  }, [session]);
+
+  // get user subscriptions
+  const getSubscritptions = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "json",
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+
+    await axios
+      .get(
+        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
+        config
+      )
+      .then((response) => {
+        setSubscriptions(response.data);
+        console.log(response.data);
+      })
+      .catch((err) => {
+        toast({
+          position: "bottom-right",
+          description: "Error getting company users",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      });
+  };
+
+  useEffect(() => {
+    sessionUpdate();
+    // getSubscritptions()
+    setUser(session?.user?.data);
+  }, [session]);
 
   const tableInstance = useTable(
     {
@@ -40,7 +98,7 @@ export default function ColumnsTable(props: TableProps) {
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
   const {
     getTableProps,
@@ -49,43 +107,55 @@ export default function ColumnsTable(props: TableProps) {
     page,
     prepareRow,
     initialState,
-  } = tableInstance
-  initialState.pageSize = 5
+  } = tableInstance;
+  initialState.pageSize = 5;
 
-  const textColor = useColorModeValue('secondaryGray.900', 'white')
-  const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100')
+  // format date
+  const formatDate = (date: any) => {
+    let dateToFormat = new Date(date);
+    let joinedDate = dateToFormat.toLocaleDateString("en-US");
+    return joinedDate;
+  };
+
+  const textColor = useColorModeValue("secondaryGray.900", "white");
+  const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
-      flexDirection='column'
-      w='100%'
-      px='0px'
-      overflowX={{ sm: 'scroll', lg: 'hidden' }}>
-      <Flex px='25px' justify='space-between' mb='10px' align='center'>
+      flexDirection="column"
+      w="100%"
+      px="0px"
+      borderRadius="10"
+      overflowX={{ sm: "scroll", lg: "hidden" }}
+    >
+      <Flex px="25px" justify="space-between" mb="10px" align="center">
         <Text
           color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
+          fontSize="22px"
+          fontWeight="700"
+          lineHeight="100%"
+        >
           Recent Transactions
         </Text>
         <Menu />
       </Flex>
-      <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
+      <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
               {headerGroup.headers.map((column, index) => (
                 <Th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  pe='10px'
+                  pe="10px"
                   key={index}
-                  borderColor={borderColor}>
+                  borderColor={borderColor}
+                >
                   <Flex
-                    justify='space-between'
-                    align='center'
-                    fontSize={{ sm: '10px', lg: '12px' }}
-                    color='gray.400'>
-                    {column.render('Header')}
+                    justify="space-between"
+                    align="center"
+                    fontSize={{ sm: "10px", lg: "12px" }}
+                    color="gray.400"
+                  >
+                    {column.render("Header")}
                   </Flex>
                 </Th>
               ))}
@@ -94,79 +164,80 @@ export default function ColumnsTable(props: TableProps) {
         </Thead>
         <Tbody {...getTableBodyProps()}>
           {page.map((row, index) => {
-            prepareRow(row)
+            prepareRow(row);
             return (
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
-                  let data
-                  if (cell.column.Header === 'AMOUNT') {
+                  let data;
+                  if (cell.column.Header === "AMOUNT") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
-                    )
-                  } else if (cell.column.Header === 'STATUS') {
+                    );
+                  } else if (cell.column.Header === "STATUS") {
                     data = (
-                      <Flex align='center'>
+                      <Flex align="center">
                         <Icon
-                          w='24px'
-                          h='24px'
-                          me='5px'
+                          w="24px"
+                          h="24px"
+                          me="5px"
                           color={
-                            cell.value === 'Approved'
-                              ? 'green.500'
-                              : cell.value === 'Disable'
-                              ? 'red.500'
-                              : cell.value === 'Error'
-                              ? 'orange.500'
+                            cell.value === "Approved"
+                              ? "green.500"
+                              : cell.value === "Disable"
+                              ? "red.500"
+                              : cell.value === "Error"
+                              ? "orange.500"
                               : null
                           }
                           as={
-                            cell.value === 'Approved'
+                            cell.value === "Approved"
                               ? MdCheckCircle
-                              : cell.value === 'Disable'
+                              : cell.value === "Disable"
                               ? MdCancel
-                              : cell.value === 'Error'
+                              : cell.value === "Error"
                               ? MdOutlineError
                               : null
                           }
                         />
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        <Text color={textColor} fontSize="sm" fontWeight="700">
                           {cell.value}
                         </Text>
                       </Flex>
-                    )
-                  } else if (cell.column.Header === 'DATE') {
+                    );
+                  } else if (cell.column.Header === "DATE") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        {formatDate(cell.value)}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "PAYMENT") {
+                    data = (
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
-                    )
-                  } else if (cell.column.Header === 'PAYMENT') {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    )
+                    );
                   }
                   return (
                     <Td
                       {...cell.getCellProps()}
                       key={index}
-                      fontSize={{ sm: '14px' }}
-                      maxH='30px !important'
-                      py='8px'
-                      minW={{ sm: '150px', md: '200px', lg: 'auto' }}
-                      borderColor='transparent'>
+                      fontSize={{ sm: "14px" }}
+                      maxH="30px !important"
+                      py="8px"
+                      minW={{ sm: "150px", md: "200px", lg: "auto" }}
+                      borderColor="transparent"
+                    >
                       {data}
                     </Td>
-                  )
+                  );
                 })}
               </Tr>
-            )
+            );
           })}
         </Tbody>
       </Table>
     </Card>
-  )
+  );
 }

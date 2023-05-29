@@ -75,6 +75,9 @@ export default function resendEmail({ providers }: any) {
     seconds: 0,
   });
 
+  const [minutes, setMinutes] = React.useState(0);
+  const [seconds, setSeconds] = React.useState(0);
+
   const countDown = () => {
     if (canResend == "false") {
       console.log("from outer if", canResend);
@@ -102,6 +105,36 @@ export default function resendEmail({ providers }: any) {
     }
   };
 
+  const countDownFunction = () => {
+    const interval = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      }
+
+      if (seconds === 0) {
+        if (minutes === 0) {
+          clearInterval(interval);
+        } else {
+          setSeconds(59);
+          setMinutes(minutes - 1);
+        }
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  };
+
+  const sendOTP = () => {
+    setMinutes(2);
+    setSeconds(59);
+  };
+  const resendOTP = () => {
+    setMinutes(2);
+    setSeconds(59);
+  };
+
   const onSubmit = async (values: any, actions: any) => {
     setCanResend("false");
     console.log(values);
@@ -120,7 +153,11 @@ export default function resendEmail({ providers }: any) {
       )
       .then((res) => {
         router.push("/auth/verifyemail");
+        // setMinutes(1);
+        // setSeconds(0);
+        // countDownFunction();
         setError("");
+        sendOTP();
       })
       .catch((error) => {
         console.log(error);
@@ -148,7 +185,7 @@ export default function resendEmail({ providers }: any) {
   });
 
   useEffect(() => {
-    countDown();
+    // countDownFunction();
   }, []);
 
   return (
@@ -205,7 +242,8 @@ export default function resendEmail({ providers }: any) {
               <Button
                 type="submit"
                 isLoading={isSubmitting}
-                isDisabled={!canResend}
+                // isDisabled={!canResend}
+                isDisabled={seconds > 0 || minutes > 0}
                 variant="homePrimary"
                 py="5"
               >
@@ -213,12 +251,29 @@ export default function resendEmail({ providers }: any) {
               </Button>
             </Flex>
             <Flex justifyContent="center" mt={2}>
-              {canResend == "false" ? (
+              {/* {canResend == "false" ? (
                 <Text>
                   Resend link in {time.time} mins : {time.seconds} secs
                 </Text>
               ) : (
                 ""
+              )} */}
+
+              {seconds > 0 || minutes > 0 ? (
+                // <p>
+                //   Time Remaining: {minutes < 10 ? `0${minutes}` : minutes}:
+                //   {seconds < 10 ? `0${seconds}` : seconds}
+                // </p>
+                <Text>
+                  Resend link in{" "}
+                  {minutes < 10
+                    ? `0${minutes} minutes : ${seconds} seconds`
+                    : seconds < 10
+                    ? `0${seconds}`
+                    : seconds}
+                </Text>
+              ) : (
+                <p>Didn't recieve code?</p>
               )}
             </Flex>
             <Flex justifyContent="center">
