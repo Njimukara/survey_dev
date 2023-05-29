@@ -6,15 +6,21 @@ import React, { useState, useEffect } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 import GenerateSurvey from "./generate";
 
-function DynamicLydar() {
+interface Survey {
+  id: number;
+  name: string;
+  is_active: boolean;
+  is_delete: boolean;
+}
+function EchoSounder() {
   const [subscription, setSubscription] = useState<any>();
-  const [surveyID, setSurveyID] = useState(2);
   const [surveys, setSurveys] = useState([]);
+  const [surveyID, setSurveyID] = useState(3);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const [user, setUser] = useState(null);
 
   const checkSubscription = () => {
-    subscriptions?.assigned_surveys?.forEach((survey: any) => {
+    subscription?.assigned_surveys?.forEach((survey: any) => {
       if (survey?.id == surveyID) {
         setSurveys([survey?.id]);
       }
@@ -25,12 +31,9 @@ function DynamicLydar() {
     const sub = async () => {
       await fetchSubscriptions();
     };
-
-    // setSurveys([2]);
-
-    // uncomment this when done with the check
     setSubscription(subscriptions[subscriptions.length - 1]);
     checkSubscription();
+
     sub();
   }, [loading, subscription]);
 
@@ -43,8 +46,9 @@ function DynamicLydar() {
       </AdminLayout>
     );
   }
+
   return surveys.length > 0 ? (
-    <GenerateSurvey surveyID={2} />
+    <GenerateSurvey surveyID={3} />
   ) : (
     // <AdminLayout>
     //   <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -74,16 +78,16 @@ function DynamicLydar() {
     //     </Card> */}
 
     //     <Flex mt="15px" gap="2">
-    //       <LidarPerformance />
-    //       <LidarCalibration />
+    //       <ScanPerformance />
+    //       <ScanCalibration />
     //     </Flex>
     //     <Flex mt="15px" mb="4" gap="2">
-    //       <LIdarCondition />
-    //       <LidarLeverarm />
+    //       <ScanCondition />
+    //       <ScanLeverarm />
     //     </Flex>
-    //     <LidarPerformanceCard />
+    //     <ScanPerformanceCard />
     //     <Flex mt="4">
-    //       <LidarResults />
+    //       <ScanResults />
     //     </Flex>
     //     <Flex mt="4" justifyContent="center" alignItems="center">
     //       <Button variant="homePrimary" size="lg">
@@ -94,8 +98,9 @@ function DynamicLydar() {
     // </AdminLayout>
     <PurchaseLisence />
   );
+  // <PurchaseLisence />;
 }
 
-export default DynamicLydar;
+export default EchoSounder;
 
-DynamicLydar.requireAuth = true;
+EchoSounder.requireAuth = true;

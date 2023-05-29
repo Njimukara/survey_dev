@@ -41,7 +41,6 @@ import { useCallback, useEffect, useState } from "react";
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
 import { TableData } from "views/admin/default/variables/columnsData";
-import ComplexTable from "views/admin/default/components/ComplexTable";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
@@ -51,6 +50,7 @@ import { Plan, subsciptionPlan } from "../../../types/data";
 import { useSubscription } from "contexts/SubscriptionContext";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
+import TransactionTable from "views/admin/default/components/TransactionTable";
 
 // mock data
 // const MonthlyPricing = [
@@ -110,6 +110,7 @@ import SubscirptionDetails from "views/admin/profile/components/SubscriptionDeta
 
 export default function Transactions() {
   // component variables
+
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [user, setUser] = useState(null);
   const [upgrade, setUpgrade] = useState(false);
@@ -119,8 +120,8 @@ export default function Transactions() {
 
   // get user subscription from store
   // const { store } = useSubscriptionContext();
-  const [subscriptions, setSubscriptions] = useState([]);
-  const { loading, subscription, fetchSubscription } = useSubscription();
+  const [localSubscriptions, setLocalSubscriptions] = useState([]);
+  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
 
   // chakra toast
   const toast = useToast();
@@ -190,11 +191,11 @@ export default function Transactions() {
   useEffect(() => {
     secondSession();
     getPlans();
-    fetchSubscription();
-    setSubscriptions(subscription);
+    fetchSubscriptions();
+    setLocalSubscriptions(subscriptions);
   }, [loading]);
 
-  if (subscriptions.length != 0) {
+  if (localSubscriptions.length != 0) {
     return (
       <AdminLayout>
         <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -300,9 +301,9 @@ export default function Transactions() {
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <ComplexTable
+            <TransactionTable
               columnsData={columnsDataComplex}
-              tableData={tableDataComplex as unknown as TableData[]}
+              tableData={localSubscriptions as unknown as TableData[]}
             />
           </SimpleGrid>
         </Box>
@@ -407,13 +408,14 @@ export default function Transactions() {
               plan={selectedPlan}
               getplan={getSelectedPlan}
               changeStep={changeStep}
+              handleUpgrade={handleUpgrade}
             />
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <ComplexTable
+            <TransactionTable
               columnsData={columnsDataComplex}
-              tableData={tableDataComplex as unknown as TableData[]}
+              tableData={localSubscriptions as unknown as TableData[]}
             />
           </SimpleGrid>
         </>

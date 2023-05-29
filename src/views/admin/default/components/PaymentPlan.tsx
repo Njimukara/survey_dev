@@ -34,6 +34,7 @@ import { HiCurrencyDollar } from "react-icons/hi2";
 import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { Formik, Form, useFormik } from "formik";
 import * as Yup from "yup";
+import { useRouter } from "next/router";
 
 // Assets
 // import { MultiSelect } from "chakra-multiselect";
@@ -78,19 +79,21 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   // subscription variables
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+  const [phone, setPhone] = useState(null);
   const [customerLivemode] = useState(true);
   const [trialPeriodDays] = useState(0);
   const [cancelAtPeriodEnd] = useState(true);
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
   const [cancelAt, setCancelAt] = useState<Date>();
-  const [daysUntilDue] = useState<number>(0);
+  const [daysUntilDue] = useState<number>(3);
   const [currency, setCurrency] = useState<string>("usd");
   const [planID, setPlanID] = useState<number>();
   const [value, setValue] = useState<number[]>([]);
 
   // get user session
   var { data: session } = useSession();
+  const router = useRouter();
 
   // chakra toast
   const toast = useToast();
@@ -125,6 +128,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
         session = res;
         setCustomerName(res?.user?.data?.name);
         setCustomerEmail(res?.user?.data?.email);
+        setPhone(res?.user?.data?.user_profile?.phone_number);
       })
       .catch((err) => {});
   }, [session]);
@@ -137,6 +141,11 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     return formatedCancelDate;
   };
 
+  // format price
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
+
   // Yup validation data schema
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -144,9 +153,51 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       .max(30, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
-    phone: Yup.number().required("Required"),
+    phone_number: Yup.number().required("Required"),
     coupon: Yup.string(),
   });
+
+  // update user with phone number
+  const updateUser = async (number: string, token: string, id: number) => {
+    let data = {
+      phone_number: number,
+    };
+
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    await axios
+      .patch(
+        `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
+        data,
+        config
+      )
+      .then(() => {
+        toast({
+          position: "bottom-right",
+          description: "Phone number saved",
+          status: "info",
+          duration: 4000,
+          isClosable: true,
+        });
+        return;
+      })
+      .catch((err) => {
+        console.log(err);
+        // toast({
+        //   position: "bottom-right",
+        //   description: 'Could not a',
+        //   status: "error",
+        //   duration: 4000,
+        //   isClosable: true,
+        // });
+        return;
+      });
+  };
 
   // subscribe to plan
   const onSubmit = async (values: any, actions: any) => {
@@ -167,6 +218,14 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       },
     };
 
+    if (phone != values.phone_number) {
+      await updateUser(
+        values.phone_number,
+        session?.user?.auth_token,
+        session?.user?.data?.id
+      );
+    }
+
     setDescription(
       `Subscription for ${customerName} subscriping to the ${plan.title}`
     );
@@ -174,14 +233,14 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     let subscription_data: subscriptionData = {
       customer_name: values.name,
       customer_email: values.email,
-      customer_phone_no: values.phone,
+      customer_phone_no: values.phone_number,
       customer_livemode: customerLivemode,
       trial_period_days: trialPeriodDays,
       cancel_at_period_end: cancelAtPeriodEnd,
       description: `Subscription for ${customerName} subscriping to the ${plan.title}`,
-      collection_method: collectionMethod,
+      // collection_method: collectionMethod,
       cancel_at: cancelAt,
-      days_until_due: daysUntilDue,
+      // days_until_due: daysUntilDue,
       currency: currency,
       plan_id: planID,
       assigned_surveys: value,
@@ -210,6 +269,8 @@ export default function PaymentPlan(props: { [x: string]: any }) {
           duration: 4000,
           isClosable: true,
         });
+        // router.push("/admin/default");
+        router.replace("/admin/default").then(() => router.reload());
       })
       .catch((err) => {
         // console.log(err);
@@ -238,7 +299,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     initialValues: {
       name: customerName,
       email: customerEmail,
-      phone: "",
+      phone_number: phone,
       coupon: "",
     },
     enableReinitialize: true,
@@ -252,6 +313,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     setCancelAt(cancelDate);
     setTotal(plan?.price);
     setPlanID(plan.id);
+    // console.log(session);
   }, [plan]);
 
   return (
@@ -341,25 +403,35 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               </FormControl>
               <FormControl>
                 <FormLabel fontSize="sm" color={textColorSecondary}>
-                  Phone Number
+                  Phone Number *
                 </FormLabel>
                 <Input
-                  id="phone"
-                  name="phone"
+                  id="phone_number"
+                  name="phone_number"
                   type="text"
                   size="sm"
                   required
                   variant="rounded"
                   placeholder=""
-                  value={values.phone}
+                  value={values.phone_number}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   // value={customerPhone}
                   // onChange={(e) => setCustomerPhone(e.target.value)}
                 />
-                {errors.phone && touched.phone ? (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
-                    {errors.phone}
+                {errors.phone_number && touched.phone_number ? (
+                  <FormHelperText
+                    display="flex"
+                    color="red.400"
+                    mt="0"
+                    // mb="5px"
+                  >
+                    <Text>
+                      <>{errors.phone_number}</>
+                    </Text>
+                    <Text color="gray.400" fontSize="sm" mx="18px" mb="0">
+                      Make sure to add country code
+                    </Text>
                   </FormHelperText>
                 ) : (
                   ""
@@ -512,7 +584,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                     isDisabled
                     variant="rounded"
                     placeholder="$23232"
-                    value={total}
+                    value={formatPrice(total)}
                     _disabled={{
                       bg: "gray.100",
                       color: "primary.500",
@@ -544,10 +616,10 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 Order Summary
               </Heading>
               <Text>Plan: {plan?.title}</Text>
-              <Text mb="5">Total: $ {plan.price}</Text>
-              <Text wordBreak="break-word">
+              <Text mb="5">Total: $ {formatPrice(plan.price)}</Text>
+              {/* <Text wordBreak="break-word">
                 You'll have a 7 day free trial before completing your payment
-              </Text>
+              </Text> */}
               <Button
                 // onClick={subscribe}
                 type="submit"

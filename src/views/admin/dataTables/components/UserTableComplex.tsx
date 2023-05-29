@@ -92,7 +92,7 @@ export default function UserTableComplex(props: TableProps) {
   const btnBgHover = useColorModeValue({ bg: "none" }, { bg: "none" });
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const deleteTextColor = useColorModeValue("red.600", "red.600");
-  const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+  const borderColor = useColorModeValue("gray.200", "gray.50");
 
   // chakra toast
   const toast = useToast();
@@ -326,6 +326,7 @@ export default function UserTableComplex(props: TableProps) {
                   pe="10px"
                   key={index}
                   borderColor={borderColor}
+                  // borderColor="gray.100"
                 >
                   <Flex
                     justify="space-between"
@@ -423,7 +424,7 @@ export default function UserTableComplex(props: TableProps) {
                       key={index}
                       fontSize={{ sm: "14px" }}
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor="gray.100"
+                      border="none"
                     >
                       {data}
                     </Td>

@@ -36,9 +36,14 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
     { bg: "whiteAlpha.100" }
   );
 
-  const { loading, subscription, fetchSubscription } = useSubscription();
+  // format price
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
 
-  const [subscriptions, setSubscriptions] = useState<any>();
+  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+
+  const [subscription, setSubscription] = useState<any>();
   const router = useRouter();
 
   const formatDate = (date: any) => {
@@ -63,9 +68,9 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
   };
 
   useEffect(() => {
-    fetchSubscription();
-    setSubscriptions(subscription[subscription.length - 1]);
-  }, [loading]);
+    fetchSubscriptions();
+    setSubscription(subscriptions[subscriptions.length - 1]);
+  }, [loading, subscriptions]);
   return (
     <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
       <Flex justifyContent="space-between" alignItems="center" p={2}>
@@ -80,7 +85,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
                   Plan
                 </Text>
                 <Text fontWeight="bold" fontSize="lg">
-                  {subscriptions?.plan?.name}
+                  {subscription?.plan?.name}
                 </Text>
               </Box>
               <Box w="100%" pr="10" display="flex" flexDirection="column">
@@ -88,8 +93,9 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
                   Cost
                 </Text>
                 <Text fontWeight="bold" fontSize="lg">
-                  ${subscriptions?.subscription_data?.plan?.amount} /&nbsp;
-                  {subscriptions?.subscription_data?.plan?.interval}
+                  ${formatPrice(subscription?.subscription_data?.plan?.amount)}{" "}
+                  /&nbsp;
+                  {subscription?.subscription_data?.plan?.interval}
                 </Text>
               </Box>
               <Box w="100%" pr="10" display="flex" flexDirection="column">
@@ -97,7 +103,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
                   Purchased on
                 </Text>
                 <Text fontWeight="bold" fontSize="lg">
-                  {formatDate(subscriptions?.start_date)}
+                  {formatDate(subscription?.start_date)}
                 </Text>
               </Box>
               <Box w="100%" pr="10" display="flex" flexDirection="column">
@@ -105,7 +111,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
                   Renewal Date
                 </Text>
                 <Text fontWeight="bold" fontSize="lg">
-                  {formatDate(subscriptions?.end_date)}
+                  {formatDate(subscription?.end_date)}
                 </Text>
               </Box>
             </Flex>
@@ -115,7 +121,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
                 Plan Benefits
               </Text>
               <Flex flexDirection="column" justifyContent="center">
-                {subscriptions?.plan?.features.map((benefit: any) => (
+                {subscription?.plan?.features.map((benefit: any) => (
                   <Text pl="5" pb="2" key="">
                     <Icon
                       as={MdCheckCircle}

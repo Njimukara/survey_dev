@@ -152,7 +152,9 @@ export default function Banner(props: {
               <Text color="gray.400" transform="capitalize">
                 Phone Number
               </Text>
-              <Text>{phoneNumber}</Text>
+              <Text>
+                {phoneNumber == "undefined" ? "Not Set" : phoneNumber}
+              </Text>
             </Box>
           </Flex>
 

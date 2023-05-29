@@ -22,6 +22,10 @@ import { AuthGuard } from "layouts/auth/AuthGuard";
 import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import { PlanContextProvider } from "contexts/PlanContext";
 import { CurrentUserProvider } from "contexts/UserContext";
+import { SurveyContextProvider } from "contexts/Survey";
+import { Router } from "next/router";
+import NProgress from "nprogress";
+NProgress.configure({ showSpinner: false });
 
 // add requireAuth to AppProps
 type AppPropsWithAuth = AppProps<{ session?: Session }> & {
@@ -31,12 +35,26 @@ type AppPropsWithAuth = AppProps<{ session?: Session }> & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithAuth) {
+  Router.events.on("routeChangeStart", (url) => {
+    NProgress.start();
+  });
+  Router.events.on("routeChangeComplete", (url) => {
+    NProgress.done();
+  });
+
   return (
     <ChakraProvider theme={theme}>
       <Head>
         <title>Survey Planner</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css"
+          integrity="sha512-42kB9yDlYiCEfx2xVwq0q7hT4uf26FUgSIZBK8uiaEnTdShXjwr8Ip1V4xGJMg3mHkUt9nNuTDxunHF0/EgxLQ=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
       </Head>
       <SessionProvider
         session={pageProps.session}
@@ -49,9 +67,11 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
           <AuthGuard>
             <SubscriptionProvider>
               <PlanContextProvider>
-                <CurrentUserProvider>
-                  <Component {...pageProps} />
-                </CurrentUserProvider>
+                <SurveyContextProvider>
+                  <CurrentUserProvider>
+                    <Component {...pageProps} />
+                  </CurrentUserProvider>
+                </SurveyContextProvider>
               </PlanContextProvider>
             </SubscriptionProvider>
           </AuthGuard>

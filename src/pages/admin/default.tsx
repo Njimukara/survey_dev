@@ -135,20 +135,20 @@ export default function UserReports(props: { [x: string]: any }) {
   };
 
   useEffect(() => {
-    const usr = async () => {
-      setFetching(true);
-      await fetchCurrentUser();
-      await setUser(currentUser);
+    // const usr = async () => {
+    //   setFetching(true);
+    fetchCurrentUser();
+    setUser(currentUser);
 
-      setFetching(false);
-    };
+    // setFetching(false);
+    // };
     if (session?.user?.data?.user_profile?.user_type != companyUser) {
       return;
     } else {
       getCompanyMembers();
     }
 
-    usr();
+    // usr();
   }, [loading]);
 
   return (
@@ -160,7 +160,7 @@ export default function UserReports(props: { [x: string]: any }) {
             mb="3%"
             py="10"
             borderRadius="10"
-            bgGradient="linear(to-r, #3A2FB7, primary.100)"
+            bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
           >
             <Flex
               gap={3}

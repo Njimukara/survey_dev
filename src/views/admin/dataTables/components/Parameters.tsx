@@ -3,6 +3,9 @@ import {
   Box,
   Button,
   Flex,
+  FormLabel,
+  Grid,
+  GridItem,
   Icon,
   SimpleGrid,
   Text,
@@ -14,12 +17,12 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";
 import LidarCard from "./LidarCard";
+import ParameterCard from "./SurveyParameters";
 
 export default function Parameters(props: { [x: string]: any }) {
-  const { ...rest } = props;
+  const { results, surveyID, ...rest } = props;
 
   // Chakra Color Mode
-
   const textColor = useColorModeValue("navy.500", "white");
   const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
@@ -35,6 +38,12 @@ export default function Parameters(props: { [x: string]: any }) {
     { bg: "primary.600" },
     { bg: "whiteAlpha.100" }
   );
+
+  // variables
+  const [lidar, setLidar] = useState(2);
+  const [multibeam, setMultibeam] = useState(1);
+  const [scan, setScan] = useState(3);
+  const [acoustic, setAcoustic] = useState(4);
 
   const [mounted, setMounted] = useState(false);
   const [active, setActive] = useState(true);
@@ -56,21 +65,312 @@ export default function Parameters(props: { [x: string]: any }) {
       w="100%"
       mb="0px"
       p="6"
+      borderRadius={10}
       {...rest}
     >
-      <Text py="3" fontSize="large" fontWeight="bold" textTransform="uppercase">
+      <Text py="2" fontSize="md" fontWeight="bold" textTransform="uppercase">
         Determination of Parameters
       </Text>
-      <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap="20px" mb="20px">
-        {array.map((data, index) => {
-          return <LidarCard index={data} key={index} />;
-        })}
-      </SimpleGrid>
-      {/* <SimpleGrid
-        columns={{ base: 1, md: 2, xl: 2 }}
-        gap="20px"
-        mb="20px"
-      ></SimpleGrid> */}
+
+      {results.map((item: any, index: number) => (
+        <ParameterCard
+          key={index}
+          label={item.name}
+          size="xs"
+          value1={item.value1}
+          value2={item.value2}
+          value3={item.value3}
+          value4={item.value4}
+        />
+      ))}
+
+      {surveyID == lidar && (
+        <>
+          {/* LiDAR */}
+          <ParameterCard
+            label="Swath Width (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Ratio Swath/Height-distance"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Max slant range (m))*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Interprofit Spacing (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Diameter of a footprint (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Range resolution (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Range Uncertainty (mm)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Horizontal Uncertainty (cm) - 1σ"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Vertical Uncertainty (cm) - 1σ"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="LiDAR points density (pts/m2)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Number of profiles in length"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
+
+      {(surveyID == scan || surveyID == acoustic) && (
+        <>
+          {/* SCAN */}
+          <ParameterCard
+            label="Width of the Image (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Ratio of Image Width/Altitude"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Range Uncertainty (mm)*"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Max Slant range (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Line spacing - 50% of overlap (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Line spacing - 25% of overlap (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Line spacing - 10% of overlap (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Along track resolution R1 (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Accross track resolution R1 (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Along track resolution R2 (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Accross track resolution R2 (cm)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Uncertainty in XY of vector-USBL (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Max ping rate (Hz)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
+
+      {surveyID == multibeam && (
+        <>
+          {/* Multibeam */}
+          <ParameterCard
+            label="Number of profiles in lenght"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Survey time (h)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Along track resolution (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Accross track resolution (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Along track beams repartition (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Accross track beams repartition (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="THU - 1 lampda (m)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
+
+      {surveyID == acoustic && (
+        <>
+          {/* Acoustic */}
+          <ParameterCard
+            label="Coverage rate in profile (%)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+          <ParameterCard
+            label="Depression angle (*)"
+            size="xs"
+            value1={0.02}
+            value2={0.2}
+            value3={0.22}
+            value4={0.32}
+          />
+        </>
+      )}
     </Card>
   );
 }

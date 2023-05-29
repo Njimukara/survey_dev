@@ -5,12 +5,13 @@ import React from "react";
 export const subscriptionContext = React.createContext();
 
 export const SubscriptionProvider = ({ children }) => {
-  const [subscription, setSubscription] = React.useState([]);
+  const [subscriptions, setSubscriptions] = React.useState([]);
+  const [currentSubscription, setCurrentSubscription] = React.useState();
   const [loading, setLoading] = React.useState(true);
 
   const { data: session } = useSession();
 
-  const fetchSubscription = async () => {
+  const fetchSubscriptions = async () => {
     const config = {
       headers: {
         "Content-Type": "json",
@@ -26,12 +27,24 @@ export const SubscriptionProvider = ({ children }) => {
       )
       .then((response) => {
         // Add it to the context
-        setSubscription(response.data);
+        let tempSUb = response.data[response.data.length - 1];
+        let id = tempSUb?.id;
+        axios
+          .get(
+            `https://surveyplanner.pythonanywhere.com/api/plans/subscription/${id}/`,
+            config
+          )
+          .then((res) => {
+            setCurrentSubscription(res.data);
+          })
+          .catch((err) => {});
+        setSubscriptions(response.data);
+        // console.log("subs", response.data);
         setLoading(false);
         return;
       })
       .catch((err) => {
-        setSubscription([]);
+        setSubscriptions([]);
         setLoading(false);
         return;
       });
@@ -39,7 +52,12 @@ export const SubscriptionProvider = ({ children }) => {
 
   return (
     <subscriptionContext.Provider
-      value={{ loading, subscription, fetchSubscription }}
+      value={{
+        loading,
+        currentSubscription,
+        subscriptions,
+        fetchSubscriptions,
+      }}
     >
       {children}
     </subscriptionContext.Provider>

@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   FormControl,
   FormLabel,
@@ -8,6 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
+import SurveyInput from "./SurveyInput";
 
 export default function LidarCard(props: { [x: string]: any }) {
   const { index } = props;
@@ -21,7 +23,16 @@ export default function LidarCard(props: { [x: string]: any }) {
       <Text mb="4" fontWeight="bold">
         LiDAR {index}
       </Text>
-      <FormControl mb="4">
+      <Box>
+        <SurveyInput
+          label=" Maximum Range (m)"
+          size="xs"
+          type="number"
+          placeholder="0.05"
+        />
+      </Box>
+
+      {/* <FormControl mb="4">
         <FormLabel fontSize="small">Maximum Range (m)*</FormLabel>
         <Input
           color={textColorSecondary}
@@ -97,7 +108,7 @@ export default function LidarCard(props: { [x: string]: any }) {
           size="sm"
           placeholder="2"
         />
-      </FormControl>
+      </FormControl> */}
       <FormControl mb="4">
         <FormLabel fontSize="small">LIDAR scanning angle (*)</FormLabel>
         <Select borderRadius="10px" size="sm" fontSize="small">

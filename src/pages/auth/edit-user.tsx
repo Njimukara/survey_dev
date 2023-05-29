@@ -39,11 +39,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Select,
+  // Select,
   Text,
   useColorModeValue,
   HStack,
   useToast,
+  InputLeftElement,
 } from "@chakra-ui/react";
 
 import { Formik, Form, useFormik } from "formik";
@@ -61,6 +62,12 @@ import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
 import defaultImage from "./../../../public/profile.png";
 import SetEmail from "views/admin/profile/components/SetEmail";
+import PhoneInput from "react-phone-input-2";
+// import "react-phone-input-2/lib/style.css";
+// import styles from "../../../styles/PhoneNumbr.module.css";
+// import "../../styles/PhoneNumbr.module.css";
+import { Country, City } from "country-state-city";
+import Select from "react-select";
 
 export default function EditUser({ providers }: any) {
   // Chakra color mode
@@ -91,6 +98,8 @@ export default function EditUser({ providers }: any) {
   const [image, setImage] = React.useState(null);
   const [defaulimage, setDefaultImage] = React.useState(null);
   const [createObjectURL, setCreateObjectURL] = React.useState(null);
+  const [phoneValue, setPhoneValue] = React.useState("");
+  const [companyCountry, setCompanyCountry] = React.useState(null);
 
   const { data: session, status } = useSession();
 
@@ -119,9 +128,17 @@ export default function EditUser({ providers }: any) {
   const updateUser = async () => {
     setSubmitting(true);
     getDefaultImage();
+    let contact;
+    if (!phoneValue.includes("+") && phone_number != null) {
+      contact = `+${phoneValue}${phone_number}`;
+    } else if (phoneValue.includes("+") && phone_number != null) {
+      contact = phoneValue + phone_number;
+    } else {
+      contact = "";
+    }
     let formData = new FormData();
     formData.append("name", name);
-    formData.append("phone_number", phone_number);
+    formData.append("phone_number", contact);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
     if (image != null) {
       formData.set("avatar", image);
@@ -233,6 +250,51 @@ export default function EditUser({ providers }: any) {
     fetchUser();
   }, [session]);
 
+  // const containerStyles = {
+  //   width: "100%",
+  //   border: "1px blue",
+  //   borderRadius: "10px",
+  //   backgroundColor: "red",
+  // };
+
+  const reactSelectStyles = {
+    control: () => ({
+      // ...defaultStyles,
+      display: "flex",
+      backgroundColor: "transparent",
+      borderColor: "gray.200",
+      color: "black",
+      zIndex: "10",
+      padding: "6px",
+      borderRadius: "15px",
+      boxShadow: "none",
+      width: "120px",
+    }),
+    // singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+  };
+
+  type option = {
+    value: {
+      phoneCode: string;
+    };
+    label: string;
+  } | null;
+
+  //   react-select
+  // const options = useMemo(() => countryList().getData(), []);
+  const options = Country.getAllCountries().map((country) => ({
+    value: {
+      phoneCode: country.phonecode,
+    },
+    label: country.phonecode,
+  }));
+
+  const changeHandler = (value: any) => {
+    console.log(value);
+    setCompanyCountry(value);
+    setPhoneValue(value.value?.phoneCode);
+  };
+
   return (
     <AdminLayout>
       <Card mt={20} borderRadius="10">
@@ -313,23 +375,47 @@ export default function EditUser({ providers }: any) {
 
               <FormControl pb="3">
                 <HStack spacing="10px">
-                  <FormLabel w="150px">Your phone number</FormLabel>
-                  <Input
-                    id="phone_number"
-                    name="phone_number"
-                    variant="rounded"
-                    fontSize="sm"
-                    ms={{ base: "0px", md: "0px" }}
-                    type="text"
+                  <FormLabel w="150px">Contact</FormLabel>
+                  <Flex flexDirection="column" w="100%" justifyContent="center">
+                    <Input
+                      // flex={1}
+                      id="phone_number"
+                      name="phone_number"
+                      variant="rounded"
+                      fontSize="sm"
+                      ms={{ base: "0px", md: "0px" }}
+                      type="text"
+                      placeholder="Add phone number"
+                      mr="2px"
+                      w="100%"
+                      fontWeight="500"
+                      size="lg"
+                      value={phone_number}
+                      onChange={(e) => setPhone_number(e.target.value)}
+                      isDisabled={canEdit}
+                    />
+                    <Text color="gray.400" fontSize="sm" mx="18px" mb="0">
+                      Make sure to add country code
+                    </Text>
+                    {/* </InputGroup> */}
+                  </Flex>
+                  {/* <PhoneInput
+                    // containerClass="container_class"
+                    // inputClass="input_class"
+                    buttonStyle={{
+                      backgroundColor: "none",
+                      border: "none",
+                      borderRadius: "5px",
+                      marginLeft: "0",
+                      padding: "0",
+                      // _hover:
+                    }}
+                    containerStyle={containerStyles}
+                    inputStyle={{ width: "100%", border: "none" }}
                     placeholder="Add phone number"
-                    mr="2px"
-                    w="100%"
-                    fontWeight="500"
-                    size="lg"
-                    value={phone_number}
-                    onChange={(e) => setName(e.target.value)}
-                    isDisabled={canEdit}
-                  />
+                    value={phoneValue}
+                    onChange={setPhoneValue}
+                  /> */}
                 </HStack>
               </FormControl>
 

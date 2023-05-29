@@ -29,7 +29,7 @@ import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
 import { TableProps } from "../variables/columnsData";
 import { getSession, useSession } from "next-auth/react";
 import axios from "axios";
-export default function ColumnsTable(props: TableProps) {
+export default function TransactionTable(props: TableProps) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
@@ -43,52 +43,58 @@ export default function ColumnsTable(props: TableProps) {
 
   var { data: session, status } = useSession();
 
-  const sessionUpdate = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {
-        // console.log(err);
-      });
-  }, [session]);
-
-  // get user subscriptions
-  const getSubscritptions = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
-      .then((response) => {
-        setSubscriptions(response.data);
-        console.log(response.data);
-      })
-      .catch((err) => {
-        toast({
-          position: "bottom-right",
-          description: "Error getting company users",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
-      });
+  // format price
+  const formatPrice = (price: number) => {
+    return price / 100;
   };
 
+  //   const sessionUpdate = useCallback(async () => {
+  //     await getSession()
+  //       .then((res) => {
+  //         session = res;
+  //         setUser(res?.user?.data);
+  //       })
+  //       .catch((err) => {
+  //         // console.log(err);
+  //       });
+  //   }, [session]);
+
+  //   // get user subscriptions
+  //   const getSubscritptions = async () => {
+  //     const config = {
+  //       headers: {
+  //         "Content-Type": "json",
+  //         Accept: "application/json;charset=UTF-8",
+  //         Authorization: `Token ${session?.user?.auth_token}`,
+  //       },
+  //     };
+
+  //     await axios
+  //       .get(
+  //         "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
+  //         config
+  //       )
+  //       .then((response) => {
+  //         setSubscriptions(response.data);
+  //         console.log(response.data);
+  //       })
+  //       .catch((err) => {
+  //         toast({
+  //           position: "bottom-right",
+  //           description: "Error getting company users",
+  //           status: "error",
+  //           duration: 4000,
+  //           isClosable: true,
+  //         });
+  //       });
+  //   };
+
   useEffect(() => {
-    sessionUpdate();
-    // getSubscritptions()
-    setUser(session?.user?.data);
-  }, [session]);
+    // sessionUpdate();
+    // // getSubscritptions()
+    // setUser(session?.user?.data);
+    console.log(data);
+  }, [session, data]);
 
   const tableInstance = useTable(
     {
@@ -126,6 +132,7 @@ export default function ColumnsTable(props: TableProps) {
       px="0px"
       borderRadius="10"
       overflowX={{ sm: "scroll", lg: "hidden" }}
+      // overflowY={{ sm: "scroll", lg: "scroll" }}
     >
       <Flex px="25px" justify="space-between" mb="10px" align="center">
         <Text
@@ -136,7 +143,7 @@ export default function ColumnsTable(props: TableProps) {
         >
           Recent Transactions
         </Text>
-        <Menu />
+        {/* <Menu /> */}
       </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
@@ -172,13 +179,13 @@ export default function ColumnsTable(props: TableProps) {
                   if (cell.column.Header === "AMOUNT") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
+                        ${formatPrice(cell.value?.amount)}
                       </Text>
                     );
                   } else if (cell.column.Header === "STATUS") {
                     data = (
                       <Flex align="center">
-                        <Icon
+                        {/* <Icon
                           w="24px"
                           h="24px"
                           me="5px"
@@ -200,9 +207,22 @@ export default function ColumnsTable(props: TableProps) {
                               ? MdOutlineError
                               : null
                           }
-                        />
-                        <Text color={textColor} fontSize="sm" fontWeight="700">
-                          {cell.value}
+                        /> */}
+                        <Text
+                          color={
+                            cell.value === "active"
+                              ? "green.500"
+                              : cell.value === "past_due"
+                              ? "red.500"
+                              : cell.value === "trialing"
+                              ? "red.500"
+                              : null
+                          }
+                          //    color={textColor}
+                          fontSize="sm"
+                          fontWeight="700"
+                        >
+                          {cell.value.toUpperCase()}
                         </Text>
                       </Flex>
                     );
@@ -215,7 +235,8 @@ export default function ColumnsTable(props: TableProps) {
                   } else if (cell.column.Header === "PAYMENT") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
+                        {/* {cell.value} */}
+                        Stripe Invoice
                       </Text>
                     );
                   }

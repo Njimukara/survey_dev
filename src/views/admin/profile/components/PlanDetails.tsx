@@ -29,11 +29,23 @@ export default function PlanDetails(props: { [x: string]: any }) {
   );
 
   // const { store } = useSubscriptionContext();
-  const { loading, subscription, fetchSubscription } = useSubscription();
+  const { loading, subscriptions, currentSubscription, fetchSubscriptions } =
+    useSubscription();
 
-  const [subscriptions, setSubscriptions] = useState([]);
+  const [subscription, setSubscription] = useState<any>();
+  const [presentSubscription, setPresentSubscription] = useState<any>();
+
+  const subscription_status = [
+    "incomplete ",
+    "incomplete_expired ",
+    "trialing ",
+    "active ",
+    "past_due ",
+    "canceled ",
+    "unpaid ",
+  ];
+
   // const calculation = useMemo(() => getSubscriptions(count), [subscription]);
-
   // const [mounted, setMounted] = useState(false);
   // const [active, setActive] = useState(true);
   // const [isActive, setIsActive] = useState(true);
@@ -48,6 +60,11 @@ export default function PlanDetails(props: { [x: string]: any }) {
     return newDate;
   };
 
+  // format price
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
+
   // delete user acount
   const deleteAccount = async () => {
     await axios
@@ -60,22 +77,29 @@ export default function PlanDetails(props: { [x: string]: any }) {
       });
   };
 
+  const makePayment = () => {
+    let url =
+      currentSubscription?.invoices[0]?.invoice_data?.hosted_invoice_url;
+    // console.log(url);
+    router.push(url);
+  };
+
   useEffect(() => {
     const sub = async () => {
-      await fetchSubscription();
+      await fetchSubscriptions();
     };
-    setSubscriptions(subscription);
+    setSubscription(subscriptions[subscriptions.length - 1]);
+    setPresentSubscription(currentSubscription);
 
     sub();
-  }, [loading]);
+    // console.log(subscriptions);
+  }, [loading, currentSubscription]);
   return (
     <Card
       mb={{ base: "0px", lg: "20px" }}
       borderRadius="10"
       bgGradient={
-        subscriptions.length == 0
-          ? "white"
-          : "linear(to-r, #3A2FB7, primary.100)"
+        !presentSubscription ? "white" : "linear(to-r, #3A2FB7, #3A2FB7)"
       }
       {...rest}
     >
@@ -88,12 +112,12 @@ export default function PlanDetails(props: { [x: string]: any }) {
           >
             <Text
               mb={2}
-              color={subscriptions.length == 0 ? textColorSecondary : whiteText}
+              color={presentSubscription ? textColorSecondary : whiteText}
             >
               Subscirption Details
             </Text>
 
-            {!loading && subscriptions.length == 0 ? (
+            {!loading && !presentSubscription ? (
               <Box py="5">
                 <Text mb="4">You do not have any subscription yet</Text>
                 <Button
@@ -106,7 +130,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                   Subscribe
                 </Button>
               </Box>
-            ) : !loading && subscriptions.length != 0 ? (
+            ) : !loading && presentSubscription ? (
               <Box>
                 <Flex
                   w="100%"
@@ -115,7 +139,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                 >
                   <Flex align="left" fontWeight="bold" flexDirection="column">
                     <Text fontSize="larger" fontWeight="bold" color={whiteText}>
-                      {subscriptions[0]?.plan?.name}
+                      {presentSubscription?.plan?.name}
                     </Text>
                     <Text
                       bg={boxBg}
@@ -125,26 +149,47 @@ export default function PlanDetails(props: { [x: string]: any }) {
                       w="max-content"
                       borderRadius="10px"
                     >
-                      $ {subscriptions[0]?.subscription_data?.plan?.amount}
+                      ${" "}
+                      {formatPrice(
+                        presentSubscription?.subscription_data?.plan?.amount
+                      )}
                       {/* spaces and forward slash */}
                       &nbsp;/&nbsp;
-                      {subscriptions[0]?.subscription_data?.plan?.interval}
+                      {presentSubscription?.subscription_data?.plan?.interval}
                     </Text>
                   </Flex>
                   <Flex align="center" flexDirection="column">
-                    <Button
-                      mb="15px"
-                      w="150px"
-                      fontSize="small"
-                      variant="homePrimary"
-                      py="5"
-                      color={whiteText}
-                      _hover={bgHover}
-                      _focus={bgFocus}
-                      _active={bgFocus}
-                    >
-                      Upgrade Plan
-                    </Button>
+                    {presentSubscription?.subscription_data?.status ==
+                    "incomplete" ? (
+                      <Button
+                        mb="15px"
+                        w="150px"
+                        fontSize="small"
+                        variant="homePrimary"
+                        py="5"
+                        color={whiteText}
+                        _hover={bgHover}
+                        _focus={bgFocus}
+                        _active={bgFocus}
+                        onClick={makePayment}
+                      >
+                        Make Payment
+                      </Button>
+                    ) : (
+                      <Button
+                        mb="15px"
+                        w="150px"
+                        fontSize="small"
+                        variant="homePrimary"
+                        py="5"
+                        color={whiteText}
+                        _hover={bgHover}
+                        _focus={bgFocus}
+                        _active={bgFocus}
+                      >
+                        Upgrade Plan
+                      </Button>
+                    )}
                     <Button
                       w="150px"
                       fontSize="small"
@@ -163,9 +208,10 @@ export default function PlanDetails(props: { [x: string]: any }) {
                 <Flex align="left" flexDirection="column" color={whiteText}>
                   <Text>Status</Text>
                   <Text color={whiteText} fontSize="large" fontWeight="bold">
-                    {subscriptions[0]?.subscription_data?.status == "trialing"
-                      ? "Trial Plan"
-                      : subscriptions[0]?.subscription_data?.status}
+                    {presentSubscription?.subscription_data?.status ==
+                    "trialing"
+                      ? "TRIAL PLAN"
+                      : presentSubscription?.subscription_data?.status.toUpperCase()}
                   </Text>
                   <Text>
                     Payment Method :{" "}
@@ -177,16 +223,16 @@ export default function PlanDetails(props: { [x: string]: any }) {
                   <Text>
                     Licence bought on{" "}
                     <span style={{ color: whiteText, fontWeight: "bold" }}>
-                      <>{formatDate(subscriptions[0]?.start_date)}</>
+                      <>{formatDate(presentSubscription?.start_date)}</>
                     </span>
                   </Text>
                   <Text>
-                    {subscriptions[0]?.subscription_data[0]?.status ==
+                    {presentSubscription?.subscription_data[0]?.status ==
                     "trialing"
                       ? "Confirm License by"
                       : "Renew License by"}{" "}
                     <span style={{ color: whiteText, fontWeight: "bold" }}>
-                      <>{formatDate(subscriptions[0]?.end_date)}</>
+                      <>{formatDate(presentSubscription?.end_date)}</>
                     </span>
                   </Text>
                 </Flex>

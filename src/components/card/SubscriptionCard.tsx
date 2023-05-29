@@ -20,7 +20,7 @@ type ArrayObject = {
 type SubscriptionProps = {
   id?: number;
   title?: String;
-  price?: Number;
+  price?: number;
   period?: String;
   description?: String;
   advantages?: Array<ArrayObject>;
@@ -30,6 +30,9 @@ type SubscriptionProps = {
 };
 
 export const SubscriptionCard = (props: SubscriptionProps) => {
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
   return (
     <Card
       transition="all .2s ease-in-out"
@@ -46,7 +49,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
             </Text>
             <Heading mb="20px" fontSize="16px">
               <Text display="inline-block" fontSize="44px">
-                ${props.price?.toString()}
+                ${formatPrice(props.price)}
               </Text>
               / {props.period}
             </Heading>

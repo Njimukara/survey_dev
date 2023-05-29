@@ -21,7 +21,7 @@ const routes: IRoute[] = [
   {
     name: "Generate Survey",
     layout: "/admin",
-    path: "/generate-survey",
+    path: "/generate",
     icon: <Icon as={MdAdd} width="20px" height="20px" color="inherit" />,
     component: MainDashboard,
   },
@@ -55,17 +55,17 @@ const routes: IRoute[] = [
     subRoutes: [
       {
         id: 1,
-        name: "Echo Sounder",
+        name: "Side Scan Sonar",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
-        path: "/echo-sounder",
+        path: "/side-scan-sonar",
         component: DataTables,
       },
       {
         id: 2,
-        name: "Dynamic Lyder",
+        name: "Dynamic Lydar",
         layout: "/admin",
         icon: (
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />

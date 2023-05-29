@@ -26,6 +26,9 @@ type PricingProps = {
 };
 
 export const PricingCard = (props: PricingProps) => {
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
   return (
     <Card
       transition="all .2s ease-in-out"
@@ -41,7 +44,8 @@ export const PricingCard = (props: PricingProps) => {
             </Text>
             <Heading mb="20px" fontSize="16px">
               <Text display="inline-block" fontSize="64px">
-                ${Math.round(props.price)}
+                ${formatPrice(props.price)}
+                {/* ${Math.round(props.price)} */}
               </Text>
               / {props.period}
             </Heading>

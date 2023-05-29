@@ -1,0 +1,10 @@
+.container_class{
+    border: "1px solid blue";
+    padding: "5px";
+    border-radius: "10px"
+  }
+  
+.input_class {
+    width: "100%";
+    border: "none"
+}
