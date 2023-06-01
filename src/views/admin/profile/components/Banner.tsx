@@ -126,7 +126,13 @@ export default function Banner(props: {
         </Flex>
         <Box h="100%" mx="10px" w="2px" bg="gray.200" />
         <Box w="80%" px={20}>
-          <Text pb={4} fontWeight="extrabold" fontSize="xl" color="primary.500">
+          <Text
+            data-cy="user-name"
+            pb={4}
+            fontWeight="extrabold"
+            fontSize="xl"
+            color="primary.500"
+          >
             {name}
           </Text>
           <Flex w="100%" mt="3" pb={4} align="center" justify="space-between">

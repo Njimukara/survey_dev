@@ -12,6 +12,7 @@ const Hero = () => {
     >
       <VStack w="60rem" textAlign="center" mt="8rem" spacing="9">
         <Heading
+          data-cy="welcome-text"
           as="h1"
           fontSize="64px"
           color="white"

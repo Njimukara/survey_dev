@@ -167,7 +167,11 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getPlanData();
+    const getplan = async () => {
+      await getPlanData();
+    };
+
+    getplan();
   });
 
   return (

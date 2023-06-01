@@ -113,7 +113,7 @@ export default function SignIn({ providers }: any) {
 
   const Login = async () => {
     if (formData.email == "" || formData.password == "") {
-      setError("Invalid Inputs");
+      setError("Invalid Email or password");
       return;
     }
     setSubmitting(true);
@@ -237,7 +237,7 @@ export default function SignIn({ providers }: any) {
         flexDirection="column"
       >
         <Box w="100%">
-          <Text textAlign="center" pb="10px">
+          <Text data-cy="login-state" textAlign="center" pb="10px">
             {login
               ? "Hello! You are welcome back :-)"
               : "Welcome to Survey Planner :-)"}
@@ -253,6 +253,7 @@ export default function SignIn({ providers }: any) {
             bgColor={googleBg}
           >
             <Button
+              data-cy="toggle-login"
               bgColor={login ? btnbgColor : "transparent"}
               color={login ? "white" : "black"}
               _hover={{ color: "inherit" }}
@@ -264,6 +265,7 @@ export default function SignIn({ providers }: any) {
               Login
             </Button>
             <Button
+              data-cy="toggle-register"
               bgColor={!login ? btnbgColor : "transparent"}
               color={!login ? "white" : "black"}
               _hover={{ color: "inherit" }}
@@ -326,7 +328,12 @@ export default function SignIn({ providers }: any) {
           </Flex>
           {error && (
             <Flex w="100%" justifyContent="center" mb="5px">
-              <Text color="red.400" fontWeight="semibold" mx="14px">
+              <Text
+                data-cy="login-error"
+                color="red.400"
+                fontWeight="semibold"
+                mx="14px"
+              >
                 {error}
               </Text>
             </Flex>
@@ -334,6 +341,7 @@ export default function SignIn({ providers }: any) {
           {login ? (
             <FormControl>
               <Input
+                data-cy="login-email"
                 id="loginEmail"
                 isRequired={true}
                 variant="rounded"
@@ -351,6 +359,7 @@ export default function SignIn({ providers }: any) {
               />
               <InputGroup size="md">
                 <Input
+                  data-cy="login-password"
                   id="loginPassword"
                   isRequired={true}
                   fontSize="sm"
@@ -397,6 +406,7 @@ export default function SignIn({ providers }: any) {
                       fontSize="sm"
                       w="124px"
                       fontWeight="500"
+                      data-cy="reset-password"
                     >
                       Forgot password?
                     </Text>
@@ -404,6 +414,7 @@ export default function SignIn({ providers }: any) {
                 </Link>
               </Flex>
               <Button
+                data-cy="login-button"
                 fontSize="sm"
                 type="submit"
                 isLoading={submitting}
@@ -423,6 +434,7 @@ export default function SignIn({ providers }: any) {
             <form onSubmit={handleSubmit}>
               <FormControl>
                 <Input
+                  data-cy="register-name"
                   id="name"
                   name="name"
                   variant="rounded"
@@ -438,7 +450,12 @@ export default function SignIn({ providers }: any) {
                   onBlur={handleBlur}
                 />
                 {errors.name && touched.name ? (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
+                  <FormHelperText
+                    data-cy="register-name-error"
+                    color="red.400"
+                    mt="0"
+                    mb="5px"
+                  >
                     {errors.name}
                   </FormHelperText>
                 ) : (
@@ -447,6 +464,7 @@ export default function SignIn({ providers }: any) {
               </FormControl>
               <FormControl>
                 <Input
+                  data-cy="register-email"
                   id="email"
                   name="email"
                   variant="rounded"
@@ -462,7 +480,12 @@ export default function SignIn({ providers }: any) {
                   onBlur={handleBlur}
                 />
                 {errors.email && touched.email ? (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
+                  <FormHelperText
+                    data-cy="register-email-error"
+                    color="red.400"
+                    mt="0"
+                    mb="5px"
+                  >
                     {errors.email}.
                   </FormHelperText>
                 ) : (
@@ -471,6 +494,7 @@ export default function SignIn({ providers }: any) {
               </FormControl>
               <FormControl>
                 <Input
+                  data-cy="register-phonenumber"
                   id="phoneNumber"
                   name="phoneNumber"
                   variant="rounded"
@@ -486,7 +510,12 @@ export default function SignIn({ providers }: any) {
                   onBlur={handleBlur}
                 />
                 {errors.phoneNumber && touched.phoneNumber ? (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
+                  <FormHelperText
+                    data-cy="register-phonenumber-error"
+                    color="red.400"
+                    mt="0"
+                    mb="5px"
+                  >
                     {errors.phoneNumber}.
                   </FormHelperText>
                 ) : (
@@ -497,6 +526,7 @@ export default function SignIn({ providers }: any) {
                 <FormControl mr="4px">
                   <InputGroup size="md">
                     <Input
+                      data-cy="register-password"
                       id="password"
                       name="password"
                       fontSize="sm"
@@ -523,7 +553,12 @@ export default function SignIn({ providers }: any) {
                     </InputRightElement>
                   </InputGroup>
                   {errors.password && touched.password ? (
-                    <FormHelperText color="red.400" mt="0" mb="5px">
+                    <FormHelperText
+                      data-cy="register-password-error"
+                      color="red.400"
+                      mt="0"
+                      mb="5px"
+                    >
                       {errors.password}
                     </FormHelperText>
                   ) : (
@@ -533,6 +568,7 @@ export default function SignIn({ providers }: any) {
                 <FormControl>
                   <InputGroup size="md">
                     <Input
+                      data-cy="register-confirmpassword"
                       id="confirmPassword"
                       name="confirmPassword"
                       fontSize="sm"
@@ -559,7 +595,12 @@ export default function SignIn({ providers }: any) {
                     </InputRightElement>
                   </InputGroup>
                   {errors.confirmPassword && touched.confirmPassword ? (
-                    <FormHelperText color="red.400" mt="0" mb="5px">
+                    <FormHelperText
+                      data-cy="register-confirmpassword-error"
+                      color="red.400"
+                      mt="0"
+                      mb="5px"
+                    >
                       {errors.confirmPassword}
                     </FormHelperText>
                   ) : (
@@ -570,6 +611,7 @@ export default function SignIn({ providers }: any) {
               <FormControl>
                 <InputGroup size="md">
                   <Select
+                    data-cy="register-usertype"
                     id="usertype"
                     name="usertype"
                     fontSize="sm"
@@ -607,6 +649,7 @@ export default function SignIn({ providers }: any) {
                     {image ? image.name : "Upload Avatar (optional)"}
                   </Button>
                   <Input
+                    data-cy="register-image"
                     onChange={uploadToClient}
                     position="absolute"
                     left="0"
@@ -638,6 +681,7 @@ export default function SignIn({ providers }: any) {
                 </Flex>
               ) : ( */}
               <Button
+                data-cy="register-button"
                 type="submit"
                 isLoading={isSubmitting}
                 fontSize="sm"
