@@ -171,7 +171,7 @@ export default function UserReports(props: { [x: string]: any }) {
               {/* <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon> */}
 
               <Box pt="3" color="white" pl="10">
-                <Heading size="lg" mb="8">
+                <Heading data-cy="dashboard-heading" size="lg" mb="8">
                   Hello {user?.name}!
                 </Heading>
                 <Text w="50%">

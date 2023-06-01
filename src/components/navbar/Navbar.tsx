@@ -111,7 +111,7 @@ const Navbar = (): JSX.Element => {
           <MenuItem to="/service">Service</MenuItem>
           <MenuItem to="/pricing">Pricing</MenuItem>
           <MenuItem to="/resources">Resources</MenuItem>
-          <Link as={NextLink} href="/auth/signin">
+          <Link daya-cy="login-button" as={NextLink} href="/auth/signin">
             <Text
               fontWeight="700"
               fontSize="18px"
