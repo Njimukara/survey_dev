@@ -1,5 +1,12 @@
 // Chakra imports
-import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  SimpleGrid,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import axios from "axios";
 import Card from "components/card/Card";
 import Projects from "views/admin/profile/components/CompanyUsers";
@@ -17,6 +24,9 @@ interface Company {
   logo: string;
   country: string;
   city: string;
+  state?: string;
+  zip_code?: string;
+  street_address?: string;
 }
 
 export default function CompanyDetails(props: {
@@ -76,12 +86,13 @@ export default function CompanyDetails(props: {
       tempCountry = countryNameFromIso(tempCountry);
       setCountry(tempCountry);
     }
-  }, [company]);
+  }, [company, hasDetails]);
 
   if (!hasDetails) {
     return (
       <Card mb="20px" {...rest}>
         <Flex
+          id="registerCompany"
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
@@ -113,50 +124,91 @@ export default function CompanyDetails(props: {
       <Flex>
         <Flex
           px={5}
-          w="30%"
+          w="100%"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
         >
           <Flex
+            w="100%"
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
           >
-            <Box>
-              <NextAvatar
-                mx="auto"
-                src={company?.logo}
-                h="87px"
-                w="87px"
-                border="4px solid"
-                borderColor={borderColor}
-              />
+            <Box w="95%" bg="gray.50" h="100" borderRadius="10" boxShadow="sm">
+              <Box mt="12">
+                <NextAvatar
+                  mx="auto"
+                  src={company?.logo}
+                  alt={company?.name}
+                  h="87px"
+                  w="87px"
+                  border="4px solid"
+                  boxShadow="md"
+                  borderColor={borderColor}
+                />
+              </Box>
             </Box>
-            <Text pb={4} fontWeight="bold" fontSize="23px" textAlign="center">
-              {company?.name}
-            </Text>
-            <Box>
-              <Text color="gray.400" transform="capitalize">
-                {country}
+            <Box w="100%" mt="10" px="5">
+              <Text
+                pb={4}
+                fontWeight="bold"
+                color="primary.500"
+                fontSize="23px"
+                textAlign="center"
+              >
+                {company?.name}
               </Text>
-            </Box>
-            <Box>
-              <Text color="gray.400" transform="capitalize">
-                {company?.city}
-              </Text>
-            </Box>
-            <Box>
-              <Text color="gray.400" transform="capitalize">
-                {/* Admin: {company?.owner} */}
-              </Text>
+              <SimpleGrid w="100%" columns={3} spacing={10}>
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    Country
+                  </Text>
+                  <Text>{country}</Text>
+                </Box>
+
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    State
+                  </Text>
+                  <Text>{company?.state}</Text>
+                </Box>
+
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    City
+                  </Text>
+                  <Text>{company?.city}</Text>
+                </Box>
+
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    Street Address
+                  </Text>
+                  <Text>{company?.street_address}</Text>
+                </Box>
+
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    Zip Code
+                  </Text>
+                  <Text>{company?.zip_code}</Text>
+                </Box>
+
+                <Box>
+                  <Text color="gray.400" transform="capitalize">
+                    {/* Admin: {company?.owner} */}
+                  </Text>
+                </Box>
+              </SimpleGrid>
             </Box>
           </Flex>
-          <Flex pb={4} align="center" justify="space-between"></Flex>
+          {/* <Flex pb={4} align="center" justify="space-between"></Flex> */}
 
           <Button
             onClick={() => router.push("/company/edit-company")}
             mb={2}
+            mt={8}
             variant="homePrimary"
             py="5"
             bg="primary.500"
@@ -165,13 +217,15 @@ export default function CompanyDetails(props: {
             Edit info
           </Button>
         </Flex>
-        <Flex w="70%">
-          <CompanyUsers
-            toggleModal={toggleCompanyUserModal}
-            isOpen={modalState}
-            company={company}
-          />
-        </Flex>
+        {/* <Flex w="70%">
+          {hasDetails && (
+            <CompanyUsers
+              toggleModal={toggleCompanyUserModal}
+              isOpen={modalState}
+              company={company}
+            />
+          )}
+        </Flex> */}
       </Flex>
     </Card>
   );

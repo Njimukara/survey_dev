@@ -72,7 +72,7 @@ export default function VerifyEmail(props: any) {
         justifyContent="center"
         mb="130px"
         px="0px"
-        mt="30vh"
+        mt="35vh"
         flexDirection="column"
       >
         <Flex flexDirection="column" alignItems="center">
@@ -88,7 +88,7 @@ export default function VerifyEmail(props: any) {
             boxSize={12}
           />
           <Text>
-            A link has ben sent to{" "}
+            A link has been sent to{" "}
             <a
               style={{ color: "blue", textDecoration: "underline" }}
               href="https://mail.google.com/mail/u/0/#inbox"
@@ -97,6 +97,11 @@ export default function VerifyEmail(props: any) {
               your email.
             </a>{" "}
             Follow it to complete registration
+          </Text>
+          <Text>
+            Not using gmail? Open your mail box and follow the intructions to{" "}
+            <br />
+            activate your account
           </Text>
           <Button
             variant="outline"

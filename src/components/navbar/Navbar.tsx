@@ -111,7 +111,7 @@ const Navbar = (): JSX.Element => {
           <MenuItem to="/service">Service</MenuItem>
           <MenuItem to="/pricing">Pricing</MenuItem>
           <MenuItem to="/resources">Resources</MenuItem>
-          <Link as={NextLink} href="/auth/signin">
+          <Link daya-cy="login-button" as={NextLink} href="/auth/signin">
             <Text
               fontWeight="700"
               fontSize="18px"
@@ -124,15 +124,20 @@ const Navbar = (): JSX.Element => {
               Login
             </Text>
           </Link>
-          <Button
-            ml={[0, 0, 4, 8]}
-            mt={10}
-            mb={4}
-            variant={navScroll ? "homePrimary" : "homeWhite"}
-            size="lg"
-          >
-            Try It Now
-          </Button>
+          <Link as={NextLink} href="/auth/signin">
+            <Button
+              ml={[0, 0, 4, 8]}
+              mt={10}
+              mb={4}
+              variant={navScroll ? "homePrimary" : "homeWhite"}
+              _active={{ bg: "white" }}
+              size="lg"
+            >
+              {/* <Link > */}
+              Try It Now
+              {/* </Link> */}
+            </Button>
+          </Link>
         </Flex>
       </Box>
     </Flex>

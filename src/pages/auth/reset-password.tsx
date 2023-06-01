@@ -87,13 +87,6 @@ export default function ResetPassword(props: any) {
   const onSubmit = async (values: any) => {
     setSubmitting(true);
     console.log(values.email);
-    // headers
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
 
     const body = {
       email: values.email,
@@ -102,8 +95,7 @@ export default function ResetPassword(props: any) {
     const res = await axios
       .post(
         "https://surveyplanner.pythonanywhere.com/auth/users/reset_password/",
-        body,
-        config
+        body
       )
       .then((res) => {
         console.log(res);

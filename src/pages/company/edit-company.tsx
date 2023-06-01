@@ -58,7 +58,8 @@ import AdminLayout from "layouts/admin";
 
 // react select
 import { useState, useMemo, SetStateAction } from "react";
-import countryList from "react-select-country-list";
+// import countryList from "react-select-country-list";
+import { Country, City } from "country-state-city";
 import Select from "react-select";
 
 export default function EditCompany({ providers }: any) {
@@ -83,7 +84,11 @@ export default function EditCompany({ providers }: any) {
   const [error, setError] = useState(null);
   const [canEdit, setCanEdit] = useState(true);
   const [name, setName] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState<any>(null);
+  const [selectedCity, setSelectedCity] = useState<any>(null);
   const [city, setCity] = useState("");
   const [iso, setIso] = useState(null);
   const [image, setImage] = useState(null);
@@ -99,12 +104,24 @@ export default function EditCompany({ providers }: any) {
   };
 
   //   react-select
-  const options = useMemo(() => countryList().getData(), []);
+  // const options = useMemo(() => countryList().getData(), []);
+  const options = Country.getAllCountries().map((country) => ({
+    value: {
+      latitude: country.latitude,
+      longitude: country.longitude,
+      isoCode: country.isoCode,
+    },
+    label: country.name,
+  }));
 
   const changeHandler = (value: any) => {
     setCountry(value);
-    setIso(value.value);
-    console.log(country);
+    setIso(value.value?.isoCode);
+  };
+
+  const handleSelectedCity = (option: any) => {
+    setSelectedCity(option);
+    setCity(option?.value?.name);
   };
 
   // css styling for react select
@@ -132,16 +149,13 @@ export default function EditCompany({ providers }: any) {
     formdata.append("name", name);
     formdata.append("country", iso || company.country);
     formdata.append("city", city);
+    formdata.append("state", state);
+    formdata.append("street_address", streetAddress);
+    formdata.append("zip_code", zipCode);
     if (image) {
       formdata.append("logo", image);
     }
-    // let body = {
-    //   name: name,
-    //   country: iso,
-    //   city: city,
-    //   logo: image,
-    // };
-    // console.log(body);
+
     const headerOptions = {
       // method: 'POST',
       headers: {
@@ -163,7 +177,7 @@ export default function EditCompany({ providers }: any) {
         setSubmitting(false);
         toast({
           position: "bottom-right",
-          description: "Proile update successful",
+          description: "Company update successful",
           status: "success",
           duration: 7000,
           isClosable: true,
@@ -175,7 +189,7 @@ export default function EditCompany({ providers }: any) {
         setSubmitting(false);
         toast({
           position: "bottom-right",
-          description: "Profile update failed",
+          description: "Company update failed",
           status: "error",
           duration: 7000,
           isClosable: true,
@@ -226,6 +240,9 @@ export default function EditCompany({ providers }: any) {
         setCountry({ value: tempIso, label: tempcountry });
 
         setCity(res?.data?.city);
+        setState(res?.data?.state);
+        setZipCode(res?.data?.zip_code);
+        setStreetAddress(res?.data?.street_address);
         setCreateObjectURL(res?.data?.logo);
       })
       .catch((error) => {
@@ -246,7 +263,7 @@ export default function EditCompany({ providers }: any) {
             <Flex alignItems="center" flexDirection="column">
               <Image
                 src={createObjectURL ? createObjectURL : "/profile.png"}
-                objectFit="fill"
+                objectFit="contain"
                 bg="transparent"
                 width="350px"
                 height="250px"
@@ -314,25 +331,6 @@ export default function EditCompany({ providers }: any) {
 
               <FormControl pb="3">
                 <HStack spacing="10px">
-                  <FormLabel w="160px">City *</FormLabel>
-                  <Input
-                    id="city"
-                    name="city"
-                    variant="rounded"
-                    fontSize="sm"
-                    type="country"
-                    placeholder="City*"
-                    fontWeight="500"
-                    size="lg"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    isDisabled={canEdit}
-                  />
-                </HStack>
-              </FormControl>
-
-              <FormControl pb="3">
-                <HStack spacing="10px">
                   <FormLabel w="160px">Country</FormLabel>
                   <Box w="100%">
                     <Select
@@ -344,6 +342,88 @@ export default function EditCompany({ providers }: any) {
                       onChange={changeHandler}
                     />
                   </Box>
+                </HStack>
+              </FormControl>
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="160px">City</FormLabel>
+                  <Box w="100%">
+                    <Select
+                      isDisabled={canEdit}
+                      styles={reactSelectStyles}
+                      options={City.getCitiesOfCountry(iso)?.map((state) => ({
+                        value: {
+                          latitude: state.latitude,
+                          longitude: state.longitude,
+                          name: state.name,
+                          stateCode: state.stateCode,
+                          countryCode: state.countryCode,
+                        },
+                        label: state.name,
+                      }))}
+                      placeholder="select city"
+                      value={city}
+                      onChange={handleSelectedCity}
+                    />
+                  </Box>
+                </HStack>
+              </FormControl>
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="160px">state</FormLabel>
+                  <Input
+                    id="state"
+                    name="state"
+                    variant="rounded"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="State"
+                    fontWeight="500"
+                    size="lg"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    isDisabled={canEdit}
+                  />
+                </HStack>
+              </FormControl>
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="160px">Zip Code</FormLabel>
+                  <Input
+                    id="zipCode"
+                    name="zipCode"
+                    variant="rounded"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Zip Code"
+                    fontWeight="500"
+                    size="lg"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    isDisabled={canEdit}
+                  />
+                </HStack>
+              </FormControl>
+
+              <FormControl pb="3">
+                <HStack spacing="10px">
+                  <FormLabel w="160px">Street Address</FormLabel>
+                  <Input
+                    id="streetAddress"
+                    name="streetAddress"
+                    variant="rounded"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Street Address"
+                    fontWeight="500"
+                    size="lg"
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                    isDisabled={canEdit}
+                  />
                 </HStack>
               </FormControl>
 

@@ -28,7 +28,7 @@ export default function Banner(props: {
   date_joined: number | string;
   [x: string]: any;
 }) {
-  const { avatar, name, email, date_joined, ...rest } = props;
+  const { avatar, name, email, date_joined, phoneNumber, ...rest } = props;
 
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
@@ -80,8 +80,6 @@ export default function Banner(props: {
       },
     };
 
-    console.log(session?.user?.data.id);
-
     await axios
       .delete(
         `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
@@ -119,6 +117,7 @@ export default function Banner(props: {
           <NextAvatar
             mx="auto"
             src={userAvatar ? "/profile.png" : avatar}
+            alt="user avatar"
             h="100px"
             w="100px"
             border="10px solid"
@@ -127,16 +126,22 @@ export default function Banner(props: {
         </Flex>
         <Box h="100%" mx="10px" w="2px" bg="gray.200" />
         <Box w="80%" px={20}>
-          <Text pb={4} fontWeight="bold" fontSize="large">
-            User Info
+          <Text
+            data-cy="user-name"
+            pb={4}
+            fontWeight="extrabold"
+            fontSize="xl"
+            color="primary.500"
+          >
+            {name}
           </Text>
-          <Flex w="100%" pb={4} align="center" justify="space-between">
-            <Box>
+          <Flex w="100%" mt="3" pb={4} align="center" justify="space-between">
+            {/* <Box>
               <Text color="gray.400" transform="capitalize">
                 Name
               </Text>
               <Text>{name}</Text>
-            </Box>
+            </Box> */}
             <Box>
               <Text color="gray.400" transform="capitalize">
                 Email
@@ -147,33 +152,43 @@ export default function Banner(props: {
               <Text color="gray.400" transform="capitalize">
                 Joined Since
               </Text>
-              <Text>{date}</Text>
+              <Text>{date == "Invalid Date" ? "loading" : date}</Text>
+            </Box>
+            <Box>
+              <Text color="gray.400" transform="capitalize">
+                Phone Number
+              </Text>
+              <Text>
+                {phoneNumber == "undefined" ? "Not Set" : phoneNumber}
+              </Text>
             </Box>
           </Flex>
 
-          <Button
-            onClick={() => router.push("/auth/edit-user")}
-            mr={2}
-            bg="primary.500"
-            variant="homePrimary"
-            py="5"
-            color="white"
-          >
-            Edit info
-          </Button>
-          <Button
-            color="red.500"
-            py="4"
-            px="4"
-            isDisabled
-            borderColor="red.500"
-            variant="outline"
-            bg="white"
-            _hover={{ bg: "red.400", color: "white" }}
-            onClick={onOpen}
-          >
-            Delete account
-          </Button>
+          <Flex mt="7">
+            <Button
+              onClick={() => router.push("/auth/edit-user")}
+              mr={2}
+              bg="primary.500"
+              variant="homePrimary"
+              py="5"
+              color="white"
+            >
+              Edit info
+            </Button>
+            <Button
+              color="red.500"
+              py="4"
+              px="4"
+              isDisabled
+              borderColor="red.500"
+              variant="outline"
+              bg="white"
+              _hover={{ bg: "red.400", color: "white" }}
+              onClick={onOpen}
+            >
+              Delete account
+            </Button>
+          </Flex>
         </Box>
         <AlertDialog
           isOpen={isOpen}

@@ -19,7 +19,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
   const cardShadow = useColorModeValue(
-    "0px 18px 40px rgba(112, 144, 176, 0.12)",
+    "0px 5px 5px rgba(112, 144, 176, 0.12)",
     "unset"
   );
 
@@ -28,8 +28,11 @@ export default function CompanyUsers(props: { [x: string]: any }) {
 
   useEffect(() => {
     // console.log("members", company?.members);
-    setCompanyMembers(company?.members);
-    console.log(company);
+    if (!company) {
+      return;
+    } else {
+      setCompanyMembers(company);
+    }
   }, [company]);
 
   return (
@@ -102,7 +105,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
                 );
               })
             ) : (
-              <Flex justifyContent="center" alignItems="center">
+              <Flex justifyContent="center" alignItems="center" pt={32}>
                 <Text>No users yet</Text>
               </Flex>
             )}

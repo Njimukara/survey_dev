@@ -1,11 +1,16 @@
 // Chakra imports
 // import { Box, Flex, Icon, Text } from '@chakra-ui/react'
-import styles from '../../styles/Home.module.css'
+import { Image } from "@chakra-ui/react";
+import styles from "../../styles/Home.module.css";
 // Assets
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 function Spinner(props: any) {
-  return <div className={styles.loader}></div>
+  return (
+    <div>
+      <Image src="/ball.gif" alt="spinner icon" h={10} w={10} />
+    </div>
+  );
 }
 
-export default Spinner
+export default Spinner;
