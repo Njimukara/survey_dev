@@ -1,4 +1,4 @@
-describe("Dashboard Page ", () => {
+export default describe("Dashboard Page ", () => {
   //   cy.visit("http://localhost:3000/signin");
 
   const User = {

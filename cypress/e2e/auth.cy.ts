@@ -1,4 +1,4 @@
-describe("Login Page", () => {
+export default describe("Login Page", () => {
   //   before(() => {
   //     cy.log(`Visiting http://localhost:3000`);
   //     cy.visit("http://localhost:3000");

@@ -282,12 +282,14 @@ export default function EditUser({ providers }: any) {
 
   //   react-select
   // const options = useMemo(() => countryList().getData(), []);
-  const options = Country.getAllCountries().map((country) => ({
-    value: {
-      phoneCode: country.phonecode,
-    },
-    label: country.phonecode,
-  }));
+  const options = Country.getAllCountries().map(
+    (country: { phonecode: any }) => ({
+      value: {
+        phoneCode: country.phonecode,
+      },
+      label: country.phonecode,
+    })
+  );
 
   const changeHandler = (value: any) => {
     console.log(value);

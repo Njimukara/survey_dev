@@ -1,4 +1,4 @@
-describe("Landing Page spec", () => {
+export default describe("Landing Page spec", () => {
   it("displays the langing page correctly", () => {
     cy.visit("http://localhost:3000");
     // cy.mount(<Home />);

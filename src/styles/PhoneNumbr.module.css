@@ -8,3 +8,15 @@
     width: "100%";
     border: "none"
 }
+
+.shipbg {
+  clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+  background-image: url('/ship_bg.png');
+  background-position: center;
+  background-size: cover;
+  height: 50vh;
+}
+
+.circle_clip {
+  clip-path: inset(0 30% 34% 0);
+}

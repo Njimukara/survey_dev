@@ -1,5 +1,5 @@
 // import Hero from "../../src/layouts/home/Hero";
-describe("Profile Page ", () => {
+export default describe("Profile Page ", () => {
   //   cy.visit("http://localhost:3000/signin");
 
   const User = {

@@ -105,14 +105,16 @@ export default function EditCompany({ providers }: any) {
 
   //   react-select
   // const options = useMemo(() => countryList().getData(), []);
-  const options = Country.getAllCountries().map((country) => ({
-    value: {
-      latitude: country.latitude,
-      longitude: country.longitude,
-      isoCode: country.isoCode,
-    },
-    label: country.name,
-  }));
+  const options = Country.getAllCountries().map(
+    (country: { latitude: any; longitude: any; isoCode: any; name: any }) => ({
+      value: {
+        latitude: country.latitude,
+        longitude: country.longitude,
+        isoCode: country.isoCode,
+      },
+      label: country.name,
+    })
+  );
 
   const changeHandler = (value: any) => {
     setCountry(value);
@@ -352,16 +354,24 @@ export default function EditCompany({ providers }: any) {
                     <Select
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
-                      options={City.getCitiesOfCountry(iso)?.map((state) => ({
-                        value: {
-                          latitude: state.latitude,
-                          longitude: state.longitude,
-                          name: state.name,
-                          stateCode: state.stateCode,
-                          countryCode: state.countryCode,
-                        },
-                        label: state.name,
-                      }))}
+                      options={City.getCitiesOfCountry(iso)?.map(
+                        (state: {
+                          latitude: any;
+                          longitude: any;
+                          name: any;
+                          stateCode: any;
+                          countryCode: any;
+                        }) => ({
+                          value: {
+                            latitude: state.latitude,
+                            longitude: state.longitude,
+                            name: state.name,
+                            stateCode: state.stateCode,
+                            countryCode: state.countryCode,
+                          },
+                          label: state.name,
+                        })
+                      )}
                       placeholder="select city"
                       value={city}
                       onChange={handleSelectedCity}

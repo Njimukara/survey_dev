@@ -8,9 +8,10 @@ import {
   Button,
   Center,
   ListIcon,
+  Card,
 } from "@chakra-ui/react";
 import { MdCheckCircle } from "react-icons/md";
-import Card from "./Card";
+// import Card from './Card'
 type ArrayObject = {
   id?: number;
   name?: String;
@@ -26,12 +27,14 @@ type PricingProps = {
 };
 
 export const PricingCard = (props: PricingProps) => {
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | any) => {
     return price / 100;
   };
   return (
     <Card
       transition="all .2s ease-in-out"
+      bg="#F6F8FA"
+      // w="340px"
       _hover={{
         transform: "scale(1.05)",
       }}
@@ -39,19 +42,28 @@ export const PricingCard = (props: PricingProps) => {
       <Flex>
         <Box>
           <Box ml="10px">
-            <Text mb="25px" fontSize="16px" fontWeight="600">
-              {props.title}
-            </Text>
-            <Heading mb="20px" fontSize="16px">
-              <Text display="inline-block" fontSize="64px">
-                ${formatPrice(props.price)}
-                {/* ${Math.round(props.price)} */}
+            <Flex
+              flexDirection="column"
+              justifyContent="center"
+              alignItems={"center"}
+            >
+              <Text
+                my="20px"
+                fontSize="20px"
+                color="primary.500"
+                fontWeight="600"
+              >
+                {props.title}
               </Text>
-              / {props.period}
-            </Heading>
-            <Text mb="15px" fontWeight="400">
-              {props.description}
-            </Text>
+              <Heading mb="20px" fontSize="16px">
+                <Text display="inline-block" fontSize="64px">
+                  ${formatPrice(props.price)}
+                </Text>
+              </Heading>
+              <Text mb="15px" fontWeight="400" px="5px">
+                {props.description}
+              </Text>
+            </Flex>
             <Box>
               <List spacing={2}>
                 {props.advantages?.map((x) => (
@@ -59,7 +71,7 @@ export const PricingCard = (props: PricingProps) => {
                     <ListIcon
                       key={x.id}
                       as={MdCheckCircle}
-                      color="primary.500"
+                      color="green.500"
                       fontSize="18px"
                     />
                     {x?.description}
@@ -70,7 +82,14 @@ export const PricingCard = (props: PricingProps) => {
           </Box>
 
           <Center>
-            <Button variant="outline" mb="20px" mt="30px">
+            <Button
+              variant="homePrimary"
+              py="5"
+              w="full"
+              mx="5"
+              mb="10px"
+              mt="30px"
+            >
               Get Licence
             </Button>
           </Center>

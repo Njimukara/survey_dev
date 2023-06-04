@@ -1,4 +1,4 @@
-import { IRoute } from "types/navigation";
+import { IRoute } from "../../types/navigation";
 
 // NextJS Requirement
 export const isWindowAvailable = () => typeof window !== "undefined";
@@ -16,14 +16,16 @@ export const findCurrentRoute = (routes: IRoute[]): IRoute => {
 
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
+};
 
 export const getActiveRoute = (routes: IRoute[]): string => {
   const route = findCurrentRoute(routes);
-  var brandName = ''
+  var brandName = "";
   if (isWindowAvailable()) {
-    brandName = (window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1));
-    brandName = capitalizeFirstLetter(brandName)
+    brandName = window.location.pathname.substring(
+      window.location.pathname.lastIndexOf("/") + 1
+    );
+    brandName = capitalizeFirstLetter(brandName);
   }
   return route?.name || brandName;
 };

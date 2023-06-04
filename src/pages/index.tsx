@@ -25,6 +25,7 @@ import {
   FormHelperText,
   Input,
   Textarea,
+  Flex,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -38,9 +39,15 @@ import Footer from "../layouts/home/Footer";
 import Navbar from "components/navbar/Navbar";
 // import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
+import styles from "../styles/PhoneNumbr.module.css";
+
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
 import { usePlanContext } from "contexts/PlanContext";
+import { WorkCard } from "components/card/WorkCard";
+import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const slides = [
   {
@@ -128,7 +135,134 @@ const MonthlyPricing = [
   },
 ];
 
+const WorkingMethodology = [
+  {
+    id: 1,
+    title: "Create an account",
+    img: "",
+    description:
+      "Login now or create and account, input your information to have an access to the platform",
+  },
+  {
+    id: 2,
+    title: "Buy a licence",
+    img: "",
+    description: "Choose a licence plan that satisfy your need and budget",
+  },
+  {
+    id: 3,
+    title: "Generate Surveys",
+    img: "",
+    description:
+      "As soon as you get your licence plan, you can now generate surveys",
+  },
+];
+
+type ArrayObject = {
+  id?: number;
+  name?: String;
+  description?: String;
+};
+
+type StripeObject = {
+  interval?: string;
+  description?: string;
+};
+
+type PricingProps = {
+  id?: number;
+  name?: String;
+  amount?: number;
+  period?: String;
+  stripe_plan_id?: StripeObject;
+  features?: Array<ArrayObject>;
+};
+
+type WorkCardProps = {
+  id?: number;
+  img?: string;
+  title?: string;
+  description?: string;
+};
+
 export default function Home() {
+  // Yup validation data schema
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string()
+      .min(3, "Name is too Short!")
+      .max(30, "Name is too Long!")
+      .required("Required"),
+    lastName: Yup.string()
+      .min(3, "Name is too Short!")
+      .max(30, "Name is too Long!")
+      .required("Required"),
+    email: Yup.string().email("Email is Invalid").required("Required"),
+    phoneNumber: Yup.number().min(9, "Min of 9 digits"),
+    message: Yup.string()
+      .min(3, "Name is too Short!")
+      .max(1000, "Name is too Long!")
+      .required("Required"),
+  });
+
+  const onSubmit = async (values: any, actions: any) => {
+    let data = {
+      name: values.firstName + " " + values.lastName,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+      message: values.message,
+    };
+
+    console.log(data);
+
+    // const options = {
+    //   // method: 'POST',
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //     Accept: "application/json;charset=UTF-8",
+    //   },
+    // };
+
+    // const res = await axios
+    //   .post(
+    //     "https://surveyplanner.pythonanywhere.com/auth/users/",
+    //     formdata,
+    //     options
+    //   )
+    //   .then((res) => {
+    //     // console.log(res);
+    //     router.push("/auth/verifyemail");
+    //   })
+    //   .catch((error) => {
+    //     // console.log(error);
+    //     let err = error.response.data.email;
+    //     setError("Server error, please try again later");
+    //     if (err != "") {
+    //       setError(err);
+    //     }
+    //   });
+  };
+
+  // formik initialisation using yup validation schema
+  const {
+    values,
+    isSubmitting,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    handleBlur,
+  } = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      message: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit,
+  });
+
   const [plans, setPlans] = useState([]);
   const { data: session, status } = useSession();
   const { addToStore } = usePlanContext();
@@ -150,7 +284,7 @@ export default function Home() {
       )
       .then((res) => {
         // console.log(res);
-        addToStore(res.data);
+        // addToStore(res.data);
         setPlans(res.data);
         // router.push('/auth/verifyemail')
       })
@@ -194,116 +328,115 @@ export default function Home() {
         </Box>
 
         {/* How it works section  */}
-        <Section title="How it Works ?" bg="white">
-          <SimpleGrid
-            textAlign="center"
-            minW="90%"
-            spacing="40px"
-            minChildWidth="200px"
-          >
-            <VStack spacing={4}>
-              <Square
-                size={100}
-                boxShadow="2xl"
-                bg="orange"
-                borderRadius="10px"
-                mb="8px"
-              >
-                <Icon as={HiUserPlus} w={10} h={10} color="white" />
-              </Square>
-              <Text fontSize="xl" fontWeight="bold">
-                1. Create an account
-              </Text>
-              <Text>
-                Login now or create and account, input your information to have
-                an access to the platform
-              </Text>
-            </VStack>
-            <VStack spacing={4}>
-              <Square
-                size={100}
-                boxShadow="2xl"
-                bg="purple"
-                borderRadius="10px"
-                mb="8px"
-              >
-                <Icon as={ImKey} w={10} h={10} color="white" />
-              </Square>
-              <Text fontSize="xl" fontWeight="bold">
-                2. Buy a licence
-              </Text>
-              <Text>
-                Choose a licence plan that satisfy your need and budget
-              </Text>
-            </VStack>
-            <VStack spacing={4}>
-              <Square
-                size={100}
-                boxShadow="2xl"
-                bg="red.500"
-                borderRadius="10px"
-                mb="8px"
-              >
-                <Icon as={BsCalculator} w={10} h={10} color="white" />
-              </Square>
-              <Text fontSize="xl" fontWeight="bold">
-                3. Generate Surveys
-              </Text>
-              <Text>
-                As soon as you get your licence plan, you can now generate
-                surveys
-              </Text>
-            </VStack>
-          </SimpleGrid>
-        </Section>
-
-        <Box bg="primary.500" py="8" px="40">
-          <Heading color="white" py="2">
-            Introducing survey planner
-          </Heading>
-          <Text color="white" pt="4" pb="8">
-            Our company provides innovative software solutions for hydrographic
-            surveying, enabling users to easily collect and analyze high-quality
-            data for mapping underwater environments. Our user-friendly software
-            delivers powerful tools for real-time data analysis and
-            visualization, making it a valuable tool for a range of applications
-            in the marine industry.
-          </Text>
-          <Button _active={{ bg: "white" }} variant="homeWhite" py="3">
-            Read more
-          </Button>
+        <Box py="6%">
+          <Box my="5px" px="6%" mb="2%">
+            <Heading as="h2" size="sm" color="primary.500">
+              How it works ?
+            </Heading>
+            <Heading
+              as="h2"
+              mb={{ base: "15px", md: "8px", lg: "0px" }}
+              size={{ base: "md", md: "lg", lg: "xl" }}
+            >
+              Here is our simple 3-step process
+            </Heading>
+          </Box>
+          <Box py="6%" px="6%" bg="#F6F8FA">
+            <SimpleGrid minW="90%" spacing="40px" minChildWidth="200px">
+              {WorkingMethodology.map((stage: WorkCardProps) => (
+                <WorkCard
+                  key={stage.id}
+                  title={stage.title}
+                  description={stage.description}
+                />
+              ))}
+            </SimpleGrid>
+          </Box>
         </Box>
+
+        <Flex
+          flexDirection={{ base: "column", md: "row", lg: "row" }}
+          w="100vw"
+          pt="15"
+          mb="8%"
+          px="6%"
+        >
+          <Box
+            w={{ base: "100%", md: "50%", lg: "50%" }}
+            mt={{ base: 0, lg: "2%" }}
+          >
+            <Heading py="2" size={{ base: "md", md: "lg", lg: "lg" }}>
+              Introducing survey planner
+            </Heading>
+            <Text
+              pt="4"
+              pb={{ base: "4", lg: "8" }}
+              textAlign="justify"
+              fontSize={{ base: "14px", md: "16px", lg: "20px" }}
+            >
+              Our company provides innovative software solutions for
+              hydrographic surveying, enabling users to easily collect and
+              analyze high-quality data for mapping underwater environments. Our
+              user-friendly software delivers powerful tools for real-time data
+              analysis and visualization, making it a valuable tool for a range
+              of applications in the marine industry.
+            </Text>
+            <Button
+              _active={{ bg: "white" }}
+              variant="homePrimary"
+              py={{ base: "4px", md: "6px", lg: "6" }}
+            >
+              Read more
+            </Button>
+          </Box>
+          <Box
+            position="relative"
+            w={{ base: "100%", md: "50%", lg: "100%" }}
+            flex="70%"
+          >
+            <Box
+              display={{ base: "none", lg: "block" }}
+              className={styles.shipbg}
+              zIndex={1}
+              bg-local
+            ></Box>
+          </Box>
+        </Flex>
 
         {/* Our products section  */}
         <Section
           title="All The Assitance You Need For Your Hydrolic Surveys Inspections"
-          bg="white"
+          bg="#F6F8FA"
         >
-          <SimpleGrid columns={2} spacing={10}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
             {slides.map((slide, sid) => (
               <Card
                 key={`slide-${sid}`}
-                shadow="md"
-                variant="bordered"
                 fontSize="18px"
-                w="400px"
+                bg="transparent"
+                borderRadius="0"
+                w="250px"
                 p="0"
               >
                 <Image
                   src={slide.image}
                   alt="holder image"
-                  w="400px"
-                  h="250px"
+                  w="250px"
+                  h="200px"
                   _hover={{
                     scale: 1.1,
                   }}
                   borderRadius="0px"
                 />
-                <Box p="20px">
-                  <Text mb="1" fontWeight="bold">
+                <Box>
+                  <Text
+                    my={{ base: "2", lg: "3" }}
+                    color="primary.500"
+                    fontWeight="bold"
+                  >
                     {slide.name}
                   </Text>
-                  <Text>{slide.description}</Text>
+                  <Text textAlign="justify">{slide.description}</Text>
                 </Box>
               </Card>
             ))}
@@ -325,34 +458,35 @@ export default function Home() {
 
         {/* Pricing Plan Section  */}
         <Section
-          bg="secondary.500"
+          bg="white"
           title="A simple and transaparent pricing just for you"
         >
           <Tabs variant="unstyled" w="full">
-            <TabList justifyContent="center" mb="70px">
+            <TabList justifyContent="center" mb={{ base: "40px", lg: "70px" }}>
               <Tab
                 bg="white"
-                borderLeftRadius="20px"
-                pt="9"
-                pb="8"
-                px="20"
-                fontSize="20px"
+                borderRadius="0"
+                shadow="md"
+                color="primary.500"
+                py="3"
+                px={{ base: "5", md: "10", lg: "20" }}
+                fontSize={{ base: "15px", md: "18px", lg: "20px" }}
                 fontWeight="semibold"
                 _selected={{
                   bg: "primary.500",
                   color: "white",
-                  borderLeftRadius: "20px",
                 }}
               >
                 Monthly
               </Tab>
               <Tab
                 bg="white"
-                borderRightRadius="20px"
-                pt="9"
-                pb="8"
-                px="20"
-                fontSize="20px"
+                borderRadius="0"
+                shadow="md"
+                color="primary.500"
+                py="3"
+                px={{ base: "5", md: "10", lg: "20" }}
+                fontSize={{ base: "15px", md: "18px", lg: "20px" }}
                 fontWeight="semibold"
                 _selected={{
                   bg: "primary.500",
@@ -364,8 +498,8 @@ export default function Home() {
             </TabList>
             <TabPanels>
               <TabPanel>
-                <SimpleGrid columns={4} spacing="10px" minChildWidth="250px">
-                  {plans.map((x) => (
+                <SimpleGrid columns={4} spacing="15" minChildWidth="250px">
+                  {plans.map((x: PricingProps) => (
                     <PricingCard
                       key={x.id}
                       title={x.name}
@@ -400,108 +534,290 @@ export default function Home() {
         </Box>
 
         {/* Get started Section ; */}
-        <Box pb="430px" bg="white">
-          <Container maxW="container.xl" centerContent py="150px">
-            <SimpleGrid columns={2} spacing={100} minChildWidth="570px">
-              <Box w="570px" mt="100px" mx="50px">
-                <Heading as="h2" lineHeight="50px" mb="23px">
+        <Box
+          bg="white"
+          bgImg='linear-gradient(to right, #3203FCA1, #3203FCA1), url("/design.jpeg")'
+          backgroundSize="cover"
+          backgroundPosition="center"
+          backgroundRepeat="no-repeat"
+        >
+          <Container maxW="container.xl" centerContent py="50px">
+            <Flex
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              color="white"
+              mx="50px"
+              py="5%"
+            >
+              <Box w="70%">
+                <Heading
+                  size={{ base: "md", md: "lg", lg: "lg" }}
+                  textAlign="center"
+                  as="h2"
+                  lineHeight="50px"
+                  mb="23px"
+                >
                   Fast, Secured and Easy Access to our platform
                 </Heading>
                 <Text
-                  lineHeight="35px"
-                  color="gray.600"
+                  textAlign="center"
+                  lineHeight={{ base: "base", lg: "35px" }}
                   mb="23px"
-                  fontSize="20px"
+                  fontSize={{ base: "sm", md: "md", lg: "lg" }}
                 >
                   You need a to have an active account to get access to our
                   platform. Creating an account is simple. Click on the button
                   below to create an account.
                 </Text>
-                <Button variant="homePrimary"> Get Started</Button>
+                <Flex justifyContent="center" alignItems="center" gap="10">
+                  <Button
+                    variant="homeWhite"
+                    py={{ base: "4px", md: "6px", lg: "6" }}
+                    // bg="white"
+                    _focus={{ bg: "gray.100" }}
+                    fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                    color="primary.500"
+                    border="2px"
+                    borderColor="white"
+                  >
+                    {" "}
+                    Get Started
+                  </Button>
+                  <Button
+                    variant="homeWhite"
+                    py={{ base: "4px", md: "6px", lg: "6" }}
+                    fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                    bg="transparent"
+                    color="white"
+                    border="2px"
+                    borderColor="white"
+                  >
+                    Show More
+                  </Button>
+                </Flex>
               </Box>
-              <Image src="/he_sitting_with_notebook.png" alt="me" width="670" />
-            </SimpleGrid>
+              {/* <Image src="/he_sitting_with_notebook.png" alt="me" width="670" /> */}
+            </Flex>
           </Container>
         </Box>
 
-        {/* Contect section  */}
-        <Footer>
-          {/* Contact us section  */}
-          <Box mt="-450px">
-            <Container maxW="container.xl" centerContent>
-              <Stack
-                divider={<VSeparator />}
-                boxShadow="2xl"
-                bg="white"
-                direction={["column", "row"]}
+        <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "6%" }}>
+          <Container maxW="container.xl">
+            <Heading color="primary.500" size="sm" fontWeight="normal">
+              Lets get in touch
+            </Heading>
+            <Heading mb="5" size={{ base: "md", md: "lg", lg: "lg" }}>
+              Got any questions for use? let us know
+            </Heading>
+            <Stack
+              spacing={0}
+              direction={{ base: "column", md: "row", lg: "row" }}
+            >
+              <Card
+                borderRadius="0"
+                w={{ base: "100%", md: "700px", lg: "900px" }}
+                position="relative"
+                zIndex={23}
               >
-                <Box width="600px" px="95px" mt="50px">
-                  <Heading as="h2" my="30px">
-                    Lets get in touch
-                  </Heading>
-                  <Text>Morbi non quam nec dui luctus rutrum.</Text>
-                  <Box as="form" mt="25px" mb="100px">
-                    <FormControl isRequired mb="25px">
-                      <FormLabel>Name</FormLabel>
-                      <Input height="50px" variant="rounded" type="text" />
-                    </FormControl>
-                    <FormControl isRequired mb="25px">
-                      <FormLabel>Email address</FormLabel>
-                      <Input height="50px" variant="rounded" type="email" />
-                    </FormControl>
-                    <FormControl mb="25px">
-                      <FormLabel>Telephone number</FormLabel>
-                      <Input
-                        height="50px"
-                        variant="rounded"
-                        type="tel"
-                        placeholder="+1(567)123-4567"
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Your messages</FormLabel>
-                      <Textarea
-                        height="50px"
-                        placeholder="Say what you want here"
-                      />
-                    </FormControl>
-
-                    <Button my="25px" width="full" variant="homePrimary">
-                      Contact us
-                    </Button>
-
-                    <Text>We will reply as soon as possible we promise</Text>
-                  </Box>
-                </Box>
-
-                <Box width="600px" px="95px" mt="60px">
-                  <Image
-                    src="/contact-us.jpg"
-                    alt="contact image"
-                    width="450px"
-                    height="330px"
-                    borderRadius="16px"
-                  />
-                  <Heading as="h3" fontSize="64px" mt="40px">
+                <Flex
+                  w="100%"
+                  justifyContent="center"
+                  // alignItems="center"
+                  flexDirection="column"
+                  px={{ base: "5px", md: "30px", lg: "50px" }}
+                  py="3%"
+                >
+                  <Heading as="h3" size="md" mt={{ base: "30px", lg: "60px" }}>
                     Do you have a question ?
                   </Heading>
-                  <Text mt="20px" mb="30px">
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor
-                    do amet sint. Velit officia consequat. Dolor ipsum amet sin
-                    iquarum tempea
+                  <Text mt="20px" mb="30px" w="100%">
+                    Thank you for reaching out to us! We value your inquiry and
+                    strive to provide prompt assistance. our dedicated team will
+                    review your message and respond to you shortly
                   </Text>
-                  <Text mb="12px">Feel free to contact us here</Text>
-                  <Text fontSize="22px">
-                    Call:{" "}
-                    <Text as="span" color="primary.500">
-                      +1 (555) 123-4567
+
+                  <Flex flexDir="column" gap="5">
+                    <Box>
+                      <span>
+                        <Icon
+                          as={MdPhone}
+                          boxSize={4}
+                          color="primary.500"
+                          mr="8px"
+                        />
+                      </span>
+                      <Text as="span">+1 (555) 123-4567</Text>
+                    </Box>
+                    <Box>
+                      <span>
+                        <Icon
+                          as={MdEmail}
+                          boxSize={4}
+                          color="primary.500"
+                          mr="8px"
+                        />
+                      </span>
+                      <Text as="span">surveyplanner@gmail.com</Text>
+                    </Box>
+                    <Box>
+                      <span>
+                        <Icon
+                          as={MdMyLocation}
+                          boxSize={4}
+                          color="primary.500"
+                          mr="8px"
+                        />
+                      </span>
+                      <Text as="span">12/3-A South RD, NYC2312</Text>
+                    </Box>
+                  </Flex>
+                </Flex>
+                <Box
+                  position="absolute"
+                  borderRadius="full"
+                  width={{ base: "20px", lg: "30px" }}
+                  height={{ base: "20px", lg: "30px" }}
+                  left={{ base: "240px", lg: "380px" }}
+                  top={{ base: "250px", lg: "290px" }}
+                  zIndex={10}
+                  background=" rgba(50, 3, 252, 0.08)"
+                ></Box>
+                <Box
+                  position="absolute"
+                  borderRadius="full"
+                  width={{ base: "40px", lg: "80px" }}
+                  height={{ base: "40px", lg: "80px" }}
+                  left={{ base: "190px", lg: "300px" }}
+                  top={{ base: "270px", lg: "340px" }}
+                  zIndex={10}
+                  background=" rgba(50, 3, 252, 0.08)"
+                ></Box>
+                <Box
+                  position="absolute"
+                  className={styles.circle_clip}
+                  borderRadius="full"
+                  width={{ base: "181px", lg: "281px" }}
+                  height={{ base: "181px", lg: "281px" }}
+                  left={{ base: "188px", lg: "320px" }}
+                  top={{ base: "270px", lg: "320px" }}
+                  zIndex={10}
+                  background=" rgba(50, 3, 252, 0.08)"
+                ></Box>
+              </Card>
+
+              <Card
+                w={{ base: "100%", md: "700px", lg: "100%" }}
+                zIndex={23}
+                bg="transparent"
+              >
+                <Box px={{ base: "10px", md: "50px", lg: "0" }} mt="50px">
+                  <form onSubmit={handleSubmit}>
+                    <Flex
+                      w={{ base: "100%", md: "100%", lg: "100%" }}
+                      flexDirection={{ base: "column", md: "row", lg: "row" }}
+                      gap="5"
+                    >
+                      <FormControl isRequired mb="25px">
+                        <FormLabel color="#3C3C3C">First Name</FormLabel>
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          variant="flushed"
+                          type="text"
+                          px="1"
+                          fontSize="sm"
+                          value={values.firstName}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+                      <FormControl isRequired mb="25px">
+                        <FormLabel color="#3C3C3C">Last Name</FormLabel>
+                        <Input
+                          id="lastName"
+                          name="lastName"
+                          variant="flushed"
+                          type="text"
+                          px="1"
+                          fontSize="sm"
+                          value={values.lastName}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+                    </Flex>
+                    <Flex
+                      w={{ base: "100%", md: "100%", lg: "100%" }}
+                      flexDirection={{ base: "column", md: "row", lg: "row" }}
+                      gap="5"
+                    >
+                      <FormControl isRequired mb="25px">
+                        <FormLabel color="#3C3C3C">Email</FormLabel>
+                        <Input
+                          id="email"
+                          name="email"
+                          variant="flushed"
+                          type="email"
+                          px="1"
+                          fontSize="sm"
+                          value={values.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+                      <FormControl mb="25px">
+                        <FormLabel color="#3C3C3C">Telephone</FormLabel>
+                        <Input
+                          id="phoneNumber"
+                          name="phoneNumber"
+                          variant="flushed"
+                          type="tel"
+                          px="1"
+                          fontSize="sm"
+                          placeholder="+1(567)123-4567"
+                          value={values.phoneNumber}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+                    </Flex>
+                    <FormControl isRequired>
+                      <FormLabel color="#3C3C3C">message</FormLabel>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        px="1"
+                        fontSize="sm"
+                        variant="flushed"
+                        value={values.message}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </FormControl>
+
+                    <Button
+                      variant="homePrimary"
+                      disabled={isSubmitting}
+                      type="submit"
+                      py="6px"
+                      mt="10"
+                      px="70px"
+                      mb={2}
+                    >
+                      Contact Us
+                    </Button>
+                    <Text fontSize="sm">
+                      We will reply as soon as possible we promise
                     </Text>
-                  </Text>
+                  </form>
                 </Box>
-              </Stack>
-            </Container>
-          </Box>
-        </Footer>
+              </Card>
+            </Stack>
+          </Container>
+        </Box>
+
+        <Footer />
       </Box>
     </>
   );

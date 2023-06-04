@@ -11,7 +11,7 @@ import {
 import MainDashboard from "pages/admin/default";
 import GenerateSurvey from "pages/admin/generate-survey";
 import Profile from "pages/admin/profile";
-import DataTables from "pages/admin/data-tables";
+// import DataTables from "pages/admin/data-tables";
 
 // Auth Imports
 import SignInCentered from "pages/auth/signin";
@@ -50,8 +50,8 @@ const routes: IRoute[] = [
     name: "My Products",
     layout: "/admin",
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    path: "/data-tables",
-    component: DataTables,
+    path: "/generate",
+    component: MainDashboard,
     subRoutes: [
       {
         id: 1,
@@ -61,7 +61,7 @@ const routes: IRoute[] = [
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
         path: "/side-scan-sonar",
-        component: DataTables,
+        // component: DataTables,
       },
       {
         id: 2,
@@ -71,7 +71,7 @@ const routes: IRoute[] = [
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
         path: "/dynamic-lydar",
-        component: DataTables,
+        // component: DataTables,
       },
       {
         id: 3,
@@ -81,7 +81,7 @@ const routes: IRoute[] = [
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
         path: "/multibeam-echosounder",
-        component: DataTables,
+        // component: DataTables,
       },
       {
         id: 4,
@@ -91,7 +91,7 @@ const routes: IRoute[] = [
           <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />
         ),
         path: "/acoustic-sonar",
-        component: DataTables,
+        // component: DataTables,
       },
     ],
   },

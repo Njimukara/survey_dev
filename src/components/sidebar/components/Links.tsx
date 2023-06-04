@@ -9,15 +9,13 @@ import {
   HStack,
   Text,
   useColorModeValue,
-  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { IRoute } from "types/navigation";
+import { IRoute } from "../../../../types/navigation";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
 import { useSession } from "next-auth/react";
-import { useSubscription } from "contexts/SubscriptionContext";
 import axios from "axios";
 
 interface SidebarLinksProps {
@@ -56,10 +54,6 @@ export function SidebarLinks(props: SidebarLinksProps) {
   const activeRoute = (routeName: string) => {
     return router.pathname.includes(routeName);
   };
-
-  // const subscripedSurveys = (routeID: number) => {
-  //   console.log(subscriptions?.assigned_surveys?.includes(routeID));
-  // };
 
   const fetchSubscription = async () => {
     const config = {

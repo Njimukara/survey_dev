@@ -9,8 +9,19 @@ type sectionProps = {
 const Section = ({ title, children, bg }: sectionProps) => {
   return (
     <Box bg={bg ? bg : ""}>
-      <Container maxW="container.xl" centerContent py="90px">
-        <Heading as="h2" mb="100px" textAlign="center" w="75%">
+      <Container
+        maxW="container.xl"
+        centerContent
+        px={{ base: "2%", md: "3%", lg: "4%" }}
+        py={{ base: "40px", md: "50px", lg: "90px" }}
+      >
+        <Heading
+          size={{ base: "lg", md: "xl", lg: "xl" }}
+          as="h2"
+          mb={{ base: "30px", md: "50px", lg: "100px" }}
+          textAlign="center"
+          w={{ base: "100%", lg: "75%" }}
+        >
           {title}
         </Heading>
         {children}
