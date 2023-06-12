@@ -115,8 +115,9 @@ const Navbar = (): JSX.Element => {
           <MenuItem to="/home">Home</MenuItem>
           <MenuItem to="/pricing">Pricing</MenuItem>
           <MenuItem to="/resources">Resources</MenuItem>
-          <Link daya-cy="login-button" as={NextLink} href="/auth/signin">
+          <Link as={NextLink} href="/auth/signin">
             <Button
+              data-cy="login-button"
               fontWeight="700"
               fontSize="18px"
               variant={navScroll ? "homeWhite" : "homeWhite"}

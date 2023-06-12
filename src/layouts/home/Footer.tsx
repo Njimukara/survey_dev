@@ -18,7 +18,7 @@ import { MdFacebook, MdSend } from "react-icons/md";
 
 const Footer = () => {
   return (
-    <Box as="footer" pt="5px" bg="#0A1C40E0">
+    <Box as="footer" pt="5px" bg="#0A1C40E0" w="100vw">
       <SimpleGrid
         color="#B1B6C2"
         columns={{ base: 1, md: 2, lg: 4 }}
@@ -31,7 +31,7 @@ const Footer = () => {
           <Heading color="white" size="md">
             <Link href="/">SurveyPlanner</Link>
           </Heading>
-          <Text my="5">
+          <Text data-cy="footer-info" my="5">
             For any questions or assistance, please do not hesitate to reach out
             to us. We are here to help and would love to hear from you.
           </Text>

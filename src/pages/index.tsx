@@ -30,6 +30,7 @@ import {
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
 import { BsCalculator } from "react-icons/bs";
+
 import Hero from "../layouts/home/Hero";
 import Section from "../layouts/home/Section";
 import Card from "../components/card/Card";
@@ -139,20 +140,23 @@ const WorkingMethodology = [
   {
     id: 1,
     title: "Create an account",
-    img: "",
+    img: HiUserPlus,
+    iconsColor: "orange",
     description:
       "Login now or create and account, input your information to have an access to the platform",
   },
   {
     id: 2,
     title: "Buy a licence",
-    img: "",
+    img: ImKey,
+    iconColor: "purple",
     description: "Choose a licence plan that satisfy your need and budget",
   },
   {
     id: 3,
     title: "Generate Surveys",
-    img: "",
+    img: BsCalculator,
+    iconsColor: "red",
     description:
       "As soon as you get your licence plan, you can now generate surveys",
   },
@@ -180,9 +184,10 @@ type PricingProps = {
 
 type WorkCardProps = {
   id?: number;
-  img?: string;
+  img?: React.ElementType;
   title?: string;
   description?: string;
+  iconColor?: string;
 };
 
 export default function Home() {
@@ -306,7 +311,7 @@ export default function Home() {
     };
 
     getplan();
-  });
+  }, []);
 
   return (
     <>
@@ -334,6 +339,7 @@ export default function Home() {
               How it works ?
             </Heading>
             <Heading
+              data-cy="process-step"
               as="h2"
               mb={{ base: "15px", md: "8px", lg: "0px" }}
               size={{ base: "md", md: "lg", lg: "xl" }}
@@ -346,8 +352,10 @@ export default function Home() {
               {WorkingMethodology.map((stage: WorkCardProps) => (
                 <WorkCard
                   key={stage.id}
+                  img={stage.img}
                   title={stage.title}
                   description={stage.description}
+                  iconColor={stage.iconColor}
                 />
               ))}
             </SimpleGrid>
@@ -372,7 +380,9 @@ export default function Home() {
               pt="4"
               pb={{ base: "4", lg: "8" }}
               textAlign="justify"
-              fontSize={{ base: "14px", md: "16px", lg: "20px" }}
+              fontSize={{ base: "14px", md: "16px", lg: "17px" }}
+              fontWeight="normal"
+              lineHeight={{ base: "20px", lg: "29px" }}
             >
               Our company provides innovative software solutions for
               hydrographic surveying, enabling users to easily collect and
@@ -417,16 +427,17 @@ export default function Home() {
                 borderRadius="0"
                 w="250px"
                 p="0"
+                _hover={{
+                  scale: 1.5,
+                }}
               >
                 <Image
                   src={slide.image}
                   alt="holder image"
                   w="250px"
                   h="200px"
-                  _hover={{
-                    scale: 1.1,
-                  }}
-                  borderRadius="0px"
+                  borderRadius="7px"
+                  boxShadow="lg"
                 />
                 <Box>
                   <Text
@@ -465,7 +476,7 @@ export default function Home() {
             <TabList justifyContent="center" mb={{ base: "40px", lg: "70px" }}>
               <Tab
                 bg="white"
-                borderRadius="0"
+                borderLeftRadius="20px"
                 shadow="md"
                 color="primary.500"
                 py="3"
@@ -475,13 +486,14 @@ export default function Home() {
                 _selected={{
                   bg: "primary.500",
                   color: "white",
+                  borderLeftRadius: "20px",
                 }}
               >
                 Monthly
               </Tab>
               <Tab
                 bg="white"
-                borderRadius="0"
+                borderRightRadius="20px"
                 shadow="md"
                 color="primary.500"
                 py="3"
@@ -491,6 +503,7 @@ export default function Home() {
                 _selected={{
                   bg: "primary.500",
                   color: "white",
+                  borderRightRadius: "20px",
                 }}
               >
                 Annually
@@ -501,6 +514,7 @@ export default function Home() {
                 <SimpleGrid columns={4} spacing="15" minChildWidth="250px">
                   {plans.map((x: PricingProps) => (
                     <PricingCard
+                      data-cy="pricing-cards"
                       key={x.id}
                       title={x.name}
                       price={x.amount}
@@ -603,7 +617,7 @@ export default function Home() {
         </Box>
 
         <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "6%" }}>
-          <Container maxW="container.xl">
+          {/* <Container maxW="container.xl">
             <Heading color="primary.500" size="sm" fontWeight="normal">
               Lets get in touch
             </Heading>
@@ -814,7 +828,130 @@ export default function Home() {
                 </Box>
               </Card>
             </Stack>
-          </Container>
+          </Container> */}
+
+          <Box>
+            <Container maxW="container.xl" centerContent>
+              <Stack
+                divider={<VSeparator />}
+                boxShadow="2xl"
+                bg="white"
+                direction={["column", "row"]}
+              >
+                <Box width="600px" px="95px" mt="50px">
+                  <Heading as="h2" my="30px">
+                    Lets get in touch
+                  </Heading>
+                  <Text>Got any questions for use? let us know</Text>
+                  <form onSubmit={handleSubmit}>
+                    <Box as="form" mt="25px" mb="100px">
+                      <FormControl isRequired mb="25px">
+                        <FormLabel color="#3C3C3C">Name</FormLabel>
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          variant="rounded"
+                          type="text"
+                          px="1"
+                          fontSize="sm"
+                          value={values.firstName}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+
+                      <FormControl isRequired mb="25px">
+                        <FormLabel color="#3C3C3C">Email</FormLabel>
+                        <Input
+                          id="email"
+                          name="email"
+                          variant="rounded"
+                          type="email"
+                          px="1"
+                          fontSize="sm"
+                          value={values.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+
+                      <FormControl mb="25px">
+                        <FormLabel color="#3C3C3C">Telephone</FormLabel>
+                        <Input
+                          id="phoneNumber"
+                          name="phoneNumber"
+                          variant="rounded"
+                          type="tel"
+                          px="1"
+                          fontSize="sm"
+                          placeholder="+1(567)123-4567"
+                          value={values.phoneNumber}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+
+                      <FormControl isRequired>
+                        <FormLabel color="#3C3C3C">message</FormLabel>
+                        <Textarea
+                          id="message"
+                          name="message"
+                          px="1"
+                          fontSize="sm"
+                          value={values.message}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+
+                      <Button
+                        variant="homePrimary"
+                        w="full"
+                        disabled={isSubmitting}
+                        type="submit"
+                        py="6px"
+                        mt="10"
+                        px="70px"
+                        mb={2}
+                      >
+                        Contact us
+                      </Button>
+
+                      <Text textAlign="center">
+                        We will reply as soon as possible we promise
+                      </Text>
+                    </Box>
+                  </form>
+                </Box>
+
+                <Box width="600px" px="95px" mt="60px">
+                  <Image
+                    src="/contact_us.jpeg"
+                    alt="contact image"
+                    width="450px"
+                    height="330px"
+                    objectFit="cover"
+                    borderRadius="16px"
+                  />
+                  <Heading as="h3" fontSize="64px" mt="40px">
+                    Do you have a question ?
+                  </Heading>
+                  <Text mt="20px" mb="30px">
+                    Thank you for reaching out to us! We value your inquiry and
+                    strive to provide prompt assistance. our dedicated team will
+                    review your message and respond to you shortly
+                  </Text>
+                  <Text mb="12px">Feel free to contact us here</Text>
+                  <Text fontSize="22px">
+                    Call:{" "}
+                    <Text as="span" color="primary.500">
+                      +1 (555) 123-4567
+                    </Text>
+                  </Text>
+                </Box>
+              </Stack>
+            </Container>
+          </Box>
         </Box>
 
         <Footer />

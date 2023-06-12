@@ -85,13 +85,13 @@ export default function PlanDetails(props: { [x: string]: any }) {
   };
 
   useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
+    // const sub = async () => {
+    fetchSubscriptions();
+    // };
     setSubscription(subscriptions[subscriptions.length - 1]);
     setPresentSubscription(currentSubscription);
 
-    sub();
+    // sub();
     // console.log(subscriptions);
   }, [loading, currentSubscription]);
   return (
@@ -111,6 +111,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
             // background: linear-gradient(90.22deg, #3A2FB7 7.43%, rgba(118, 113, 183, 0) 81.71%)
           >
             <Text
+              data-cy="subscription-card"
               mb={2}
               color={presentSubscription ? textColorSecondary : whiteText}
             >

@@ -60,7 +60,7 @@ import DailyTraffic from "views/admin/default/components/DailyTraffic";
 // import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { getSession, useSession } from "next-auth/react";
 import { ImHappy } from "react-icons/im";
 import axios from "axios";
@@ -134,6 +134,8 @@ export default function UserReports(props: { [x: string]: any }) {
       });
   };
 
+  // const User = useMemo(() => fetchCurrentUser(), [currentUser]);
+
   useEffect(() => {
     // const usr = async () => {
     //   setFetching(true);
@@ -149,7 +151,7 @@ export default function UserReports(props: { [x: string]: any }) {
     }
 
     // usr();
-  }, [loading]);
+  }, [currentUser]);
 
   return (
     <AdminLayout>

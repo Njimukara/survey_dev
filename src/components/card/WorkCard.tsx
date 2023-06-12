@@ -10,20 +10,29 @@ import {
   ListIcon,
   Card,
   Image,
+  Square,
+  Icon,
+  Circle,
 } from "@chakra-ui/react";
 import { MdCheckCircle } from "react-icons/md";
+
+// import { HiUserPlus } from "react-icons/hi2";
+// import { ImKey } from "react-icons/im";
+// import { BsCalculator } from "react-icons/bs";
 // import Card from './Card'
 
 type WorkCardProps = {
-  img?: string;
+  img?: React.ElementType;
   title?: string;
   description?: string;
+  iconColor?: string;
 };
 
 export const WorkCard = (props: WorkCardProps) => {
   return (
     <Card
       transition="all .2s ease-in-out"
+      borderRadius={15}
       _hover={{
         transform: "scale(1.05)",
       }}
@@ -31,12 +40,22 @@ export const WorkCard = (props: WorkCardProps) => {
       <Flex px="25px" py="15px" justifyContent="left" alignItems="flex-start">
         <Box>
           <Flex py="20px">
-            <Image
+            {/* <Image
               borderRadius="full"
               boxSize="50px"
               src=""
               alt={props.title}
-            />
+            /> */}
+            <Circle
+              size={70}
+              boxShadow="2xl"
+              // bg={props.iconColor}
+              bg="purple"
+              // borderRadius="10px"
+              mb="8px"
+            >
+              <Icon as={props.img} w={10} h={10} color="white" />
+            </Circle>
           </Flex>
           <Box>
             <Text
@@ -49,7 +68,7 @@ export const WorkCard = (props: WorkCardProps) => {
             <Text
               mb="15px"
               fontWeight="400"
-              fontSize={{ base: "13px", md: "15px", lg: "20px" }}
+              fontSize={{ base: "13px", md: "15px", lg: "15px" }}
             >
               {props.description}
             </Text>

@@ -13,7 +13,7 @@ function AuthIllustration(props: {
   const { children, illustrationBackground } = props;
   // Chakra color mode
   return (
-    <Flex minW="100vh" bg={authBg} position="relative" h="max-content">
+    <Flex minW="100vw" bg={authBg} position="relative" h="max-content">
       <Flex
         h={{
           sm: "initial",
@@ -22,7 +22,7 @@ function AuthIllustration(props: {
           xl: "100vh",
         }}
         w="100%"
-        maxW={{ md: "50vh", lg: "80%" }}
+        maxW={{ md: "100vh", lg: "80%" }}
         mx="auto"
         pt={{ sm: "50px", md: "0px" }}
         px={{ lg: "30px", xl: "0px" }}
@@ -48,7 +48,7 @@ function AuthIllustration(props: {
           display={{ base: "none", md: "block" }}
           h="100%"
           maxH="95vh"
-          w={{ lg: "50vw" }}
+          w={{ base: 0, md: "30vw", lg: "50vw" }}
           position="absolute"
           left="20px"
           right="20px"
@@ -81,9 +81,9 @@ function AuthIllustration(props: {
           </Flex>
         </Box>
 
-        <Flex justifyContent="center" alignItems="center" w="100%" mt="100px">
+        {/* <Flex justifyContent="center" alignItems="center" w="100%" mt="100px">
           <Footer />
-        </Flex>
+        </Flex> */}
       </Flex>
     </Flex>
   );

@@ -48,6 +48,7 @@ export const PricingCard = (props: PricingProps) => {
               alignItems={"center"}
             >
               <Text
+                data-cy="pricing-plan-name"
                 my="20px"
                 fontSize="20px"
                 color="primary.500"

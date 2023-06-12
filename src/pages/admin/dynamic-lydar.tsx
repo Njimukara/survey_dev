@@ -14,7 +14,7 @@ function DynamicLydar() {
   const [user, setUser] = useState(null);
 
   const checkSubscription = () => {
-    subscriptions?.assigned_surveys?.forEach((survey: any) => {
+    subscription?.assigned_surveys?.forEach((survey: any) => {
       if (survey?.id == surveyID) {
         setSurveys([survey?.id]);
       }
@@ -30,6 +30,7 @@ function DynamicLydar() {
 
     // uncomment this when done with the check
     setSubscription(subscriptions[subscriptions.length - 1]);
+    // console.log(subscriptions.length);
     checkSubscription();
     sub();
   }, [loading, subscription]);

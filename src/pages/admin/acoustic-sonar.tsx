@@ -14,7 +14,7 @@ export default function AcousticSonar() {
   const [user, setUser] = useState(null);
 
   const checkSubscription = () => {
-    subscriptions?.assigned_surveys?.forEach((survey: any) => {
+    subscription?.assigned_surveys?.forEach((survey: any) => {
       if (survey?.id == surveyID) {
         setSurveys([survey?.id]);
       }

@@ -166,6 +166,7 @@ export default function Banner(props: {
 
           <Flex mt="7">
             <Button
+              data-cy="edit-info"
               onClick={() => router.push("/auth/edit-user")}
               mr={2}
               bg="primary.500"
