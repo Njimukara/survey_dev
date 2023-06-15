@@ -44,9 +44,9 @@ import styles from "../styles/PhoneNumbr.module.css";
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
-import { usePlanContext } from "contexts/PlanContext";
+// import { usePlanContext } from "contexts/PlanContext";
 import { WorkCard } from "components/card/WorkCard";
-import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
+// import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -270,8 +270,8 @@ export default function Home() {
 
   const [plans, setPlans] = useState([]);
   const { data: session, status } = useSession();
-  const { addToStore } = usePlanContext();
-  const [user, setUser] = useState(null);
+  // const { addToStore } = usePlanContext();
+  // const [user, setUser] = useState(null);
   const router = useRouter();
 
   const getPlanData = async () => {
@@ -476,7 +476,7 @@ export default function Home() {
             <TabList justifyContent="center" mb={{ base: "40px", lg: "70px" }}>
               <Tab
                 bg="white"
-                borderLeftRadius="20px"
+                borderLeftRadius="10px"
                 shadow="md"
                 color="primary.500"
                 py="3"
@@ -486,14 +486,14 @@ export default function Home() {
                 _selected={{
                   bg: "primary.500",
                   color: "white",
-                  borderLeftRadius: "20px",
+                  borderLeftRadius: "10px",
                 }}
               >
                 Monthly
               </Tab>
               <Tab
                 bg="white"
-                borderRightRadius="20px"
+                borderRightRadius="10px"
                 shadow="md"
                 color="primary.500"
                 py="3"
@@ -503,7 +503,7 @@ export default function Home() {
                 _selected={{
                   bg: "primary.500",
                   color: "white",
-                  borderRightRadius: "20px",
+                  borderRightRadius: "10px",
                 }}
               >
                 Annually

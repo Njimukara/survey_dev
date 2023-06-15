@@ -50,14 +50,14 @@ export default function GenerateSurvey() {
             />
           </FormControl>
         </Card>
-        <PercormanceCard />
+        <PercormanceCard surveyID={0} />
         <Flex mt="15px">
-          <PerformanceInsCard mr="15px" />
-          <OperationalConditionsCard />
+          <PerformanceInsCard surveyID={0} mr="15px" />
+          <OperationalConditionsCard surveyID={0} />
         </Flex>
         <Flex mt="15px" mb="4">
-          <Calibrations mr="15px" />
-          <LeverarmCard />
+          <Calibrations surveyID={0} mr="15px" />
+          <LeverarmCard surveyID={0} />
         </Flex>
         <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
           <CloudPoints />

@@ -6,13 +6,13 @@ import {
   FormLabel,
   Grid,
   GridItem,
+  Card,
   Icon,
   SimpleGrid,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 // Custom components
-import Card from "components/card/Card";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";

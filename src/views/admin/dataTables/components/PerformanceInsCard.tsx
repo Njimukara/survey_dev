@@ -14,8 +14,15 @@ import React, { useState } from "react";
 import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
-export default function PerformanceInsCard(props: { [x: string]: any }) {
-  const { surveyID, ...rest } = props;
+type Props = {
+  performance_ins?: Array<any>;
+  handleform?: any;
+  surveyID: number;
+  [x: string]: any;
+};
+
+export default function PerformanceInsCard(props: Props) {
+  const { performance_ins, handleform, surveyID, ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
     "secondaryGray.300"
@@ -46,86 +53,18 @@ export default function PerformanceInsCard(props: { [x: string]: any }) {
         Performance INS/GNSS/USBL
       </Text>
       <Box>
-        {/* LIDAR and Multibeam */}
-
-        <SurveyInput
-          label=" Yaw uncertainty (*)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={yawUncertainty}
-          inputName="yawUncertainty"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Roll uncertainty (*)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={rollUncertainty}
-          inputName="rollUncertainty"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Pitch uncertainty (*)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={pitchUncertainty}
-          inputName="pitchUncertainty"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Positioning uncertainty in H (m)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={pitchUncertainty}
-          inputName="positioningUncertaintyH"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label=" Positioning uncertainty in V (m)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={pitchUncertainty}
-          inputName="positioningUncertaintyV"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label=" Heave uncertainty (*)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          // value={pitchUncertainty}
-          inputName="heaveUncertaintyH"
-          handleChange={handleFormChange}
-        />
-
-        {(surveyID == scan || surveyID == acoustic) && (
-          <>
-            {/* SCAN and ACOUSTic */}
-            <SurveyInput
-              label=" Slant range Uncertainty of the USBL (m)"
-              size="xs"
-              type="number"
-              placeholder="0.05"
-              // value={pitchUncertainty}
-              inputName="slantRangeUncertainty"
-              handleChange={handleFormChange}
-            />
-            <SurveyInput
-              label="Angle Uncertainty of the USBL (*)"
-              size="xs"
-              type="number"
-              placeholder="0.05"
-              // value={pitchUncertainty}
-              inputName="uncertaintyAngleUSBL"
-              handleChange={handleFormChange}
-            />
-          </>
-        )}
+        {performance_ins.map((performance) => (
+          <SurveyInput
+            key={performance.key}
+            label={performance.label}
+            size="xs"
+            type="number"
+            placeholder="0.05"
+            // value={pitchUncertainty}
+            inputName={performance.name}
+            handleChange={handleform}
+          />
+        ))}
       </Box>
     </Card>
   );

@@ -23,7 +23,6 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 // Chakra imports
 import {
   Box,
@@ -356,6 +355,7 @@ export default function EditUser({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="150px">Your name *</FormLabel>
                   <Input
+                    data-cy="editName_input"
                     id="name"
                     name="name"
                     variant="rounded"
@@ -471,6 +471,7 @@ export default function EditUser({ providers }: any) {
               {canEdit ? (
                 <Flex w="100%" gap="20px" alignItems="center" pl="150px" mt={5}>
                   <Button
+                    data-cy="toggleEdit"
                     onClick={toggleEdit}
                     fontSize="sm"
                     variant="homePrimary"

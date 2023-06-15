@@ -32,7 +32,7 @@ import General from "views/admin/profile/components/General";
 import Notifications from "views/admin/profile/components/Notifications";
 
 // types
-import { AuthUser } from "types/user";
+// import { AuthUser } from "types/user";
 
 // Assets
 import avatar from "img/avatars/avatar4.png";

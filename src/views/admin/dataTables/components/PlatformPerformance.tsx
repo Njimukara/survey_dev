@@ -14,8 +14,15 @@ import React from "react";
 import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
-export default function PlatformPerformance(props: { [x: string]: any }) {
-  const { ...rest } = props;
+type Props = {
+  platformPerformance?: Array<any>;
+  handleform?: any;
+  surveyID: number;
+  [x: string]: any;
+};
+
+export default function PlatformPerformance(props: Props) {
+  const { platformPerformance, handleform, ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
     "secondaryGray.300"
@@ -29,38 +36,17 @@ export default function PlatformPerformance(props: { [x: string]: any }) {
         Survey Platform Performance
       </Text>
       <Box>
-        <SurveyInput
-          label=" Surevy Speed (Km/h) - [1kn ~ 1.85 km/h]"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          inputName="surveySpeed"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Survey Speed Uncertainty (km/h)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          inputName="surveySpeedUncertainty"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Draft Uncertainty (m)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          inputName="draftUncertainty"
-          handleChange={handleFormChange}
-        />
-        <SurveyInput
-          label="Variation in Z due to loads (m)"
-          size="xs"
-          type="number"
-          placeholder="0.05"
-          inputName="zVariation"
-          handleChange={handleFormChange}
-        />
+        {platformPerformance.map((performance) => (
+          <SurveyInput
+            key={performance.key}
+            label={performance.label}
+            size="xs"
+            type="number"
+            placeholder="0.05"
+            inputName={performance.name}
+            handleChange={handleform}
+          />
+        ))}
       </Box>
     </Card>
   );

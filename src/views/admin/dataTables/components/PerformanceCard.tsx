@@ -4,6 +4,7 @@ import {
   Button,
   Flex,
   FormLabel,
+  Card,
   Grid,
   GridItem,
   Icon,
@@ -12,7 +13,6 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 // Custom components
-import Card from "components/card/Card";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";
@@ -27,8 +27,15 @@ const formFields = [
   },
 ];
 
-export default function PercormanceCard(props: { [x: string]: any }) {
-  const { surveyID, ...rest } = props;
+type Props = {
+  performance_ssss?: Array<any>;
+  surveyID: number;
+  handleform?: any;
+  [x: string]: any;
+};
+
+export default function PercormanceCard(props: Props) {
+  const { performance_ssss, handleform, surveyID, ...rest } = props;
 
   // variables
   const [lidar, setLidar] = useState(2);
@@ -102,265 +109,22 @@ export default function PercormanceCard(props: { [x: string]: any }) {
             </Text>
           </GridItem>
         ))}
-        {/* <GridItem colSpan={1} h="10">
-          <Text fontSize="sm" fontWeight="bold">
-            Lidar 2
-          </Text>
-        </GridItem>
-        <GridItem colSpan={1} h="10">
-          <Text fontSize="sm" fontWeight="bold">
-            Lidar 3
-          </Text>
-        </GridItem>
-        <GridItem colSpan={1} h="10">
-          <Text fontSize="sm" fontWeight="bold">
-            Lidar 4
-          </Text>
-        </GridItem> */}
       </Grid>
-      {surveyID == lidar && (
-        <>
-          <PerformanceSurvey
-            label="Maximum Range (m)"
-            size="xs"
-            name="maxRange"
-            // value1={0.02}
-            // value2={0.2}
-            // value3={0.22}
-            // value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Beam Divergence (mrad)*"
-            size="xs"
-            // value1={0.02}
-            // value2={0.2}
-            // value3={0.22}
-            // value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Signal to Noise Ratio (dB)*"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Uncertainty of divergence*"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Pulse duration (ns)*"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Pulse repetition rate (KHz)*"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Range Uncertainty (mm)*"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="LIDAR scanning angle (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-            type="select"
-            options={[1, 2, 2, 1]}
-          />
-          <PerformanceSurvey
-            label="Texture (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-            type="select"
-            options={["integrated", "external", "no texture"]}
-          />
-        </>
-      )}
 
-      {(surveyID == scan || surveyID == acoustic) && (
-        <>
-          {/* SCAN */}
-          <PerformanceSurvey
-            label="Defined operating frequency (Hz)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Horizontal field of view (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Vertical field of view (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Pulse duration (us)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Beamwidth (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Depression Angle (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-        </>
-      )}
-
-      {surveyID == scan && (
+      {performance_ssss.map((ss, index) => (
         <PerformanceSurvey
-          label="Max range of SSS (m)"
+          key={ss.key}
+          label={ss.label}
+          value1={ss.name1}
+          nameprefix={ss.nameprefix}
+          // value2={`${ss.nameprefix}.${index}.${ss.name2}`}
+          // value3={`${ss.nameprefix}.${index}.${ss.name3}`}
+          // value4={`${ss.nameprefix}.${index}.${ss.name4}`}
+          handleform={handleform}
           size="xs"
-          value1={0.02}
-          value2={0.2}
-          value3={0.22}
-          value4={0.32}
+          name="maxRange"
         />
-      )}
-
-      {surveyID == multibeam && (
-        <>
-          {/* Multibeam */}
-          <PerformanceSurvey
-            label="Defined operating frequency (Hz)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Along track beamwidth (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Accross track beamwidth (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Beams number"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Depth resulotion (mm)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Ping rate (Hz)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-
-          <PerformanceSurvey
-            label="User defined Swath coverage (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-            type="select"
-            options={[1, 2, 2, 1]}
-          />
-          <PerformanceSurvey
-            label="Shape of antenna"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-            type="select"
-            options={["Circular", "Rectangular"]}
-          />
-        </>
-      )}
-
-      {surveyID == acoustic && (
-        <>
-          {/* Acoustic */}
-          <PerformanceSurvey
-            label="Max range of camera (m)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-          <PerformanceSurvey
-            label="Inclination of the antenna/Horizontal (*)"
-            size="xs"
-            value1={0.02}
-            value2={0.2}
-            value3={0.22}
-            value4={0.32}
-          />
-        </>
-      )}
+      ))}
     </Card>
   );
 }

@@ -151,7 +151,7 @@ export default function UserReports(props: { [x: string]: any }) {
     }
 
     // usr();
-  }, [currentUser]);
+  }, []);
 
   return (
     <AdminLayout>

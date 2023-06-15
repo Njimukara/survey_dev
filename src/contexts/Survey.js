@@ -46,20 +46,19 @@ export function useSurveyContext() {
   const [loading, setLoading] = useState(true);
   const [surveyResults, setSurveyResults] = useState([]);
 
-  const [form, setForm] =
-    useState();
-    //   {
-    //   pitchboresight: null,
-    //   rollBoresight: null,
-    //   yawBoresight: null,
-    //   yawUncertainty: null,
-    //   pitchUncertainty: null,
-    //   rollUncertainty: null,
-    //   latencyGNSSINS: null,
-    //   latencyGNSSUSBL: null,
-    //   latencyUnctyGNSSINS: null,
-    //   latencyUnctyGNSSLiDAR: null,
-    // }
+  const [form, setForm] = useState();
+  //   {
+  //   pitchboresight: null,
+  //   rollBoresight: null,
+  //   yawBoresight: null,
+  //   yawUncertainty: null,
+  //   pitchUncertainty: null,
+  //   rollUncertainty: null,
+  //   latencyGNSSINS: null,
+  //   latencyGNSSUSBL: null,
+  //   latencyUnctyGNSSINS: null,
+  //   latencyUnctyGNSSLiDAR: null,
+  // }
 
   const handleFormChange = (event) => {
     // Clone form because we need to modify it
@@ -70,14 +69,16 @@ export function useSurveyContext() {
     // Assign new value to the appropriate form field
     updatedForm[event.target.name] = event.target.value;
 
-    console.log("Form changed: ", updatedForm);
+    console.log("updated Form changed: ", updatedForm);
+    console.log("Form changed: ", form);
     // console.log(event);
 
     // Update state
     setForm(updatedForm);
   };
 
-  const planSurvey = () => {
+  const planSurvey = (surveyCode) => {
+    console.log("surveycode", surveyCode);
     setLoading(true);
 
     console.log("form in context", form);
