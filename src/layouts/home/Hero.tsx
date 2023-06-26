@@ -24,7 +24,7 @@ const Hero = () => {
         <Heading
           data-cy="welcome-text"
           as="h1"
-          fontSize="64px"
+          fontSize={{ base: "16px", md: "40px", lg: "64px" }}
           color="white"
           letterSpacing="2px"
           mb="2"
@@ -32,7 +32,12 @@ const Hero = () => {
           The Fastest solution to generate hydrographic surveys
         </Heading>
 
-        <Text w="40rem" fontSize="28px" color="white" lineHeight="9">
+        <Text
+          w="40rem"
+          fontSize={{ base: "14px", md: "24px", lg: "28px" }}
+          color="white"
+          lineHeight="9"
+        >
           Much more than just a software, we provide an easy made solution for
           you to generate your surveys
         </Text>

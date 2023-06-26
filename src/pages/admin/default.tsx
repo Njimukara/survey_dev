@@ -135,6 +135,7 @@ export default function UserReports(props: { [x: string]: any }) {
   };
 
   // const User = useMemo(() => fetchCurrentUser(), [currentUser]);
+  // console.log("user", User);
 
   useEffect(() => {
     // const usr = async () => {

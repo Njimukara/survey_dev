@@ -27,7 +27,7 @@ export default function SurveyResult() {
   return (
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-        <PercormanceCard />
+        {/* <PercormanceCard /> */}
         <Parameters />
         <Flex mt="4" justifyContent="center" gap="10" alignItems="center">
           <Button variant="homePrimary" py="6" size="lg">

@@ -25,7 +25,6 @@ import {
   Input,
   Textarea,
   Flex,
-  Divider,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -40,7 +39,7 @@ import Footer from "../layouts/home/Footer";
 import Navbar from "components/navbar/Navbar";
 // import { useSubscriptionContext } from "../contexts/SubscriptionContext";
 
-import styles from "../styles/PhoneNumbr.module.css";
+// import styles from "../styles/PhoneNumbr.module.css";
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
@@ -306,16 +305,19 @@ export default function Home() {
     getplan();
   }, []);
 
-  if (status === "authenticated") {
+  if (status === "authenticated" && typeof window !== "undefined") {
     router.push("/admin/default");
     // getSubscriptionData();
     // console.log(session);
+  } else if (typeof window === "undefined") {
+    console.log("undefined window");
+    return <></>;
   } else {
     return (
       <>
         <Navbar />
         <Box>
-          <Hero />
+          {/* <Hero /> */}
 
           {/* Pattern design */}
           <Box position="relative">
@@ -331,90 +333,85 @@ export default function Home() {
           </Box>
 
           {/* How it works section  */}
-          <Section bg="white">
-            <Box w="100vw" py="1%">
-              <Box my="5px" px="6%" mb="2%">
-                <Heading as="h2" size="sm" color="primary.500">
-                  How it works ?
-                </Heading>
-                <Heading
-                  data-cy="process-step"
-                  as="h2"
-                  mb={{ base: "15px", md: "8px", lg: "0px" }}
-                  size={{ base: "md", md: "lg", lg: "xl" }}
-                >
-                  Here is our simple 3-step process
-                </Heading>
-              </Box>
-              <Box py="6%" px="6%" bg="#F6F8FA">
-                <SimpleGrid minW="90%" spacing="40px" minChildWidth="200px">
-                  {WorkingMethodology.map((stage: WorkCardProps) => (
-                    <WorkCard
-                      key={stage.id}
-                      img={stage.img}
-                      title={stage.title}
-                      description={stage.description}
-                      iconColor={stage.iconColor}
-                    />
-                  ))}
-                </SimpleGrid>
-              </Box>
+          <Box py="6%">
+            <Box my="5px" px="6%" mb="2%">
+              <Heading as="h2" size="sm" color="primary.500">
+                How it works ?
+              </Heading>
+              <Heading
+                data-cy="process-step"
+                as="h2"
+                mb={{ base: "15px", md: "8px", lg: "0px" }}
+                size={{ base: "md", md: "lg", lg: "xl" }}
+              >
+                Here is our simple 3-step process
+              </Heading>
             </Box>
-          </Section>
+            <Box py="6%" px="6%" bg="#F6F8FA">
+              <SimpleGrid minW="90%" spacing="40px" minChildWidth="200px">
+                {WorkingMethodology.map((stage: WorkCardProps) => (
+                  <WorkCard
+                    key={stage.id}
+                    img={stage.img}
+                    title={stage.title}
+                    description={stage.description}
+                    iconColor={stage.iconColor}
+                  />
+                ))}
+              </SimpleGrid>
+            </Box>
+          </Box>
 
-          <Section bg="white">
-            <Flex
-              flexDirection={{ base: "column", md: "row", lg: "row" }}
-              w="100vw"
-              // pt="5"
-              mb="8%"
-              px="6%"
+          <Flex
+            flexDirection={{ base: "column", md: "row", lg: "row" }}
+            w="100vw"
+            pt="15"
+            mb="8%"
+            px="6%"
+          >
+            <Box
+              w={{ base: "100%", md: "50%", lg: "50%" }}
+              mt={{ base: 0, lg: "2%" }}
+            >
+              <Heading py="2" size={{ base: "md", md: "lg", lg: "lg" }}>
+                Introducing survey planner
+              </Heading>
+              <Text
+                pt="4"
+                pb={{ base: "4", lg: "8" }}
+                textAlign="justify"
+                fontSize={{ base: "14px", md: "16px", lg: "17px" }}
+                fontWeight="normal"
+                lineHeight={{ base: "20px", lg: "29px" }}
+              >
+                Our company provides innovative software solutions for
+                hydrographic surveying, enabling users to easily collect and
+                analyze high-quality data for mapping underwater environments.
+                Our user-friendly software delivers powerful tools for real-time
+                data analysis and visualization, making it a valuable tool for a
+                range of applications in the marine industry.
+              </Text>
+              <Button
+                _active={{ bg: "white" }}
+                variant="homePrimary"
+                py={{ base: "4px", md: "6px", lg: "6" }}
+              >
+                Read more
+              </Button>
+            </Box>
+            <Box
+              position="relative"
+              w={{ base: "100%", md: "50%", lg: "100%" }}
+              flex="70%"
             >
               <Box
-                w={{ base: "100%", md: "50%", lg: "50%" }}
-                mt={{ base: 0, lg: "2%" }}
-              >
-                <Heading py="2" size={{ base: "md", md: "lg", lg: "lg" }}>
-                  Introducing survey planner
-                </Heading>
-                <Text
-                  pt="4"
-                  pb={{ base: "4", lg: "8" }}
-                  textAlign="justify"
-                  fontSize={{ base: "14px", md: "16px", lg: "17px" }}
-                  fontWeight="normal"
-                  lineHeight={{ base: "20px", lg: "29px" }}
-                >
-                  Our company provides innovative software solutions for
-                  hydrographic surveying, enabling users to easily collect and
-                  analyze high-quality data for mapping underwater environments.
-                  Our user-friendly software delivers powerful tools for
-                  real-time data analysis and visualization, making it a
-                  valuable tool for a range of applications in the marine
-                  industry.
-                </Text>
-                <Button
-                  _active={{ bg: "white" }}
-                  variant="homePrimary"
-                  py={{ base: "4px", md: "6px", lg: "6" }}
-                >
-                  Read more
-                </Button>
-              </Box>
-              <Box
-                position="relative"
-                w={{ base: "100%", md: "50%", lg: "100%" }}
-                flex="70%"
-              >
-                <Box
-                  display={{ base: "none", lg: "block" }}
-                  className={styles.shipbg}
-                  zIndex={1}
-                  bg-local
-                ></Box>
-              </Box>
-            </Flex>
-          </Section>
+                display={{ base: "none", lg: "block" }}
+                // className={styles.shipbg}
+                zIndex={1}
+                bg-local
+              ></Box>
+            </Box>
+          </Flex>
 
           {/* Our products section  */}
           <Section
@@ -623,20 +620,234 @@ export default function Home() {
           </Box>
 
           <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "6%" }}>
-            <Container maxW="container.xl" centerContent>
-              <Card boxShadow="2xl" borderRadius="5px">
-                <Flex direction={{ base: "column", md: "column", lg: "row" }}>
-                  <Box
-                    width={{ base: "100%", md: "100%", lg: "600px" }}
-                    px="95px"
-                    mt="50px"
+            {/* <Container maxW="container.xl">
+              <Heading color="primary.500" size="sm" fontWeight="normal">
+                Lets get in touch
+              </Heading>
+              <Heading mb="5" size={{ base: "md", md: "lg", lg: "lg" }}>
+                Got any questions for use? let us know
+              </Heading>
+              <Stack
+                spacing={0}
+                direction={{ base: "column", md: "row", lg: "row" }}
+              >
+                <Card
+                  borderRadius="0"
+                  w={{ base: "100%", md: "700px", lg: "900px" }}
+                  position="relative"
+                  zIndex={23}
+                >
+                  <Flex
+                    w="100%"
+                    justifyContent="center"
+                    // alignItems="center"
+                    flexDirection="column"
+                    px={{ base: "5px", md: "30px", lg: "50px" }}
+                    py="3%"
                   >
+                    <Heading as="h3" size="md" mt={{ base: "30px", lg: "60px" }}>
+                      Do you have a question ?
+                    </Heading>
+                    <Text mt="20px" mb="30px" w="100%">
+                      Thank you for reaching out to us! We value your inquiry and
+                      strive to provide prompt assistance. our dedicated team will
+                      review your message and respond to you shortly
+                    </Text>
+  
+                    <Flex flexDir="column" gap="5">
+                      <Box>
+                        <span>
+                          <Icon
+                            as={MdPhone}
+                            boxSize={4}
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span">+1 (555) 123-4567</Text>
+                      </Box>
+                      <Box>
+                        <span>
+                          <Icon
+                            as={MdEmail}
+                            boxSize={4}
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span">surveyplanner@gmail.com</Text>
+                      </Box>
+                      <Box>
+                        <span>
+                          <Icon
+                            as={MdMyLocation}
+                            boxSize={4}
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span">12/3-A South RD, NYC2312</Text>
+                      </Box>
+                    </Flex>
+                  </Flex>
+                  <Box
+                    position="absolute"
+                    borderRadius="full"
+                    width={{ base: "20px", lg: "30px" }}
+                    height={{ base: "20px", lg: "30px" }}
+                    left={{ base: "240px", lg: "380px" }}
+                    top={{ base: "250px", lg: "290px" }}
+                    zIndex={10}
+                    background=" rgba(50, 3, 252, 0.08)"
+                  ></Box>
+                  <Box
+                    position="absolute"
+                    borderRadius="full"
+                    width={{ base: "40px", lg: "80px" }}
+                    height={{ base: "40px", lg: "80px" }}
+                    left={{ base: "190px", lg: "300px" }}
+                    top={{ base: "270px", lg: "340px" }}
+                    zIndex={10}
+                    background=" rgba(50, 3, 252, 0.08)"
+                  ></Box>
+                  <Box
+                    position="absolute"
+                    className={styles.circle_clip}
+                    borderRadius="full"
+                    width={{ base: "181px", lg: "281px" }}
+                    height={{ base: "181px", lg: "281px" }}
+                    left={{ base: "188px", lg: "320px" }}
+                    top={{ base: "270px", lg: "320px" }}
+                    zIndex={10}
+                    background=" rgba(50, 3, 252, 0.08)"
+                  ></Box>
+                </Card>
+  
+                <Card
+                  w={{ base: "100%", md: "700px", lg: "100%" }}
+                  zIndex={23}
+                  bg="transparent"
+                >
+                  <Box px={{ base: "10px", md: "50px", lg: "0" }} mt="50px">
                     <form onSubmit={handleSubmit}>
-                      <Heading as="h2" my="30px">
-                        Lets get in touch
-                      </Heading>
-                      <Text>Got any questions for use? let us know</Text>
-                      <Box mt="25px" mb="100px">
+                      <Flex
+                        w={{ base: "100%", md: "100%", lg: "100%" }}
+                        flexDirection={{ base: "column", md: "row", lg: "row" }}
+                        gap="5"
+                      >
+                        <FormControl isRequired mb="25px">
+                          <FormLabel color="#3C3C3C">First Name</FormLabel>
+                          <Input
+                            id="firstName"
+                            name="firstName"
+                            variant="flushed"
+                            type="text"
+                            px="1"
+                            fontSize="sm"
+                            value={values.firstName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </FormControl>
+                        <FormControl isRequired mb="25px">
+                          <FormLabel color="#3C3C3C">Last Name</FormLabel>
+                          <Input
+                            id="lastName"
+                            name="lastName"
+                            variant="flushed"
+                            type="text"
+                            px="1"
+                            fontSize="sm"
+                            value={values.lastName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </FormControl>
+                      </Flex>
+                      <Flex
+                        w={{ base: "100%", md: "100%", lg: "100%" }}
+                        flexDirection={{ base: "column", md: "row", lg: "row" }}
+                        gap="5"
+                      >
+                        <FormControl isRequired mb="25px">
+                          <FormLabel color="#3C3C3C">Email</FormLabel>
+                          <Input
+                            id="email"
+                            name="email"
+                            variant="flushed"
+                            type="email"
+                            px="1"
+                            fontSize="sm"
+                            value={values.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </FormControl>
+                        <FormControl mb="25px">
+                          <FormLabel color="#3C3C3C">Telephone</FormLabel>
+                          <Input
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            variant="flushed"
+                            type="tel"
+                            px="1"
+                            fontSize="sm"
+                            placeholder="+1(567)123-4567"
+                            value={values.phoneNumber}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </FormControl>
+                      </Flex>
+                      <FormControl isRequired>
+                        <FormLabel color="#3C3C3C">message</FormLabel>
+                        <Textarea
+                          id="message"
+                          name="message"
+                          px="1"
+                          fontSize="sm"
+                          variant="flushed"
+                          value={values.message}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
+  
+                      <Button
+                        variant="homePrimary"
+                        disabled={isSubmitting}
+                        type="submit"
+                        py="6px"
+                        mt="10"
+                        px="70px"
+                        mb={2}
+                      >
+                        Contact Us
+                      </Button>
+                      <Text fontSize="sm">
+                        We will reply as soon as possible we promise
+                      </Text>
+                    </form>
+                  </Box>
+                </Card>
+              </Stack>
+            </Container> */}
+
+            <Box>
+              <Container maxW="container.xl" centerContent>
+                <Stack
+                  divider={<VSeparator />}
+                  boxShadow="2xl"
+                  bg="white"
+                  direction={["column", "row"]}
+                >
+                  <Box width="600px" px="95px" mt="50px">
+                    <Heading as="h2" my="30px">
+                      Lets get in touch
+                    </Heading>
+                    <Text>Got any questions for use? let us know</Text>
+                    <form onSubmit={handleSubmit}>
+                      <Box as="form" mt="25px" mb="100px">
                         <FormControl isRequired mb="25px">
                           <FormLabel color="#3C3C3C">Name</FormLabel>
                           <Input
@@ -716,13 +927,7 @@ export default function Home() {
                     </form>
                   </Box>
 
-                  <Divider orientation="vertical" colorScheme="gray" />
-
-                  <Box
-                    width={{ base: "100%", md: "100%", lg: "600px" }}
-                    px="95px"
-                    mt="60px"
-                  >
+                  <Box width="600px" px="95px" mt="60px">
                     <Image
                       src="/contact_us.jpeg"
                       alt="contact image"
@@ -747,12 +952,12 @@ export default function Home() {
                       </Text>
                     </Text>
                   </Box>
-                </Flex>
-              </Card>
-            </Container>
+                </Stack>
+              </Container>
+            </Box>
           </Box>
 
-          <Footer />
+          {/* <Footer /> */}
         </Box>
       </>
     );

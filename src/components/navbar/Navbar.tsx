@@ -112,9 +112,9 @@ const Navbar = (): JSX.Element => {
           color={isLargerThan992 ? "black" : "white"}
         >
           <MenuItem to="/">Home</MenuItem>
-          <MenuItem to="/home">Home</MenuItem>
-          <MenuItem to="/pricing">Pricing</MenuItem>
-          <MenuItem to="/resources">Resources</MenuItem>
+          <MenuItem to="#">Services</MenuItem>
+          <MenuItem to="#">Pricing</MenuItem>
+          <MenuItem to="#">Resources</MenuItem>
           <Link as={NextLink} href="/auth/signin">
             <Button
               data-cy="login-button"

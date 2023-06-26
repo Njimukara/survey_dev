@@ -15,14 +15,15 @@ import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
-  performance_ins?: Array<any>;
+  performance_ins?: any;
   handleform?: any;
   surveyID: number;
+  value?: any;
   [x: string]: any;
 };
 
 export default function PerformanceInsCard(props: Props) {
-  const { performance_ins, handleform, surveyID, ...rest } = props;
+  const { performance_ins, handleform, value, surveyID, ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
     "secondaryGray.300"
@@ -53,15 +54,15 @@ export default function PerformanceInsCard(props: Props) {
         Performance INS/GNSS/USBL
       </Text>
       <Box>
-        {performance_ins.map((performance) => (
+        {Object.keys(performance_ins).map((performance: any) => (
           <SurveyInput
-            key={performance.key}
-            label={performance.label}
+            key={performance}
+            label={performance}
             size="xs"
-            type="number"
-            placeholder="0.05"
-            // value={pitchUncertainty}
-            inputName={performance.name}
+            type={performance.type}
+            placeholder="0.8"
+            inputName={performance}
+            value={value && value[performance] ? value[performance] : ""}
             handleChange={handleform}
           />
         ))}

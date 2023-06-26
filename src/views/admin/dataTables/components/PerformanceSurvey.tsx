@@ -53,7 +53,7 @@ export default function PerformanceSurvey(props: Props) {
   const [multibeam, setMultibeam] = useState(1);
   const [scan, setScan] = useState(3);
   const [acoustic, setAcoustic] = useState(4);
-  const array = ["1", "2", "3", "4"];
+  const array = [0, 1, 2, 3];
 
   const { loading, form, handleFormChange } = useSurveyContext();
 
@@ -73,7 +73,6 @@ export default function PerformanceSurvey(props: Props) {
                   w="100%"
                   fontSize={size}
                   variant="flushed"
-                  // value={value1}
                   size={size}
                   type={type}
                   placeholder="0.02"

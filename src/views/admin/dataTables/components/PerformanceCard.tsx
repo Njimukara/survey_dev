@@ -11,6 +11,8 @@ import {
   SimpleGrid,
   Text,
   useColorModeValue,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 // Custom components
 import dynamic from "next/dynamic";
@@ -31,11 +33,12 @@ type Props = {
   performance_ssss?: Array<any>;
   surveyID: number;
   handleform?: any;
+  value?: any;
   [x: string]: any;
 };
 
 export default function PercormanceCard(props: Props) {
-  const { performance_ssss, handleform, surveyID, ...rest } = props;
+  const { performance_ssss, handleform, value, surveyID, ...rest } = props;
 
   // variables
   const [lidar, setLidar] = useState(2);
@@ -62,9 +65,19 @@ export default function PercormanceCard(props: Props) {
 
   const [mounted, setMounted] = useState(false);
   const [active, setActive] = useState(true);
+  const [labels, setLabels] = useState([]);
   const array = [1, 2, 3, 4];
 
+  const formattedString = (inputString: string) => {
+    return inputString
+      .replace(/^.*?\./, "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (match) => match.toUpperCase());
+  };
+
   useEffect(() => {
+    console.log("form in component", value);
+    console.log("form in component", performance_ssss);
     const timeout = setTimeout(() => {
       setMounted(true);
     }, 3000);
@@ -111,20 +124,87 @@ export default function PercormanceCard(props: Props) {
         ))}
       </Grid>
 
-      {performance_ssss.map((ss, index) => (
-        <PerformanceSurvey
-          key={ss.key}
-          label={ss.label}
-          value1={ss.name1}
-          nameprefix={ss.nameprefix}
-          // value2={`${ss.nameprefix}.${index}.${ss.name2}`}
-          // value3={`${ss.nameprefix}.${index}.${ss.name3}`}
-          // value4={`${ss.nameprefix}.${index}.${ss.name4}`}
-          handleform={handleform}
-          size="xs"
-          name="maxRange"
-        />
-      ))}
+      <Flex>
+        <Box pt="2" w="300px">
+          <Flex flexDir="column">
+            {Object.keys(performance_ssss[0]).map((attr: any) => (
+              <GridItem colSpan={5} h="10" key={attr}>
+                <Text fontSize="sm">{formattedString(attr)}</Text>
+              </GridItem>
+            ))}
+          </Flex>
+        </Box>
+        <Box w="200px">
+          <Grid templateColumns="repeat(8, 1fr)" gap="1">
+            {performance_ssss.map((ss, index) => (
+              <>
+                <GridItem colSpan={2}>
+                  {Object.keys(ss).map((attr) => (
+                    <>
+                      {ss[attr].type === "number" && (
+                        <Input
+                          key={attr}
+                          h="10"
+                          name={`${index}.${attr}`}
+                          color={textColorSecondary}
+                          fontSize="sm"
+                          variant="flushed"
+                          size="sm"
+                          type="number"
+                          placeholder="0.02"
+                          value={
+                            value && value[index] ? value[index][attr] : ""
+                          }
+                          onChange={handleform}
+                        />
+                      )}
+                      {
+                        ss[attr].type === "select" && (
+                          <Select
+                            onChange={handleform}
+                            name={`${index}.${attr}`}
+                            size="xs"
+                            h="10"
+                            fontSize="xs"
+                            variant="flushed"
+                            value={
+                              value && value[index] ? value[index][attr] : ""
+                            }
+                          >
+                            {ss[attr].option.map(
+                              (opt: string, index: number) => (
+                                <option value={opt} key={index}>
+                                  {opt}
+                                </option>
+                              )
+                            )}
+                          </Select>
+                        )
+
+                        // <Input
+                        //   key={attr}
+                        //   h="10"
+                        //   name={`${index}.${attr}`}
+                        //   color={textColorSecondary}
+                        //   fontSize="sm"
+                        //   variant="flushed"
+                        //   size="sm"
+                        //   type="number"
+                        //   placeholder="0.02"
+                        //   value={
+                        //     value && value[index] ? value[index][attr] : ""
+                        //   }
+                        //   onChange={handleform}
+                        // />
+                      }
+                    </>
+                  ))}
+                </GridItem>
+              </>
+            ))}
+          </Grid>
+        </Box>
+      </Flex>
     </Card>
   );
 }

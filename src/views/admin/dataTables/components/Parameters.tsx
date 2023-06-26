@@ -49,6 +49,13 @@ export default function Parameters(props: { [x: string]: any }) {
   const [active, setActive] = useState(true);
   const array = [1, 2, 3, 4];
 
+  const formattedString = (inputString: string) => {
+    return inputString
+      .replace(/^.*?\./, "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (match) => match.toUpperCase());
+  };
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setMounted(true);
@@ -72,21 +79,21 @@ export default function Parameters(props: { [x: string]: any }) {
         Determination of Parameters
       </Text>
 
-      {results.map((item: any, index: number) => (
-        <ParameterCard
-          key={index}
-          label={item.name}
-          size="xs"
-          value1={item.value1}
-          value2={item.value2}
-          value3={item.value3}
-          value4={item.value4}
-        />
-      ))}
+      {results &&
+        Object.entries(results).map(([keys, values]: any) => (
+          <ParameterCard
+            key={keys}
+            label={formattedString(keys)}
+            size="xs"
+            value1={values}
+            value2={values}
+            value3={values}
+            value4={values}
+          />
+        ))}
 
-      {surveyID == lidar && (
+      {/* {surveyID == lidar && (
         <>
-          {/* LiDAR */}
           <ParameterCard
             label="Swath Width (m)"
             size="xs"
@@ -180,7 +187,6 @@ export default function Parameters(props: { [x: string]: any }) {
 
       {(surveyID == scan || surveyID == acoustic) && (
         <>
-          {/* SCAN */}
           <ParameterCard
             label="Width of the Image (m)"
             size="xs"
@@ -290,7 +296,6 @@ export default function Parameters(props: { [x: string]: any }) {
 
       {surveyID == multibeam && (
         <>
-          {/* Multibeam */}
           <ParameterCard
             label="Number of profiles in lenght"
             size="xs"
@@ -352,7 +357,6 @@ export default function Parameters(props: { [x: string]: any }) {
 
       {surveyID == acoustic && (
         <>
-          {/* Acoustic */}
           <ParameterCard
             label="Coverage rate in profile (%)"
             size="xs"
@@ -370,7 +374,7 @@ export default function Parameters(props: { [x: string]: any }) {
             value4={0.32}
           />
         </>
-      )}
+      )} */}
     </Card>
   );
 }

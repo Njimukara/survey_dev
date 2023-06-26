@@ -4,19 +4,20 @@ import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
-  calibrations?: Array<any>;
+  calibrations?: any;
   surveyID: number;
   handleform?: any;
+  value?: any;
   [x: string]: any;
 };
 //
 export default function Calibrations(props: Props) {
-  const { calibrations, handleform, surveyID, ...rest } = props;
-  const { loading, form, handleFormChange } = useSurveyContext();
+  const { calibrations, handleform, value, surveyID, ...rest } = props;
+  const { loading, handleFormChange } = useSurveyContext();
 
   useEffect(() => {
-    console.log(loading);
-    console.log(form);
+    console.log(calibrations);
+    console.log("form", value);
   }, [loading]);
 
   return (
@@ -27,14 +28,15 @@ export default function Calibrations(props: Props) {
 
       <Box>
         {/* Common features */}
-        {calibrations.map((calibration: any) => (
+        {Object.keys(calibrations).map((calibration: any) => (
           <SurveyInput
-            key={calibration.key}
-            label={calibration.label}
+            key={calibration}
+            label={calibration}
             size="xs"
-            type="number"
+            type={calibration.type}
             placeholder="0.8"
-            inputName={calibration.name}
+            inputName={calibration}
+            value={value && value[calibration] ? value[calibration] : null}
             handleChange={handleform}
           />
         ))}

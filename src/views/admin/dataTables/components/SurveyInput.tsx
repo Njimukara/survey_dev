@@ -30,15 +30,22 @@ export default function SurveyInput(props: { [x: string]: any }) {
 
   const [data, setData] = useState(value);
 
+  const formattedString = (inputString: string) => {
+    return inputString
+      .replace(/^.*?\./, "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (match) => match.toUpperCase());
+  };
+
   return (
     <FormControl display="flex" mb="1">
       <FormLabel flex={1} fontSize="sm">
-        {label}
+        {formattedString(label)}
       </FormLabel>
       <Input
         color={textColorSecondary}
         w="20%"
-        value={data}
+        value={value || ""}
         fontSize={size}
         variant="flushed"
         size={size}

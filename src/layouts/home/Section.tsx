@@ -13,7 +13,7 @@ const Section = ({ title, children, bg }: sectionProps) => {
         maxW="container.xl"
         centerContent
         px={{ base: "2%", md: "3%", lg: "4%" }}
-        py={{ base: "40px", md: "50px", lg: "90px" }}
+        py={{ base: "30px", md: "40px", lg: "50px" }}
       >
         <Heading
           size={{ base: "lg", md: "xl", lg: "xl" }}

@@ -4,14 +4,15 @@ import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
-  operationConditions?: Array<any>;
+  operationConditions?: any;
   handleform?: any;
   surveyID: number;
+  value?: any;
   [x: string]: any;
 };
 
 export default function OperationalConditionsCard(props: Props) {
-  const { operationConditions, handleform, surveyID, ...rest } = props;
+  const { operationConditions, handleform, value, surveyID, ...rest } = props;
 
   const { handleFormChange } = useSurveyContext();
 
@@ -21,14 +22,15 @@ export default function OperationalConditionsCard(props: Props) {
         Operational Conditions
       </Text>
       <Box>
-        {operationConditions.map((calibration) => (
+        {Object.keys(operationConditions).map((conditions: any) => (
           <SurveyInput
-            key={calibration.key}
-            label={calibration.label}
+            key={conditions}
+            label={conditions}
             size="xs"
-            type="number"
-            placeholder="0.05"
-            inputName={calibration.name}
+            type={conditions.type}
+            placeholder="0.8"
+            inputName={conditions}
+            value={value && value[conditions] ? value[conditions] : ""}
             handleChange={handleform}
           />
         ))}

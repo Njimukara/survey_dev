@@ -4,14 +4,15 @@ import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
-  Leverarm?: Array<any>;
+  Leverarm?: any;
   surveyID: number;
   handleform?: any;
+  value?: any;
   [x: string]: any;
 };
 
 export default function LeverarmCard(props: Props) {
-  const { Leverarm, handleform, surveyID, ...rest } = props;
+  const { Leverarm, handleform, value, surveyID, ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
     "secondaryGray.300"
@@ -32,7 +33,20 @@ export default function LeverarmCard(props: Props) {
         >
           std (m)
         </Text>
-        {Leverarm.map((lever) => (
+
+        {Object.keys(Leverarm).map((lever: any) => (
+          <SurveyInput
+            key={lever}
+            label={lever}
+            size="xs"
+            type={lever.type}
+            placeholder="0.8"
+            inputName={lever}
+            value={value && value[lever] ? value[lever] : ""}
+            handleChange={handleform}
+          />
+        ))}
+        {/* {Leverarm.map((lever) => (
           <SurveyInput
             key={lever.key}
             label={lever.label}
@@ -40,11 +54,12 @@ export default function LeverarmCard(props: Props) {
             type="number"
             placeholder="0.05"
             inputName={lever.name1}
+            value={value && value[lever.name1] ? value[lever.name1] : ""}
             handleChange={handleform}
           />
-        ))}
+        ))} */}
       </Box>
-      <Box>
+      {/* <Box>
         <Text
           mb="2"
           fontSize="sm"
@@ -95,7 +110,7 @@ export default function LeverarmCard(props: Props) {
           inputName={Leverarm[2].name2}
           handleChange={handleform}
         />
-      </Box>
+      </Box> */}
     </Card>
   );
 }

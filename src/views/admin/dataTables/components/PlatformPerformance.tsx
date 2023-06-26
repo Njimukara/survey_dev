@@ -15,14 +15,15 @@ import SurveyInput from "./SurveyInput";
 import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
-  platformPerformance?: Array<any>;
+  platformPerformance?: any;
   handleform?: any;
   surveyID: number;
+  value?: any;
   [x: string]: any;
 };
 
 export default function PlatformPerformance(props: Props) {
-  const { platformPerformance, handleform, ...rest } = props;
+  const { platformPerformance, handleform, value, ...rest } = props;
   const textColorSecondary = useColorModeValue(
     "secondaryGray.600",
     "secondaryGray.300"
@@ -36,14 +37,15 @@ export default function PlatformPerformance(props: Props) {
         Survey Platform Performance
       </Text>
       <Box>
-        {platformPerformance.map((performance) => (
+        {Object.keys(platformPerformance).map((performance: any) => (
           <SurveyInput
-            key={performance.key}
-            label={performance.label}
+            key={performance}
+            label={performance}
             size="xs"
-            type="number"
-            placeholder="0.05"
-            inputName={performance.name}
+            type={performance.type}
+            placeholder="0.8"
+            inputName={performance}
+            value={value && value[performance] ? value[performance] : ""}
             handleChange={handleform}
           />
         ))}

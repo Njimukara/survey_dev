@@ -13,7 +13,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useSurveyContext } from "contexts/Survey";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Props {
   label?: string;
@@ -53,6 +53,10 @@ export default function ParameterCard(props: Props) {
 
   const { loading, form, handleFormChange } = useSurveyContext();
 
+  useEffect(() => {
+    // console.log(value1, value2, value3, value4);
+  });
+
   return (
     <Box>
       <Grid templateColumns="repeat(9, 1fr)" gap="1">
@@ -62,83 +66,23 @@ export default function ParameterCard(props: Props) {
           </Text>
         </GridItem>
         <>
-          {/* {array.map((item, index) => (
-              <GridItem colSpan={1} h="8" key={index}>
-                <Input
-                  color={textColorSecondary}
-                  w="100%"
-                  name={`${name}${item}`}
-                  fontSize={size}
-                  variant="flushed"
-                  value={}
-                  size={size}
-                  type={type}
-                  placeholder="0.02"
-                  onChange={handleFormChange}
-                />
-              </GridItem>
-            ))} */}
           <GridItem colSpan={1} h="8">
-            {/* <Input
-                color={textColorSecondary}
-                w="100%"
-                isDisabled
-                fontSize={size}
-                variant="flushed"
-                value={value1}
-                size={size}
-                type={type}
-                placeholder="0.02"
-              /> */}
-            <Text w="100%" fontSize={size}>
+            <Text w="100%" fontSize={size} fontWeight="bold">
               {value1}
             </Text>
           </GridItem>
           <GridItem colSpan={1} h="8">
-            {/* <Input
-                color={textColorSecondary}
-                w="100%"
-                isDisabled
-                fontSize={size}
-                variant="flushed"
-                value={value2}
-                size={size}
-                type={type}
-                placeholder="0.02"
-              /> */}
-            <Text w="100%" fontSize={size}>
+            <Text w="100%" fontSize={size} fontWeight="bold">
               {value2}
             </Text>
           </GridItem>
           <GridItem colSpan={1} h="8">
-            {/* <Input
-                color={textColorSecondary}
-                w="100%"
-                isDisabled
-                fontSize={size}
-                variant="flushed"
-                value={value3}
-                size={size}
-                type={type}
-                placeholder="0.02"
-              /> */}
-            <Text w="100%" fontSize={size}>
+            <Text w="100%" fontSize={size} fontWeight="bold">
               {value3}
             </Text>
           </GridItem>
           <GridItem colSpan={1} h="8">
-            {/* <Input
-                isDisabled
-                color={textColorSecondary}
-                w="100%"
-                fontSize={size}
-                variant="flushed"
-                value={value4}
-                size={size}
-                type={type}
-                placeholder="0.02"
-              /> */}
-            <Text w="100%" fontSize={size}>
+            <Text w="100%" fontSize={size} fontWeight="bold">
               {value4}
             </Text>
           </GridItem>
