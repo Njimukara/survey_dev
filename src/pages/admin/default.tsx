@@ -142,6 +142,7 @@ export default function UserReports(props: { [x: string]: any }) {
     //   setFetching(true);
     fetchCurrentUser();
     setUser(currentUser);
+    console.log("user", currentUser);
 
     // setFetching(false);
     // };
@@ -152,7 +153,7 @@ export default function UserReports(props: { [x: string]: any }) {
     }
 
     // usr();
-  }, []);
+  }, [currentUser]);
 
   return (
     <AdminLayout>
@@ -171,19 +172,14 @@ export default function UserReports(props: { [x: string]: any }) {
               justifyContent="space-between"
               // position="relative"
             >
-              {/* <Icon boxSize={5} color="primary.200" as={ImHappy}></Icon> */}
-
               <Box pt="3" color="white" pl="10">
-                <Heading data-cy="dashboard-heading" size="lg" mb="8">
+                <Heading data-cy="dashboard-heading" size="lg" mb="4">
                   Hello {user?.name}!
                 </Heading>
-                <Text w="50%">
+                <Text>
                   This is your survey planner dashboard, where you can see an
                   overview of your account details
                 </Text>
-              </Box>
-              <Box mb="-9">
-                <Image src="/hello.png" alt="hello" />
               </Box>
             </Flex>
           </Card>

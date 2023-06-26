@@ -22,7 +22,12 @@ export default function Default(props: {
   const textColorSecondary = "secondaryGray.600";
 
   return (
-    <Card py="30px" borderRadius="10">
+    <Card
+      py="20px"
+      borderRadius="10"
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
+    >
       <Flex
         my="auto"
         h="100%"
@@ -36,7 +41,7 @@ export default function Default(props: {
             lineHeight="100%"
             color={textColorSecondary}
             fontSize={{
-              base: "sm",
+              base: "lg",
             }}
           >
             {name}

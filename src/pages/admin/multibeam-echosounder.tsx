@@ -634,7 +634,7 @@ export default function MultibeamEchoSounder() {
 
   // Helper function to determine if a value should be converted to a float
   const shouldConvertToFloat = (inputField: string): boolean => {
-    // Add conditions for the input fields where conversion is required
+    // Add conditions for the input fields where conversion is not required
     const fieldsRequiringFloatConversion = [
       "sounding_reduction",
       "shape_of_atennna",
@@ -670,8 +670,14 @@ export default function MultibeamEchoSounder() {
   };
 
   const getSurveys = async () => {
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
     await axios
-      .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`)
+      .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`, config)
       .then((res) => {
         res.data.map((survey: Survey) => {
           if (survey.id == surveyID) {

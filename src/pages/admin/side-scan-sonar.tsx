@@ -35,6 +35,7 @@ import SurveyInput from "views/admin/dataTables/components/SurveyInput";
 interface Survey {
   id: number;
   name: string;
+  code: string;
   is_active: boolean;
   is_delete: boolean;
 }
@@ -222,6 +223,36 @@ function EchoSounder() {
     std_ins_of_the_usbl_the_gnss: "",
   });
 
+  const [surveyParameters, setSurveyParameters] = useState<any>({
+    width_of_the_image: 0,
+    "ratio_of_the_image_width-alternative": 0,
+    range_uncertainty: 0,
+    max_slant_range: 0,
+    line_spacing_50p_overlap: 0,
+    line_spacing_24p_overlap: 0,
+    along_track_resolution_r1: 0,
+    accross_track_resolution_r1: 0,
+    along_track_resolution_r2: 0,
+    accross_track_resolution_r2: 0,
+    uncertainty_in_xy_of_vector_usbl: 0,
+    max_ping_rate: 0,
+  });
+
+  const [results, setResults] = useState({
+    width_of_the_image: { type: "number" },
+    "ratio_of_the_image_width-alternative": { type: "number" },
+    range_uncertainty: { type: "number" },
+    max_slant_range: { type: "number" },
+    line_spacing_50p_overlap: { type: "number" },
+    line_spacing_24p_overlap: { type: "number" },
+    along_track_resolution_r1: { type: "number" },
+    accross_track_resolution_r1: { type: "number" },
+    along_track_resolution_r2: { type: "number" },
+    accross_track_resolution_r2: { type: "number" },
+    uncertainty_in_xy_of_vector_usbl: { type: "number" },
+    max_ping_rate: { type: "number" },
+  });
+
   const [calibrationForm, setCalibrationForm] = useState<any>({});
   const [platformForm, setPlatformForm] = useState<any>({});
   const [performanceForm, setPerformanceForm] = useState<any>({});
@@ -232,25 +263,17 @@ function EchoSounder() {
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
   const [surveys, setSurveys] = useState([]);
-  const [results, setResults] = useState([]);
   const [surveyID, setSurveyID] = useState<number>(3);
   const [surveyName, setSurveyName] = useState("");
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { data: session } = useSession();
   const [user, setUser] = useState(null);
-  const [surveyCode] = useState("S01");
+  const [surveyCode, setSurveyCode] = useState("S02");
   // chakra toast
   const toast = useToast();
 
   const [isChecked, setIsChecked] = React.useState(false);
   const { surveyResults, planSurvey, handleFormChange } = useSurveyContext();
-
-  // get previous surveys from database
-  let data = "fine";
-
-  function calc() {
-    return "data";
-  }
 
   const checkSubscription = () => {
     subscription?.assigned_surveys?.forEach((survey: any) => {
@@ -545,14 +568,38 @@ function EchoSounder() {
     setSSPerformanceForm(updatedForm);
   };
 
-  const changeHandler = (value: any) => {
-    // setCompanyCountry(value);
-    // setIso(value.value?.isoCode);
-    // place code to load data unto survey form
-    form;
+  // const changeHandler = (value: any) => {
+  //   // setCompanyCountry(value);
+  //   // setIso(value.value?.isoCode);
+  //   // place code to load data unto survey form
+  //   form;
+  // };
+
+  // get all surveys
+  const getSurveys = async () => {
+    const config = {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Token ${session?.user?.auth_token}`,
+      },
+    };
+    await axios
+      .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`, config)
+      .then((res) => {
+        res.data.map((survey: Survey) => {
+          if (survey.id == surveyID) {
+            setSurveyCode(survey.code);
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const loadSurvey = () => {};
+  useEffect(() => {
+    getSurveys();
+  }, [surveys]);
 
   const loadSurveyData = () => {
     setForm(calibrations);
@@ -600,8 +647,7 @@ function EchoSounder() {
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      // this should be changed
-      "performance_of_mbess-s1-s2-s3-s4": ssPerformanceForm,
+      "performance_of_ssss-s1-s2-s3-s4": ssPerformanceForm,
     };
 
     let data = {
@@ -705,7 +751,11 @@ function EchoSounder() {
             handleform={handlessPerformanceForm}
             surveyID={surveyID}
           />
-          <Parameters results={surveyResults} surveyID={surveyID} />
+          <Parameters
+            results={surveyParameters}
+            value={performanceForm}
+            surveyID={surveyID}
+          />
         </GridItem>
         <GridItem colSpan={3}>
           <Flex gap={3}>

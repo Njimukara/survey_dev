@@ -11,6 +11,7 @@ export const CurrentUserProvider = ({ children }) => {
   const { data: session } = useSession();
 
   const fetchCurrentUser = async () => {
+    setLoading(true);
     const config = {
       headers: {
         "Content-Type": "json",
