@@ -28,49 +28,38 @@ import {
   Flex,
   Heading,
   Text,
-  Image,
   useToast,
 } from "@chakra-ui/react";
-// Assets
-// Custom components
-import {
-  MdAddTask,
-  MdAttachMoney,
-  MdBarChart,
-  MdFileCopy,
-} from "react-icons/md";
 
+// Assets
+import { MdAttachMoney, MdFileCopy } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
+
+// Custom components
 import SurveyTable from "views/admin/default/components/SurveyTable";
 import {
   columnsDataSurvey,
   TableData,
 } from "views/admin/default/variables/columnsData";
-import tableDataSurvey from "views/admin/default/variables/tableDataSurvey.json";
 import AdminLayout from "layouts/admin";
 import Card from "components/card/Card";
 import PieCard from "views/admin/default/components/PieCard";
-import CurrentPlan from "views/admin/default/components/CurrentPlan";
 import Offers from "views/admin/default/components/Offers";
-import ComplexTable from "views/admin/default/components/ComplexTable";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import Users from "views/admin/default/components/Users";
-import DailyTraffic from "views/admin/default/components/DailyTraffic";
-// import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import { useCallback, useEffect, useState, useMemo } from "react";
-import { getSession, useSession } from "next-auth/react";
-import { ImHappy } from "react-icons/im";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { SubscriptionProvider } from "contexts/SubscriptionContext";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useSession } from "next-auth/react";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import { useCurrentUser } from "contexts/UserContext";
-import Spinner from "components/spinner";
-
-// const stripe = require("stripe")();
+import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
+import TransactionTable from "views/admin/default/components/TransactionTable";
+import { useSubscription } from "contexts/SubscriptionContext";
+import axiosConfig from "axiosConfig";
+import NoData from "layouts/admin/noData";
 
 export default function UserReports(props: { [x: string]: any }) {
   interface User {
@@ -85,75 +74,120 @@ export default function UserReports(props: { [x: string]: any }) {
   }
 
   const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
-  // const { subscription, fetchSubscription } = useCurrentUser();
-  // console.log(subscription);
+  const { surveys, getAllSurveys } = useAllSurveysContext();
+  const { subscriptions, fetchSubscriptions } = useSubscription();
+  const { history, companySurveyHistory, getSurveyHistory, getCompanySurvey } =
+    useSurveyHistoryContext();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
 
   const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
   const [individualUser, setIndividualUser] = useState(1);
-  const [fetching, setFetching] = useState(true);
   const [companyMembers, setCompanyMembers] = useState([]);
+  const [surveyHistory, setSurveyHistory] = useState([]);
   const { data: session, status } = useSession();
-
-  // const router = useRouter();
 
   // chakra toast
   const toast = useToast();
 
-  // console.log(session);
-  const getCompanyMembers = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/",
-        config
-      )
-      .then((response) => {
-        setCompanyMembers(response.data);
-      })
-      .catch((err) => {
-        toast({
-          position: "bottom-right",
-          description: "Error getting company users",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
-      });
+  const formatPrice = (price: number) => {
+    return price / 100;
   };
 
-  // const User = useMemo(() => fetchCurrentUser(), [currentUser]);
-  // console.log("user", User);
+  const invertedArray = useMemo(() => {
+    return [...subscriptions].reverse();
+  }, [subscriptions]);
+
+  const totalExpenditure = useMemo(() => {
+    let expenditure = 0;
+    subscriptions.forEach((sub: any) => {
+      if (
+        !sub?.subscription_data?.status
+          .toLowerCase()
+          .includes("trialing" || "incomplete")
+      ) {
+        expenditure = expenditure + sub?.subscription_data?.plan?.amount;
+      }
+    });
+    expenditure = formatPrice(expenditure);
+    return expenditure;
+  }, [subscriptions]);
+
+  const getCompanyMembers = useCallback(async () => {
+    try {
+      const response = await axiosConfig.get(
+        "api/company/companymembers/companymember/"
+      );
+      setCompanyMembers(response.data);
+    } catch (error) {
+      toast({
+        position: "bottom-right",
+        description: "Error getting company users",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    // const usr = async () => {
-    //   setFetching(true);
-    fetchCurrentUser();
-    setUser(currentUser);
-    console.log("user", currentUser);
-
-    // setFetching(false);
-    // };
-    if (session?.user?.data?.user_profile?.user_type != companyUser) {
-      return;
-    } else {
-      getCompanyMembers();
+    if (!history) {
+      getSurveyHistory().catch((error: any) => {
+        // Handle error
+        console.error("Failed to fetch survey history:", error);
+      });
     }
 
-    // usr();
-  }, [currentUser]);
+    if (history) {
+      setSurveyHistory(history);
+    }
+  }, [history, getSurveyHistory]);
+
+  useEffect(() => {
+    if (!surveys) {
+      getAllSurveys().catch((error: any) => {
+        // Handle error
+        console.error("Failed to fetch all surveys:", error);
+      });
+    }
+    if (!subscriptions) {
+      fetchSubscriptions();
+    }
+  }, [surveys, fetchSubscriptions, subscriptions, getAllSurveys]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      fetchCurrentUser();
+    }
+    setUser(currentUser);
+  }, [currentUser, fetchCurrentUser]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (session?.user?.data?.user_profile?.user_type === companyUser) {
+          await getCompanyMembers();
+          if (!companySurveyHistory) {
+            getCompanySurvey();
+          }
+        }
+      } catch (error) {
+        // Handle error
+        console.error("Failed to fetch user or company data:", error);
+      }
+    };
+
+    fetchUser();
+  }, [
+    companyUser,
+    session,
+    companySurveyHistory,
+    getCompanyMembers,
+    getCompanySurvey,
+  ]);
 
   return (
     <AdminLayout>
@@ -202,7 +236,7 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Surveys"
-              value="23"
+              value={history ? history.length : "-"}
             />
             {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
@@ -239,24 +273,13 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Total Spent"
-              value="$430"
+              value={totalExpenditure ? `$${totalExpenditure}` : 0}
             />
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
-            {user == null ? (
-              <Card py="10" px="4">
-                <Flex
-                  w="100%"
-                  h="50"
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Spinner />
-                </Flex>
-              </Card>
-            ) : user?.user_profile?.user_type == companyUser ||
-              user?.user_profile?.user_type == individualUser ? (
+            {user?.user_profile?.user_type == companyUser ||
+            user?.user_profile?.user_type == individualUser ? (
               <>
                 <Flex w="70%">
                   <PlanDetails />
@@ -279,20 +302,32 @@ export default function UserReports(props: { [x: string]: any }) {
               gap="20px"
               mb="20px"
             >
-              <PieCard members={companyMembers} />
+              {companySurveyHistory ? (
+                <PieCard companySurvey={companySurveyHistory} />
+              ) : (
+                <NoData title="No sompany survey data yet" />
+              )}
               <Users members={companyMembers} />
             </SimpleGrid>
           )}
 
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
-            <SurveyTable
-              columnsData={columnsDataSurvey}
-              tableData={tableDataSurvey as unknown as TableData[]}
-            />
-            <DailyTraffic />
+          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
+            {surveyHistory.length > 0 ? (
+              <SurveyTable
+                columnsData={columnsDataSurvey}
+                tableData={surveyHistory as unknown as TableData[]}
+              />
+            ) : (
+              <NoData title="No survey history" />
+            )}
           </SimpleGrid>
 
-          {user?.user_profile?.user_type == companyUser ||
+          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
+            <WeeklyRevenue />
+            {/* <DailyTraffic /> */}
+          </SimpleGrid>
+
+          {/* {user?.user_profile?.user_type == companyUser ||
             (user?.user_profile?.user_type == individualUser && (
               <SimpleGrid
                 columns={{ base: 1, md: 1, xl: 1 }}
@@ -304,12 +339,22 @@ export default function UserReports(props: { [x: string]: any }) {
                   tableData={tableDataComplex as unknown as TableData[]}
                 />
               </SimpleGrid>
-            ))}
+            ))} */}
+
+          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
+            {invertedArray.length > 0 ? (
+              <TransactionTable
+                columnsData={columnsDataComplex}
+                tableData={invertedArray}
+              />
+            ) : (
+              <NoData title="No subscription history" />
+            )}
+          </SimpleGrid>
         </>
       </Box>
     </AdminLayout>
   );
 }
 
-// add the requireAuth property to the page component
 UserReports.requireAuth = true;

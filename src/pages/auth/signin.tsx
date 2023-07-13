@@ -59,6 +59,7 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import axiosConfig from "axiosConfig";
 import { FaLinkedin } from "react-icons/fa";
+import { useAllSurveysContext } from "contexts/SurveyContext";
 
 const CustomInput = forwardRef(
   (props: any, ref: LegacyRef<HTMLInputElement>) => {
@@ -122,6 +123,8 @@ export default function SignIn() {
   const [phoneNumber, setPhoneNumber] = React.useState(null);
   const [numberError, setNumberError] = React.useState(null);
 
+  const { getAllSurveys } = useAllSurveysContext();
+
   // varaibles used for login
   const [formData, setFormData] = React.useState({
     email: "",
@@ -166,6 +169,7 @@ export default function SignIn() {
     });
 
     if (res.status == 200) {
+      getAllSurveys();
       setSubmitting(false);
       router.push("/admin");
     } else if (res.status != 200) {

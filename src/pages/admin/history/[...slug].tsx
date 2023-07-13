@@ -14,8 +14,7 @@ import Spinner from "components/spinner";
 import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
-import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
-import GenerateSurvey from "./generate";
+// import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
 import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
@@ -25,9 +24,10 @@ import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
 import { useSession } from "next-auth/react";
-import axios from "axios";
-import Select from "react-select";
+// import axios from "axios";
+// import Select from "react-select";
 import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useRouter } from "next/router";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 
 const jsonData = {
@@ -283,7 +283,7 @@ export default function MultibeamEchoSounder() {
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
-  const [survey, setSurvey] = useState([]);
+  const [survey, setSurvey] = useState(null);
   const [results, setResults] = useState({
     "swath-width": { type: "number" },
     survey_time: { type: "number" },
@@ -304,22 +304,114 @@ export default function MultibeamEchoSounder() {
   });
   const [surveyID, setSurveyID] = useState<number>(1);
   const [surveyName, setSurveyName] = useState("");
-  const [planning, setPlanning] = useState(false);
+  // const [planning, setPlanning] = useState(false);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { data: session } = useSession();
-  const [user, setUser] = useState(null);
-  const [surveyCode, setSurveyCode] = useState("S01");
+  // const [user, setUser] = useState(null);
+  // const [result, setResult] = useState(null);
+  const [resultID, setResultID] = useState(null);
+  // const [surveyCode, setSurveyCode] = useState("S01");
   const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { history, surveyOptions, getSurveyHistory } =
-    useSurveyHistoryContext();
+  const { history, getSurveyHistory } = useSurveyHistoryContext();
 
   // chakra toast
-  const toast = useToast();
+  // const toast = useToast();
+  const router = useRouter();
 
-  const checkSubscription = () => {
-    subscription?.assigned_surveys?.forEach((survey: any) => {
-      if (survey?.id == surveyID) {
-        setSurvey([survey?.id]);
+  // const [isChecked, setIsChecked] = React.useState(false);
+
+  const checkSurvey = () => {
+    let url: any = router.query;
+    let result_id = Number(url.result_id);
+    setResultID(result_id);
+    let survey_id = Number(url.survey_id);
+
+    surveys.map((survey: Survey) => {
+      if (survey.id == survey_id) {
+        setSurvey(survey);
+      }
+    });
+  };
+
+  const getSurveyResults = () => {
+    history.forEach((item: any) => {
+      if (item.id == resultID) {
+        console.log(item);
+        // destructure the results
+        const { name, survey, results, parameters } = item;
+
+        // Destructure the item based on survey type
+        if (survey === 1) {
+          const {
+            calibration_parameters,
+            "performance_ins-gnss-usbl": performance_gnss_usbl,
+            survey_platform_performance,
+            lever_arm_measures_between,
+            operational_conditions,
+            "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
+          } = parameters;
+
+          setCalibrationForm(calibration_parameters);
+          setPerformanceForm(performance_gnss_usbl);
+          setPlatformForm(survey_platform_performance);
+          setOperationalForm(operational_conditions);
+          setSSPerformanceForm(performance_ssss);
+          setLeverForm(lever_arm_measures_between);
+        } else if (survey === 2) {
+          //lydar
+          const {
+            calibration_parameters,
+            "performance_ins-gnss-usbl": performance_gnss_usbl,
+            survey_platform_performance,
+            lever_arm_measures_between,
+            operational_conditions,
+            "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
+          } = parameters;
+
+          setCalibrationForm(calibration_parameters);
+          setPerformanceForm(performance_gnss_usbl);
+          setPlatformForm(survey_platform_performance);
+          setOperationalForm(operational_conditions);
+          setSSPerformanceForm(performance_ssss);
+          setLeverForm(lever_arm_measures_between);
+        } else if (survey === 3) {
+          //side scan
+          const {
+            calibration_parameters,
+            "performance_ins-gnss-usbl": performance_gnss_usbl,
+            survey_platform_performance,
+            lever_arm_measures_between,
+            operational_conditions,
+            "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
+          } = parameters;
+
+          setCalibrationForm(calibration_parameters);
+          setPerformanceForm(performance_gnss_usbl);
+          setPlatformForm(survey_platform_performance);
+          setOperationalForm(operational_conditions);
+          setSSPerformanceForm(performance_ssss);
+          setLeverForm(lever_arm_measures_between);
+        } else if (survey === 4) {
+          //acoustc
+          const {
+            calibration_parameters,
+            "performance_ins-gnss-usbl": performance_gnss_usbl,
+            survey_platform_performance,
+            lever_arm_measures_between,
+            operational_conditions,
+            "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
+          } = parameters;
+
+          setCalibrationForm(calibration_parameters);
+          setPerformanceForm(performance_gnss_usbl);
+          setPlatformForm(survey_platform_performance);
+          setOperationalForm(operational_conditions);
+          setSSPerformanceForm(performance_ssss);
+          setLeverForm(lever_arm_measures_between);
+        }
+
+        setSurveyName(name);
+        setSurveyParameters(results);
       }
     });
   };
@@ -327,17 +419,15 @@ export default function MultibeamEchoSounder() {
   useEffect(() => {
     if (!surveys) {
       getAllSurveys();
+    } else {
+      checkSurvey();
     }
-
-    if (subscription && multibeam) {
-      checkSubscription();
+    if (survey && history && resultID) {
+      getSurveyResults();
+    } else {
+      getSurveyHistory();
     }
-
-    if (multibeam) {
-      setSurveyCode(multibeam.code);
-      setSurveyID(multibeam.id);
-    }
-  }, [surveys, subscription]);
+  }, [surveys, survey, history, getAllSurveys]);
 
   useEffect(() => {
     const sub = async () => {
@@ -349,45 +439,6 @@ export default function MultibeamEchoSounder() {
     // console.log("formside scan", form);
   }, [loading, subscription]);
 
-  const handleForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...form };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = value;
-    } else {
-      nestedObj[lastKey] = value;
-    }
-    console.log("Form changed: ", updatedForm);
-    // Update state
-    setForm(updatedForm);
-  };
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
     let updatedForm = { ...calibrationForm };
@@ -657,9 +708,9 @@ export default function MultibeamEchoSounder() {
     return !fieldsRequiringFloatConversion.includes(inputField);
   };
 
-  const loadSurveyData = (event: any) => {
+  const loadSurveyData = () => {
+    setForm(calibrations);
     const {
-      name,
       parameters: {
         calibration_parameters,
         "performance_ins-gnss-usbl": performance_gnss_usbl,
@@ -668,7 +719,7 @@ export default function MultibeamEchoSounder() {
         operational_conditions,
         "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
       },
-    } = event.value;
+    } = jsonData;
 
     setCalibrationForm(calibration_parameters);
     setPerformanceForm(performance_gnss_usbl);
@@ -676,95 +727,13 @@ export default function MultibeamEchoSounder() {
     setOperationalForm(operational_conditions);
     setSSPerformanceForm(performance_ssss);
     setLeverForm(lever_arm_measures_between);
-    setSurveyName(name);
+
+    // console.log("calibration_parameters:", calibration_parameters);
+    // console.log("performance_gnss_usbl:", performance_gnss_usbl);
+    // console.log("survey_platform_performance:", survey_platform_performance);
+    // console.log("operational_conditions:", operational_conditions);
+    // console.log("performance_ssss:", performance_ssss);
   };
-
-  const handleSubmit = async (surveyCode: string) => {
-    setPlanning(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    let formData = {
-      "performance_ins-gnss-usbl": performanceForm,
-      calibration_parameters: calibrationForm,
-      survey_platform_performance: platformForm,
-      operational_conditions: operationalForm,
-      lever_arm_measures_between: leverForm,
-      "performance_of_mbess-s1-s2-s3-s4": ssPerformanceForm,
-    };
-
-    let data = {
-      name: surveyName,
-      survey: multibeam.id,
-      parameters: formData,
-    };
-
-    console.log(data);
-
-    await axios
-      .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
-        data,
-        config
-      )
-      .then((res) => {
-        setResults(res.data);
-        setSurveyParameters(res.data.results);
-        // console.log(res);
-        toast({
-          position: "bottom-right",
-          description: "Successful",
-          status: "info",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast({
-          position: "bottom-right",
-          description: "Error planning survey at this time",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-      });
-  };
-
-  const reactSelectStyles = {
-    control: (defaultStyles: any) => ({
-      ...defaultStyles,
-      backgroundColor: "transparent",
-      borderColor: "grey.200",
-      color: "black",
-      padding: "6px",
-      borderRadius: "15px",
-      boxShadow: "none",
-    }),
-    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
-  };
-
-  // useEffect(() => {
-  //   console.log("after generate survey", form);
-  //   getSurveys();
-  // }, [surveys]);
-
-  // useEffect(() => {
-  //   const sub = async () => {
-  //     await fetchSubscriptions();
-  //   };
-
-  //   checkSubscription();
-  //   setSubscription(subscriptions[subscriptions.length - 1]);
-
-  //   sub();
-  // }, [loading, subscription]);
 
   if (loading) {
     return (
@@ -776,7 +745,7 @@ export default function MultibeamEchoSounder() {
     );
   }
 
-  return survey.length > 0 ? (
+  return (
     <AdminLayout>
       <Grid
         pt={{ base: "130px", md: "80px", xl: "80px" }}
@@ -801,15 +770,7 @@ export default function MultibeamEchoSounder() {
                 size="sm"
                 value={surveyName}
                 onChange={(e) => setSurveyName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">Surveys</FormLabel>
-              <Select
-                styles={reactSelectStyles}
-                options={surveyOptions}
-                onChange={(e) => loadSurveyData(e)}
-                placeholder="Load past survey data"
+                isDisabled
               />
             </FormControl>
           </Card>
@@ -871,7 +832,7 @@ export default function MultibeamEchoSounder() {
               <CloudPoints surveyID={surveyID} />
             </Box>
           </Flex>
-          <Button
+          {/* <Button
             mt="6"
             onClick={() => {
               handleSubmit(surveyCode);
@@ -881,12 +842,10 @@ export default function MultibeamEchoSounder() {
             py="6"
           >
             Plan Survey
-          </Button>
+          </Button> */}
         </GridItem>
       </Grid>
     </AdminLayout>
-  ) : (
-    <PurchaseLisence />
   );
 }
 

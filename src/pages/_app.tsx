@@ -25,6 +25,8 @@ import { CurrentUserProvider } from "contexts/UserContext";
 import { SurveyContextProvider } from "contexts/Survey";
 import { Router } from "next/router";
 import NProgress from "nprogress";
+import { AllSurveysProvider } from "contexts/SurveyContext";
+import { SurveyHistoryProvider } from "contexts/SurveyHistoryContext";
 NProgress.configure({ showSpinner: false });
 
 // add requireAuth to AppProps
@@ -48,13 +50,6 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
         <title>Survey Planner</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css"
-          integrity="sha512-42kB9yDlYiCEfx2xVwq0q7hT4uf26FUgSIZBK8uiaEnTdShXjwr8Ip1V4xGJMg3mHkUt9nNuTDxunHF0/EgxLQ=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
       </Head>
       <SessionProvider
         session={pageProps.session}
@@ -66,19 +61,25 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
         {Component.requireAuth ? (
           <AuthGuard>
             <SubscriptionProvider>
-              <PlanContextProvider>
-                <SurveyContextProvider>
-                  <CurrentUserProvider>
-                    <Component {...pageProps} />
-                  </CurrentUserProvider>
-                </SurveyContextProvider>
-              </PlanContextProvider>
+              <SurveyHistoryProvider>
+                <PlanContextProvider>
+                  <AllSurveysProvider>
+                    <SurveyContextProvider>
+                      <CurrentUserProvider>
+                        <Component {...pageProps} />
+                      </CurrentUserProvider>
+                    </SurveyContextProvider>
+                  </AllSurveysProvider>
+                </PlanContextProvider>
+              </SurveyHistoryProvider>
             </SubscriptionProvider>
           </AuthGuard>
         ) : (
-          <PlanContextProvider>
-            <Component {...pageProps} />
-          </PlanContextProvider>
+          <AllSurveysProvider>
+            <PlanContextProvider>
+              <Component {...pageProps} />
+            </PlanContextProvider>
+          </AllSurveysProvider>
         )}
         {/* <Component {...pageProps} /> */}
       </SessionProvider>

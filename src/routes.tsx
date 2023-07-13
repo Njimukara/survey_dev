@@ -10,19 +10,13 @@ import {
 // Admin Imports
 import MainDashboard from "pages/admin/default";
 import Profile from "pages/admin/profile";
+import SurveyHistory from "pages/admin/survey-history";
 // import DataTables from "pages/admin/data-tables";
 
 // Auth Imports
 import { IRoute } from "../types/navigation";
 
 const routes: IRoute[] = [
-  // {
-  //   name: "Generate Survey",
-  //   layout: "/admin",
-  //   path: "/generate",
-  //   icon: <Icon as={MdAdd} width="20px" height="20px" color="inherit" />,
-  //   component: MainDashboard,
-  // },
   {
     name: "Dashboard",
     layout: "/admin",
@@ -99,6 +93,13 @@ const routes: IRoute[] = [
     path: "/profile",
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Profile,
+  },
+  {
+    name: "Survey History",
+    layout: "/admin",
+    path: "/survey-history",
+    icon: <Icon as={MdHistory} width="20px" height="20px" color="inherit" />,
+    component: SurveyHistory,
   },
 ];
 

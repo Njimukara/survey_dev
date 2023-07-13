@@ -26,11 +26,12 @@ import OperationalConditionsCard from "views/admin/dataTables/components/Operati
 import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
-import { useSurveyContext } from "contexts/Survey";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import Select from "react-select";
 import SurveyInput from "views/admin/dataTables/components/SurveyInput";
+import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 
 interface Survey {
   id: number;
@@ -262,77 +263,52 @@ function EchoSounder() {
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
-  const [surveys, setSurveys] = useState([]);
+  const [survey, setSurvey] = useState([]);
   const [surveyID, setSurveyID] = useState<number>(3);
   const [surveyName, setSurveyName] = useState("");
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { data: session } = useSession();
   const [user, setUser] = useState(null);
   const [surveyCode, setSurveyCode] = useState("S02");
+  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+  const { surveys, sideScan, getAllSurveys } = useAllSurveysContext();
+  const { history, surveyOptions } = useSurveyHistoryContext();
+
   // chakra toast
   const toast = useToast();
 
   const [isChecked, setIsChecked] = React.useState(false);
-  const { surveyResults, planSurvey, handleFormChange } = useSurveyContext();
 
   const checkSubscription = () => {
     subscription?.assigned_surveys?.forEach((survey: any) => {
-      if (survey?.id == surveyID) {
-        setSurveys([survey?.id]);
+      if (survey?.id == sideScan.id) {
+        setSurvey([survey?.id]);
       }
     });
   };
+
+  useEffect(() => {
+    if (!surveys) {
+      getAllSurveys();
+    }
+    if (subscription && sideScan) {
+      checkSubscription();
+    }
+
+    if (sideScan) {
+      setSurveyCode(sideScan.id);
+      setSurveyCode(sideScan.code);
+    }
+  }, [surveys, subscription, getAllSurveys]);
 
   useEffect(() => {
     const sub = async () => {
       await fetchSubscriptions();
     };
     setSubscription(subscriptions[subscriptions.length - 1]);
-    checkSubscription();
 
     sub();
-    console.log("formside scan", form);
   }, [loading, subscription]);
 
-  const handleForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...form };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = value;
-    } else {
-      nestedObj[lastKey] = value;
-    }
-    console.log("Form changed: ", updatedForm);
-    // Update state
-    setForm(updatedForm);
-  };
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
     let updatedForm = { ...calibrationForm };
@@ -575,55 +551,52 @@ function EchoSounder() {
   //   form;
   // };
 
-  // get all surveys
-  const getSurveys = async () => {
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`, config)
-      .then((res) => {
-        res.data.map((survey: Survey) => {
-          if (survey.id == surveyID) {
-            setSurveyCode(survey.code);
-          }
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // // get all surveys
+  // const getSurveys = async () => {
+  //   const config = {
+  //     headers: {
+  //       Accept: "application/json;charset=UTF-8",
+  //       Authorization: `Token ${session?.user?.auth_token}`,
+  //     },
+  //   };
+  //   await axios
+  //     .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`, config)
+  //     .then((res) => {
+  //       res.data.map((survey: Survey) => {
+  //         if (survey.id == surveyID) {
+  //           setSurveyCode(survey.code);
+  //         }
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
-  useEffect(() => {
-    getSurveys();
-  }, [surveys]);
+  // useEffect(() => {
+  //   getSurveys();
+  // }, [surveys]);
 
-  const loadSurveyData = () => {
-    setForm(calibrations);
+  const loadSurveyData = (event: any) => {
     const {
+      name,
       parameters: {
         calibration_parameters,
         "performance_ins-gnss-usbl": performance_gnss_usbl,
         survey_platform_performance,
+        lever_arm_measures_between,
         operational_conditions,
         "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
       },
-    } = jsonData;
+    } = event.value;
 
     setCalibrationForm(calibration_parameters);
     setPerformanceForm(performance_gnss_usbl);
     setPlatformForm(survey_platform_performance);
     setOperationalForm(operational_conditions);
     setSSPerformanceForm(performance_ssss);
-
-    console.log("calibration_parameters:", calibration_parameters);
-    console.log("performance_gnss_usbl:", performance_gnss_usbl);
-    console.log("survey_platform_performance:", survey_platform_performance);
-    console.log("operational_conditions:", operational_conditions);
-    console.log("performance_ssss:", performance_ssss);
+    setLeverForm(lever_arm_measures_between);
+    setSurveyName(name);
   };
 
   const options = [
@@ -653,7 +626,7 @@ function EchoSounder() {
     let data = {
       name: surveyName,
       // this should equally be replaced with the correct survey id
-      survey: 1,
+      survey: sideScan.id,
       parameters: formData,
     };
 
@@ -661,7 +634,7 @@ function EchoSounder() {
 
     await axios
       .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/generate-survey/${surveyCode}`,
+        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
         data,
         config
       )
@@ -705,7 +678,7 @@ function EchoSounder() {
     );
   }
 
-  return surveys.length > 0 ? (
+  return survey.length > 0 ? (
     <AdminLayout>
       <Grid
         pt={{ base: "130px", md: "80px", xl: "80px" }}
@@ -733,11 +706,11 @@ function EchoSounder() {
               />
             </FormControl>
             <FormControl>
-              <FormLabel fontSize="sm">Country</FormLabel>
+              <FormLabel fontSize="sm">Surveys</FormLabel>
               <Select
                 styles={reactSelectStyles}
-                options={options}
-                onChange={loadSurveyData}
+                options={surveyOptions}
+                onChange={(e) => loadSurveyData(e)}
                 placeholder="Load past survey data"
               />
             </FormControl>

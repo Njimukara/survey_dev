@@ -24,6 +24,7 @@
 import {
   Box,
   Button,
+  Card,
   Flex,
   SimpleGrid,
   Spinner,
@@ -36,92 +37,35 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
 import { TableData } from "views/admin/default/variables/columnsData";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
-import { getSession, useSession } from "next-auth/react";
-import axios from "axios";
+import { useSession } from "next-auth/react";
 import { Plan, subsciptionPlan } from "../../../types/data";
 import { useSubscription } from "contexts/SubscriptionContext";
-import PlanDetails from "views/admin/profile/components/PlanDetails";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
 import TransactionTable from "views/admin/default/components/TransactionTable";
-
-// mock data
-// const MonthlyPricing = [
-//   {
-//     id: 1,
-//     title: "Single Product Licence",
-//     price: 48,
-//     period: "Month",
-//     description:
-//       "Keep it simple, This licence gives you access to one product of your choice",
-//     advantages: [
-//       { name: "Access to a single product " },
-//       { name: "Unlimited Generation of surveys" },
-//       { name: "Customer Support" },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     title: "Double Product Licence",
-//     price: 98,
-//     period: "Month",
-//     description:
-//       "In need of more, This licence gives you access to two product of your choice",
-//     advantages: [
-//       { name: "Access to two producta" },
-//       { name: "Unlimited Generation of surveys" },
-//       { name: "Customer Support" },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     title: "Triple Product Licence",
-//     price: 158,
-//     period: "Month",
-//     description:
-//       "Make it flexible, This licence gives you access to three product of your choice",
-//     advantages: [
-//       { name: "Access to a three producta" },
-//       { name: "Unlimited Generation of surveys" },
-//       { name: "Customer Support" },
-//     ],
-//   },
-//   {
-//     id: 4,
-//     title: "Complete Product Licence",
-//     price: 48,
-//     period: "Month",
-//     description:
-//       "No stressing, No limits, This licence gives you access to all our products",
-//     advantages: [
-//       { name: "Access to all products" },
-//       { name: "Unlimited Generation of surveys" },
-//       { name: "Customer Support" },
-//     ],
-//   },
-// ];
+import { useCurrentUser } from "contexts/UserContext";
+import axiosConfig from "axiosConfig";
+import NoData from "layouts/admin/noData";
 
 export default function Transactions() {
   // component variables
 
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
-  const [user, setUser] = useState(null);
   const [upgrade, setUpgrade] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [step, setStep] = useState(1);
   const [plans, setPlans] = useState([]);
 
   // get user subscription from store
-  // const { store } = useSubscriptionContext();
   const [localSubscriptions, setLocalSubscriptions] = useState([]);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+  const { currentUser, fetchCurrentUser } = useCurrentUser();
 
   // chakra toast
   const toast = useToast();
@@ -136,75 +80,47 @@ export default function Transactions() {
     setStep(newStep);
   };
 
-  // initial user session
-  var { data: session } = useSession();
-
-  // updated user session
-  const secondSession = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        // console.log(res);
-        session = res;
-        setUser(res?.user?.data);
-      })
-      .catch((err) => {});
-  }, [session]);
-
   const handleUpgrade = (state: boolean) => {
     setUpgrade(state);
     // setStep(newstep);
   };
-
   // get subscription plans from database
   const getPlans = useCallback(async () => {
     setFetching(true);
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/list-with-price",
-        config
-      )
-      .then((res) => {
-        setPlans(res.data);
-        setFetching(false);
-      })
-      .catch((error) => {
-        // console.log(error);
-        toast({
-          position: "bottom-right",
-          description: "Error getting plans",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
-        setFetching(false);
+    try {
+      const response = await axiosConfig.get("/api/plans/list-with-price");
+      setPlans(response.data);
+    } catch (error) {
+      toast({
+        position: "bottom-right",
+        description: "Error getting plans",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
       });
-  }, []);
+    } finally {
+      setFetching(false);
+    }
+  }, [toast]);
 
   useEffect(() => {
-    secondSession();
-    getPlans();
-    fetchSubscriptions();
+    if (!currentUser) {
+      fetchCurrentUser();
+    }
+    if (plans.length <= 0) {
+      getPlans();
+    }
+
+    if (subscriptions.length <= 0) {
+      fetchSubscriptions();
+    }
     setLocalSubscriptions(subscriptions);
-  }, [loading]);
+  }, []);
 
   if (localSubscriptions.length != 0) {
     return (
       <AdminLayout>
         <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-          {/* {
-            if upgrade and step == 2{show payment}
-            else (upgrade) and step ==1 {show plans}
-            else show subscirpiton
-          } */}
-
           {upgrade && step == 2 ? (
             <PaymentPlan
               plan={selectedPlan}
@@ -271,9 +187,9 @@ export default function Transactions() {
                         spacing="20px"
                         minChildWidth="250px"
                       >
-                        {plans.map((plan: Plan) => (
+                        {plans.map((plan: Plan, index: number) => (
                           <SubscriptionCard
-                            key={plan.id}
+                            key={plan.id + index}
                             id={plan.id}
                             title={plan.name}
                             price={plan.amount}
@@ -301,10 +217,14 @@ export default function Transactions() {
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <TransactionTable
-              columnsData={columnsDataComplex}
-              tableData={localSubscriptions as unknown as TableData[]}
-            />
+            {localSubscriptions.length > 0 ? (
+              <TransactionTable
+                columnsData={columnsDataComplex}
+                tableData={localSubscriptions as unknown as TableData[]}
+              />
+            ) : (
+              <NoData title="No subscription data" />
+            )}
           </SimpleGrid>
         </Box>
       </AdminLayout>
@@ -314,11 +234,6 @@ export default function Transactions() {
     <AdminLayout>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <>
-          {/* {subscriptions.length != 0 && !upgrade && (
-              <Box>
-                <SubscirptionDetails />
-              </Box>
-            )} */}
           {step == 1 ? (
             <Box pb="50px">
               <Tabs variant="unstyled" w="full">
@@ -413,10 +328,14 @@ export default function Transactions() {
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            <TransactionTable
-              columnsData={columnsDataComplex}
-              tableData={localSubscriptions as unknown as TableData[]}
-            />
+            {localSubscriptions.length > 0 ? (
+              <TransactionTable
+                columnsData={columnsDataComplex}
+                tableData={localSubscriptions as unknown as TableData[]}
+              />
+            ) : (
+              <NoData title="No subscription data" />
+            )}
           </SimpleGrid>
         </>
       </Box>

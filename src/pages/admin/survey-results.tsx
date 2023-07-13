@@ -13,9 +13,8 @@ import {
 import Spinner from "components/spinner";
 import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
-import React, { useState, useEffect } from "react";
-import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
-import GenerateSurvey from "./generate";
+import React, { useState, useEffect, useCallback } from "react";
+// import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
 import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
@@ -24,107 +23,7 @@ import OperationalConditionsCard from "views/admin/dataTables/components/Operati
 import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
-import { useSession } from "next-auth/react";
-import axios from "axios";
-import Select from "react-select";
 import { useAllSurveysContext } from "contexts/SurveyContext";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
-
-const jsonData = {
-  name: "my test survey",
-  survey: 1,
-  parameters: {
-    calibration_parameters: {
-      pitch_boresight: 9,
-      roll_boresight: 3,
-      yaw_boresight: 9,
-      pitch_boresight_uncertainty: 5,
-      roll_boresight_uncertainty: 9,
-      yaw_boresight_uncertainty: 1,
-      "latency_gnss-smf": 3,
-      "uncty_of_latency_gnss-smf": 7,
-      "latency_gnss-ins": 6,
-      "uncty_of_latency_gnss-ins": 2,
-    },
-    "performance_ins-gnss-usbl": {
-      yaw_uncertainty: 0.05,
-      roll_uncertainty: 0.06,
-      pitch_uncertainty: 0.07,
-      positioning_uncertainty_in_h: 0.08,
-      positioning_uncertainty_in_v: 0.09,
-      heave_uncertainty: 0.1,
-    },
-    survey_platform_performance: {
-      survey_speed: 2.5,
-      survey_speed_uncertainty: 0.2,
-      draft_uncertainty: 0.01,
-      variation_in_z_due_to_loads: 0.03,
-    },
-    lever_arm_measures_between: {
-      lever_arms_uncertainty: 3,
-      ford_gnss_smf: 2,
-      ford_ins_and_gnss: 6,
-      down_ins_and_gnss: 7,
-      down_gnss_and_smf: 1,
-      std_ins_and_gnss: 9,
-      std_gnss_and_smf: 3.3,
-      sounding_reduction: "gnss",
-    },
-    operational_conditions: {
-      mean_sound_speed: 1500,
-      max_depth_of_the_svp: 200,
-      svs_uncertainty: 0.1,
-      svp_uncertainty: 0.2,
-      uncert_svp_beyond_its_max_depth: 0.3,
-      tide_uncertainty: 0.05,
-      co_tidal_uncertainty: 0.06,
-      depth: 50,
-      incidence_angle_of_mbes: 30,
-    },
-    "performance_of_mbess-s1-s2-s3-s4": [
-      {
-        defined_operating_frequency: 2,
-        along_track_beanwidth: 1,
-        accross_track_beanwidth: 6,
-        beams_number: 4,
-        depth_resolution: 5,
-        ping_rate: 1,
-        user_defined_swath_coverage: 100,
-        shape_of_atennna: "circular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 120,
-        shape_of_atennna: "rectangular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 100,
-        shape_of_atennna: "circular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 120,
-        shape_of_atennna: "rectangular",
-      },
-    ],
-  },
-};
 
 type Survey = {
   id: number;
@@ -135,8 +34,11 @@ type Survey = {
   is_delete: boolean;
 };
 
-export default function MultibeamEchoSounder() {
-  const [subscription, setSubscription] = useState<any>();
+function SurveyResults(
+  { surveyResult }: { surveyResult: any },
+  ref: React.LegacyRef<HTMLDivElement>
+) {
+  const { name, parameters } = surveyResult;
   const [calibrations, setCalibrations] = useState<any>({
     roll_boresight: { type: "number" },
     yaw_boresight: { type: "number" },
@@ -279,11 +181,9 @@ export default function MultibeamEchoSounder() {
   const [performanceForm, setPerformanceForm] = useState<any>({});
   const [leverForm, setLeverForm] = useState<any>({});
   const [operationalForm, setOperationalForm] = useState<any>({});
-  const [form, setForm] = useState<any>({});
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
-  const [survey, setSurvey] = useState([]);
   const [results, setResults] = useState({
     "swath-width": { type: "number" },
     survey_time: { type: "number" },
@@ -302,92 +202,117 @@ export default function MultibeamEchoSounder() {
       enum: ["gnss", "tide"],
     },
   });
-  const [surveyID, setSurveyID] = useState<number>(1);
+  const [surveyid, setSurveyId] = useState<number>(1);
+  const [survey, setSurvey] = useState(null);
   const [surveyName, setSurveyName] = useState("");
-  const [planning, setPlanning] = useState(false);
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-  const { data: session } = useSession();
-  const [user, setUser] = useState(null);
-  const [surveyCode, setSurveyCode] = useState("S01");
-  const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { history, surveyOptions, getSurveyHistory } =
-    useSurveyHistoryContext();
+  const { loading } = useSubscription();
+  const { surveys, getAllSurveys } = useAllSurveysContext();
 
-  // chakra toast
-  const toast = useToast();
-
-  const checkSubscription = () => {
-    subscription?.assigned_surveys?.forEach((survey: any) => {
-      if (survey?.id == surveyID) {
-        setSurvey([survey?.id]);
+  const getSurveyResults = useCallback(() => {
+    let currentSurvey: any;
+    surveys.map((survey: Survey) => {
+      if (survey.id == surveyResult.survey) {
+        currentSurvey = survey;
+        setSurvey(survey);
       }
     });
-  };
+    // destructure the results
+    const { survey, results, parameters } = surveyResult;
+
+    // Destructure the item based on survey type
+    if (
+      currentSurvey &&
+      currentSurvey.name.toLowerCase().includes("multibeam")
+    ) {
+      const {
+        calibration_parameters,
+        "performance_ins-gnss-usbl": performance_gnss_usbl,
+        survey_platform_performance,
+        lever_arm_measures_between,
+        operational_conditions,
+        "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
+      } = parameters;
+
+      setCalibrationForm(calibration_parameters);
+      setPerformanceForm(performance_gnss_usbl);
+      setPlatformForm(survey_platform_performance);
+      setOperationalForm(operational_conditions);
+      setSSPerformanceForm(performance_ssss);
+      setLeverForm(lever_arm_measures_between);
+    } else if (
+      currentSurvey &&
+      currentSurvey.name.toLowerCase().includes("dynamic")
+    ) {
+      //lydar
+      const {
+        calibration_parameters,
+        "performance_ins-gnss-usbl": performance_gnss_usbl,
+        survey_platform_performance,
+        lever_arm_measures_between,
+        operational_conditions,
+        "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
+      } = parameters;
+
+      setCalibrationForm(calibration_parameters);
+      setPerformanceForm(performance_gnss_usbl);
+      setPlatformForm(survey_platform_performance);
+      setOperationalForm(operational_conditions);
+      setSSPerformanceForm(performance_ssss);
+      setLeverForm(lever_arm_measures_between);
+    } else if (
+      currentSurvey &&
+      currentSurvey.name.toLowerCase().includes("scan")
+    ) {
+      //side scan
+      const {
+        calibration_parameters,
+        "performance_ins-gnss-usbl": performance_gnss_usbl,
+        survey_platform_performance,
+        lever_arm_measures_between,
+        operational_conditions,
+        "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
+      } = parameters;
+
+      setCalibrationForm(calibration_parameters);
+      setPerformanceForm(performance_gnss_usbl);
+      setPlatformForm(survey_platform_performance);
+      setOperationalForm(operational_conditions);
+      setSSPerformanceForm(performance_ssss);
+      setLeverForm(lever_arm_measures_between);
+    } else if (
+      currentSurvey &&
+      currentSurvey.name.toLowerCase().includes("acoustic")
+    ) {
+      //acoustc
+      const {
+        calibration_parameters,
+        "performance_ins-gnss-usbl": performance_gnss_usbl,
+        survey_platform_performance,
+        lever_arm_measures_between,
+        operational_conditions,
+        "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
+      } = parameters;
+      setCalibrationForm(calibration_parameters);
+      setPerformanceForm(performance_gnss_usbl);
+      setPlatformForm(survey_platform_performance);
+      setOperationalForm(operational_conditions);
+      setSSPerformanceForm(performance_ssss);
+      setLeverForm(lever_arm_measures_between);
+    }
+
+    setSurveyName(name);
+    setSurveyParameters(results);
+  }, [surveyResult, name, surveys]);
 
   useEffect(() => {
     if (!surveys) {
       getAllSurveys();
     }
-
-    if (subscription && multibeam) {
-      checkSubscription();
+    if (surveyResult) {
+      getSurveyResults();
     }
+  }, [surveys, getSurveyResults, surveyResult, getAllSurveys]);
 
-    if (multibeam) {
-      setSurveyCode(multibeam.code);
-      setSurveyID(multibeam.id);
-    }
-  }, [surveys, subscription]);
-
-  useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
-    setSubscription(subscriptions[subscriptions.length - 1]);
-
-    sub();
-    // console.log("formside scan", form);
-  }, [loading, subscription]);
-
-  const handleForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...form };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = value;
-    } else {
-      nestedObj[lastKey] = value;
-    }
-    console.log("Form changed: ", updatedForm);
-    // Update state
-    setForm(updatedForm);
-  };
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
     let updatedForm = { ...calibrationForm };
@@ -657,115 +582,6 @@ export default function MultibeamEchoSounder() {
     return !fieldsRequiringFloatConversion.includes(inputField);
   };
 
-  const loadSurveyData = (event: any) => {
-    const {
-      name,
-      parameters: {
-        calibration_parameters,
-        "performance_ins-gnss-usbl": performance_gnss_usbl,
-        survey_platform_performance,
-        lever_arm_measures_between,
-        operational_conditions,
-        "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
-      },
-    } = event.value;
-
-    setCalibrationForm(calibration_parameters);
-    setPerformanceForm(performance_gnss_usbl);
-    setPlatformForm(survey_platform_performance);
-    setOperationalForm(operational_conditions);
-    setSSPerformanceForm(performance_ssss);
-    setLeverForm(lever_arm_measures_between);
-    setSurveyName(name);
-  };
-
-  const handleSubmit = async (surveyCode: string) => {
-    setPlanning(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    let formData = {
-      "performance_ins-gnss-usbl": performanceForm,
-      calibration_parameters: calibrationForm,
-      survey_platform_performance: platformForm,
-      operational_conditions: operationalForm,
-      lever_arm_measures_between: leverForm,
-      "performance_of_mbess-s1-s2-s3-s4": ssPerformanceForm,
-    };
-
-    let data = {
-      name: surveyName,
-      survey: multibeam.id,
-      parameters: formData,
-    };
-
-    console.log(data);
-
-    await axios
-      .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
-        data,
-        config
-      )
-      .then((res) => {
-        setResults(res.data);
-        setSurveyParameters(res.data.results);
-        // console.log(res);
-        toast({
-          position: "bottom-right",
-          description: "Successful",
-          status: "info",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast({
-          position: "bottom-right",
-          description: "Error planning survey at this time",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-      });
-  };
-
-  const reactSelectStyles = {
-    control: (defaultStyles: any) => ({
-      ...defaultStyles,
-      backgroundColor: "transparent",
-      borderColor: "grey.200",
-      color: "black",
-      padding: "6px",
-      borderRadius: "15px",
-      boxShadow: "none",
-    }),
-    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
-  };
-
-  // useEffect(() => {
-  //   console.log("after generate survey", form);
-  //   getSurveys();
-  // }, [surveys]);
-
-  // useEffect(() => {
-  //   const sub = async () => {
-  //     await fetchSubscriptions();
-  //   };
-
-  //   checkSubscription();
-  //   setSubscription(subscriptions[subscriptions.length - 1]);
-
-  //   sub();
-  // }, [loading, subscription]);
-
   if (loading) {
     return (
       <AdminLayout>
@@ -776,118 +592,98 @@ export default function MultibeamEchoSounder() {
     );
   }
 
-  return survey.length > 0 ? (
-    <AdminLayout>
-      <Grid
-        pt={{ base: "130px", md: "80px", xl: "80px" }}
-        templateColumns="repeat(5, 1fr)"
-        gap={3}
-      >
-        <GridItem colSpan={5}>
-          <Card py="5" px="10">
-            <FormControl mb="2">
-              <FormLabel fontSize="sm">Survey Name</FormLabel>
-              <Input
-                data-cy="register-name"
-                id="name"
-                name="name"
-                variant="rounded"
-                fontSize="sm"
-                ms={{ base: "0px", md: "0px" }}
-                type="text"
-                placeholder="Survey Name"
-                mr="2px"
-                fontWeight="500"
-                size="sm"
-                value={surveyName}
-                onChange={(e) => setSurveyName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">Surveys</FormLabel>
-              <Select
-                styles={reactSelectStyles}
-                options={surveyOptions}
-                onChange={(e) => loadSurveyData(e)}
-                placeholder="Load past survey data"
-              />
-            </FormControl>
-          </Card>
-        </GridItem>
-        <GridItem colSpan={2}>
-          <PercormanceCard
-            mb="2"
-            mr="2"
-            performance_ssss={performanceCard}
-            value={ssPerformanceForm}
-            handleform={handlessPerformanceForm}
-            surveyID={surveyID}
-          />
-          <Parameters
-            results={surveyParameters}
-            value={performanceForm}
-            surveyID={surveyID}
-          />
-        </GridItem>
-        <GridItem colSpan={3}>
-          <Flex gap={3}>
-            <Box>
-              <PerformanceInsCard
-                mb="2"
-                performance_ins={performance_ins}
-                handleform={handlePerformanceForm}
-                surveyID={surveyID}
-                value={performanceForm}
-              />
-              <PlatformPerformance
-                mb="2"
-                platformPerformance={platformPerformance}
-                handleform={handlePlatformForm}
-                value={platformForm}
-                surveyID={surveyID}
-              />
-              <OperationalConditionsCard
-                operationConditions={operationalConditions}
-                handleform={handleOperationalForm}
-                surveyID={surveyID}
-                value={operationalForm}
-              />
-            </Box>
-            <Box>
-              <Calibrations
-                mb="2"
-                calibrations={calibrations}
-                handleform={handleCalibrationsForm}
-                surveyID={surveyID}
-                value={calibrationForm}
-              />
-              <LeverarmCard
-                mb="2"
-                Leverarm={leverarm}
-                handleform={handleleverForm}
-                surveyID={surveyID}
-                value={leverForm}
-              />
-              <CloudPoints surveyID={surveyID} />
-            </Box>
-          </Flex>
-          <Button
-            mt="6"
-            onClick={() => {
-              handleSubmit(surveyCode);
-            }}
-            isLoading={planning}
-            variant="homePrimary"
-            py="6"
-          >
-            Plan Survey
-          </Button>
-        </GridItem>
-      </Grid>
-    </AdminLayout>
-  ) : (
-    <PurchaseLisence />
+  return (
+    // <AdminLayout>
+    <Grid
+      ref={ref}
+      pt={{ base: "130px", md: "80px", xl: "80px" }}
+      templateColumns="repeat(5, 1fr)"
+      gap={3}
+    >
+      <GridItem colSpan={5}>
+        <Card py="5" px="10">
+          <FormControl mb="2">
+            <FormLabel fontSize="sm">Survey Name</FormLabel>
+            <Input
+              data-cy="register-name"
+              id="name"
+              name="name"
+              variant="rounded"
+              fontSize="sm"
+              ms={{ base: "0px", md: "0px" }}
+              type="text"
+              placeholder="Survey Name"
+              mr="2px"
+              fontWeight="500"
+              size="sm"
+              value={surveyName}
+              onChange={(e) => setSurveyName(e.target.value)}
+              isDisabled
+            />
+          </FormControl>
+        </Card>
+      </GridItem>
+      <GridItem colSpan={2}>
+        <PercormanceCard
+          mb="2"
+          mr="2"
+          performance_ssss={performanceCard}
+          value={ssPerformanceForm}
+          handleform={handlessPerformanceForm}
+          surveyID={surveyid}
+        />
+        <Parameters
+          results={surveyParameters}
+          value={performanceForm}
+          surveyID={surveyid}
+        />
+      </GridItem>
+      <GridItem colSpan={3}>
+        <Flex gap={3}>
+          <Box>
+            <PerformanceInsCard
+              mb="2"
+              performance_ins={performance_ins}
+              handleform={handlePerformanceForm}
+              surveyID={surveyid}
+              value={performanceForm}
+            />
+            <PlatformPerformance
+              mb="2"
+              platformPerformance={platformPerformance}
+              handleform={handlePlatformForm}
+              value={platformForm}
+              surveyID={surveyid}
+            />
+            <OperationalConditionsCard
+              operationConditions={operationalConditions}
+              handleform={handleOperationalForm}
+              surveyID={surveyid}
+              value={operationalForm}
+            />
+          </Box>
+          <Box>
+            <Calibrations
+              mb="2"
+              calibrations={calibrations}
+              handleform={handleCalibrationsForm}
+              surveyID={surveyid}
+              value={calibrationForm}
+            />
+            <LeverarmCard
+              mb="2"
+              Leverarm={leverarm}
+              handleform={handleleverForm}
+              surveyID={surveyid}
+              value={leverForm}
+            />
+            <CloudPoints surveyid={surveyid} />
+          </Box>
+        </Flex>
+      </GridItem>
+    </Grid>
+    // </AdminLayout>
   );
 }
 
-MultibeamEchoSounder.requireAuth = true;
+export default React.forwardRef(SurveyResults);

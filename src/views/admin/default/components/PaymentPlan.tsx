@@ -24,10 +24,8 @@ import {
 
 // Custom components
 import Card from "components/card/Card";
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
-import { MdOutlineCreditCard } from "react-icons/md";
-import { getSession, useSession } from "next-auth/react";
-import axios from "axios";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useSession } from "next-auth/react";
 import RadioCard from "components/Radio";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { HiCurrencyDollar } from "react-icons/hi2";
@@ -35,11 +33,30 @@ import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { Formik, Form, useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/router";
+import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useCurrentUser } from "contexts/UserContext";
+import axiosConfig from "axiosConfig";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 
 // Assets
 // import { MultiSelect } from "chakra-multiselect";
+interface survey {
+  id: number;
+  name: string;
+  code: string;
+  code_value: string;
+}
 
-export default function PaymentPlan(props: { [x: string]: any }) {
+interface Props {
+  plan?: any;
+  getPlan?: any;
+  changeStep?: any;
+  handleUpgrade?: any;
+  [x: string]: any;
+}
+
+export default function PaymentPlan(props: Props) {
   const { plan, getplan, changeStep, handleUpgrade, ...rest } = props;
 
   type subscriptionData = {
@@ -51,35 +68,19 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
 
-  //   react-select
-  const options = [
-    { label: "product one", value: "product one" },
-    { label: "product two", value: "product two" },
-    { label: "product three", value: "product three" },
-  ];
-
-  const surveys = [
-    { value: 1, name: "multibeam survey" },
-    { value: 2, name: "Lydar survey" },
-    { value: 3, name: "Acoustic survey" },
-    { value: 4, name: "Echo survey" },
-  ];
-
   const radioOptions = ["USD", "EUR"];
-  // const options = useMemo(() => optionsArray, []);
 
   // component variables
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [serverError, setServerError] = useState("");
   const [total, setTotal] = useState(0);
-
-  // var value: any = useMemo(() => handleCheckBox(item), [item]);
+  const { surveys, getAllSurveys } = useAllSurveysContext();
 
   // subscription variables
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [phone, setPhone] = useState(null);
+  const [phone, setPhone] = useState("");
   const [customerLivemode] = useState(true);
   const [trialPeriodDays] = useState(0);
   const [cancelAtPeriodEnd] = useState(true);
@@ -88,8 +89,10 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   const [cancelAt, setCancelAt] = useState<Date>();
   const [daysUntilDue] = useState<number>(3);
   const [currency, setCurrency] = useState<string>("usd");
-  const [planID, setPlanID] = useState<number>();
+  const [planID, setPlanID] = useState<number>(0);
   const [value, setValue] = useState<number[]>([]);
+  // const [surveys, setSurveys] = useState([]);
+  const { currentUser, fetchCurrentUser } = useCurrentUser();
 
   // get user session
   var { data: session } = useSession();
@@ -122,17 +125,6 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   });
   const group = getRootProps();
 
-  const secondSession = useCallback(async () => {
-    await getSession()
-      .then((res) => {
-        session = res;
-        setCustomerName(res?.user?.data?.name);
-        setCustomerEmail(res?.user?.data?.email);
-        setPhone(res?.user?.data?.user_profile?.phone_number);
-      })
-      .catch((err) => {});
-  }, [session]);
-
   // get cancellation date
   const getCancelDate = (days: number) => {
     let today = new Date();
@@ -153,7 +145,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       .max(30, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
-    phone_number: Yup.number().required("Required"),
+    // phone_number: Yup.number().required("Required"),
     coupon: Yup.string(),
   });
 
@@ -163,40 +155,18 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       phone_number: number,
     };
 
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${token}`,
-      },
-    };
-
-    await axios
-      .patch(
-        `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
-        data,
-        config
-      )
-      .then(() => {
-        toast({
-          position: "bottom-right",
-          description: "Phone number saved",
-          status: "info",
-          duration: 4000,
-          isClosable: true,
-        });
-        return;
-      })
-      .catch((err) => {
-        console.log(err);
-        // toast({
-        //   position: "bottom-right",
-        //   description: 'Could not a',
-        //   status: "error",
-        //   duration: 4000,
-        //   isClosable: true,
-        // });
-        return;
+    try {
+      await axiosConfig.patch(`/auth/users/me/`, data);
+      toast({
+        position: "bottom-right",
+        description: "Phone number saved",
+        status: "info",
+        duration: 4000,
+        isClosable: true,
       });
+    } catch (err) {
+      return;
+    }
   };
 
   // subscribe to plan
@@ -209,14 +179,8 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       return;
     }
 
-    setError(null);
+    setError("");
     setLoading(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
 
     if (phone != values.phone_number) {
       await updateUser(
@@ -251,15 +215,11 @@ export default function PaymentPlan(props: { [x: string]: any }) {
       delete subscription_data["coupon_code"];
     }
 
-    console.log(subscription_data);
+    // console.log(subscription_data);
     // setLoading(false);
 
-    await axios
-      .post(
-        `https://surveyplanner.pythonanywhere.com/api/plans/create-subscription`,
-        subscription_data,
-        config
-      )
+    await axiosConfig
+      .post(`/api/plans/create-subscription`, subscription_data)
       .then((res) => {
         setLoading(false);
         toast({
@@ -270,7 +230,8 @@ export default function PaymentPlan(props: { [x: string]: any }) {
           isClosable: true,
         });
         // router.push("/admin/default");
-        router.replace("/admin/default").then(() => router.reload());
+        // .then(() => router.reload())
+        router.replace("/admin/default");
       })
       .catch((err) => {
         // console.log(err);
@@ -299,7 +260,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
     initialValues: {
       name: customerName,
       email: customerEmail,
-      phone_number: phone,
+      // phone_number: phone,
       coupon: "",
     },
     enableReinitialize: true,
@@ -308,13 +269,23 @@ export default function PaymentPlan(props: { [x: string]: any }) {
   });
 
   useEffect(() => {
+    if (!surveys) {
+      getAllSurveys();
+    }
+  }, [surveys, getAllSurveys]);
+
+  useEffect(() => {
     let cancelDate = getCancelDate(30);
-    secondSession();
+    if (!currentUser) {
+      fetchCurrentUser();
+    }
+    setCustomerName(currentUser.name);
+    setCustomerEmail(currentUser.email);
+    setPhone(currentUser.phone_number);
     setCancelAt(cancelDate);
     setTotal(plan?.price);
     setPlanID(plan.id);
-    // console.log(session);
-  }, [plan]);
+  }, [plan, fetchCurrentUser, currentUser]);
 
   return (
     <Card
@@ -360,19 +331,14 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 type="text"
                 variant="rounded"
                 required
-                // placeholder="123 454 231 123 122"
                 value={values.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                // value={customerName}
-                // onChange={(e) => setCustomerName(e.target.value)}
               />
-              {errors.name && touched.name ? (
+              {errors.name && touched.name && (
                 <FormHelperText color="red.400" mt="0" mb="5px">
                   {errors.name}
                 </FormHelperText>
-              ) : (
-                ""
               )}
             </FormControl>
             <Flex w="100%" pb="10px">
@@ -390,51 +356,36 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  // value={customerEmail}
-                  // onChange={(e) => setCustomerEmail(e.target.value)}
                 />
-                {errors.email && touched.email ? (
+                {errors.email && touched.email && (
                   <FormHelperText color="red.400" mt="0" mb="5px">
                     {errors.email}
                   </FormHelperText>
-                ) : (
-                  ""
                 )}
               </FormControl>
               <FormControl>
                 <FormLabel fontSize="sm" color={textColorSecondary}>
                   Phone Number *
                 </FormLabel>
-                <Input
-                  id="phone_number"
-                  name="phone_number"
-                  type="text"
-                  size="sm"
-                  required
-                  variant="rounded"
-                  placeholder=""
-                  value={values.phone_number}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  // value={customerPhone}
-                  // onChange={(e) => setCustomerPhone(e.target.value)}
+                <PhoneInput
+                  placeholder="Phone Number"
+                  international
+                  value={phone}
+                  onChange={setPhone}
+                  inputComponent={Input}
+                  style={{
+                    borderRadius: "15px",
+                    padding: "4px",
+                    fontSize: "14px",
+                    width: "100%",
+                  }}
                 />
-                {errors.phone_number && touched.phone_number ? (
-                  <FormHelperText
-                    display="flex"
-                    color="red.400"
-                    mt="0"
-                    // mb="5px"
-                  >
+                {!phone && (
+                  <FormHelperText display="flex" color="red.400" mt="0">
                     <Text>
-                      <>{errors.phone_number}</>
-                    </Text>
-                    <Text color="gray.400" fontSize="sm" mx="18px" mb="0">
-                      Make sure to add country code
+                      <>required</>
                     </Text>
                   </FormHelperText>
-                ) : (
-                  ""
                 )}
               </FormControl>
             </Flex>
@@ -455,73 +406,26 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 Select Survey(s). max {plan.max_products}
               </FormLabel>
               <Stack spacing={5} direction="row">
-                {surveys.map((survey) => {
-                  return (
-                    <Checkbox
-                      key={survey.value}
-                      colorScheme="primary"
-                      value={survey.value}
-                      onChange={handleCheckedState}
-                      isDisabled={
-                        !isChecked(survey.value) &&
-                        value.length == plan.max_products
-                      }
-                    >
-                      {survey.name}
-                    </Checkbox>
-                  );
-                })}
+                {surveys &&
+                  surveys.map((survey: survey) => {
+                    return (
+                      <Checkbox
+                        key={survey.id}
+                        colorScheme="primary"
+                        value={survey.id}
+                        onChange={handleCheckedState}
+                        isDisabled={
+                          !isChecked(survey.id) &&
+                          value.length == plan.max_products
+                        }
+                      >
+                        {survey.name}
+                      </Checkbox>
+                    );
+                  })}
               </Stack>
               <FormHelperText color="red.400">{error}</FormHelperText>
             </FormControl>
-
-            {/* <FormControl>
-            <FormLabel fontSize="sm" color={textColorSecondary}>
-              Select Currency
-            </FormLabel>
-            <Select
-              variant="outline"
-              // border={{ border: "0.5px purple" }}
-              size="lg"
-              borderRadius="2xl"
-              fontSize="sm"
-              _hover={{ border: "0.5px purple" }}
-              _focus={{ border: "0.5px purple" }}
-              onChange={(e) => setCurrency(e.target.value)}
-              value={currency}
-            >
-              <option value="usd">usd - default</option>
-              <option value="eur">eur</option>
-            </Select>
-          </FormControl> */}
-
-            {/* <MultiSelect
-            options={options}
-            value={value}
-            label="Choose an item"
-            onChange={setValue}
-            bg="red.500"
-          /> */}
-
-            {/* <FormControl>
-            <FormLabel fontSize="sm" color={textColorSecondary}>
-              Select Surveys
-            </FormLabel>
-            <Select
-              variant="outline"
-              // border={{ border: "0.5px purple" }}
-              size="lg"
-              borderRadius="2xl"
-              fontSize="sm"
-              _hover={{ border: "0.5px purple" }}
-              _focus={{ border: "0.5px purple" }}
-              onChange={(e) => setCurrency(e.target.value)}
-              value={currency}
-            >
-              <option value="usd">usd - default</option>
-              <option value="eur">eur</option>
-            </Select>
-          </FormControl> */}
 
             <FormControl>
               <FormLabel fontSize="sm" color={textColorSecondary}>
@@ -536,15 +440,11 @@ export default function PaymentPlan(props: { [x: string]: any }) {
                 value={values.coupon}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                // value={couponCode}
-                // onChange={(e) => setCouponCode(e.target.value)}
               />
-              {errors.coupon && touched.coupon ? (
+              {errors.coupon && touched.coupon && (
                 <FormHelperText color="red.400" mt="0" mb="5px">
                   {errors.coupon}
                 </FormHelperText>
-              ) : (
-                ""
               )}
             </FormControl>
 
@@ -617,11 +517,7 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               </Heading>
               <Text>Plan: {plan?.title}</Text>
               <Text mb="5">Total: $ {formatPrice(plan.price)}</Text>
-              {/* <Text wordBreak="break-word">
-                You'll have a 7 day free trial before completing your payment
-              </Text> */}
               <Button
-                // onClick={subscribe}
                 type="submit"
                 isLoading={loading}
                 fontSize="sm"
@@ -638,16 +534,6 @@ export default function PaymentPlan(props: { [x: string]: any }) {
               </Button>
             </Box>
             <Flex w="100%">
-              {/* <Button
-              variant="outline"
-              py="7"
-              my="3"
-              onClick={() => {
-                changeStep(2);
-              }}
-            >
-              Back
-            </Button> */}
               <Button
                 variant="outline"
                 w="full"

@@ -28,6 +28,8 @@ import { useSurveyContext } from "contexts/Survey";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Select from "react-select";
+import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 
 const jsonData = {
   name: "my test survey",
@@ -135,9 +137,13 @@ type Survey = {
 
 export default function AcousticSonar() {
   const [subscription, setSubscription] = useState<any>();
-  const [surveys, setSurveys] = useState([]);
+  const [survey, setSurvey] = useState([]);
   const [surveyID, setSurveyID] = useState(4);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+  const { surveys, acoustic, getAllSurveys } = useAllSurveysContext();
+  const { history, surveyOptions, getSurveyHistory } =
+    useSurveyHistoryContext();
+
   const [user, setUser] = useState(null);
   const { data: session } = useSession();
   const [surveyCode, setSurveyCode] = useState("S04");
@@ -559,25 +565,40 @@ export default function AcousticSonar() {
 
   const checkSubscription = () => {
     subscription?.assigned_surveys?.forEach((survey: any) => {
-      if (survey?.id == surveyID) {
-        setSurveys([survey?.id]);
+      if (survey?.id == acoustic.id) {
+        setSurvey([survey?.id]);
       }
     });
   };
 
+  useEffect(() => {
+    if (!surveys) {
+      getAllSurveys();
+    }
+
+    if (subscription && acoustic) {
+      checkSubscription();
+    }
+
+    if (acoustic) {
+      setSurveyCode(acoustic.code);
+      setSurveyID(acoustic.id);
+    }
+  }, [surveys, acoustic, subscription, getAllSurveys]);
+
   // to prefill form with survey past survey data
-  const loadSurveyData = () => {
-    setForm(calibrations);
+  const loadSurveyData = (event: any) => {
     const {
+      name,
       parameters: {
         calibration_parameters,
         "performance_ins-gnss-usbl": performance_gnss_usbl,
         survey_platform_performance,
         lever_arm_measures_between,
         operational_conditions,
-        "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
+        "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
       },
-    } = jsonData;
+    } = event.value;
 
     setCalibrationForm(calibration_parameters);
     setPerformanceForm(performance_gnss_usbl);
@@ -585,36 +606,8 @@ export default function AcousticSonar() {
     setOperationalForm(operational_conditions);
     setSSPerformanceForm(performance_ssss);
     setLeverForm(lever_arm_measures_between);
-
-    console.log("calibration_parameters:", calibration_parameters);
-    console.log("performance_gnss_usbl:", performance_gnss_usbl);
-    console.log("survey_platform_performance:", survey_platform_performance);
-    console.log("operational_conditions:", operational_conditions);
-    console.log("performance_ssss:", performance_ssss);
+    setSurveyName(name);
   };
-
-  // get all surveys
-  const getSurveys = async () => {
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .get(`https://surveyplanner.pythonanywhere.com/api/surveys/`, config)
-      .then((res) => {
-        res.data.map((survey: Survey) => {
-          if (survey.id == surveyID) {
-            setSurveyCode(survey.code);
-          }
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   // dummy option for react select
   const options = [
     {
@@ -644,7 +637,7 @@ export default function AcousticSonar() {
 
     let data = {
       name: surveyName,
-      survey: surveyID,
+      survey: acoustic.id,
       parameters: formData,
     };
 
@@ -652,7 +645,7 @@ export default function AcousticSonar() {
 
     await axios
       .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/generate-survey/${surveyCode}`,
+        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
         data,
         config
       )
@@ -697,16 +690,11 @@ export default function AcousticSonar() {
   };
 
   useEffect(() => {
-    getSurveys();
-  }, [surveys]);
-
-  useEffect(() => {
     const sub = async () => {
       await fetchSubscriptions();
     };
     // setSurveys([4]);
     setSubscription(subscriptions[subscriptions.length - 1]);
-    checkSubscription();
 
     sub();
   }, [loading, subscription]);
@@ -721,7 +709,7 @@ export default function AcousticSonar() {
     );
   }
 
-  return surveys.length > 0 ? (
+  return survey.length > 0 ? (
     <AdminLayout>
       <Grid
         pt={{ base: "130px", md: "80px", xl: "80px" }}
@@ -752,8 +740,8 @@ export default function AcousticSonar() {
               <FormLabel fontSize="sm">Surveys</FormLabel>
               <Select
                 styles={reactSelectStyles}
-                options={options}
-                onChange={loadSurveyData}
+                options={surveyOptions}
+                onChange={(e) => loadSurveyData(e)}
                 placeholder="Load past survey data"
               />
             </FormControl>
