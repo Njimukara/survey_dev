@@ -28,19 +28,12 @@ import Link from "next/link";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
-  Spinner,
   FormControl,
-  FormHelperText,
   FormLabel,
-  Icon,
   Image,
   Input,
-  InputGroup,
-  InputRightElement,
   Text,
-  useColorModeValue,
   HStack,
   useToast,
   Heading,
@@ -53,31 +46,16 @@ import Card from "components/card/Card";
 
 // import { useRef } from 'react'
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import AdminLayout from "layouts/admin";
 
 // react select
-import { useState, useMemo, SetStateAction } from "react";
+import { useState } from "react";
 // import countryList from "react-select-country-list";
 import { Country, City } from "country-state-city";
 import Select from "react-select";
+import axiosConfig from "axiosConfig";
 
 export default function EditCompany({ providers }: any) {
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
-  const textColor = useColorModeValue("navy.700", "white");
-  const textColorSecondary = "gray.400";
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [company, setCompany] = useState<any>();
@@ -162,14 +140,12 @@ export default function EditCompany({ providers }: any) {
       // method: 'POST',
       headers: {
         "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
 
-    await axios
+    await axiosConfig
       .patch(
-        `https://surveyplanner.pythonanywhere.com/api/company/update-company/${company.id}/`,
+        `/api/company/update-company/${company.id}/`,
         formdata,
         headerOptions
       )
@@ -219,20 +195,8 @@ export default function EditCompany({ providers }: any) {
   };
 
   const getCompany = async () => {
-    const headerOptions = {
-      // method: 'POST',
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/my-company/`,
-        headerOptions
-      )
+    await axiosConfig
+      .get(`/api/company/my-company/`)
       .then((res) => {
         // console.log(res);
         setCompany(res?.data);
@@ -293,7 +257,6 @@ export default function EditCompany({ providers }: any) {
             <Flex
               w="100%"
               mx={{ base: "auto", lg: "0px" }}
-              //   alignItems="center"
               justifyContent="center"
               mb={{ base: "30px", md: "60px" }}
               flexDirection="column"

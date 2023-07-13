@@ -21,7 +21,7 @@
 
 */
 
-import React from "react";
+import React, { forwardRef, ChangeEvent, LegacyRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 // Chakra imports
@@ -30,21 +30,20 @@ import {
   Button,
   Checkbox,
   Flex,
-  Spinner,
   FormControl,
   FormHelperText,
   FormLabel,
   Icon,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
-  Select,
+  Select as ChakraSelect,
   Text,
   useColorModeValue,
+  Heading,
 } from "@chakra-ui/react";
 
-import { Formik, Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 
 // Custom components
@@ -55,14 +54,46 @@ import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 
-// import { useRef } from 'react'
 import { signIn } from "next-auth/react";
-import axios from "axios";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import axiosConfig from "axiosConfig";
+import { FaLinkedin } from "react-icons/fa";
 
-export default function SignIn({ providers }: any) {
+const CustomInput = forwardRef(
+  (props: any, ref: LegacyRef<HTMLInputElement>) => {
+    const { value, onChange, ...rest } = props;
+    const handleChangeEvent = (event: ChangeEvent<HTMLInputElement>) => {
+      if (onChange) {
+        onChange(event.target.value);
+      }
+    };
+
+    return (
+      <Input
+        ref={ref}
+        isRequired={true}
+        id="phoneNumber"
+        variant="flushed"
+        fontSize="sm"
+        ms={{ base: "0px", md: "0px" }}
+        type="email"
+        placeholder="Enter your Email"
+        mt="3"
+        mb="10px"
+        fontWeight="500"
+        size="lg"
+        value={value}
+        onChange={handleChangeEvent}
+        {...rest}
+      />
+    );
+  }
+);
+
+export default function SignIn() {
   // Chakra color mode
   const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
   const textColorBrand = useColorModeValue("brand.500", "white");
@@ -75,16 +106,27 @@ export default function SignIn({ providers }: any) {
     { bg: "secondaryGray.300" },
     { bg: "whiteAlpha.200" }
   );
+  const linkedin = useColorModeValue({ bg: "#0077b5" }, { bg: "#0077b5" });
+  const linkedinHover = useColorModeValue({ bg: "#0f6694" }, { bg: "#0f6694" });
+  const linkedinActive = useColorModeValue(
+    { bg: "#3c90bd" },
+    { bg: "#3c90bd" }
+  );
+
   const router = useRouter();
   const [show, setShow] = React.useState(false);
   const [login, setLogin] = React.useState(true);
+  const [remember, setRemember] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [phoneNumber, setPhoneNumber] = React.useState(null);
+  const [numberError, setNumberError] = React.useState(null);
 
   // varaibles used for login
   const [formData, setFormData] = React.useState({
     email: "",
     password: "",
+    remember,
   });
 
   // Yup validation data schema
@@ -94,7 +136,6 @@ export default function SignIn({ providers }: any) {
       .max(30, "Name is too Long!")
       .required("Required"),
     email: Yup.string().email("Email is Invalid").required("Required"),
-    phoneNumber: Yup.number().min(9, "Min of 9 digits").required("Required"),
     password: Yup.string()
       .min(8, "Min of 8 characters required")
       .required("Required"),
@@ -112,91 +153,62 @@ export default function SignIn({ providers }: any) {
   };
 
   const Login = async () => {
-    if (formData.email == "" || formData.password == "") {
-      setError("Invalid Email or password");
+    if (!formData.email || !formData.password) {
+      setError("Email and password required");
       return;
     }
     setSubmitting(true);
-    // console.log()
-    // setError(null)
-    // nextauth login with credentials
     const res: any = await signIn("Credentials", {
       email: formData.email,
       password: formData.password,
+      remember: formData.remember,
       redirect: false,
-      // callbackurl: `${window.location.origin}`,
     });
 
     if (res.status == 200) {
-      // console.log(res);
       setSubmitting(false);
       router.push("/admin");
     } else if (res.status != 200) {
       let error = JSON.parse(res.error);
       setError(error.errors);
-      // console.log(res);
       setSubmitting(false);
     }
     setSubmitting(false);
   };
 
+  const handlePhoneNumber = (option: string) => {
+    setPhoneNumber(option);
+    setNumberError(null);
+  };
+
   const onSubmit = async (values: any, actions: any) => {
+    console.log(phoneNumber);
+    if (!phoneNumber) {
+      setNumberError("required");
+      return;
+    }
+    setNumberError(null);
+
     var formdata = new FormData();
     formdata.append("name", values.name);
     formdata.append("email", values.email);
-    formdata.append("phone_number", values.phoneNumber);
+    formdata.append("phone_number", phoneNumber);
     formdata.append("user_type", values.usertype);
     formdata.append("password", values.password);
     formdata.append("re_password", values.password);
-    formdata.set("avatar", "");
-    if (image != "") {
-      formdata.set("avatar", image);
-    }
-    const options = {
-      // method: 'POST',
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-      },
-    };
 
-    const res = await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/auth/users/",
-        formdata,
-        options
-      )
+    const res = await axiosConfig
+      .post("/auth/users/", formdata)
       .then((res) => {
-        // console.log(res);
         router.push("/auth/verifyemail");
       })
       .catch((error) => {
-        // console.log(error);
         let err = error.response.data.email;
         setError("Server error, please try again later");
         if (err != "") {
           setError(err);
         }
       });
-  };
-
-  const [image, setImage] = React.useState(null);
-  const [createObjectURL, setCreateObjectURL] = React.useState(null);
-
-  // display uploaded avatatar on fronend
-  const uploadToClient = (event: any) => {
-    if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
-
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
-    }
-  };
-
-  // remove user avatar
-  const removeAvatar = (event: any) => {
-    setImage(null);
-    setCreateObjectURL(null);
   };
 
   // formik initialisation using yup validation schema
@@ -212,7 +224,6 @@ export default function SignIn({ providers }: any) {
     initialValues: {
       name: "",
       email: "",
-      phoneNumber: "",
       password: "",
       confirmPassword: "",
       usertype: "1",
@@ -228,27 +239,29 @@ export default function SignIn({ providers }: any) {
         maxW={{ base: "100%", md: "max-content" }}
         w="100%"
         mx={{ base: "auto", lg: "0px" }}
-        h="100vh"
         alignItems="center"
         justifyContent="center"
-        mb={{ base: "30px", md: "60px" }}
         px={{ base: "25px", md: "0px" }}
-        mt={login ? "8vh" : "1vh"}
         flexDirection="column"
       >
         <Box w="100%">
-          <Text data-cy="login-state" textAlign="center" pb="10px">
-            {login
-              ? "Hello! You are welcome back :-)"
-              : "Welcome to Survey Planner :-)"}
-          </Text>
+          <Heading
+            as="h2"
+            data-cy="login-state"
+            fontSize="2xl"
+            textTransform="capitalize"
+            textAlign="center"
+            pb="20px"
+          >
+            {login ? "Welcome back!" : "Welcome to Survey Planner!"}
+          </Heading>
           <Flex
             justifyContent="space-evenly"
             alignItems="center"
             h="50px"
             px="5px"
             py="5px"
-            mb="15px"
+            mb="10"
             borderRadius="7px"
             bgColor={googleBg}
           >
@@ -277,18 +290,6 @@ export default function SignIn({ providers }: any) {
               Register
             </Button>
           </Flex>
-          {!login ? (
-            <Text
-              mb="10px"
-              color={textColorSecondary}
-              fontWeight="400"
-              fontSize="sm"
-            >
-              we provide an easy made solution for you to generate your surveys
-            </Text>
-          ) : (
-            ""
-          )}
         </Box>
         <Flex
           zIndex="2"
@@ -300,32 +301,7 @@ export default function SignIn({ providers }: any) {
           mx={{ base: "auto", lg: "unset" }}
           me="auto"
           mb={{ base: "20px", md: "auto" }}
-          // my={{xl: ''}}
         >
-          <Button
-            fontSize="sm"
-            me="0px"
-            mb="26px"
-            py="15px"
-            h="50px"
-            borderRadius="16px"
-            bgColor={googleBg}
-            color={textColor}
-            fontWeight="500"
-            _hover={googleHover}
-            _active={googleActive}
-            _focus={googleActive}
-          >
-            <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
-            Sign in with Google
-          </Button>
-          <Flex align="center" mb="25px">
-            <HSeparator />
-            <Text color="gray.400" mx="14px">
-              or
-            </Text>
-            <HSeparator />
-          </Flex>
           {error && (
             <Flex w="100%" justifyContent="center" mb="5px">
               <Text
@@ -339,24 +315,27 @@ export default function SignIn({ providers }: any) {
             </Flex>
           )}
           {login ? (
-            <FormControl>
-              <Input
-                data-cy="login-email"
-                id="loginEmail"
-                isRequired={true}
-                variant="rounded"
-                fontSize="sm"
-                ms={{ base: "0px", md: "0px" }}
-                type="email"
-                placeholder="Email"
-                mb="24px"
-                fontWeight="500"
-                size="lg"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
+            <div>
+              <FormControl>
+                <Input
+                  data-cy="login-email"
+                  id="loginEmail"
+                  isRequired={true}
+                  variant="flushed"
+                  fontSize="sm"
+                  ms={{ base: "0px", md: "0px" }}
+                  type="email"
+                  placeholder="Enter your Email"
+                  mb="24px"
+                  fontWeight="500"
+                  size="lg"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </FormControl>
+
               <InputGroup size="md">
                 <Input
                   data-cy="login-password"
@@ -367,7 +346,7 @@ export default function SignIn({ providers }: any) {
                   mb="24px"
                   size="lg"
                   type={show ? "text" : "password"}
-                  variant="rounded"
+                  variant="flushed"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -387,12 +366,15 @@ export default function SignIn({ providers }: any) {
                   <Checkbox
                     id="remember-login"
                     colorScheme="brandScheme"
+                    isChecked={remember}
+                    onChange={(e) => {
+                      setRemember(e.target.checked);
+                    }}
                     me="10px"
                   />
                   <FormLabel
                     htmlFor="remember-login"
                     mb="0"
-                    fontWeight="normal"
                     color={textColor}
                     fontSize="sm"
                   >
@@ -421,279 +403,324 @@ export default function SignIn({ providers }: any) {
                 variant="homePrimary"
                 fontWeight="500"
                 w="100%"
-                h="30"
+                py="6"
                 mb="24px"
                 onClick={Login}
               >
-                Sign in
+                Log in
               </Button>
-              {/* )} */}
-            </FormControl>
+
+              <Flex align="center" mb="25px">
+                <HSeparator />
+                <Text color="gray.400" mx="14px">
+                  or
+                </Text>
+                <HSeparator />
+              </Flex>
+              <Box w="100%">
+                <Button
+                  fontSize="sm"
+                  me="0px"
+                  w="100%"
+                  mb="26px"
+                  py="10px"
+                  h="40px"
+                  borderRadius="5px"
+                  border="1px"
+                  borderColor="gray.300"
+                  bgColor="white"
+                  color={textColor}
+                  fontWeight="500"
+                  _hover={googleHover}
+                  _active={googleActive}
+                  _focus={googleActive}
+                >
+                  <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
+                  Continue with Google
+                </Button>
+                <Button
+                  fontSize="sm"
+                  me="0px"
+                  w="100%"
+                  py="10px"
+                  h="40px"
+                  borderRadius="5px"
+                  border="1px"
+                  borderColor="gray.300"
+                  bgColor="#0077b5"
+                  color="white"
+                  fontWeight="500"
+                  _hover={linkedinHover}
+                  _active={linkedinActive}
+                  _focus={linkedinActive}
+                >
+                  <Icon as={FaLinkedin} w="20px" h="20px" me="10px" />
+                  Continue with LinkedIn
+                </Button>
+              </Box>
+            </div>
           ) : (
             // Signup form begins
-            <form onSubmit={handleSubmit}>
-              <FormControl>
-                <Input
-                  data-cy="register-name"
-                  id="name"
-                  name="name"
-                  variant="rounded"
-                  fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
-                  type="text"
-                  placeholder="Your name*"
-                  mr="2px"
-                  fontWeight="500"
-                  size="lg"
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.name && touched.name ? (
-                  <FormHelperText
-                    data-cy="register-name-error"
-                    color="red.400"
-                    mt="0"
-                    mb="5px"
-                  >
-                    {errors.name}
-                  </FormHelperText>
-                ) : (
-                  ""
-                )}
-              </FormControl>
-              <FormControl>
-                <Input
-                  data-cy="register-email"
-                  id="email"
-                  name="email"
-                  variant="rounded"
-                  fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
-                  type="email"
-                  placeholder="Email*"
-                  mt="12px"
-                  fontWeight="500"
-                  size="lg"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.email && touched.email ? (
-                  <FormHelperText
-                    data-cy="register-email-error"
-                    color="red.400"
-                    mt="0"
-                    mb="5px"
-                  >
-                    {errors.email}.
-                  </FormHelperText>
-                ) : (
-                  ""
-                )}
-              </FormControl>
-              <FormControl>
-                <Input
-                  data-cy="register-phonenumber"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  variant="rounded"
-                  fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
-                  type="text"
-                  placeholder="Phone Number*"
-                  mt="12px"
-                  fontWeight="500"
-                  size="lg"
-                  value={values.phoneNumber}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.phoneNumber && touched.phoneNumber ? (
-                  <FormHelperText
-                    data-cy="register-phonenumber-error"
-                    color="red.400"
-                    mt="0"
-                    mb="5px"
-                  >
-                    {errors.phoneNumber}.
-                  </FormHelperText>
-                ) : (
-                  ""
-                )}
-              </FormControl>
-              <Flex>
-                <FormControl mr="4px">
-                  <InputGroup size="md">
-                    <Input
-                      data-cy="register-password"
-                      id="password"
-                      name="password"
-                      fontSize="sm"
-                      placeholder="Password*(Min. 8 characters)"
-                      size="lg"
-                      mt="12px"
-                      type={show ? "text" : "password"}
-                      variant="rounded"
-                      value={values.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <InputRightElement
-                      display="flex"
-                      alignItems="center"
-                      mt="15px"
-                    >
-                      <Icon
-                        color={textColorSecondary}
-                        _hover={{ cursor: "pointer" }}
-                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                        onClick={handleClick}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                  {errors.password && touched.password ? (
+            <div>
+              <form onSubmit={handleSubmit}>
+                <FormControl>
+                  <Input
+                    data-cy="register-name"
+                    id="name"
+                    name="name"
+                    variant="flushed"
+                    fontSize="sm"
+                    ms={{ base: "0px", md: "0px" }}
+                    type="text"
+                    placeholder="Enter Full Name"
+                    mr="2px"
+                    fontWeight="500"
+                    size="lg"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.name && touched.name ? (
                     <FormHelperText
-                      data-cy="register-password-error"
+                      data-cy="register-name-error"
                       color="red.400"
                       mt="0"
                       mb="5px"
                     >
-                      {errors.password}
+                      {errors.name}
                     </FormHelperText>
                   ) : (
                     ""
                   )}
                 </FormControl>
                 <FormControl>
-                  <InputGroup size="md">
-                    <Input
-                      data-cy="register-confirmpassword"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      fontSize="sm"
-                      placeholder="Confirm Password"
-                      size="lg"
-                      mt="12px"
-                      type={show ? "text" : "password"}
-                      variant="rounded"
-                      value={values.confirmPassword}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <InputRightElement
-                      display="flex"
-                      alignItems="center"
-                      mt="15px"
-                    >
-                      <Icon
-                        color={textColorSecondary}
-                        _hover={{ cursor: "pointer" }}
-                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                        onClick={handleClick}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                  {errors.confirmPassword && touched.confirmPassword ? (
+                  <Input
+                    data-cy="register-email"
+                    id="email"
+                    name="email"
+                    variant="flushed"
+                    fontSize="sm"
+                    ms={{ base: "0px", md: "0px" }}
+                    type="email"
+                    placeholder="Your Email"
+                    mt="12px"
+                    fontWeight="500"
+                    size="lg"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.email && touched.email ? (
                     <FormHelperText
-                      data-cy="register-confirmpassword-error"
+                      data-cy="register-email-error"
                       color="red.400"
                       mt="0"
                       mb="5px"
                     >
-                      {errors.confirmPassword}
+                      {errors.email}.
                     </FormHelperText>
                   ) : (
                     ""
                   )}
                 </FormControl>
-              </Flex>
-              <FormControl>
-                <InputGroup size="md">
-                  <Select
-                    data-cy="register-usertype"
-                    id="usertype"
-                    name="usertype"
-                    fontSize="sm"
-                    placeholder="Select type of user*"
-                    size="lg"
-                    mt="12px"
-                    variant="auth"
-                    value={values.usertype}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    <option value="1">Individual - default</option>
-                    <option value="2">Company</option>
-                  </Select>
-                </InputGroup>
-                {errors.usertype && touched.usertype ? (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
-                    {errors.usertype}
-                  </FormHelperText>
-                ) : (
-                  ""
-                )}
-              </FormControl>
-              <Flex alignItems="center">
-                <Image
-                  src={createObjectURL ? createObjectURL : "/profile.png"}
-                  borderRadius="10px"
-                  objectFit="cover"
-                  width="50px"
-                  height="50px"
-                  borderColor="primary.500"
-                />
-                <Box position="relative" overflow="hidden" my="3">
-                  <Button ml="10px" cursor="pointer">
-                    {image ? image.name : "Upload Avatar (optional)"}
-                  </Button>
-                  <Input
-                    data-cy="register-image"
-                    onChange={uploadToClient}
-                    position="absolute"
-                    left="0"
-                    opacity="0"
-                    type="file"
-                    name="myfile"
-                    accept="image/*"
-                  />
-                </Box>
-                {image ? (
-                  <Button onClick={removeAvatar} ml="10px" cursor="pointer">
-                    Remove Avatar
-                  </Button>
-                ) : null}
-              </Flex>
 
-              {/* {isSubmitting ? (
-                <Flex
-                  mt='10px'
-                  w='100%'
-                  alignItems='center'
-                  justifyContent='center'>
-                  <Spinner
-                    size='xl'
-                    thickness='7px'
-                    speed='0.9s'
-                    color='primary.500'
+                <FormControl>
+                  <PhoneInput
+                    placeholder="Phone Number"
+                    international
+                    value={phoneNumber}
+                    onChange={handlePhoneNumber}
+                    inputComponent={CustomInput}
                   />
+                  {numberError && (
+                    <FormHelperText
+                      data-cy="register-phonenumber-error"
+                      color="red.400"
+                      mt="0"
+                      mb="5px"
+                    >
+                      {numberError}.
+                    </FormHelperText>
+                  )}
+                </FormControl>
+
+                <Flex>
+                  <FormControl mr="4px">
+                    <InputGroup size="md">
+                      <Input
+                        data-cy="register-password"
+                        id="password"
+                        name="password"
+                        fontSize="sm"
+                        placeholder="Password*(Min. 8 characters)"
+                        size="lg"
+                        mt="12px"
+                        type={show ? "text" : "password"}
+                        variant="flushed"
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <InputRightElement
+                        display="flex"
+                        alignItems="center"
+                        mt="15px"
+                      >
+                        <Icon
+                          color={textColorSecondary}
+                          _hover={{ cursor: "pointer" }}
+                          as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                          onClick={handleClick}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                    {errors.password && touched.password ? (
+                      <FormHelperText
+                        data-cy="register-password-error"
+                        color="red.400"
+                        mt="0"
+                        mb="5px"
+                      >
+                        {errors.password}
+                      </FormHelperText>
+                    ) : (
+                      ""
+                    )}
+                  </FormControl>
+                  <FormControl>
+                    <InputGroup size="md">
+                      <Input
+                        data-cy="register-confirmpassword"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        fontSize="sm"
+                        placeholder="Confirm Password"
+                        size="lg"
+                        mt="12px"
+                        type={show ? "text" : "password"}
+                        variant="flushed"
+                        value={values.confirmPassword}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <InputRightElement
+                        display="flex"
+                        alignItems="center"
+                        mt="15px"
+                      >
+                        <Icon
+                          color={textColorSecondary}
+                          _hover={{ cursor: "pointer" }}
+                          as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                          onClick={handleClick}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                    {errors.confirmPassword && touched.confirmPassword ? (
+                      <FormHelperText
+                        data-cy="register-confirmpassword-error"
+                        color="red.400"
+                        mt="0"
+                        mb="5px"
+                      >
+                        {errors.confirmPassword}
+                      </FormHelperText>
+                    ) : (
+                      ""
+                    )}
+                  </FormControl>
                 </Flex>
-              ) : ( */}
-              <Button
-                data-cy="register-button"
-                type="submit"
-                isLoading={isSubmitting}
-                fontSize="sm"
-                variant="homePrimary"
-                fontWeight="500"
-                w="100%"
-                h="30px"
-              >
-                Sign Up
-              </Button>
-              {/* )} */}
-            </form>
+                <FormControl>
+                  <InputGroup size="md">
+                    <ChakraSelect
+                      data-cy="register-usertype"
+                      id="usertype"
+                      name="usertype"
+                      fontSize="sm"
+                      placeholder="Select type of user*"
+                      size="lg"
+                      mt="12px"
+                      variant="flushed"
+                      value={values.usertype}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <option value="1">Individual - default</option>
+                      <option value="2">Company</option>
+                    </ChakraSelect>
+                  </InputGroup>
+                  {errors.usertype && touched.usertype ? (
+                    <FormHelperText color="red.400" mt="0" mb="5px">
+                      {errors.usertype}
+                    </FormHelperText>
+                  ) : (
+                    ""
+                  )}
+                </FormControl>
+
+                <Button
+                  data-cy="register-button"
+                  type="submit"
+                  isLoading={isSubmitting}
+                  fontSize="sm"
+                  variant="homePrimary"
+                  fontWeight="500"
+                  w="100%"
+                  py="6"
+                  mt="5"
+                >
+                  Sign Up
+                </Button>
+              </form>
+              <Flex align="center" my="25px">
+                <HSeparator />
+                <Text color="gray.400" mx="14px">
+                  or
+                </Text>
+                <HSeparator />
+              </Flex>
+              <Box w="100%">
+                <Button
+                  fontSize="sm"
+                  me="0px"
+                  w="100%"
+                  mb="26px"
+                  py="10px"
+                  h="40px"
+                  borderRadius="5px"
+                  border="1px"
+                  borderColor="gray.300"
+                  bgColor="white"
+                  color={textColor}
+                  fontWeight="500"
+                  _hover={googleHover}
+                  _active={googleActive}
+                  _focus={googleActive}
+                >
+                  <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
+                  Continue with Google
+                </Button>
+                <Button
+                  fontSize="sm"
+                  me="0px"
+                  w="100%"
+                  py="10px"
+                  h="40px"
+                  borderRadius="5px"
+                  border="1px"
+                  borderColor="gray.300"
+                  bgColor="#0077b5"
+                  color="white"
+                  fontWeight="500"
+                  _hover={linkedinHover}
+                  _active={linkedinActive}
+                  _focus={linkedinActive}
+                >
+                  <Icon as={FaLinkedin} w="20px" h="20px" me="10px" />
+                  Continue with LinkedIn
+                </Button>
+              </Box>
+            </div>
           )}
         </Flex>
       </Flex>

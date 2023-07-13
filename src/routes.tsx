@@ -3,30 +3,28 @@ import {
   MdBarChart,
   MdPerson,
   MdHome,
-  MdAdd,
   MdOutlineShoppingCart,
+  MdHistory,
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "pages/admin/default";
-import GenerateSurvey from "pages/admin/generate-survey";
 import Profile from "pages/admin/profile";
 // import DataTables from "pages/admin/data-tables";
 
 // Auth Imports
-import SignInCentered from "pages/auth/signin";
-import { IRoute } from "types/navigation";
+import { IRoute } from "../types/navigation";
 
 const routes: IRoute[] = [
+  // {
+  //   name: "Generate Survey",
+  //   layout: "/admin",
+  //   path: "/generate",
+  //   icon: <Icon as={MdAdd} width="20px" height="20px" color="inherit" />,
+  //   component: MainDashboard,
+  // },
   {
-    name: "Generate Survey",
-    layout: "/admin",
-    path: "/generate",
-    icon: <Icon as={MdAdd} width="20px" height="20px" color="inherit" />,
-    component: MainDashboard,
-  },
-  {
-    name: "Home",
+    name: "Dashboard",
     layout: "/admin",
     path: "/default",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,

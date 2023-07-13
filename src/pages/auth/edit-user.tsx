@@ -27,66 +27,34 @@ import { useRouter } from "next/router";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
-  Spinner,
   FormControl,
-  FormHelperText,
   FormLabel,
-  Icon,
   Image,
   Input,
   InputGroup,
   InputRightElement,
-  // Select,
   Text,
-  useColorModeValue,
   HStack,
   useToast,
-  InputLeftElement,
 } from "@chakra-ui/react";
-
-import { Formik, Form, useFormik } from "formik";
-import * as Yup from "yup";
 
 // Custom components
 import Card from "components/card/Card";
 
-// Assets
-
-// import { useRef } from 'react'
-import { signIn, useSession, getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import AdminLayout from "layouts/admin";
 import SetPassword from "views/admin/profile/components/SetPassword";
-import defaultImage from "./../../../public/profile.png";
 import SetEmail from "views/admin/profile/components/SetEmail";
-import PhoneInput from "react-phone-input-2";
-// import "react-phone-input-2/lib/style.css";
-// import styles from "../../../styles/PhoneNumbr.module.css";
-// import "../../styles/PhoneNumbr.module.css";
-import { Country, City } from "country-state-city";
-import Select from "react-select";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import axiosConfig from "axiosConfig";
 
-export default function EditUser({ providers }: any) {
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
-  const textColor = useColorModeValue("navy.700", "white");
-  const textColorSecondary = "gray.400";
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
+export default function EditUser() {
   const router = useRouter();
   const [submitting, setSubmitting] = React.useState(false);
-  const [user, setUser] = React.useState<any>();
+  const [, setUser] = React.useState<any>();
   const [error, setError] = React.useState(null);
   const [canEdit, setCanEdit] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -95,12 +63,9 @@ export default function EditUser({ providers }: any) {
   const [phone_number, setPhone_number] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [image, setImage] = React.useState(null);
-  const [defaulimage, setDefaultImage] = React.useState(null);
   const [createObjectURL, setCreateObjectURL] = React.useState(null);
-  const [phoneValue, setPhoneValue] = React.useState("");
-  const [companyCountry, setCompanyCountry] = React.useState(null);
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // chakra toast
   const toast = useToast();
@@ -121,29 +86,16 @@ export default function EditUser({ providers }: any) {
     setEmailModal(state);
   };
 
-  // toggleEmailModal;
-
   // function to upddate user
   const updateUser = async () => {
     setSubmitting(true);
-    getDefaultImage();
-    let contact;
-    if (!phoneValue.includes("+") && phone_number != null) {
-      contact = `+${phoneValue}${phone_number}`;
-    } else if (phoneValue.includes("+") && phone_number != null) {
-      contact = phoneValue + phone_number;
-    } else {
-      contact = "";
-    }
     let formData = new FormData();
     formData.append("name", name);
-    formData.append("phone_number", contact);
+    formData.append("phone_number", phone_number);
     formData.append("user_type", session?.user?.data?.user_profile?.user_type);
     if (image != null) {
       formData.set("avatar", image);
     }
-
-    // console.log("avatar", formData.get("avatar"));
 
     const options = {
       // method: 'POST',
@@ -160,8 +112,7 @@ export default function EditUser({ providers }: any) {
         formData,
         options
       )
-      .then((res) => {
-        axios.get("/api/auth/session?update");
+      .then(() => {
         getUser();
         toggleEdit();
         setSubmitting(false);
@@ -173,9 +124,7 @@ export default function EditUser({ providers }: any) {
           isClosable: true,
         });
       })
-      .catch((err) => {
-        // console.log(err);
-        // setError(err);
+      .catch(() => {
         setSubmitting(false);
         toast({
           position: "bottom-right",
@@ -185,13 +134,6 @@ export default function EditUser({ providers }: any) {
           isClosable: true,
         });
       });
-  };
-
-  // display uploaded avatatar on frontend
-  const getDefaultImage = () => {
-    const i = new Blob([defaultImage]);
-    console.log(i);
-    setDefaultImage(i);
   };
 
   // display uploaded avatatar on frontend
@@ -205,33 +147,23 @@ export default function EditUser({ providers }: any) {
   };
 
   // remove user avatar
-  const removeAvatar = (event: any) => {
+  const removeAvatar = () => {
     setImage(null);
     setCreateObjectURL(null);
   };
 
   // get user
   const getUser = async () => {
-    const options = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(`https://surveyplanner.pythonanywhere.com/auth/users/me/`, options)
+    await axiosConfig
+      .get(`/auth/users/me/`)
       .then((res) => {
         setUser(res?.data);
         setName(res?.data?.name);
         setEmail(res?.data?.email);
-        setPhone_number(res?.data?.phone_number);
+        setPhone_number(res?.data?.user_profile?.phone_number);
         setCreateObjectURL(res?.data?.user_profile?.avatar);
-        // router.push("/auth/verifyemail");
       })
-      .catch((error) => {
-        // console.log(error);
+      .catch(() => {
         toast({
           position: "bottom-right",
           description: "Error getting user details",
@@ -249,53 +181,6 @@ export default function EditUser({ providers }: any) {
     fetchUser();
   }, [session]);
 
-  // const containerStyles = {
-  //   width: "100%",
-  //   border: "1px blue",
-  //   borderRadius: "10px",
-  //   backgroundColor: "red",
-  // };
-
-  const reactSelectStyles = {
-    control: () => ({
-      // ...defaultStyles,
-      display: "flex",
-      backgroundColor: "transparent",
-      borderColor: "gray.200",
-      color: "black",
-      zIndex: "10",
-      padding: "6px",
-      borderRadius: "15px",
-      boxShadow: "none",
-      width: "120px",
-    }),
-    // singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
-  };
-
-  type option = {
-    value: {
-      phoneCode: string;
-    };
-    label: string;
-  } | null;
-
-  //   react-select
-  // const options = useMemo(() => countryList().getData(), []);
-  const options = Country.getAllCountries().map(
-    (country: { phonecode: any }) => ({
-      value: {
-        phoneCode: country.phonecode,
-      },
-      label: country.phonecode,
-    })
-  );
-
-  const changeHandler = (value: any) => {
-    console.log(value);
-    setCompanyCountry(value);
-    setPhoneValue(value.value?.phoneCode);
-  };
-
   return (
     <AdminLayout>
       <Card mt={20} borderRadius="10">
@@ -304,7 +189,7 @@ export default function EditUser({ providers }: any) {
             {/* image upload */}
             <Flex alignItems="center" flexDirection="column">
               <Image
-                src={createObjectURL != "" ? createObjectURL : "/profile.png"}
+                src={createObjectURL || "/profile.png"}
                 objectFit="contain"
                 bg="transparent"
                 width="370px"
@@ -327,11 +212,12 @@ export default function EditUser({ providers }: any) {
                   accept="image/x-png,image/gif,image/jpeg,image/avif"
                 />
               </Box>
-              {image || (createObjectURL && !canEdit) ? (
-                <Button onClick={removeAvatar} ml="10px" cursor="pointer">
-                  Remove Avatar
-                </Button>
-              ) : null}
+              {image ||
+                (createObjectURL && !canEdit && (
+                  <Button onClick={removeAvatar} ml="10px" cursor="pointer">
+                    Remove Avatar
+                  </Button>
+                ))}
             </Flex>
 
             {/* user details */}
@@ -369,55 +255,28 @@ export default function EditUser({ providers }: any) {
                     size="lg"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    // onBlur={handleBlur}
                     isDisabled={canEdit}
                   />
                 </HStack>
               </FormControl>
 
-              <FormControl pb="3">
+              <FormControl>
                 <HStack spacing="10px">
-                  <FormLabel w="150px">Contact</FormLabel>
-                  <Flex flexDirection="column" w="100%" justifyContent="center">
-                    <Input
-                      // flex={1}
-                      id="phone_number"
-                      name="phone_number"
-                      variant="rounded"
-                      fontSize="sm"
-                      ms={{ base: "0px", md: "0px" }}
-                      type="text"
-                      placeholder="Add phone number"
-                      mr="2px"
-                      w="100%"
-                      fontWeight="500"
-                      size="lg"
-                      value={phone_number}
-                      onChange={(e) => setPhone_number(e.target.value)}
-                      isDisabled={canEdit}
-                    />
-                    <Text color="gray.400" fontSize="sm" mx="18px" mb="0">
-                      Make sure to add country code
-                    </Text>
-                    {/* </InputGroup> */}
-                  </Flex>
-                  {/* <PhoneInput
-                    // containerClass="container_class"
-                    // inputClass="input_class"
-                    buttonStyle={{
-                      backgroundColor: "none",
-                      border: "none",
-                      borderRadius: "5px",
-                      marginLeft: "0",
-                      padding: "0",
-                      // _hover:
+                  <FormLabel w="150px">Phone Number</FormLabel>
+                  <PhoneInput
+                    placeholder="Phone Number"
+                    international
+                    value={phone_number}
+                    onChange={setPhone_number}
+                    inputComponent={Input}
+                    isDisabled={canEdit}
+                    style={{
+                      borderRadius: "15px",
+                      padding: "4px",
+                      fontSize: "14px",
+                      width: "100%",
                     }}
-                    containerStyle={containerStyles}
-                    inputStyle={{ width: "100%", border: "none" }}
-                    placeholder="Add phone number"
-                    value={phoneValue}
-                    onChange={setPhoneValue}
-                  /> */}
+                  />
                 </HStack>
               </FormControl>
 
@@ -432,10 +291,8 @@ export default function EditUser({ providers }: any) {
                       placeholder="Confirm Password"
                       size="lg"
                       mt="12px"
-                      // type={show ? "text" : "password"}
                       variant="rounded"
                       value={email}
-                      // onChange={handleChange}
                       isDisabled={canEdit}
                     />
                     <InputRightElement
@@ -488,7 +345,6 @@ export default function EditUser({ providers }: any) {
                     px="5"
                     fontWeight="500"
                   >
-                    {/* <Link href="/admin/profile">Profile</Link> */}
                     Back
                   </Button>
                 </Flex>
@@ -505,7 +361,6 @@ export default function EditUser({ providers }: any) {
                     Save
                   </Button>
                   <Button
-                    // isLoading={isSubmitting}
                     onClick={toggleEdit}
                     fontSize="sm"
                     variant="outline"

@@ -38,50 +38,25 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-// Custom components
-import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
 import {
-  MdOutlineMail,
   MdOutlineArrowBack,
   MdLockOpen,
   MdOutlineRemoveRedEye,
 } from "react-icons/md";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import { RiEyeCloseLine } from "react-icons/ri";
+import axiosConfig from "axiosConfig";
 
 export default function SetPassword(props: any) {
-  // var state = props
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
-  const textColor = useColorModeValue("navy.700", "white");
-  const brandColor = useColorModeValue("brand.500", "white");
   const textColorSecondary = "gray.400";
-  // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
-
-  //   togle password visibility
-  const handleClick = () => setShow(!show);
 
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -101,18 +76,14 @@ export default function SetPassword(props: any) {
   // chakra toast
   const toast = useToast();
 
+  const handleClick = () => setShow(!show);
+
   // submit email for password reset
   const onSubmit = async (values: any) => {
     setSubmitting(true);
     setError(null);
-    let url: any = router.query.slug;
-    let uid, token;
-    for (let i in url) {
-      uid = url[0];
-      token = url[1];
-    }
-    // console.log(uid, token);
-
+    const { slug } = router.query;
+    const [uid, token] = slug;
     // request body
     const data = {
       uid: uid,
@@ -120,19 +91,8 @@ export default function SetPassword(props: any) {
       new_password: values.password,
     };
 
-    // headers
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-      },
-    };
-
-    const res = await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/auth/users/reset_password_confirm/",
-        data,
-        config
-      )
+    await axiosConfig
+      .post("/auth/users/reset_password_confirm/", data)
       .then((res) => {
         router.push("/auth/signin");
         setSubmitting(false);
@@ -145,9 +105,7 @@ export default function SetPassword(props: any) {
         });
       })
       .catch((err) => {
-        // console.log(err);
         setError(err.response.data.token[0]);
-        // setError(err.response.data.uid);
         setSubmitting(false);
         toast({
           position: "bottom-right",
@@ -159,29 +117,21 @@ export default function SetPassword(props: any) {
       });
   };
 
-  const {
-    values,
-    isSubmitting,
-    errors,
-    touched,
-    handleChange,
-    handleSubmit,
-    handleBlur,
-  } = useFormik({
-    initialValues: {
-      password: "",
-      confirmPassword: "",
-    },
-    validationSchema: validationSchema,
-    onSubmit,
-  });
+  const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
+    useFormik({
+      initialValues: {
+        password: "",
+        confirmPassword: "",
+      },
+      validationSchema: validationSchema,
+      onSubmit,
+    });
 
   useEffect(() => {}, []);
 
   return (
     <>
       <Flex
-        // maxW={{ base: '100%', md: 'max-content' }}
         w="100%"
         h="100vh"
         alignItems="center"
@@ -206,12 +156,10 @@ export default function SetPassword(props: any) {
             Your new password must be different from the previous one.
           </Text>
 
-          {error != null ? (
+          {error && (
             <Text my={3} fontSize="sm" color="red.400" textAlign="center">
               {error}
             </Text>
-          ) : (
-            ""
           )}
           <form onSubmit={handleSubmit}>
             <FormControl>
@@ -227,7 +175,7 @@ export default function SetPassword(props: any) {
                   mb="5px"
                   size="lg"
                   type={show ? "text" : "password"}
-                  variant="rounded"
+                  variant="flushed"
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -241,12 +189,10 @@ export default function SetPassword(props: any) {
                   />
                 </InputRightElement>
               </InputGroup>
-              {errors.password && touched.password ? (
+              {errors.password && touched.password && (
                 <FormHelperText color="red.400" mt="0" mb="5px">
                   {errors.password}.
                 </FormHelperText>
-              ) : (
-                ""
               )}
             </FormControl>
             <FormControl>
@@ -256,7 +202,7 @@ export default function SetPassword(props: any) {
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
-                variant="rounded"
+                variant="flushed"
                 fontSize="sm"
                 ms={{ base: "0px", md: "0px" }}
                 mb="5px"
@@ -268,16 +214,13 @@ export default function SetPassword(props: any) {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {errors.confirmPassword && touched.confirmPassword ? (
+              {errors.confirmPassword && touched.confirmPassword && (
                 <FormHelperText color="red.400" mt="0" mb="5px">
                   {errors.confirmPassword}.
                 </FormHelperText>
-              ) : (
-                ""
               )}
             </FormControl>
             <Button
-              // onClick={handleSubmit}
               type="submit"
               isLoading={submitting}
               variant="homePrimary"

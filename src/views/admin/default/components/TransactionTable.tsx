@@ -1,7 +1,6 @@
 import {
   Flex,
   Table,
-  Progress,
   Icon,
   Tbody,
   Td,
@@ -10,9 +9,11 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  useToast,
+  Button,
+  Box,
+  Input,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -22,84 +23,27 @@ import {
 
 // Custom components
 import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
 
 // Assets
 import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
 import { TableProps } from "../variables/columnsData";
-import { getSession, useSession } from "next-auth/react";
-import axios from "axios";
 export default function TransactionTable(props: TableProps) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-
-  const [user, setUser] = useState(null);
-  const [subscriptions, setSubscriptions] = useState(null);
-
-  // chakra toast
-  const toast = useToast();
-
-  var { data: session, status } = useSession();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // format price
   const formatPrice = (price: number) => {
     return price / 100;
   };
 
-  //   const sessionUpdate = useCallback(async () => {
-  //     await getSession()
-  //       .then((res) => {
-  //         session = res;
-  //         setUser(res?.user?.data);
-  //       })
-  //       .catch((err) => {
-  //         // console.log(err);
-  //       });
-  //   }, [session]);
-
-  //   // get user subscriptions
-  //   const getSubscritptions = async () => {
-  //     const config = {
-  //       headers: {
-  //         "Content-Type": "json",
-  //         Accept: "application/json;charset=UTF-8",
-  //         Authorization: `Token ${session?.user?.auth_token}`,
-  //       },
-  //     };
-
-  //     await axios
-  //       .get(
-  //         "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-  //         config
-  //       )
-  //       .then((response) => {
-  //         setSubscriptions(response.data);
-  //         console.log(response.data);
-  //       })
-  //       .catch((err) => {
-  //         toast({
-  //           position: "bottom-right",
-  //           description: "Error getting company users",
-  //           status: "error",
-  //           duration: 4000,
-  //           isClosable: true,
-  //         });
-  //       });
-  //   };
-
-  useEffect(() => {
-    // sessionUpdate();
-    // // getSubscritptions()
-    // setUser(session?.user?.data);
-    console.log(data);
-  }, [session, data]);
-
   const tableInstance = useTable(
     {
       columns,
       data,
+      initialState: { pageIndex: 0, pageSize: 5 },
     },
     useGlobalFilter,
     useSortBy,
@@ -112,19 +56,40 @@ export default function TransactionTable(props: TableProps) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    state: { pageIndex },
+    setGlobalFilter,
   } = tableInstance;
-  initialState.pageSize = 5;
 
-  // format date
-  const formatDate = (date: any) => {
-    let dateToFormat = new Date(date);
-    let joinedDate = dateToFormat.toLocaleDateString("en-US");
-    return joinedDate;
+  const handleSearch = () => {
+    setGlobalFilter(searchTerm);
   };
+  const cancelSearch = () => {
+    setSearchTerm("");
+  };
+
+  function formatDate(date: string) {
+    let options = [{ month: "short" }, { day: "numeric" }, { year: "numeric" }];
+    let newDate = new Date(date);
+
+    function format(options: any) {
+      let formatter = new Intl.DateTimeFormat("en", options);
+      return formatter.format(newDate);
+    }
+    return options.map(format).join(", ");
+  }
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+  const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
+  const nullbtnbgfocus = useColorModeValue({ bg: "none" }, { bg: "none" });
+
   return (
     <Card
       flexDirection="column"
@@ -143,6 +108,30 @@ export default function TransactionTable(props: TableProps) {
         >
           Recent Transactions
         </Text>
+        <Input
+          placeholder="Input Search"
+          value={searchTerm}
+          w="50%"
+          variant="flushed"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          mr="2"
+        />
+        <Box>
+          <Button onClick={handleSearch} variant="outline" py="3" px="6" mr="2">
+            Search
+          </Button>
+          <Button
+            onClick={cancelSearch}
+            _active={nullbtnbgfocus}
+            _focus={nullbtnbgfocus}
+            variant="homeWhite"
+            py="4"
+            px="2"
+          >
+            <Icon as={MdCancel} w={5} h={5} color={textColorSecondary} />
+          </Button>
+        </Box>
+
         {/* <Menu /> */}
       </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
@@ -185,40 +174,39 @@ export default function TransactionTable(props: TableProps) {
                   } else if (cell.column.Header === "STATUS") {
                     data = (
                       <Flex align="center">
-                        {/* <Icon
+                        <Icon
                           w="24px"
                           h="24px"
                           me="5px"
                           color={
-                            cell.value === "Approved"
+                            cell.value === "active"
                               ? "green.500"
-                              : cell.value === "Disable"
-                              ? "red.500"
-                              : cell.value === "Error"
+                              : cell.value === "past_due"
                               ? "orange.500"
+                              : cell.value === "canceled" || "trialing"
+                              ? "red.500"
                               : null
                           }
                           as={
-                            cell.value === "Approved"
+                            cell.value === "active"
                               ? MdCheckCircle
-                              : cell.value === "Disable"
+                              : cell.value === "canceled" || "trialing"
                               ? MdCancel
-                              : cell.value === "Error"
+                              : cell.value === "past_due"
                               ? MdOutlineError
                               : null
                           }
-                        /> */}
+                        />
                         <Text
                           color={
                             cell.value === "active"
                               ? "green.500"
                               : cell.value === "past_due"
                               ? "red.500"
-                              : cell.value === "trialing"
+                              : cell.value === "canceled" || "trialing"
                               ? "red.500"
                               : null
                           }
-                          //    color={textColor}
                           fontSize="sm"
                           fontWeight="700"
                         >
@@ -259,6 +247,78 @@ export default function TransactionTable(props: TableProps) {
           })}
         </Tbody>
       </Table>
+      <Flex justifyContent="space-between" alignItems="center" px="25px">
+        <Box>
+          <Button
+            onClick={() => gotoPage(0)}
+            disabled={!canPreviousPage}
+            bg={nullbtnbgfocus}
+            mr="2"
+          >
+            {"<<"}
+          </Button>
+          <Button
+            onClick={previousPage}
+            bg={nullbtnbgfocus}
+            disabled={!canPreviousPage}
+            mr="2"
+          >
+            {"<"}
+          </Button>
+          <Button
+            onClick={nextPage}
+            bg={nullbtnbgfocus}
+            disabled={!canNextPage}
+            mr="2"
+          >
+            {">"}
+          </Button>
+          <Button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+            bg={nullbtnbgfocus}
+          >
+            {">>"}
+          </Button>
+        </Box>
+        <Box>
+          <Text as="span" mr="2">
+            Page
+          </Text>
+          <Input
+            type="number"
+            variant="flushed"
+            min={1}
+            max={pageOptions.length}
+            value={pageIndex + 1}
+            onChange={(e) => {
+              const pageNumber = e.target.value
+                ? Number(e.target.value) - 1
+                : 0;
+              gotoPage(pageNumber);
+            }}
+            w="40px"
+            mr="2"
+          />
+          <Text as="span" mr="2">
+            of {pageOptions.length}
+          </Text>
+          {/* <Select
+            value={pageSize}
+            variant="flushed"
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+            w="100%"
+          >
+            {[5, 10, 20].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </Select> */}
+        </Box>
+      </Flex>
     </Card>
   );
 }

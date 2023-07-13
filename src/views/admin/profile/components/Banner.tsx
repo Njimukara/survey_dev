@@ -20,6 +20,7 @@ import { NextAvatar } from "components/image/Avatar";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export default function Banner(props: {
   avatar: string;
@@ -31,19 +32,13 @@ export default function Banner(props: {
   const { avatar, name, email, date_joined, phoneNumber, ...rest } = props;
 
   // Chakra Color Mode
-  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = "gray.400";
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
   const borderColor = useColorModeValue(
     "primary.100 !important",
     "#111C44 !important"
   );
 
-  const date = new Date(date_joined).toLocaleDateString();
+  const date = new Date(date_joined)?.toLocaleDateString() ?? "Loading";
+  const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber) ?? "Not Set";
   const router = useRouter();
 
   // alert dialog controls
@@ -53,16 +48,14 @@ export default function Banner(props: {
   const [deleting, setDeleting] = useState(false);
   const [userAvatar, setUserAvatar] = useState(false);
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // chakra toast
   const toast = useToast();
 
   const checkAvatar = () => {
-    // console.log("avatar", avatar);
     if (avatar) {
       let pathname = new URL(avatar).pathname;
-      // console.log("checkavatar result", pathname.includes("null"));
       return pathname.includes("null");
     }
     return true;
@@ -80,32 +73,27 @@ export default function Banner(props: {
       },
     };
 
-    await axios
-      .delete(
+    try {
+      await axios.delete(
         `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
         config
-      )
-      .then(() => {
-        signOut({ callbackUrl: "http://localhost:3000" });
-        setDeleting(false);
-        onClose();
-      })
-      .catch((err) => {
-        // console.log(err);
-        toast({
-          position: "bottom-right",
-          description: ["Account delete unsuccessful"],
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
-        setDeleting(false);
+      );
+      signOut({ callbackUrl: "http://localhost:3000" });
+      onClose();
+    } catch (err) {
+      toast({
+        position: "bottom-right",
+        description: ["Account deleted unsuccessful"],
+        status: "error",
+        duration: 4000,
+        isClosable: true,
       });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   useEffect(() => {
-    // console.log(user?.user_profile?.avatar);
-    // headers
     let result = checkAvatar();
     setUserAvatar(result);
   }, [avatar]);
@@ -136,12 +124,6 @@ export default function Banner(props: {
             {name}
           </Text>
           <Flex w="100%" mt="3" pb={4} align="center" justify="space-between">
-            {/* <Box>
-              <Text color="gray.400" transform="capitalize">
-                Name
-              </Text>
-              <Text>{name}</Text>
-            </Box> */}
             <Box>
               <Text color="gray.400" transform="capitalize">
                 Email
@@ -152,15 +134,13 @@ export default function Banner(props: {
               <Text color="gray.400" transform="capitalize">
                 Joined Since
               </Text>
-              <Text>{date == "Invalid Date" ? "loading" : date}</Text>
+              <Text>{date}</Text>
             </Box>
             <Box>
               <Text color="gray.400" transform="capitalize">
                 Phone Number
               </Text>
-              <Text>
-                {phoneNumber == "undefined" ? "Not Set" : phoneNumber}
-              </Text>
+              <Text>{formattedPhoneNumber}</Text>
             </Box>
           </Flex>
 

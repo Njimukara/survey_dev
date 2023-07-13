@@ -13,7 +13,7 @@ export default function PurchaseLisence() {
           <Box w="50%" mt="5">
             <Button
               onClick={() => {
-                router.push("/admin/default");
+                router.push("/admin/transactions");
               }}
               w="50"
               py="4"

@@ -277,11 +277,12 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               _focus={{ bg: "none" }}
               color="red.400"
               borderRadius="8px"
+              onClick={logOut}
             >
               <Flex w="100$">
-                <Button bg="none" _hover={{ bg: "none" }} onClick={logOut}>
+                <Text bg="none" _hover={{ bg: "none" }} onClick={logOut}>
                   Log out
-                </Button>
+                </Text>
               </Flex>
             </MenuItem>
           </Flex>

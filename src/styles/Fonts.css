@@ -1,47 +1,49 @@
+
 @font-face {
-  font-family: 'DM Sans';
-  font-style: italic;
-  font-weight: 400;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
   font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-Italic.ttf) format('truetype');
+  src: url(/fonts/Roboto-Regular.ttf);
 }
 
-/* @font-face {
-  font-family: 'DM Sans';
-  font-style: italic;
-  font-weight: 500;
-  font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-Italic.ttf) format('truetype');
-} */
-
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'Roboto';
   font-style: italic;
   font-weight: 700;
   font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-BoldItalic.ttf) format('truetype');
+  src: url(/fonts/Roboto-BoldItalic.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-Regular.ttf) format('truetype');
+  src: url(/fonts/Roboto-Regular.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-Medium.ttf) format('truetype');
+  src: url(/fonts/Roboto-Regular.ttf) format('truetype');
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(/fonts/dm-sans/DMSans-Bold.ttf) format('truetype');
+  src: url(/fonts/Roboto-Bold.ttf) format('truetype');
 }
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(/fonts/Roboto-Bold.ttf) format('truetype');
+}
+

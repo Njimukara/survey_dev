@@ -19,14 +19,13 @@ import {
   FormControl,
   ButtonGroup,
 } from "@chakra-ui/react";
-import axios from "axios";
 import Card from "components/card/Card";
-import { useState, useMemo } from "react";
-import countryList from "react-select-country-list";
+import { useState } from "react";
 import { Country, City } from "country-state-city";
 import Select from "react-select";
 
 import { useSession } from "next-auth/react";
+import axiosConfig from "axiosConfig";
 
 export default function RegisterCompany(props: { [x: string]: any }) {
   let { toggleModal, opened, toggleDetails, ...rest } = props;
@@ -35,102 +34,100 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
 
-  const [companyCountry, setCompanyCountry] = useState(null);
-  const [iso, setIso] = useState(null);
-  const [companyName, setCompanyName] = useState("");
-  const [companyCity, setCompanyCity] = useState(null);
-  const [city, setCity] = useState(null);
-  const [state, setState] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [image, setImage] = useState(null);
-  const [createObjectURL, setCreateObjectURL] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [imageError, setImageError] = useState(null);
+  const [companyData, setCompanyData] = useState({
+    country: null,
+    iso: null,
+    name: "",
+    city: null,
+    state: "",
+    zipCode: "",
+    streetAddress: "",
+    image: null,
+    createObjectURL: null,
+    submitting: false,
+    imageError: null,
+  });
+
   const { data: session } = useSession();
 
   //   import React, { useState, useMemo } from 'react'
 
   const closeModal = () => {
     toggleModal(false);
-    removeAvatar(null);
-    setCompanyCountry(null);
-    setCompanyName(null);
-    setCompanyCity(null);
-    setIso(null);
-    setImageError(null);
+    removeAvatar();
+    setCompanyData((prevState) => ({
+      ...prevState,
+      country: null,
+      name: null,
+      iso: null,
+      image: null,
+      createObjectURL: null,
+    }));
   };
   // display uploaded logo on frontend
   const uploadToClient = (event: any) => {
-    if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
-
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
-      // setImageError(null)
+    const file = event.target.files?.[0];
+    if (file) {
+      setCompanyData((prevState) => ({
+        ...prevState,
+        image: file,
+        createObjectURL: URL.createObjectURL(file),
+      }));
     }
   };
 
   // remove company logo
-  const removeAvatar = (event: any) => {
-    setImage(null);
-    setCreateObjectURL(null);
+  const removeAvatar = () => {
+    setCompanyData((prevState) => ({
+      ...prevState,
+      image: null,
+      createObjectURL: null,
+    }));
   };
 
   const onSubmit = async () => {
+    const { image, name, city, iso, state, streetAddress, zipCode } =
+      companyData;
+
     if (!image) {
-      setSubmitting(false);
-      setImageError("please upload your company logo");
+      setCompanyData((prevState) => ({
+        ...prevState,
+        imageError: "Please upload your company logo",
+      }));
       return;
     }
-    setImageError(null);
-    setSubmitting(true);
+
+    setCompanyData((prevState) => ({
+      ...prevState,
+      imageError: null,
+      submitting: true,
+    }));
+
     var formdata = new FormData();
     formdata.append("logo", image);
-    formdata.append("name", companyName);
-    formdata.append("city", companyCity);
+    formdata.append("name", name);
+    formdata.append("city", city);
     formdata.append("country", iso);
     formdata.append("state", state);
     formdata.append("street_address", streetAddress);
     formdata.append("zip_code", zipCode);
 
-    // console.log(formdata);
-    // setSubmitting(false)
-
-    // headers
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/api/company/create/",
-        formdata,
-        config
-      )
-      .then((res) => {
-        // console.log(res);
-        setSubmitting(false);
-        toggleDetails(true);
-        closeModal();
-      })
-      .catch((error) => {
-        // console.log(error);
-        toggleDetails(false);
-        setSubmitting(false);
-      });
+    try {
+      await axiosConfig.post("/api/company/create/", formdata);
+      setCompanyData((prevState) => ({
+        ...prevState,
+        submitting: false,
+      }));
+      toggleDetails(true);
+      closeModal();
+    } catch (error) {
+      setCompanyData((prevState) => ({
+        ...prevState,
+        submitting: false,
+      }));
+      toggleDetails(false);
+    }
   };
-
-  // const options = useMemo(() => countryList().getData(), []);
-
-  // const changeHandler = (value: any) => {
-  //   setCompanyCountry(value);
-  //   setIso(value.value);
-  // };
 
   // css styling for react select
   const reactSelectStyles = {
@@ -167,7 +164,6 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   } | null;
 
   //   react-select
-  // const options = useMemo(() => countryList().getData(), []);
   const options = Country.getAllCountries().map(
     (country: { latitude: any; longitude: any; isoCode: any; name: any }) => ({
       value: {
@@ -180,13 +176,18 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   );
 
   const changeHandler = (value: any) => {
-    setCompanyCountry(value);
-    setIso(value.value?.isoCode);
+    setCompanyData((prevState) => ({
+      ...prevState,
+      country: value,
+      iso: value?.value?.isoCode,
+    }));
   };
 
-  const handleSelectedCity = (option: any) => {
-    setCompanyCity(option?.value?.name);
-    setCity(option?.value?.name);
+  const handleSelectedCity = (option: cityOption) => {
+    setCompanyData((prevState) => ({
+      ...prevState,
+      city: option?.value?.name,
+    }));
   };
 
   return (
@@ -227,32 +228,25 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                     Company Details
                   </Text>
                   <form>
-                    <FormControl>
-                      <FormLabel fontSize="sm" color={textColorSecondary}>
-                        Company Name
-                      </FormLabel>
+                    <FormControl pb="3">
+                      <FormLabel w="160px">Name</FormLabel>
                       <Input
-                        id="companyName"
-                        name="companyName"
-                        isRequired={true}
+                        id="name"
+                        name="name"
                         variant="rounded"
                         fontSize="sm"
-                        ms={{ base: "0px", md: "0px" }}
-                        mb="5px"
                         type="text"
-                        placeholder="Company Name"
-                        fontWeight="400"
-                        size="md"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder="Name"
+                        fontWeight="500"
+                        size="lg"
+                        value={companyData.name}
+                        onChange={(e) =>
+                          setCompanyData((prevState) => ({
+                            ...prevState,
+                            name: e.target.value,
+                          }))
+                        }
                       />
-                      {/* {errors.companyName && touched.companyName ? (
-                        <FormHelperText color='red.400' mt='0' mb='5px'>
-                          {errors.companyName}
-                        </FormHelperText>
-                      ) : (
-                        ''
-                      )} */}
                     </FormControl>
                     <Flex w="100%">
                       <FormControl mr="4">
@@ -263,7 +257,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           styles={reactSelectStyles}
                           options={options}
                           placeholder="select country"
-                          value={companyCountry}
+                          value={companyData.country}
                           onChange={changeHandler}
                         />
                       </FormControl>
@@ -275,33 +269,27 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                             id="companyCity"
                             name="companyCity"
                             styles={reactSelectStyles}
-                            options={City.getCitiesOfCountry(iso)?.map(
-                              (state: {
-                                latitude: any;
-                                longitude: any;
-                                name: any;
-                                stateCode: any;
-                                countryCode: any;
-                              }) => ({
-                                value: {
-                                  latitude: state.latitude,
-                                  longitude: state.longitude,
-                                  name: state.name,
-                                  stateCode: state.stateCode,
-                                  countryCode: state.countryCode,
-                                },
-                                label: state.name,
-                              })
-                            )}
+                            options={City.getCitiesOfCountry(
+                              companyData.iso
+                            )?.map((state: any) => ({
+                              value: {
+                                latitude: state.latitude,
+                                longitude: state.longitude,
+                                name: state.name,
+                                stateCode: state.stateCode,
+                                countryCode: state.countryCode,
+                              },
+                              label: state.name,
+                            }))}
                             placeholder="select city"
-                            value={companyCity}
+                            value={companyData.city}
                             onChange={handleSelectedCity}
                           />
                         </Box>
                       </FormControl>
 
                       <FormControl pb="3">
-                        <FormLabel w="160px">state</FormLabel>
+                        <FormLabel w="160px">State</FormLabel>
                         <Input
                           id="state"
                           name="state"
@@ -311,8 +299,13 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           placeholder="State"
                           fontWeight="500"
                           size="lg"
-                          value={state}
-                          onChange={(e) => setState(e.target.value)}
+                          value={companyData.state}
+                          onChange={(e) =>
+                            setCompanyData((prevState) => ({
+                              ...prevState,
+                              state: e.target.value,
+                            }))
+                          }
                         />
                       </FormControl>
 
@@ -327,8 +320,13 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           placeholder="Zip Code"
                           fontWeight="500"
                           size="lg"
-                          value={zipCode}
-                          onChange={(e) => setZipCode(e.target.value)}
+                          value={companyData.zipCode}
+                          onChange={(e) =>
+                            setCompanyData((prevState) => ({
+                              ...prevState,
+                              zipCode: e.target.value,
+                            }))
+                          }
                         />
                       </FormControl>
 
@@ -343,17 +341,22 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           placeholder="Street Address"
                           fontWeight="500"
                           size="lg"
-                          value={streetAddress}
-                          onChange={(e) => setStreetAddress(e.target.value)}
+                          value={companyData.streetAddress}
+                          onChange={(e) =>
+                            setCompanyData((prevState) => ({
+                              ...prevState,
+                              streetAddress: e.target.value,
+                            }))
+                          }
                         />
                       </FormControl>
                     </Flex>
                     <Flex alignItems="center" w="100%">
                       <Image
                         src={
-                          createObjectURL == null
+                          companyData.createObjectURL == null
                             ? "/profile.png"
-                            : createObjectURL
+                            : companyData.createObjectURL
                         }
                         borderRadius="10px"
                         objectFit="cover"
@@ -364,7 +367,9 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                       />
                       <Box position="relative" overflow="hidden" my="3">
                         <Button ml="10px" cursor="pointer">
-                          {image ? image.name : "Upload logo"}
+                          {companyData.image
+                            ? companyData.image.name
+                            : "Upload logo"}
                         </Button>
                         <Input
                           onChange={uploadToClient}
@@ -377,12 +382,10 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                         />
                       </Box>
                     </Flex>
-                    {imageError != null ? (
+                    {companyData.imageError && (
                       <Text color="red.400" mt="0" mb="5px">
-                        {imageError}
+                        {companyData.imageError}
                       </Text>
-                    ) : (
-                      ""
                     )}
                   </form>
                 </VStack>
@@ -392,18 +395,13 @@ export default function RegisterCompany(props: { [x: string]: any }) {
           <ModalFooter>
             <ButtonGroup variant="homePrimary" spacing="6">
               <Button
-                isLoading={submitting}
+                isLoading={companyData.submitting}
                 colorScheme="blue"
                 onClick={onSubmit}
               >
                 Register Company
               </Button>
-              <Button
-                // variant='homeWhite'
-                onClick={closeModal}
-              >
-                Close
-              </Button>
+              <Button onClick={closeModal}>Close</Button>
             </ButtonGroup>
           </ModalFooter>
         </ModalContent>

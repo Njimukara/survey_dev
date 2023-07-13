@@ -19,6 +19,9 @@ import {
   AlertDialogFooter,
   useDisclosure,
   useToast,
+  Input,
+  Select,
+  Box,
 } from "@chakra-ui/react";
 import React, {
   useMemo,
@@ -67,11 +70,13 @@ export default function UserTableComplex(props: TableProps) {
   const [pendingDelete, setPendingDelete] = useState<any>();
   const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const tableInstance = useTable(
     {
       columns,
       data,
+      initialState: { pageIndex: 0, pageSize: 5 },
     },
     useGlobalFilter,
     useSortBy,
@@ -84,12 +89,29 @@ export default function UserTableComplex(props: TableProps) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+    setGlobalFilter,
   } = tableInstance;
-  initialState.pageSize = 5;
+
+  const handleSearch = () => {
+    setGlobalFilter(searchTerm);
+  };
+  const cancelSearch = () => {
+    setSearchTerm("");
+    setGlobalFilter("");
+  };
 
   // chakra colors
   const btnBgHover = useColorModeValue({ bg: "none" }, { bg: "none" });
+  const btnBg = useColorModeValue({ bg: "none" }, { bg: "none" });
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const deleteTextColor = useColorModeValue("red.600", "red.600");
   const borderColor = useColorModeValue("gray.200", "gray.50");
@@ -316,6 +338,28 @@ export default function UserTableComplex(props: TableProps) {
           </AlertDialogOverlay>
         </AlertDialog>
       </Flex>
+      <Flex align="flex-end" px="5" pb="10">
+        <Input
+          placeholder="Search"
+          value={searchTerm}
+          w="50%"
+          variant="flushed"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          mr="2"
+        />
+        <Button onClick={handleSearch} variant="outline" py="4" px="6" mr="2">
+          Search
+        </Button>
+        <Button
+          onClick={cancelSearch}
+          _active={btnBg}
+          _focus={btnBg}
+          variant="homeWhite"
+          py="4"
+        >
+          Cancel
+        </Button>
+      </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
@@ -368,15 +412,7 @@ export default function UserTableComplex(props: TableProps) {
                         {formatDate(cell.value)}
                       </Text>
                     );
-                  }
-                  // else if (cell.column.Header === "ISACTIVE") {
-                  //   data = (
-                  //     <Text color={textColor} fontSize="sm" fontWeight="700">
-                  //       {cell.value.toString()}
-                  //     </Text>
-                  //   );
-                  // }
-                  else if (
+                  } else if (
                     cell.column.Header === "BLOCK" &&
                     user?.user_profile?.user_type == companyUser
                   ) {
@@ -435,6 +471,73 @@ export default function UserTableComplex(props: TableProps) {
           })}
         </Tbody>
       </Table>
+      <Flex justifyContent="space-between" alignItems="center" px="25px">
+        <Box>
+          <Button
+            onClick={() => gotoPage(0)}
+            disabled={!canPreviousPage}
+            bg={btnBg}
+            mr="2"
+          >
+            {"<<"}
+          </Button>
+          <Button
+            onClick={previousPage}
+            bg={btnBg}
+            disabled={!canPreviousPage}
+            mr="2"
+          >
+            {"<"}
+          </Button>
+          <Button onClick={nextPage} bg={btnBg} disabled={!canNextPage} mr="2">
+            {">"}
+          </Button>
+          <Button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+            bg={btnBg}
+          >
+            {">>"}
+          </Button>
+        </Box>
+        <Box>
+          <Text as="span" mr="2">
+            Page
+          </Text>
+          <Input
+            type="number"
+            variant="flushed"
+            min={1}
+            max={pageOptions.length}
+            value={pageIndex + 1}
+            onChange={(e) => {
+              const pageNumber = e.target.value
+                ? Number(e.target.value) - 1
+                : 0;
+              gotoPage(pageNumber);
+            }}
+            w="40px"
+            mr="2"
+          />
+          <Text as="span" mr="2">
+            of {pageOptions.length}
+          </Text>
+          {/* <Select
+            value={pageSize}
+            variant="flushed"
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+            w="100%"
+          >
+            {[5, 10, 20].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </Select> */}
+        </Box>
+      </Flex>
     </Card>
   );
 }

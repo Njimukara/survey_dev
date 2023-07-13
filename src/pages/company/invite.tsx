@@ -23,29 +23,24 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 // Chakra imports
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   Spinner,
   FormControl,
   FormHelperText,
-  FormLabel,
   Icon,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
-  Select,
   Text,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 
-import { Formik, Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 
 // Custom components
@@ -55,13 +50,7 @@ import DefaultAuthLayout from "layouts/auth/Default";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
-import { MdUpload } from "react-icons/md";
-import styles from "../../../styles/Home.module.css";
-// import styles from '../../styles/Home.module.css'
-
-// import { useRef } from 'react'
-import { signIn } from "next-auth/react";
-import axios from "axios";
+import axiosConfig from "axiosConfig";
 
 export default function SignIn({ providers }: any) {
   // Chakra color mode
@@ -118,29 +107,15 @@ export default function SignIn({ providers }: any) {
       token: token,
     };
 
-    const options = {
-      // method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json;charset=UTF-8",
-      },
-    };
-
-    await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/auth/register-invited-user/",
-        data,
-        options
-      )
+    await axiosConfig
+      .post("/auth/register-invited-user/", data)
       .then((res) => {
-        console.log(res);
-        setError("");
         router.push("/auth/signin");
       })
       .catch((error) => {
-        console.log(error);
-        setError(error.response.data.non_field_errors);
-        setError(error.response.data.email);
+        setError(
+          error.response.data.non_field_errors || error.response.data.email
+        );
       });
   };
 
@@ -167,10 +142,8 @@ export default function SignIn({ providers }: any) {
   //   verify token
   const verifyToken = async (token: any) => {
     setIsVerifying(true);
-    await axios
-      .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/verify-invitation/${token}/`
-      )
+    await axiosConfig
+      .get(`/api/company/verify-invitation/${token}/`)
       .then((res) => {
         setError("");
         setIsVerifying(false);
@@ -192,7 +165,7 @@ export default function SignIn({ providers }: any) {
   useEffect(() => {
     let token = router.query.token;
     setToken(token);
-    if (token != undefined) {
+    if (token) {
       verifyToken(token);
     }
   }, [router]);
@@ -254,7 +227,7 @@ export default function SignIn({ providers }: any) {
         >
           <Box w="100%">
             <Text textAlign="center" pb="10px">
-              Welcome to Survey Planner :-)
+              Welcome to Survey Planner!
             </Text>
             <Flex
               justifyContent="space-evenly"
@@ -330,7 +303,7 @@ export default function SignIn({ providers }: any) {
                 <Input
                   id="name"
                   name="name"
-                  variant="rounded"
+                  variant="flushed"
                   fontSize="sm"
                   ms={{ base: "0px", md: "0px" }}
                   type="text"
@@ -354,7 +327,7 @@ export default function SignIn({ providers }: any) {
                 <Input
                   id="email"
                   name="email"
-                  variant="rounded"
+                  variant="flushed"
                   fontSize="sm"
                   ms={{ base: "0px", md: "0px" }}
                   type="email"
@@ -366,12 +339,10 @@ export default function SignIn({ providers }: any) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                {errors.email && touched.email ? (
+                {errors.email && touched.email && (
                   <FormHelperText color="red.400" mt="0" mb="2px">
                     {errors.email}.
                   </FormHelperText>
-                ) : (
-                  ""
                 )}
               </FormControl>
               <Flex>
@@ -385,7 +356,7 @@ export default function SignIn({ providers }: any) {
                       size="lg"
                       mt="12px"
                       type={show ? "text" : "password"}
-                      variant="rounded"
+                      variant="flushed"
                       value={values.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -421,7 +392,7 @@ export default function SignIn({ providers }: any) {
                       size="lg"
                       mt="12px"
                       type={show ? "text" : "password"}
-                      variant="rounded"
+                      variant="flushed"
                       value={values.confirm_Password}
                       onChange={handleChange}
                       onBlur={handleBlur}

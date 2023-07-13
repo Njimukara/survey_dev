@@ -36,47 +36,23 @@ import {
   Icon,
   Input,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-// Custom components
-import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
-import { MdOutlineMail, MdOutlineArrowBack, MdLockOpen } from "react-icons/md";
+import { MdOutlineArrowBack, MdLockOpen } from "react-icons/md";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSession } from "next-auth/react";
+import axiosConfig from "axiosConfig";
 
 export default function ResetPassword(props: any) {
   // var state = props
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
-  const textColor = useColorModeValue("navy.700", "white");
-  const brandColor = useColorModeValue("brand.500", "white");
   const textColorSecondary = "gray.400";
-  // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
+
   const router = useRouter();
-
-  const [email, setEmail] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-
-  const { data: session, status } = useSession();
 
   // Yup validation data schema
   const validationSchema = Yup.object().shape({
@@ -86,43 +62,29 @@ export default function ResetPassword(props: any) {
   // submit email for password reset
   const onSubmit = async (values: any) => {
     setSubmitting(true);
-    console.log(values.email);
-
     const body = {
       email: values.email,
     };
 
-    const res = await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/auth/users/reset_password/",
-        body
-      )
-      .then((res) => {
-        console.log(res);
+    const res = await axiosConfig
+      .post("/auth/users/reset_password/", body)
+      .then(() => {
         router.push("/auth/verifyemail");
         setSubmitting(false);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setSubmitting(false);
       });
   };
 
-  const {
-    values,
-    isSubmitting,
-    errors,
-    touched,
-    handleChange,
-    handleSubmit,
-    handleBlur,
-  } = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: validationSchema,
-    onSubmit,
-  });
+  const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
+    useFormik({
+      initialValues: {
+        email: "",
+      },
+      validationSchema: validationSchema,
+      onSubmit,
+    });
 
   useEffect(() => {}, []);
 
@@ -173,16 +135,7 @@ export default function ResetPassword(props: any) {
                 value={values.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                // value={email}
-                // onChange={(e) => setEmail(e.target.value)}
               />
-              {/* {error ? (
-                <FormHelperText color='red.400' mt='0' mb='5px'>
-                  {error}
-                </FormHelperText>
-              ) : (
-                ''
-              )} */}
               {errors.email && touched.email ? (
                 <FormHelperText color="red.400" mt="0" mb="5px">
                   {errors.email}.
@@ -192,7 +145,6 @@ export default function ResetPassword(props: any) {
               )}
             </FormControl>
             <Button
-              // onClick={handleSubmit}
               type="submit"
               isLoading={submitting}
               variant="homePrimary"

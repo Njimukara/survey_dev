@@ -28,98 +28,52 @@ import Link from "next/link";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   Icon,
   Image,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Select,
   Spinner,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 
-import { Formik, Form, useFormik } from "formik";
-import * as Yup from "yup";
-
-// Custom components
-import { HSeparator } from "components/separator/Separator";
-import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
-import {
-  MdUpload,
-  MdClear,
-  MdCheck,
-  MdOutlineMail,
-  MdOutlineArrowBack,
-} from "react-icons/md";
+import { MdClear } from "react-icons/md";
 
 import { useEffect } from "react";
-import { getProviders, getSession, signIn } from "next-auth/react";
-import axios from "axios";
+import axiosConfig from "axiosConfig";
 
 export default function SuccesVerifyEmail({ providers }: any) {
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
   const textColor = useColorModeValue("navy.700", "white");
-  const brandColor = useColorModeValue("primary.500", "white");
-  const textColorSecondary = "gray.400";
-  // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
 
   const router = useRouter();
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [responseData, setResponseData] = useState("");
 
   const display = async () => {
     setLoading(true);
-    let url: any = router.query.slug;
-    // console.log(url);
-    let uid, token;
-    for (let i in url) {
-      uid = url[1];
-      token = url[2];
-    }
-    // console.log(uid, token);
+    const { slug } = router.query;
+    const [uid, token] = slug;
     const data = {
-      uid: uid,
-      token: token,
+      uid,
+      token,
     };
     let respond;
-    if (uid != undefined && token != undefined) {
-      await axios
-        .post(
-          "https://surveyplanner.pythonanywhere.com/auth/users/activation/",
-          data
-        )
+    if (!uid && !token) {
+      await axiosConfig
+        .post("/auth/users/activation/", data)
         .then((res) => {
           respond = res;
-          // console.log(res);
           setLoading(false);
           setError("");
         })
         .catch((err) => {
-          setError(err.response.data.detail);
+          setError(
+            err.response.data.detail ||
+              "There is an error with the verification email"
+          );
           setLoading(false);
         });
     }
-    // setError('There is an error with the verification email')
   };
 
   useEffect(() => {

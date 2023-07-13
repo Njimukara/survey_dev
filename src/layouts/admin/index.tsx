@@ -20,10 +20,9 @@ interface DashboardLayoutProps extends PropsWithChildren {
 // Custom Chakra theme
 export default function AdminLayout(props: DashboardLayoutProps) {
   const { children, ...rest } = props;
-  // states and functions
+
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  // functions for changing the states from components
   const { onOpen } = useDisclosure();
 
   useEffect(() => {

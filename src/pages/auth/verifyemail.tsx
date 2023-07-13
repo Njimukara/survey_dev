@@ -26,40 +26,19 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 // Chakra imports
 import { Button, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
-
-import { useFormik } from "formik";
-import * as Yup from "yup";
-
 // Custom components
 import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
 import { MdOutlineMail, MdOutlineArrowBack } from "react-icons/md";
 
-import { useEffect } from "react";
-import axios from "axios";
-
 export default function VerifyEmail(props: any) {
-  // var state = props
-  // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
-  const btnHover = useColorModeValue({ color: "white" }, { color: "white" });
-  const textColor = useColorModeValue("navy.700", "white");
-  const brandColor = useColorModeValue("brand.500", "white");
-  const textColorSecondary = "gray.400";
-  // const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600')
-  const textColorBrand = useColorModeValue("brand.500", "white");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
   const router = useRouter();
+  const textColor = useColorModeValue("primary.500", "primary.500");
+  const btnBgNull = useColorModeValue({ bg: "none" }, { bg: "none" });
 
-  useEffect(() => {}, []);
+  const handleOpenEmail = () => {
+    window.open("mailto:"); // Opens the default email server
+  };
 
   return (
     <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
@@ -67,12 +46,9 @@ export default function VerifyEmail(props: any) {
         maxW="max-content"
         w="100%"
         mx="0px"
-        h="100vh"
         alignItems="center"
         justifyContent="center"
-        mb="130px"
         px="0px"
-        mt="35vh"
         flexDirection="column"
       >
         <Flex flexDirection="column" alignItems="center">
@@ -89,19 +65,17 @@ export default function VerifyEmail(props: any) {
           />
           <Text>
             A link has been sent to{" "}
-            <a
-              style={{ color: "blue", textDecoration: "underline" }}
-              href="https://mail.google.com/mail/u/0/#inbox"
-              target="_blank"
+            <Button
+              color={textColor}
+              bg={btnBgNull}
+              _focus={btnBgNull}
+              _active={btnBgNull}
+              _hover={btnBgNull}
+              onClick={handleOpenEmail}
             >
-              your email.
-            </a>{" "}
-            Follow it to complete registration
-          </Text>
-          <Text>
-            Not using gmail? Open your mail box and follow the intructions to{" "}
-            <br />
-            activate your account
+              your email
+            </Button>
+            Follow it to activate your account
           </Text>
           <Button
             variant="outline"

@@ -1,23 +1,19 @@
 // Chakra imports
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
-// // Assets
-// import Project1 from 'img/profile/Project1.png'
-// import Project2 from 'img/profile/Project2.png'
-// import Project3 from 'img/profile/Project3.png'
+
 // Custom components
 import Card from "components/card/Card";
 import Project from "views/admin/profile/components/Project";
 import { MdAdd } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import RegisterCompany from "views/admin/default/components/RegisterCompany";
 import InviteUser from "./InviteUser";
 
 export default function CompanyUsers(props: { [x: string]: any }) {
   const { toggleModal, isOpen, company, ...rest } = props;
+
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = "gray.400";
   const cardShadow = useColorModeValue(
     "0px 5px 5px rgba(112, 144, 176, 0.12)",
     "unset"
@@ -27,7 +23,6 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   const router = useRouter();
 
   useEffect(() => {
-    // console.log("members", company?.members);
     if (!company) {
       return;
     } else {
@@ -36,7 +31,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
   }, [company]);
 
   return (
-    <Card mb={{ base: "0px", "2xl": "20px" }} {...rest}>
+    <Card mb={{ base: "0px", "2xl": "20px" }} bg="transparent" {...rest}>
       <Flex flexDirection="column" alignItems="center">
         <Flex
           w="100%"
@@ -85,31 +80,21 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           </Flex>
         </Flex>
         <Box w="100%">
-          <>
-            {/* <Project
-              boxShadow={cardShadow}
-              mb="20px"
-              position="Owner"
-              name={company?.owner}
-            /> */}
-            {companyMembers.length != 0 ? (
-              companyMembers.map((member, index) => {
-                return (
-                  <Project
-                    key={index}
-                    boxShadow={cardShadow}
-                    mb="20px"
-                    position={member?.email}
-                    name={member?.name}
-                  />
-                );
-              })
-            ) : (
-              <Flex justifyContent="center" alignItems="center" pt={32}>
-                <Text>No users yet</Text>
-              </Flex>
-            )}
-          </>
+          {companyMembers.length != 0 ? (
+            companyMembers.map((member) => (
+              <Project
+                key={member.email}
+                boxShadow={cardShadow}
+                mb="20px"
+                position={member?.email}
+                name={member?.name}
+              />
+            ))
+          ) : (
+            <Flex justifyContent="center" alignItems="center" pt={32}>
+              <Text>No users yet</Text>
+            </Flex>
+          )}
         </Box>
       </Flex>
       <InviteUser opened={isOpen} toggleModal={toggleModal} />

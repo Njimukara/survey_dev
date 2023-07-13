@@ -23,7 +23,7 @@ const Footer = () => {
         color="#B1B6C2"
         columns={{ base: 1, md: 2, lg: 4 }}
         spacing={5}
-        py="5%"
+        pt="5%"
         px="10%"
       >
         {/*  */}
@@ -103,6 +103,19 @@ const Footer = () => {
           </InputGroup>
         </Box>
       </SimpleGrid>
+      <Box px="10%" py="2%" color="#B1B6C2">
+        <Heading color="white" size="sm">
+          Resources
+        </Heading>
+        <Text fontSize="sm" py="2">
+          <a
+            href="https://www.flaticon.com/free-icons/no-data"
+            title="no data icons"
+          >
+            Flaticons
+          </a>
+        </Text>
+      </Box>
     </Box>
   );
 };

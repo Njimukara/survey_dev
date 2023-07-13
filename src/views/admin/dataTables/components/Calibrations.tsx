@@ -15,11 +15,6 @@ export default function Calibrations(props: Props) {
   const { calibrations, handleform, value, surveyID, ...rest } = props;
   const { loading, handleFormChange } = useSurveyContext();
 
-  useEffect(() => {
-    console.log(calibrations);
-    console.log("form", value);
-  }, [loading]);
-
   return (
     <Card borderRadius="10px" p="4" w="100%" {...rest}>
       <Text mb="4" fontWeight="bold" textTransform="uppercase">

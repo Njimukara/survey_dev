@@ -4,6 +4,7 @@ import {
   Button,
   Flex,
   Icon,
+  Image,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -16,6 +17,7 @@ import {
   barChartOptionsConsumption,
 } from "variables/charts";
 import { MdBarChart } from "react-icons/md";
+import { BiErrorCircle } from "react-icons/bi";
 
 export default function Offers(props: { [x: string]: any }) {
   const { ...rest } = props;
@@ -79,6 +81,7 @@ export default function Offers(props: { [x: string]: any }) {
       flexDirection="column"
       borderRadius="10"
     >
+      <Icon as={BiErrorCircle} boxSize={24} color="gray" />
       <Text fontSize="large" fontWeight="bold">
         No offers currently available
       </Text>

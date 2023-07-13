@@ -1,9 +1,7 @@
 // Chakra imports
 import {
-  Box,
   Button,
   Flex,
-  Image,
   Input,
   Modal,
   ModalBody,
@@ -18,120 +16,106 @@ import {
   VStack,
   FormControl,
   ButtonGroup,
-  FormHelperText,
   useToast,
 } from "@chakra-ui/react";
-import axios from "axios";
-import * as Yup from "yup";
 import Card from "components/card/Card";
-import Projects from "views/admin/profile/components/CompanyUsers";
 
-import { NextAvatar } from "components/image/Avatar";
 import { useRouter } from "next/router";
-import { useState, useMemo, SetStateAction } from "react";
-import countryList from "react-select-country-list";
-import Select from "react-select";
+import { useState } from "react";
 
-import { useFormik } from "formik";
-import { useSession } from "next-auth/react";
+import axiosConfig from "axiosConfig";
 
 export default function InviteUser(props: { [x: string]: any }) {
   let { getInvitations, toggleModal, opened, ...rest } = props;
 
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
-  const textColordark = useColorModeValue("black", "white");
-  const textColorPrimary = useColorModeValue("primary.500", "white");
-  const borderColor = useColorModeValue(
-    "white !important",
-    "#111C44 !important"
-  );
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const { data: session } = useSession();
+  const [guestUser, setGuestUser] = useState({
+    name: "",
+    email: "",
+    submitting: false,
+    error: "",
+  });
+
   const router = useRouter();
 
   // chakra toast
   const toast = useToast();
 
-  //   import React, { useState, useMemo } from 'react'
-
   const closeModal = () => {
     toggleModal(false);
-    setName("");
-    setEmail("");
-    setError("");
+    setGuestUser((prevState) => ({
+      ...prevState,
+      name: "",
+      email: "",
+      error: "",
+    }));
   };
 
   const onSubmit = async () => {
-    if (name == "" || email == "") {
-      setError("Name and Email are required");
+    if (!guestUser.name || !guestUser.email) {
+      setGuestUser((prevState) => ({
+        ...prevState,
+        error: "Name and Email are required",
+      }));
       return;
     }
-    setError("");
-    setSubmitting(true);
+    setGuestUser((prevState) => ({
+      ...prevState,
+      error: "",
+      submitting: true,
+    }));
 
     const body = {
-      name: name,
-      email: email,
+      name: guestUser.name,
+      email: guestUser.email,
     };
 
-    // console.log(body);
-
-    // headers
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    const res = await axios
-      .post(
-        "https://surveyplanner.pythonanywhere.com/api/company/send-invitation/",
-        body,
-        config
-      )
-      .then((res) => {
-        // console.log(res);
-        router.push("/company/users");
-        getInvitations();
-        setSubmitting(false);
-        closeModal();
+    try {
+      const res = await axiosConfig.post("/api/company/send-invitation/", body);
+      router.push("/company/users");
+      getInvitations();
+      closeModal();
+      console.log(res);
+      if (res) {
         toast({
           position: "bottom-right",
-          description: "Invite has been sent successfully.",
+          description: "Invite sent successfully.",
           status: "success",
           duration: 5000,
           isClosable: true,
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        setError(error.response.data.error);
-        setSubmitting(false);
-        toast({
-          position: "bottom-right",
-          description: "Something went wrong, please try again",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+      }
+      toast({
+        position: "bottom-right",
+        description: "Something went wrong, please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
       });
+      setGuestUser((prevState) => ({
+        ...prevState,
+        submitting: false,
+      }));
+    } catch (error: any) {
+      console.log(error);
+      toast({
+        position: "bottom-right",
+        description: "Something went wrong, please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      setGuestUser((prevState) => ({
+        ...prevState,
+        error: error.respose.data.error,
+        submitting: false,
+      }));
+    }
   };
 
   return (
-    // <Card
-    //   mb={{ base: "0px", lg: "0px" }}
-    //   mt="0"
-    //   bgColor="transparent"
-    //   borderRadius={0}
-    //   {...rest}
-    // >
     <Modal
       onClose={() => toggleModal(false)}
       isOpen={opened}
@@ -159,7 +143,7 @@ export default function InviteUser(props: { [x: string]: any }) {
           >
             <Flex>
               <VStack flex="1">
-                {error != "" && (
+                {guestUser.error && (
                   <Text
                     w="100%"
                     textAlign="center"
@@ -167,7 +151,7 @@ export default function InviteUser(props: { [x: string]: any }) {
                     fontSize="sm"
                     color="red.500"
                   >
-                    {error}
+                    {guestUser.error}
                   </Text>
                 )}
                 <form>
@@ -187,8 +171,13 @@ export default function InviteUser(props: { [x: string]: any }) {
                       placeholder="Name"
                       fontWeight="400"
                       size="md"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={guestUser.name}
+                      onChange={(e) =>
+                        setGuestUser((prevState) => ({
+                          ...prevState,
+                          name: e.target.value,
+                        }))
+                      }
                     />
                   </FormControl>
                   <Flex w="100%">
@@ -208,8 +197,13 @@ export default function InviteUser(props: { [x: string]: any }) {
                         placeholder="email"
                         fontWeight="400"
                         size="md"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={guestUser.email}
+                        onChange={(e) =>
+                          setGuestUser((prevState) => ({
+                            ...prevState,
+                            email: e.target.value,
+                          }))
+                        }
                       />
                     </FormControl>
                   </Flex>
@@ -222,7 +216,7 @@ export default function InviteUser(props: { [x: string]: any }) {
           <ButtonGroup variant="homePrimary" spacing="6">
             <Button
               py="6"
-              isLoading={submitting}
+              isLoading={guestUser.submitting}
               colorScheme="blue"
               onClick={onSubmit}
             >
@@ -235,6 +229,5 @@ export default function InviteUser(props: { [x: string]: any }) {
         </ModalFooter>
       </ModalContent>
     </Modal>
-    // </Card>
   );
 }

@@ -15,50 +15,126 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSubscription } from "contexts/SubscriptionContext";
 import { MdCheckCircle } from "react-icons/md";
+import axiosConfig from "axiosConfig";
+
+interface Subscription {
+  plan: any;
+  subscription_data: any;
+  start_date: string;
+  end_date: string;
+}
+
+interface Props {
+  subscription: Subscription;
+  textColorSecondary: string;
+  upgrade: any;
+}
+
+function SubscriptionDetails({
+  subscription,
+  textColorSecondary,
+  upgrade,
+}: Props) {
+  const formatDate = (date: any) => {
+    let newDate = new Date(date).toDateString();
+    return newDate;
+  };
+  const handleUpgrade = () => {
+    upgrade(true);
+  };
+  // format price
+  const formatPrice = (price: number) => {
+    return price / 100;
+  };
+  return (
+    <Card>
+      <Text mb={2} color={textColorSecondary}>
+        Subscription Details
+      </Text>
+      <Flex py="5" px="2">
+        <Box w="100%" pr="10" display="flex" flexDirection="column">
+          <Text color={textColorSecondary} fontSize="sm">
+            Plan
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            {subscription?.plan?.name}
+          </Text>
+        </Box>
+        <Box w="100%" pr="10" display="flex" flexDirection="column">
+          <Text color={textColorSecondary} fontSize="sm">
+            Cost
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            ${formatPrice(subscription?.subscription_data?.plan?.amount)} /{" "}
+            {subscription?.subscription_data?.plan?.interval}
+          </Text>
+        </Box>
+        <Box w="100%" pr="10" display="flex" flexDirection="column">
+          <Text color={textColorSecondary} fontSize="sm">
+            Purchased on
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            {formatDate(subscription?.start_date)}
+          </Text>
+        </Box>
+        <Box w="100%" pr="10" display="flex" flexDirection="column">
+          <Text color={textColorSecondary} fontSize="sm">
+            Renewal Date
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            {formatDate(subscription?.end_date)}
+          </Text>
+        </Box>
+      </Flex>
+
+      <Box py="3">
+        <Text py="3" color={textColorSecondary}>
+          Plan Benefits
+        </Text>
+        <Flex flexDirection="column" justifyContent="center">
+          {subscription?.plan?.features.map((benefit: any) => (
+            <Text pl="5" pb="2" key="">
+              <Icon
+                as={MdCheckCircle}
+                color="primary.500"
+                fontSize="18px"
+                mx="1"
+              />
+              {benefit.description}
+            </Text>
+          ))}
+        </Flex>
+        <Flex my="5">
+          <Button
+            onClick={handleUpgrade}
+            _hover={{ bg: "none" }}
+            bg="none"
+            color="primary.400"
+          >
+            Upgrade Subscription
+          </Button>
+          <Button _hover={{ bg: "none" }} bg="none" color="red.600">
+            Cancel Subscription
+          </Button>
+        </Flex>
+      </Box>
+    </Card>
+  );
+}
 
 export default function SubscirptionDetails(props: { [x: string]: any }) {
   const { upgrade, ...rest } = props;
 
   // Chakra Color Mode
-  const textColor = useColorModeValue("navy.500", "white");
-  const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
-  const textColordark = useColorModeValue("black", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const iconColor = useColorModeValue("brand.500", "white");
-  const bgButton = useColorModeValue("primary.500", "blue.300");
-  const bgHover = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.50" }
-  );
-  const bgFocus = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.100" }
-  );
-
-  // format price
-  const formatPrice = (price: number) => {
-    return price / 100;
-  };
 
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-
   const [subscription, setSubscription] = useState<any>();
-  const router = useRouter();
-
-  const formatDate = (date: any) => {
-    let newDate = new Date(date).toDateString();
-    return newDate;
-  };
-
-  const handleUpgrade = () => {
-    upgrade(true);
-  };
 
   // delete user acount
   const deleteAccount = async () => {
-    await axios
-      .delete(`https://surveyplanner.pythonanywhere.com/auth/users/me/`)
+    await axiosConfig
+      .delete(`/auth/users/me/`)
       .then(() => {
         signOut({ callbackUrl: "http://localhost:3000" });
       })
@@ -68,88 +144,24 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
   };
 
   useEffect(() => {
-    fetchSubscriptions();
+    if (!subscriptions) {
+      fetchSubscriptions().catch((error: any) => {
+        console.error("Failed to fetch subsciprions:", error);
+      });
+    }
     setSubscription(subscriptions[subscriptions.length - 1]);
-  }, [loading, subscriptions]);
+  }, [loading, subscriptions, fetchSubscriptions]);
+
   return (
-    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
+    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10">
       <Flex justifyContent="space-between" alignItems="center" p={2}>
         <Flex flexDirection="column" w="100%">
-          <Card>
-            <Text mb={2} color={textColorSecondary}>
-              Subscirption Details
-            </Text>
-            <Flex py="5" px="2">
-              <Box w="100%" pr="10" display="flex" flexDirection="column">
-                <Text color={textColorSecondary} fontSize="sm">
-                  Plan
-                </Text>
-                <Text fontWeight="bold" fontSize="lg">
-                  {subscription?.plan?.name}
-                </Text>
-              </Box>
-              <Box w="100%" pr="10" display="flex" flexDirection="column">
-                <Text color={textColorSecondary} fontSize="sm">
-                  Cost
-                </Text>
-                <Text fontWeight="bold" fontSize="lg">
-                  ${formatPrice(subscription?.subscription_data?.plan?.amount)}{" "}
-                  /&nbsp;
-                  {subscription?.subscription_data?.plan?.interval}
-                </Text>
-              </Box>
-              <Box w="100%" pr="10" display="flex" flexDirection="column">
-                <Text color={textColorSecondary} fontSize="sm">
-                  Purchased on
-                </Text>
-                <Text fontWeight="bold" fontSize="lg">
-                  {formatDate(subscription?.start_date)}
-                </Text>
-              </Box>
-              <Box w="100%" pr="10" display="flex" flexDirection="column">
-                <Text color={textColorSecondary} fontSize="sm">
-                  Renewal Date
-                </Text>
-                <Text fontWeight="bold" fontSize="lg">
-                  {formatDate(subscription?.end_date)}
-                </Text>
-              </Box>
-            </Flex>
-
-            <Box py="3">
-              <Text py="3" color={textColorSecondary}>
-                Plan Benefits
-              </Text>
-              <Flex flexDirection="column" justifyContent="center">
-                {subscription?.plan?.features.map((benefit: any) => (
-                  <Text pl="5" pb="2" key="">
-                    <Icon
-                      as={MdCheckCircle}
-                      color="primary.500"
-                      fontSize="18px"
-                      mx="1"
-                    />
-                    {benefit.description}
-                  </Text>
-                ))}
-              </Flex>
-              <Flex my="5">
-                <Button
-                  onClick={handleUpgrade}
-                  _hover={{ bg: "none" }}
-                  bg="none"
-                  color="primary.400"
-                >
-                  Upgrade Subscription
-                </Button>
-                <Button _hover={{ bg: "none" }} bg="none" color="red.600">
-                  Cancel Subscription
-                </Button>
-              </Flex>
-            </Box>
-          </Card>
+          <SubscriptionDetails
+            subscription={subscription}
+            textColorSecondary={textColorSecondary}
+            upgrade={upgrade}
+          />
         </Flex>
-        {/* <Flex>Payment Details</Flex> */}
       </Flex>
     </Card>
   );

@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useSession } from "next-auth/react";
+import axiosConfig from "axiosConfig";
 import React from "react";
 
 export const subscriptionContext = React.createContext();
@@ -9,38 +8,23 @@ export const SubscriptionProvider = ({ children }) => {
   const [currentSubscription, setCurrentSubscription] = React.useState();
   const [loading, setLoading] = React.useState(true);
 
-  const { data: session } = useSession();
-
   const fetchSubscriptions = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
+    await axiosConfig
+      .get("/api/plans/subscription/")
       .then((response) => {
         // Add it to the context
         let tempSUb = response.data[response.data.length - 1];
         let id = tempSUb?.id;
-        axios
-          .get(
-            `https://surveyplanner.pythonanywhere.com/api/plans/subscription/${id}/`,
-            config
-          )
+        axiosConfig
+          .get(`/api/plans/subscription/${id}/`)
           .then((res) => {
             setCurrentSubscription(res.data);
+            setLoading(false);
           })
-          .catch((err) => {});
+          .catch((err) => {
+            setLoading(false);
+          });
         setSubscriptions(response.data);
-        // console.log("subs", response.data);
-        setLoading(false);
         return;
       })
       .catch((err) => {

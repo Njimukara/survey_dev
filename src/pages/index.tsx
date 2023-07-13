@@ -217,12 +217,11 @@ export default function Home() {
       message: values.message,
     };
 
-    console.log(data);
+    // console.log(data);
 
     // const options = {
     //   // method: 'POST',
     //   headers: {
-    //     "Content-Type": "multipart/form-data",
     //     Accept: "application/json;charset=UTF-8",
     //   },
     // };
@@ -230,7 +229,7 @@ export default function Home() {
     // const res = await axios
     //   .post(
     //     "https://surveyplanner.pythonanywhere.com/auth/users/",
-    //     formdata,
+    //     data,
     //     options
     //   )
     //   .then((res) => {
@@ -410,7 +409,7 @@ export default function Home() {
                   display={{ base: "none", lg: "block" }}
                   className={styles.shipbg}
                   zIndex={1}
-                  bg-local
+                  // bg-local
                 ></Box>
               </Box>
             </Flex>
@@ -518,17 +517,18 @@ export default function Home() {
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={4} spacing="15" minChildWidth="250px">
-                    {plans.map((x: PricingProps) => (
-                      <PricingCard
-                        data-cy="pricing-cards"
-                        key={x.id}
-                        title={x.name}
-                        price={x.amount}
-                        period={x?.stripe_plan_id?.interval}
-                        description={x?.stripe_plan_id?.description}
-                        advantages={x.features}
-                      ></PricingCard>
-                    ))}
+                    {plans &&
+                      plans.map((x: PricingProps) => (
+                        <PricingCard
+                          data-cy="pricing-cards"
+                          key={x.id}
+                          title={x.name}
+                          price={x.amount}
+                          period={x?.stripe_plan_id?.interval}
+                          description={x?.stripe_plan_id?.description}
+                          advantages={x.features}
+                        ></PricingCard>
+                      ))}
                   </SimpleGrid>
                 </TabPanel>
                 <TabPanel>

@@ -60,28 +60,28 @@ export default function ParameterCard(props: Props) {
   return (
     <Box>
       <Grid templateColumns="repeat(9, 1fr)" gap="1">
-        <GridItem colSpan={5} h="5">
+        <GridItem colSpan={5} h="10">
           <Text fontWeight="semibold" fontSize={"sm"}>
             {label}
           </Text>
         </GridItem>
         <>
-          <GridItem colSpan={1} h="8">
+          <GridItem colSpan={1} h="10">
             <Text w="100%" fontSize={size} fontWeight="bold">
               {value1}
             </Text>
           </GridItem>
-          <GridItem colSpan={1} h="8">
+          <GridItem colSpan={1} h="10">
             <Text w="100%" fontSize={size} fontWeight="bold">
               {value2}
             </Text>
           </GridItem>
-          <GridItem colSpan={1} h="8">
+          <GridItem colSpan={1} h="10">
             <Text w="100%" fontSize={size} fontWeight="bold">
               {value3}
             </Text>
           </GridItem>
-          <GridItem colSpan={1} h="8">
+          <GridItem colSpan={1} h="10">
             <Text w="100%" fontSize={size} fontWeight="bold">
               {value4}
             </Text>

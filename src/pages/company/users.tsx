@@ -25,6 +25,28 @@ import InviteUser from "views/admin/profile/components/InviteUser";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Router from "next/router";
+import axiosConfig from "axiosConfig";
+import NoData from "layouts/admin/noData";
+
+const LoadingSpinner = () => (
+  <Card w="100%" borderRadius={10}>
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      py={20}
+    >
+      <Spinner
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="primary.500"
+        size="xl"
+      />
+      <Text>Loading ...</Text>
+    </Flex>
+  </Card>
+);
 
 export default function Users() {
   // component variables
@@ -32,7 +54,6 @@ export default function Users() {
   const [isFetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [companyMembers, setCompanyMembers] = useState([]);
-  const [company, setCompany] = useState(null);
   const [hasDetails, setHasDetails] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [user, setUser] = useState<any>();
@@ -51,99 +72,44 @@ export default function Users() {
   //   get invitations
   const getCompanyMembers = useCallback(async () => {
     setFetching(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/companymembers/companymember/`,
-        config
-      )
-      .then((res) => {
-        // console.log(res);
-        // getInvitations();
-        setCompanyMembers(res.data);
-        // console.log(res.data);
-        setFetching(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        setFetching(false);
-      });
-  }, [companyMembers]);
+
+    try {
+      const response = await axiosConfig.get(
+        "/api/company/companymembers/companymember/"
+      );
+      setCompanyMembers(response.data);
+      setFetching(false);
+    } catch (error) {
+      setFetching(false);
+    }
+  }, []);
 
   //   get invitations
   const getInvitations = useCallback(async () => {
     setLoading(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/invitations/invitations/`,
-        config
-      )
-      .then((res) => {
-        // console.log(res.data);
-
-        let result = res.data.filter((invite: any) => {
-          return invite.status == 1;
-        });
-        setInvitations(result);
-        // console.log(result.length);
-        setLoading(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        setLoading(false);
+    try {
+      const response = await axiosConfig.get(
+        "/api/company/companymembers/companymember/"
+      );
+      let result = response.data.filter((invite: any) => {
+        return invite.status == 1;
       });
-  }, [invitations]);
-
-  const getCompany = async () => {
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        `https://surveyplanner.pythonanywhere.com/api/company/my-company/`,
-        config
-      )
-      .then((res) => {
-        console.log(res.data);
-        setCompany(res.data);
-        setLoading(false);
-        setHasDetails(true);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-        setHasDetails(false);
-      });
-  };
+      setInvitations(result);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // if (session?.user?.user_profile?.user_type == companyUser) {
-    //   Router.push("/admin/default");
-    // }
     if (session != null) {
-      // get invitations and company members
       getInvitations();
       getCompanyMembers();
       setUser(session?.user?.data);
     }
-  }, [session]);
+  }, [session, getInvitations, getCompanyMembers]);
 
-  if (session == null || undefined) {
+  if (session == null || session === undefined) {
     return (
       <AdminLayout>
         <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
@@ -190,41 +156,16 @@ export default function Users() {
           </Box>
         </Flex>
         <Flex w="75%">
-          {companyMembers != undefined && companyMembers.length != 0 ? (
+          {companyMembers && companyMembers.length != 0 ? (
             <UserTableComplex
               columnsData={columnsDataUsers}
               getCompanyMembers={getCompanyMembers}
               tableData={companyMembers as unknown as TableData[]}
             />
           ) : isFetching ? (
-            <Card w="100%" borderRadius={10}>
-              <Flex
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                py={20}
-              >
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="primary.500"
-                  size="xl"
-                />
-                <Text>Loading ...</Text>
-              </Flex>
-            </Card>
+            <LoadingSpinner />
           ) : (
-            <Card w="100%" borderRadius={10}>
-              <Flex
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                py={24}
-              >
-                <Text>There are no company users</Text>
-              </Flex>
-            </Card>
+            <NoData title="There are no company users yet" />
           )}
         </Flex>
       </Flex>
@@ -239,41 +180,16 @@ export default function Users() {
           </Box>
         </Flex>
         <Flex w="75%">
-          {invitations != undefined && invitations.length != 0 ? (
+          {invitations && invitations.length != 0 ? (
             <PendingUserInvite
               columnsData={PendingInvite}
               getInvitations={getInvitations}
               tableData={invitations as unknown as TableData[]}
             />
           ) : loading ? (
-            <Card w="100%" borderRadius={10}>
-              <Flex
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                py={20}
-              >
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="primary.500"
-                  size="xl"
-                />
-                <Text>Loading ...</Text>
-              </Flex>
-            </Card>
+            <LoadingSpinner />
           ) : (
-            <Card w="100%" borderRadius={10}>
-              <Flex
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                py={24}
-              >
-                <Text>There are no pending invites in this company</Text>
-              </Flex>
-            </Card>
+            <NoData title="No pending invies in your company" />
           )}
         </Flex>
       </Flex>

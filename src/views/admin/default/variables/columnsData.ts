@@ -39,21 +39,22 @@ export const columnsDataComplex = [
 ];
 
 export const columnsDataSurvey = [
-  // {
-  //   Header: 'ID',
-  //   accessor: 'id',
-  // },
   {
     Header: "NAME",
     accessor: "name",
   },
+  {
+    Header: "TYPE",
+    accessor: "survey",
+  },
+
   {
     Header: "DOWNLOAD",
     accessor: "download",
   },
   {
     Header: "DATE GENERATED",
-    accessor: "date generated",
+    accessor: "created",
   },
   {
     Header: "ACTIONS",

@@ -53,7 +53,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
               </Text>
               / {props.period}
             </Heading>
-            <Text mb="15px" fontSize="sm" px-3 fontWeight="400">
+            <Text mb="15px" fontSize="sm" px="3" fontWeight="400">
               {props.description}
             </Text>
             <Box>

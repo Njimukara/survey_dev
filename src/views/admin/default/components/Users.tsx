@@ -6,9 +6,7 @@ import Link from "next/link";
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 
 // Assets
-import Project2 from "img/profile/Project2.png";
-import Project3 from "img/profile/Project3.png";
-import { MdAdd, MdArrowRight } from "react-icons/md";
+import { MdArrowRight } from "react-icons/md";
 
 // Custom components
 import Card from "components/card/Card";
@@ -18,11 +16,6 @@ export default function Users(props: { [x: string]: any }) {
   const { members, ...rest } = props;
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = "gray.400";
-  const cardShadow = useColorModeValue(
-    "0px 18px 40px rgba(112, 144, 176, 0.12)",
-    "unset"
-  );
 
   if (members.length == 0) {
     return (
@@ -45,7 +38,12 @@ export default function Users(props: { [x: string]: any }) {
   }
 
   return (
-    <Card mb={{ base: "0px", "2xl": "20px" }} borderRadius="10" {...rest}>
+    <Card
+      mb={{ base: "0px", "2xl": "20px" }}
+      bg="transparent"
+      borderRadius="10"
+      {...rest}
+    >
       <>
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
@@ -58,30 +56,20 @@ export default function Users(props: { [x: string]: any }) {
             >
               My Users
             </Text>
-            <Text color={textColorSecondary} fontSize="md" me="26px" mb="40px">
-              All current users in your company.
-            </Text>
           </Box>
           <Flex gap={3}>
             <Link href={`/company/users`}>
-              <Button variant="homePrimary" py="5" px="4">
+              <Button variant="homePrimary" py="6" px="5" bg="#3A2FB7">
                 All Users
                 <MdArrowRight />
               </Button>
             </Link>
           </Flex>
         </Flex>
-        {members?.map((member: any) => {
+        {members?.map(({ email, name }: { name: string; email: string }) => {
           return (
-            <User
-              key={member.name}
-              boxShadow="sm"
-              my="1"
-              name={member.name}
-              email={member.email}
-            />
+            <User key={email} boxShadow="sm" my="1" name={name} email={email} />
           );
-          // console.log(y);
         })}
       </>
     </Card>

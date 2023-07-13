@@ -5,60 +5,24 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  HStack,
-  Icon,
   Image,
   Input,
-  InputGroup,
-  InputRightAddon,
-  Select,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card";
-import LineChart from "components/charts/LineChart";
-import { useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { IoCheckmarkCircle } from "react-icons/io5";
-import {
-  MdBarChart,
-  MdOutlineCalendarToday,
-  MdOutlineCreditCard,
-} from "react-icons/md";
-// Assets
-import { RiArrowUpSFill } from "react-icons/ri";
-import {
-  lineChartDataTotalSpent,
-  lineChartOptionsTotalSpent,
-} from "variables/charts";
 
 export default function Company(props: { [x: string]: any }) {
   const { ...rest } = props;
 
   // Chakra Color Mode
-
-  const textColor = useColorModeValue("navy.500", "white");
-  const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const iconColor = useColorModeValue("brand.500", "white");
-  const brandColor = useColorModeValue("brand.500", "white");
-  const bgButton = useColorModeValue("primary.500", "blue.300");
-  const bgHover = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.50" }
-  );
-  const bgFocus = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.100" }
-  );
 
   const [mounted, setMounted] = useState(false);
-  const [active, setActive] = useState(true);
 
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
@@ -67,8 +31,6 @@ export default function Company(props: { [x: string]: any }) {
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
 
-      // console.log(i)
-      // console.log(createObjectURL)
       setImage(i);
       setCreateObjectURL(URL.createObjectURL(i));
     }

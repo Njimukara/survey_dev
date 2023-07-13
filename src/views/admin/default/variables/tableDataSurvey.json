@@ -1,20 +1,23 @@
 [
   {
     "id": "1",
-    "name": "Side Scan Sonar",
+    "type": "Side Scan Sonar",
+    "name": "My survey",
     "download": "Download in PDF",
-    "date generated": "18 Apr 2022"
+    "created": "18 Apr 2022"
   },
   {
     "id": "2",
-    "name": "Dynamic Lyder",
+    "type": "Dynamic Lyder",
+    "name": "Second survey",
     "download": "Download in PDF",
-    "date generated": "18 Oct 2022"
+    "created": "18 Oct 2022"
   },
   {
     "id": "3",
-    "name": "2D Acoustic Camera",
+    "type": "2D Acoustic Camera",
+    "name": "Last survey",
     "download": "Download in PDF",
-    "date generated": "18 Jun 2022"
+    "created": "18 Jun 2022"
   }
 ]

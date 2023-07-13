@@ -1,6 +1,9 @@
 import axios from "axios";
+import axiosConfig from "axiosConfig";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export const authOptions = (req) => ({
   secret: process.env.NEXTAUTH_SECRET,
   // Configure one or more authentication providers
@@ -24,21 +27,22 @@ export const authOptions = (req) => ({
           type: "password",
           placeholder: "Enter Password",
         },
+        remember: {
+          label: "Remember me",
+          type: "checkbox",
+        },
       },
 
       async authorize(credentials, req) {
-        const { email, password } = credentials;
+        const { email, password, remember } = credentials;
         const body = {
           email: email,
           password: password,
         };
         let respond, error;
         let user = {};
-        await axios
-          .post(
-            "https://surveyplanner.pythonanywhere.com/auth/token/login/",
-            body
-          )
+        await axiosConfig
+          .post(`/auth/token/login/`, body)
           .then((res) => {
             respond = res;
           })
@@ -46,22 +50,21 @@ export const authOptions = (req) => ({
             error = err;
           });
 
-        if (respond != undefined) {
+        if (respond) {
           if (respond.status == 200) {
             const config = {
               headers: { Authorization: `Token ${respond.data.auth_token}` },
             };
-            await axios
-              .get(
-                "https://surveyplanner.pythonanywhere.com/auth/users/me/",
-                config
-              )
+            await axiosConfig
+              .get(`/auth/users/me/`, config)
               .then((res) => {
+                console.log("res", res);
                 user.data = res.data;
                 user.auth_token = respond.data.auth_token;
                 return user;
               })
               .catch((err) => {
+                console.log("err", err);
                 throw new Error(
                   JSON.stringify({
                     errors: "Server error, please try again later",
@@ -70,6 +73,7 @@ export const authOptions = (req) => ({
                 );
               });
           } else {
+            // console.log("this is strange", respond);
             throw new Error(
               JSON.stringify({
                 errors: "Server error, please try again later",
@@ -77,7 +81,10 @@ export const authOptions = (req) => ({
               })
             );
           }
-          return user;
+          return {
+            ...user,
+            remember: remember ? true : false,
+          };
         }
         throw new Error(
           JSON.stringify({
@@ -93,18 +100,8 @@ export const authOptions = (req) => ({
     async jwt({ token, user }) {
       if (req.url === "/api/auth/session?update") {
         // Note, that `session` can be any arbitrary object, remember to validate it!
-        let config = {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json;charset=UTF-8",
-            Authorization: `Token ${token?.auth_token}`,
-          },
-        };
-        await axios
-          .get(
-            "https://surveyplanner.pythonanywhere.com/auth/users/me/",
-            config
-          )
+        await axiosConfig
+          .get("/auth/users/me/")
           .then((res) => {
             token.data = res.data;
           })
@@ -116,6 +113,10 @@ export const authOptions = (req) => ({
               })
             );
           });
+      }
+      if (user && user.remember) {
+        // Extend the expiration time of the token for "remembered" users
+        token.expires = Date.now() + 5 * 24 * 60 * 60 * 1000; // 5 days in milliseconds
       }
       return { ...token, ...user };
     },
@@ -137,6 +138,8 @@ export const authOptions = (req) => ({
   },
 });
 // export default NextAuth(authOptions);
-export default async (req, res) => {
+const NextAuthFunction = async (req, res) => {
   return NextAuth(req, res, authOptions(req));
 };
+
+export default NextAuthFunction;
