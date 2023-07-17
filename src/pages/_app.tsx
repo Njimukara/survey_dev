@@ -22,7 +22,6 @@ import { AuthGuard } from "layouts/auth/AuthGuard";
 import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import { PlanContextProvider } from "contexts/PlanContext";
 import { CurrentUserProvider } from "contexts/UserContext";
-import { SurveyContextProvider } from "contexts/Survey";
 import { Router } from "next/router";
 import NProgress from "nprogress";
 import { AllSurveysProvider } from "contexts/SurveyContext";
@@ -64,11 +63,9 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
               <SurveyHistoryProvider>
                 <PlanContextProvider>
                   <AllSurveysProvider>
-                    <SurveyContextProvider>
-                      <CurrentUserProvider>
-                        <Component {...pageProps} />
-                      </CurrentUserProvider>
-                    </SurveyContextProvider>
+                    <CurrentUserProvider>
+                      <Component {...pageProps} />
+                    </CurrentUserProvider>
                   </AllSurveysProvider>
                 </PlanContextProvider>
               </SurveyHistoryProvider>
