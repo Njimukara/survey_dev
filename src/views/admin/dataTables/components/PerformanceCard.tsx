@@ -1,44 +1,28 @@
 // Chakra imports
 import {
   Box,
-  Button,
   Flex,
-  FormLabel,
   Card,
   Grid,
   GridItem,
-  Icon,
-  SimpleGrid,
   Text,
   useColorModeValue,
   Input,
   Select,
 } from "@chakra-ui/react";
 // Custom components
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";
-import LidarCard from "./LidarCard";
-import PerformanceSurvey from "./PerformanceSurvey";
-
-const formFields = [
-  {
-    survey: "",
-    label: "",
-    name: "",
-  },
-];
 
 type Props = {
   performance_ssss?: Array<any>;
-  surveyID: number;
+  survey_Id: number;
   handleform?: any;
   value?: any;
   [x: string]: any;
 };
 
 export default function PercormanceCard(props: Props) {
-  const { performance_ssss, handleform, value, surveyID, ...rest } = props;
+  const { performance_ssss, handleform, value, survey_Id, ...rest } = props;
 
   // variables
   const [lidar, setLidar] = useState(2);
@@ -47,25 +31,9 @@ export default function PercormanceCard(props: Props) {
   const [acoustic, setAcoustic] = useState(4);
 
   // Chakra Color Mode
-  const textColor = useColorModeValue("navy.500", "white");
-  const whiteText = useColorModeValue("white", "white");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
-  const textColordark = useColorModeValue("black", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const iconColor = useColorModeValue("brand.500", "white");
-  const bgButton = useColorModeValue("primary.500", "blue.300");
-  const bgHover = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.50" }
-  );
-  const bgFocus = useColorModeValue(
-    { bg: "primary.600" },
-    { bg: "whiteAlpha.100" }
-  );
 
   const [mounted, setMounted] = useState(false);
-  const [active, setActive] = useState(true);
-  const [labels, setLabels] = useState([]);
   const array = [1, 2, 3, 4];
 
   const formattedString = (inputString: string) => {
@@ -98,11 +66,11 @@ export default function PercormanceCard(props: Props) {
         <GridItem colSpan={5} h="10">
           <Text fontSize="large" fontWeight="bold" textTransform="uppercase">
             Performance of{" "}
-            {surveyID == lidar
+            {survey_Id == lidar
               ? "Lidars"
-              : surveyID == multibeam
+              : survey_Id == multibeam
               ? "MBESs  "
-              : surveyID == scan
+              : survey_Id == scan
               ? "SSSs"
               : "Cameras"}
           </Text>
@@ -110,11 +78,11 @@ export default function PercormanceCard(props: Props) {
         {array.map((item, index) => (
           <GridItem colSpan={1} h="10" key={index}>
             <Text fontSize="sm" fontWeight="bold">
-              {surveyID == lidar
+              {survey_Id == lidar
                 ? `Lidar ${item}`
-                : surveyID == multibeam
+                : survey_Id == multibeam
                 ? `MBES ${item}`
-                : surveyID == scan
+                : survey_Id == scan
                 ? `SL ${item}`
                 : `AC ${item}`}
             </Text>

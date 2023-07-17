@@ -15,7 +15,6 @@ import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
-import GenerateSurvey from "./generate";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
 import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
@@ -24,107 +23,10 @@ import OperationalConditionsCard from "views/admin/dataTables/components/Operati
 import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
-import { useSession } from "next-auth/react";
-import axios from "axios";
 import Select from "react-select";
 import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
-
-const jsonData = {
-  name: "my test survey",
-  survey: 1,
-  parameters: {
-    calibration_parameters: {
-      pitch_boresight: 9,
-      roll_boresight: 3,
-      yaw_boresight: 9,
-      pitch_boresight_uncertainty: 5,
-      roll_boresight_uncertainty: 9,
-      yaw_boresight_uncertainty: 1,
-      "latency_gnss-smf": 3,
-      "uncty_of_latency_gnss-smf": 7,
-      "latency_gnss-ins": 6,
-      "uncty_of_latency_gnss-ins": 2,
-    },
-    "performance_ins-gnss-usbl": {
-      yaw_uncertainty: 0.05,
-      roll_uncertainty: 0.06,
-      pitch_uncertainty: 0.07,
-      positioning_uncertainty_in_h: 0.08,
-      positioning_uncertainty_in_v: 0.09,
-      heave_uncertainty: 0.1,
-    },
-    survey_platform_performance: {
-      survey_speed: 2.5,
-      survey_speed_uncertainty: 0.2,
-      draft_uncertainty: 0.01,
-      variation_in_z_due_to_loads: 0.03,
-    },
-    lever_arm_measures_between: {
-      lever_arms_uncertainty: 3,
-      ford_gnss_smf: 2,
-      ford_ins_and_gnss: 6,
-      down_ins_and_gnss: 7,
-      down_gnss_and_smf: 1,
-      std_ins_and_gnss: 9,
-      std_gnss_and_smf: 3.3,
-      sounding_reduction: "gnss",
-    },
-    operational_conditions: {
-      mean_sound_speed: 1500,
-      max_depth_of_the_svp: 200,
-      svs_uncertainty: 0.1,
-      svp_uncertainty: 0.2,
-      uncert_svp_beyond_its_max_depth: 0.3,
-      tide_uncertainty: 0.05,
-      co_tidal_uncertainty: 0.06,
-      depth: 50,
-      incidence_angle_of_mbes: 30,
-    },
-    "performance_of_mbess-s1-s2-s3-s4": [
-      {
-        defined_operating_frequency: 2,
-        along_track_beanwidth: 1,
-        accross_track_beanwidth: 6,
-        beams_number: 4,
-        depth_resolution: 5,
-        ping_rate: 1,
-        user_defined_swath_coverage: 100,
-        shape_of_atennna: "circular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 120,
-        shape_of_atennna: "rectangular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 100,
-        shape_of_atennna: "circular",
-      },
-      {
-        defined_operating_frequency: 100,
-        along_track_beanwidth: 20,
-        accross_track_beanwidth: 10,
-        beams_number: 256,
-        depth_resolution: 0.1,
-        ping_rate: 10,
-        user_defined_swath_coverage: 120,
-        shape_of_atennna: "rectangular",
-      },
-    ],
-  },
-};
+import axiosConfig from "axiosConfig";
 
 type Survey = {
   id: number;
@@ -279,7 +181,6 @@ export default function MultibeamEchoSounder() {
   const [performanceForm, setPerformanceForm] = useState<any>({});
   const [leverForm, setLeverForm] = useState<any>({});
   const [operationalForm, setOperationalForm] = useState<any>({});
-  const [form, setForm] = useState<any>({});
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
@@ -306,12 +207,9 @@ export default function MultibeamEchoSounder() {
   const [surveyName, setSurveyName] = useState("");
   const [planning, setPlanning] = useState(false);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-  const { data: session } = useSession();
-  const [user, setUser] = useState(null);
   const [surveyCode, setSurveyCode] = useState("S01");
   const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { history, surveyOptions, getSurveyHistory } =
-    useSurveyHistoryContext();
+  const { surveyOptions } = useSurveyHistoryContext();
 
   // chakra toast
   const toast = useToast();
@@ -349,45 +247,6 @@ export default function MultibeamEchoSounder() {
     // console.log("formside scan", form);
   }, [loading, subscription]);
 
-  const handleForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...form };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = value;
-    } else {
-      nestedObj[lastKey] = value;
-    }
-    console.log("Form changed: ", updatedForm);
-    // Update state
-    setForm(updatedForm);
-  };
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
     let updatedForm = { ...calibrationForm };
@@ -427,7 +286,6 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setCalibrationForm(updatedForm);
   };
@@ -470,7 +328,6 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setLeverForm(updatedForm);
   };
@@ -513,7 +370,6 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setOperationalForm(updatedForm);
   };
@@ -556,7 +412,6 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setPerformanceForm(updatedForm);
   };
@@ -599,7 +454,6 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setPlatformForm(updatedForm);
   };
@@ -642,10 +496,51 @@ export default function MultibeamEchoSounder() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setSSPerformanceForm(updatedForm);
   };
+
+  // const handleFormChange = (event: any, form: any, setFormState: any) => {
+  //   // Clone form because we need to modify it
+  //   let updatedForm = { ...form };
+
+  //   const { name, value } = event.target;
+
+  //   // Split the name into an array of keys
+  //   const keys = name.split(".");
+
+  //   // Build the nested object dynamically
+  //   let nestedObj = updatedForm;
+
+  //   for (let i = 0; i < keys.length - 1; i++) {
+  //     const key = keys[i];
+
+  //     if (!nestedObj[key]) {
+  //       // Check if the next key is a number (indicating an array)
+  //       if (isNaN(keys[i + 1])) {
+  //         nestedObj[key] = {};
+  //       } else {
+  //         nestedObj[key] = [];
+  //       }
+  //     }
+
+  //     nestedObj = nestedObj[key];
+  //   }
+
+  //   const lastKey = keys[keys.length - 1];
+  //   if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
+  //     // Convert the value to a number if it represents an array index
+  //     nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
+  //       ? parseFloat(value)
+  //       : value;
+  //   } else {
+  //     nestedObj[lastKey] = shouldConvertToFloat(lastKey)
+  //       ? parseFloat(value)
+  //       : value;
+  //   }
+  //   // Update state
+  //   setFormState(updatedForm);
+  // };
 
   // Helper function to determine if a value should be converted to a float
   const shouldConvertToFloat = (inputField: string): boolean => {
@@ -681,12 +576,6 @@ export default function MultibeamEchoSounder() {
 
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
 
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
@@ -703,14 +592,8 @@ export default function MultibeamEchoSounder() {
       parameters: formData,
     };
 
-    console.log(data);
-
-    await axios
-      .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
-        data,
-        config
-      )
+    await axiosConfig
+      .post(`/api/surveys/${surveyCode}/generate-survey/`, data)
       .then((res) => {
         setResults(res.data);
         setSurveyParameters(res.data.results);
@@ -725,7 +608,6 @@ export default function MultibeamEchoSounder() {
         setPlanning(false);
       })
       .catch((error) => {
-        console.log(error);
         toast({
           position: "bottom-right",
           description: "Error planning survey at this time",
@@ -821,12 +703,12 @@ export default function MultibeamEchoSounder() {
             performance_ssss={performanceCard}
             value={ssPerformanceForm}
             handleform={handlessPerformanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
           <Parameters
             results={surveyParameters}
             value={performanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
         </GridItem>
         <GridItem colSpan={3}>
@@ -836,7 +718,7 @@ export default function MultibeamEchoSounder() {
                 mb="2"
                 performance_ins={performance_ins}
                 handleform={handlePerformanceForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={performanceForm}
               />
               <PlatformPerformance
@@ -844,12 +726,12 @@ export default function MultibeamEchoSounder() {
                 platformPerformance={platformPerformance}
                 handleform={handlePlatformForm}
                 value={platformForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
               />
               <OperationalConditionsCard
                 operationConditions={operationalConditions}
                 handleform={handleOperationalForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={operationalForm}
               />
             </Box>
@@ -858,17 +740,17 @@ export default function MultibeamEchoSounder() {
                 mb="2"
                 calibrations={calibrations}
                 handleform={handleCalibrationsForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={calibrationForm}
               />
               <LeverarmCard
                 mb="2"
                 Leverarm={leverarm}
                 handleform={handleleverForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={leverForm}
               />
-              <CloudPoints surveyID={surveyID} />
+              <CloudPoints survey_Id={surveyID} />
             </Box>
           </Flex>
           <Button

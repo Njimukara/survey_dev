@@ -1,19 +1,5 @@
-import {
-  Box,
-  Card,
-  Flex,
-  FormControl,
-  FormLabel,
-  Grid,
-  GridItem,
-  Input,
-  Select,
-  SimpleGrid,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { useSurveyContext } from "contexts/Survey";
-import React, { useState, useEffect } from "react";
+import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
+import React from "react";
 
 interface Props {
   label?: string;
@@ -42,20 +28,6 @@ export default function ParameterCard(props: Props) {
     options,
     ...rest
   } = props;
-  const textColorSecondary = useColorModeValue("black", "secondaryGray.300");
-
-  // variables
-  const [lidar, setLidar] = useState(2);
-  const [multibeam, setMultibeam] = useState(1);
-  const [scan, setScan] = useState(3);
-  const [acoustic, setAcoustic] = useState(4);
-  const array = [1, 2, 3, 4];
-
-  const { loading, form, handleFormChange } = useSurveyContext();
-
-  useEffect(() => {
-    // console.log(value1, value2, value3, value4);
-  });
 
   return (
     <Box>

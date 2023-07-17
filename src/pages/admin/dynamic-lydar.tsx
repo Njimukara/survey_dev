@@ -8,7 +8,6 @@ import {
   Grid,
   GridItem,
   Input,
-  SimpleGrid,
   useToast,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner";
@@ -16,7 +15,6 @@ import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
-import GenerateSurvey from "./generate";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
 import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
@@ -25,110 +23,10 @@ import OperationalConditionsCard from "views/admin/dataTables/components/Operati
 import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
-import { useSurveyContext } from "contexts/Survey";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import Select from "react-select";
 import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
-
-const jsonData = {
-  name: "my test survey",
-  survey: 1,
-  parameters: {
-    calibration_parameters: {
-      pitch_boresight: 0.1,
-      roll_boresight: -0.2,
-      yaw_boresight: 0.3,
-      pitch_boresight_uncertainty: 0.02,
-      roll_boresight_uncertainty: 0.03,
-      yaw_boresight_uncertainty: 0.04,
-      "latency_gnss-ins": 0.5,
-      "latency_gnss-lidar": 0.6,
-      "uncty_of_latency_gnss-ins": 0.02,
-      "uncty_of_latency_gnss-lidar": 0.03,
-    },
-    "performance_ins-gnss-usbl": {
-      yaw_uncertainty: 0.05,
-      roll_uncertainty: 0.06,
-      pitch_uncertainty: 0.07,
-      positioning_uncertainty_in_h: 0.08,
-      positioning_uncertainty_in_v: 0.09,
-      heave_uncertainty: 0.1,
-    },
-    survey_platform_performance: {
-      survey_speed: 2.5,
-      survey_speed_uncertainty: 0.2,
-      draft_uncertainty: 0.01,
-      variation_in_z_due_to_loads: 0.03,
-    },
-    lever_arm_measures_between: {
-      lever_arms_uncertainty: 0.01,
-      ford_gnss_smf: 0.2,
-      ford_ins_and_gnss: 0.1,
-      down_ins_and_gnss: 0.3,
-      down_gnss_and_smf: 0.2,
-      std_ins_and_gnss: 0.15,
-      std_gnss_and_lidar: 0.25,
-    },
-    operational_conditions: {
-      flying_height_or_distance: 1000,
-      max_depth_of_the_svp: 200,
-      angle_of_incidence_of_a_beam: 30,
-      overlap_rate: 0.8,
-      width_of_the_study_area: 1000,
-      length_of_the_study_area: 2000,
-      tide_uncertainty: 0.05,
-      co_tidal_uncertainty: 0.06,
-    },
-    "performance_of_mbess-s1-s2-s3-s4": [
-      {
-        maximum_range: 200,
-        beam_divergence: 0.1,
-        signal_to_noise_ratio: 30,
-        uncertainty_of_divergence: 0.02,
-        pulse_duration: 10,
-        pulse_repetition_rate: 100,
-        range_uncertainty: 0.05,
-        lidar_scanning_angle: 30,
-        texture: "integrated",
-      },
-      {
-        maximum_range: 200,
-        beam_divergence: 0.1,
-        signal_to_noise_ratio: 30,
-        uncertainty_of_divergence: 0.02,
-        pulse_duration: 10,
-        pulse_repetition_rate: 100,
-        range_uncertainty: 0.05,
-        lidar_scanning_angle: 30,
-        texture: "integrated",
-      },
-      {
-        maximum_range: 200,
-        beam_divergence: 0.1,
-        signal_to_noise_ratio: 30,
-        uncertainty_of_divergence: 0.02,
-        pulse_duration: 10,
-        pulse_repetition_rate: 100,
-        range_uncertainty: 0.05,
-        lidar_scanning_angle: 30,
-        texture: "integrated",
-      },
-      {
-        maximum_range: 200,
-        beam_divergence: 0.1,
-        signal_to_noise_ratio: 30,
-        uncertainty_of_divergence: 0.02,
-        pulse_duration: 10,
-        pulse_repetition_rate: 100,
-        range_uncertainty: 0.05,
-        lidar_scanning_angle: 30,
-        texture: "integrated",
-      },
-    ],
-  },
-};
+import axiosConfig from "axiosConfig";
 
 type Survey = {
   id: number;
@@ -145,10 +43,7 @@ function DynamicLydar() {
   const [survey, setSurvey] = useState([]);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { surveys, lidar, getAllSurveys } = useAllSurveysContext();
-  const { history, surveyOptions } = useSurveyHistoryContext();
-
-  const [user, setUser] = useState(null);
-  const { data: session } = useSession();
+  const { surveyOptions } = useSurveyHistoryContext();
 
   const [surveyCode, setSurveyCode] = useState("S03");
   const [planning, setPlanning] = useState(false);
@@ -306,7 +201,6 @@ function DynamicLydar() {
   const [performanceForm, setPerformanceForm] = useState<any>({});
   const [leverForm, setLeverForm] = useState<any>({});
   const [operationalForm, setOperationalForm] = useState<any>({});
-  const [form, setForm] = useState<any>({});
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
   const [results, setResults] = useState({
@@ -327,8 +221,6 @@ function DynamicLydar() {
       enum: ["gnss", "tide"],
     },
   });
-
-  const { surveyResults, planSurvey, handleFormChange } = useSurveyContext();
 
   // manage all the surveyparameters on input change
   const handleCalibrationsForm = (event: any) => {
@@ -649,12 +541,6 @@ function DynamicLydar() {
   // submit form for survey generation
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
 
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
@@ -673,12 +559,8 @@ function DynamicLydar() {
 
     console.log(data);
 
-    await axios
-      .post(
-        `https://surveyplanner.pythonanywhere.com/api/surveys/${surveyCode}/generate-survey/`,
-        data,
-        config
-      )
+    await axiosConfig
+      .post(`/api/surveys/${surveyCode}/generate-survey/`, data)
       .then((res) => {
         setResults(res.data);
         setSurveyParameters(res.data.results);
@@ -782,12 +664,12 @@ function DynamicLydar() {
             performance_ssss={performanceCard}
             value={ssPerformanceForm}
             handleform={handlessPerformanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
           <Parameters
             results={surveyParameters}
             value={performanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
         </GridItem>
         <GridItem colSpan={3}>
@@ -797,7 +679,7 @@ function DynamicLydar() {
                 mb="2"
                 performance_ins={performance_ins}
                 handleform={handlePerformanceForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={performanceForm}
               />
               <PlatformPerformance
@@ -805,12 +687,12 @@ function DynamicLydar() {
                 platformPerformance={platformPerformance}
                 handleform={handlePlatformForm}
                 value={platformForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
               />
               <OperationalConditionsCard
                 operationConditions={operationalConditions}
                 handleform={handleOperationalForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={operationalForm}
               />
             </Box>
@@ -819,17 +701,17 @@ function DynamicLydar() {
                 mb="2"
                 calibrations={calibrations}
                 handleform={handleCalibrationsForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={calibrationForm}
               />
               <LeverarmCard
                 mb="2"
                 Leverarm={leverarm}
                 handleform={handleleverForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={leverForm}
               />
-              <CloudPoints surveyID={surveyID} />
+              <CloudPoints survey_Id={surveyID} />
             </Box>
           </Flex>
           <Button

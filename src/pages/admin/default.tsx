@@ -73,7 +73,7 @@ export default function UserReports(props: { [x: string]: any }) {
     };
   }
 
-  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
+  const { currentUser, fetchCurrentUser } = useCurrentUser();
   const { surveys, getAllSurveys } = useAllSurveysContext();
   const { subscriptions, fetchSubscriptions } = useSubscription();
   const { history, companySurveyHistory, getSurveyHistory, getCompanySurvey } =
@@ -88,7 +88,7 @@ export default function UserReports(props: { [x: string]: any }) {
   const [individualUser, setIndividualUser] = useState(1);
   const [companyMembers, setCompanyMembers] = useState([]);
   const [surveyHistory, setSurveyHistory] = useState([]);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // chakra toast
   const toast = useToast();
@@ -293,7 +293,6 @@ export default function UserReports(props: { [x: string]: any }) {
                 <Offers />
               </Flex>
             )}
-            {/* <MiniCalendar h='100%' minW='100%' selectRange={false} /> */}
           </Flex>
 
           {user?.user_profile?.user_type == companyUser && (

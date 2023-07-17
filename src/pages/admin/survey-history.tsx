@@ -1,7 +1,7 @@
 import { Box, Flex, Spinner } from "@chakra-ui/react";
 import React from "react";
 import AdminLayout from "layouts/admin";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import SurveyTable from "views/admin/default/components/SurveyTable";
 import {
@@ -15,24 +15,16 @@ export default function SurveyHistory() {
   // component variables
   const [user, setUser] = useState(null);
   const [allSurveyHistory, setAllsurveyHistory] = useState([]);
-  // const [companyUserLength, setCompanyUserLength] = useState(0);
-  // const [companyUser] = useState(2);
-  const { history, arrayHistory, getSurveyHistory } = useSurveyHistoryContext();
+  const { arrayHistory, getSurveyHistory } = useSurveyHistoryContext();
 
   // session hook
   const { data: session } = useSession();
-
-  // toggleUser invite modal
-  // const toggleModal = (state: boolean) => {
-  //   setIsOpen(state);
-  // };
 
   useEffect(() => {
     if (!arrayHistory) {
       getSurveyHistory();
     } else {
       setAllsurveyHistory(arrayHistory);
-      console.log("history", arrayHistory);
     }
   }, [arrayHistory, getSurveyHistory]);
 

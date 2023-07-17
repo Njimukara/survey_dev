@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Flex, Grid } from "@chakra-ui/react";
+import { Box, Grid } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
 
 // Custom components
@@ -32,7 +32,6 @@ import PlanDetails from "views/admin/profile/components/PlanDetails";
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
-import axios from "axios";
 import { useCurrentUser } from "contexts/UserContext";
 import CompanyUsers from "views/admin/profile/components/CompanyUsers";
 import axiosConfig from "axiosConfig";

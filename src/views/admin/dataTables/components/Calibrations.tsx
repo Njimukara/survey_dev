@@ -1,19 +1,16 @@
-import { Box, Card, Input, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Box, Card, Text } from "@chakra-ui/react";
+import React from "react";
 import SurveyInput from "./SurveyInput";
-import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
   calibrations?: any;
-  surveyID: number;
   handleform?: any;
   value?: any;
   [x: string]: any;
 };
 //
 export default function Calibrations(props: Props) {
-  const { calibrations, handleform, value, surveyID, ...rest } = props;
-  const { loading, handleFormChange } = useSurveyContext();
+  const { calibrations, handleform, value, ...rest } = props;
 
   return (
     <Card borderRadius="10px" p="4" w="100%" {...rest}>

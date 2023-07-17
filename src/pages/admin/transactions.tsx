@@ -24,7 +24,6 @@
 import {
   Box,
   Button,
-  Card,
   Flex,
   SimpleGrid,
   Spinner,
@@ -33,18 +32,16 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
 import { TableData } from "views/admin/default/variables/columnsData";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
-import { useSession } from "next-auth/react";
 import { Plan, subsciptionPlan } from "../../../types/data";
 import { useSubscription } from "contexts/SubscriptionContext";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";

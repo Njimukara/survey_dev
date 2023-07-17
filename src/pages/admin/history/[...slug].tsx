@@ -782,12 +782,12 @@ export default function MultibeamEchoSounder() {
             performance_ssss={performanceCard}
             value={ssPerformanceForm}
             handleform={handlessPerformanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
           <Parameters
             results={surveyParameters}
             value={performanceForm}
-            surveyID={surveyID}
+            survey_Id={surveyID}
           />
         </GridItem>
         <GridItem colSpan={3}>
@@ -797,7 +797,7 @@ export default function MultibeamEchoSounder() {
                 mb="2"
                 performance_ins={performance_ins}
                 handleform={handlePerformanceForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={performanceForm}
               />
               <PlatformPerformance
@@ -805,12 +805,12 @@ export default function MultibeamEchoSounder() {
                 platformPerformance={platformPerformance}
                 handleform={handlePlatformForm}
                 value={platformForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
               />
               <OperationalConditionsCard
                 operationConditions={operationalConditions}
                 handleform={handleOperationalForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={operationalForm}
               />
             </Box>
@@ -819,14 +819,14 @@ export default function MultibeamEchoSounder() {
                 mb="2"
                 calibrations={calibrations}
                 handleform={handleCalibrationsForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={calibrationForm}
               />
               <LeverarmCard
                 mb="2"
                 Leverarm={leverarm}
                 handleform={handleleverForm}
-                surveyID={surveyID}
+                survey_Id={surveyID}
                 value={leverForm}
               />
               <CloudPoints surveyID={surveyID} />

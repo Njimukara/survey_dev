@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import Card from "components/card/Card";
 import PieChart from "components/charts/PieChart";
 // import { pieChartData, pieChartOptions } from "variables/charts";
-import { VSeparator } from "components/separator/Separator";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import { ApexOptions } from "apexcharts";
@@ -59,19 +58,14 @@ export default function Conversion(props: { [x: string]: any }) {
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const cardColor = useColorModeValue("white", "navy.700");
-  const cardShadow = useColorModeValue(
-    "0px 18px 40px rgba(112, 144, 176, 0.12)",
-    "unset"
-  );
   const bgHover = useColorModeValue(
     { bg: "primary.700", color: "white" },
     { bg: "primary.700", color: "secondaryGray.900" }
   );
 
-  const { mergedCompanyHistory } = useSurveyHistoryContext();
+  const { getCompanySurvey, mergedCompanyHistory } = useSurveyHistoryContext();
 
-  const [pieData, setPieData] = useState();
+  const [pieData, setPieData] = useState(null);
   const [period, setPeriod] = useState("year");
   const [month, setMonth] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -178,16 +172,6 @@ export default function Conversion(props: { [x: string]: any }) {
 
     pieChartOptions.colors = newColors;
     return { labels, counts };
-
-    // const labels = useMemo(
-    //   () => groups[0].map((item: any) => item?.count?.name),
-    //   [groups]
-    // );
-    // const counts = useMemo(
-    //   () => groups[0].map((item: any) => item?.count?.count),
-    //   [groups]
-    // );
-    // return merged;
   };
 
   function generateRandomColor() {
@@ -206,16 +190,29 @@ export default function Conversion(props: { [x: string]: any }) {
     []
   );
 
-  const data = useMemo(
-    () => getAnalysis(mergedCompanyHistory, period, year, month),
-    [mergedCompanyHistory, period, year, month, getAnalysis]
-  );
+  // const data = useMemo(
+  //   () => getAnalysis(mergedCompanyHistory, period, year, month),
+  //   [mergedCompanyHistory, period, year, month, getAnalysis]
+  // );
 
   useEffect(() => {
-    console.log("usememo", data);
+    // console.log("usememo", data);
     let month = new Date().getMonth();
     setMonth(month);
+
+    if (mergedCompanyHistory) {
+      let data = getAnalysis(mergedCompanyHistory, period, year, month);
+      // console.log(data);
+      setPieData(data);
+    } else getCompanySurvey();
   }, []);
+
+  const CalculatePieWeekData = (cperiod: string) => {
+    // let mperiod = 'week'
+    let data = getAnalysis(mergedCompanyHistory, cperiod, year, month);
+    setPieData(data);
+    // console.log("week", data);
+  };
 
   if (companySurvey.length <= 0) {
     return (
@@ -264,7 +261,10 @@ export default function Conversion(props: { [x: string]: any }) {
             bg={period === "week" ? "primary.600" : "#F7F7FC"}
             _hover={bgHover}
             mr="1"
-            onClick={() => setPeriod("week")}
+            onClick={() => {
+              setPeriod("week");
+              CalculatePieWeekData("week");
+            }}
           >
             Week
           </Button>
@@ -273,7 +273,10 @@ export default function Conversion(props: { [x: string]: any }) {
             bg={period === "month" ? "primary.600" : "#F7F7FC"}
             _hover={bgHover}
             mr="1"
-            onClick={() => setPeriod("month")}
+            onClick={() => {
+              setPeriod("month");
+              CalculatePieWeekData("month");
+            }}
           >
             Month
           </Button>
@@ -281,19 +284,21 @@ export default function Conversion(props: { [x: string]: any }) {
             _hover={bgHover}
             color={period === "year" ? "white" : "black"}
             bg={period === "year" ? "primary.600" : "#F7F7FC"}
-            onClick={() => setPeriod("year")}
+            onClick={() => {
+              setPeriod("year");
+              CalculatePieWeekData("year");
+            }}
           >
             Year
           </Button>
         </Box>
       </Flex>
 
-      {data && (
+      {pieData && (
         <PieChart
           h="100%"
           w="100%"
-          // chartData={pieChartData}
-          chartData={data.counts}
+          chartData={pieData.counts}
           chartOptions={pieChartOptions}
         />
       )}

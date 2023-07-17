@@ -1,20 +1,16 @@
 import { Box, Card, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import SurveyInput from "./SurveyInput";
-import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
   operationConditions?: any;
   handleform?: any;
-  surveyID: number;
   value?: any;
   [x: string]: any;
 };
 
 export default function OperationalConditionsCard(props: Props) {
-  const { operationConditions, handleform, value, surveyID, ...rest } = props;
-
-  const { handleFormChange } = useSurveyContext();
+  const { operationConditions, handleform, value, ...rest } = props;
 
   return (
     <Card borderRadius="10px" p="4" w="100%" {...rest}>

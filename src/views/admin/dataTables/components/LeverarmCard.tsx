@@ -1,23 +1,16 @@
 import { Box, Card, Text, useColorModeValue } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SurveyInput from "./SurveyInput";
-import { useSurveyContext } from "contexts/Survey";
 
 type Props = {
   Leverarm?: any;
-  surveyID: number;
   handleform?: any;
   value?: any;
   [x: string]: any;
 };
 
 export default function LeverarmCard(props: Props) {
-  const { Leverarm, handleform, value, surveyID, ...rest } = props;
-  const textColorSecondary = useColorModeValue(
-    "secondaryGray.600",
-    "secondaryGray.300"
-  );
-  const { loading, form, handleFormChange } = useSurveyContext();
+  const { Leverarm, handleform, value, ...rest } = props;
 
   return (
     <Card borderRadius="10px" p="4" w="100%" {...rest}>

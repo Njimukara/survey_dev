@@ -66,11 +66,19 @@ export default function Users(props: { [x: string]: any }) {
             </Link>
           </Flex>
         </Flex>
-        {members?.map(({ email, name }: { name: string; email: string }) => {
-          return (
-            <User key={email} boxShadow="sm" my="1" name={name} email={email} />
-          );
-        })}
+        {members
+          ?.slice(0, 3)
+          .map(({ email, name }: { name: string; email: string }) => {
+            return (
+              <User
+                key={email}
+                boxShadow="sm"
+                my="1"
+                name={name}
+                email={email}
+              />
+            );
+          })}
       </>
     </Card>
   );
