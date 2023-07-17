@@ -12,7 +12,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useSurveyContext } from "contexts/Survey";
 import React, { useState } from "react";
 
 interface Props {
@@ -47,15 +46,7 @@ export default function PerformanceSurvey(props: Props) {
     ...rest
   } = props;
   const textColorSecondary = useColorModeValue("black", "secondaryGray.300");
-
-  // variables
-  const [lidar, setLidar] = useState(2);
-  const [multibeam, setMultibeam] = useState(1);
-  const [scan, setScan] = useState(3);
-  const [acoustic, setAcoustic] = useState(4);
   const array = [0, 1, 2, 3];
-
-  const { loading, form, handleFormChange } = useSurveyContext();
 
   return (
     <Box>

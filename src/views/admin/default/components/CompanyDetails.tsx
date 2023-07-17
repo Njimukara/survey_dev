@@ -24,6 +24,15 @@ interface Company {
   street_address?: string;
 }
 
+const countryNameFromIso = (countryCode: string) => {
+  const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+    type: "region",
+  });
+  let tempCountry = countryCode;
+  tempCountry = regionNamesInEnglish.of(tempCountry);
+  return tempCountry;
+};
+
 export default function CompanyDetails(props: {
   company: Company;
   hasDetails: boolean;
@@ -51,17 +60,8 @@ export default function CompanyDetails(props: {
     toggleHasDetails(state);
   };
 
-  const countryNameFromIso = (countryCode: any) => {
-    const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-      type: "region",
-    });
-    let tempCountry = countryCode;
-    tempCountry = regionNamesInEnglish.of(tempCountry);
-    return tempCountry;
-  };
-
   useEffect(() => {
-    if (company != undefined) {
+    if (company) {
       const tempCountry = countryNameFromIso(company?.country);
       setCountry(tempCountry);
     }
@@ -130,7 +130,7 @@ export default function CompanyDetails(props: {
               fontSize="23px"
               textAlign="center"
             >
-              {company?.name}
+              {company?.name ?? ""}
             </Text>
             <Grid
               templateColumns={{
@@ -144,31 +144,31 @@ export default function CompanyDetails(props: {
                 <Text color="gray.400" transform="capitalize">
                   Country
                 </Text>
-                <Text>{country}</Text>
+                <Text>{country ?? ""}</Text>
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">
                   State
                 </Text>
-                <Text>{company?.state}</Text>
+                <Text>{company?.state ?? ""}</Text>
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">
                   City
                 </Text>
-                <Text>{company?.city}</Text>
+                <Text>{company?.city ?? ""}</Text>
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">
                   Street Address
                 </Text>
-                <Text>{company?.street_address}</Text>
+                <Text>{company?.street_address ?? ""}</Text>
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">
                   Zip Code
                 </Text>
-                <Text>{company?.zip_code}</Text>
+                <Text>{company?.zip_code ?? ""}</Text>
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">

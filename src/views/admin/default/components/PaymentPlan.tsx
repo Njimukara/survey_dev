@@ -204,7 +204,7 @@ export default function PaymentPlan(props: Props) {
       description: `Subscription for ${customerName} subscriping to the ${plan.title}`,
       // collection_method: collectionMethod,
       cancel_at: cancelAt,
-      // days_until_due: daysUntilDue,
+      days_until_due: daysUntilDue,
       currency: currency,
       plan_id: planID,
       assigned_surveys: value,
@@ -516,7 +516,10 @@ export default function PaymentPlan(props: Props) {
                 Order Summary
               </Heading>
               <Text>Plan: {plan?.title}</Text>
-              <Text mb="5">Total: $ {formatPrice(plan.price)}</Text>
+              <Text mb="2">Total: $ {formatPrice(plan.price)}</Text>
+              <Text mb="5">
+                You will have {daysUntilDue} days of free trial{" "}
+              </Text>
               <Button
                 type="submit"
                 isLoading={loading}
@@ -530,7 +533,7 @@ export default function PaymentPlan(props: Props) {
                 py="7"
                 _focus={{ bg: "white" }}
               >
-                Make payment
+                Place Order
               </Button>
             </Box>
             <Flex w="100%">

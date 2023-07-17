@@ -612,6 +612,8 @@ export default function Home() {
                       color="white"
                       border="2px"
                       borderColor="white"
+                      _focus={{ bg: "primary.400" }}
+                      _hover={{ bg: "primary.400" }}
                     >
                       Show More
                     </Button>
@@ -724,7 +726,7 @@ export default function Home() {
                     mt="60px"
                   >
                     <Image
-                      src="/contact_us.jpeg"
+                      src="/contact.jpg"
                       alt="contact image"
                       width="450px"
                       height="330px"

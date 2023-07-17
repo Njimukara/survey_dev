@@ -1,25 +1,8 @@
 // Chakra imports
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card";
-import LineChart from "components/charts/LineChart";
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { IoCheckmarkCircle } from "react-icons/io5";
-import { MdBarChart, MdOutlineCalendarToday } from "react-icons/md";
-// Assets
-import { RiArrowUpSFill } from "react-icons/ri";
-import {
-  lineChartDataTotalSpent,
-  lineChartOptionsTotalSpent,
-} from "variables/charts";
 
 export default function CurrentPlan(props: { [x: string]: any }) {
   const { ...rest } = props;
@@ -28,10 +11,8 @@ export default function CurrentPlan(props: { [x: string]: any }) {
 
   const textColor = useColorModeValue("navy.500", "white");
   const whiteText = useColorModeValue("white", "white");
-  const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
-  const iconColor = useColorModeValue("brand.500", "white");
   const bgButton = useColorModeValue("primary.500", "blue.300");
   const bgHover = useColorModeValue(
     { bg: "primary.600" },
@@ -42,18 +23,7 @@ export default function CurrentPlan(props: { [x: string]: any }) {
     { bg: "whiteAlpha.100" }
   );
 
-  const [mounted, setMounted] = useState(false);
-  const [active, setActive] = useState(true);
   const [isActive, setIsActive] = useState(true);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setMounted(true);
-    }, 3000);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
 
   return (
     <Card

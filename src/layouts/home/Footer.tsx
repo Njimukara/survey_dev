@@ -94,7 +94,12 @@ const Footer = () => {
             Get in touch with us{" "}
           </Heading>
           <InputGroup size="md" my="5">
-            <Input placeholder="Email" variant="flushed" />
+            <Input
+              placeholder="Email"
+              variant="flushed"
+              color="gray.200"
+              type="email"
+            />
             <InputRightElement width="4.5rem">
               <Button bg="none" _hover={{ bg: "none" }} h="1.75rem" size="sm">
                 <Icon as={MdSend} boxSize={4} color="white" />
