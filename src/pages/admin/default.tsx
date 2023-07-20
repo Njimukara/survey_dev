@@ -323,7 +323,6 @@ export default function UserReports(props: { [x: string]: any }) {
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
             <WeeklyRevenue />
-            {/* <DailyTraffic /> */}
           </SimpleGrid>
 
           {/* {user?.user_profile?.user_type == companyUser ||

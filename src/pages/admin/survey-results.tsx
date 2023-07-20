@@ -8,9 +8,6 @@ import {
   GridItem,
   Input,
 } from "@chakra-ui/react";
-import Spinner from "components/spinner";
-import { useSubscription } from "contexts/SubscriptionContext";
-import AdminLayout from "layouts/admin";
 import React, { useState, useEffect, useCallback } from "react";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
@@ -36,7 +33,6 @@ function SurveyResults(
   ref: React.LegacyRef<HTMLDivElement>
 ) {
   const [surveyid, setSurveyId] = useState<number>(1);
-  const [survey, setSurvey] = useState(null);
   const [surveyName, setSurveyName] = useState("");
   const { surveys, getAllSurveys } = useAllSurveysContext();
 
@@ -185,25 +181,6 @@ function SurveyResults(
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
-  const [results, setResults] = useState({
-    "swath-width": { type: "number" },
-    survey_time: { type: "number" },
-    "ratio_swath-height-distance": { type: "number" },
-    max_slant_range: { type: "number" },
-    interprofil_spacing: { type: "number" },
-    diameter_of_a_footprint: { type: "number" },
-    range_resolution: { type: "number" },
-    range_uncertainty: { type: "number" },
-    horizontal_uncertainty: { type: "number" },
-    vertical_uncertainty: { type: "number" },
-    lidar_points_density: { type: "number" },
-    number_of_profiles_in_length: { type: "number" },
-    reduction_of_cloud_points: {
-      type: "string",
-      enum: ["gnss", "tide"],
-    },
-  });
-
   const getSurveyResults = useCallback(() => {
     let currentSurvey: Survey;
 
@@ -211,7 +188,7 @@ function SurveyResults(
       surveys.map((survey: Survey) => {
         if (survey.id == surveyResult.survey) {
           currentSurvey = survey;
-          setSurvey(survey);
+          setSurveyId(survey.id);
         }
       });
       // destructure the results
@@ -310,7 +287,7 @@ function SurveyResults(
     } else {
       getSurveyResults();
     }
-  }, [surveys, surveyResult, getAllSurveys]);
+  }, [surveys, getSurveyResults, getAllSurveys]);
 
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it

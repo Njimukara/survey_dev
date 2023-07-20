@@ -8,8 +8,14 @@ import PieChart from "components/charts/PieChart";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import { ApexOptions } from "apexcharts";
+import DonutChart from "components/charts/DonutChart";
 
 type ApexGeneric = ApexOptions & any;
+
+interface DonutChartData {
+  name: string;
+  count: number;
+}
 
 interface SurveyCountByUser {
   userId: string;
@@ -87,7 +93,78 @@ export default function Conversion(props: { [x: string]: any }) {
 
   const changeMonth = (e: any) => {
     setMonth(e.value);
+    // setPeriod("month");
+    // let data = getAnalysis(mergedCompanyHistory, period, year, e.value);
+    // setPieData(data);
   };
+
+  // const getSurveyCountsByUser = (surveys: any) => {
+  //   const surveyCountsByUser: { [userId: string]: DonutChartData } = {};
+  //   surveys.forEach((survey: any) => {
+  //     const userId = survey.user?.id;
+  //     const userName = survey.user?.name;
+
+  //     if (surveyCountsByUser[userId]) {
+  //       surveyCountsByUser[userId].count++;
+  //     } else {
+  //       surveyCountsByUser[userId] = { name: userName, count: 1 };
+  //     }
+  //   });
+
+  //   return Object.values(surveyCountsByUser);
+  // };
+
+  // const groupSurveysByTimePeriod = (
+  //   surveys: any[],
+  //   timePeriod: string,
+  //   year: number,
+  //   month?: number
+  // ): DonutChartData[] => {
+  //   const groups: DonutChartData[] = [];
+  //   switch (timePeriod) {
+  //     case "week":
+  //       for (let week = 1; week <= 5; week++) {
+  //         const weekStart = new Date(year, month || 0, week * 7 - 6);
+  //         const weekEnd = new Date(year, month || 0, week * 7);
+
+  //         const weekSurveys = surveys.filter((survey: any) => {
+  //           const surveyDate = new Date(survey.created);
+  //           return surveyDate >= weekStart && surveyDate <= weekEnd;
+  //         });
+
+  //         groups.push(...getSurveyCountsByUser(weekSurveys));
+  //       }
+  //       break;
+  //     case "month":
+  //       for (let month = 0; month <= 11; month++) {
+  //         const monthStart = new Date(year, month, 1);
+  //         const monthEnd = new Date(year, month + 1, 0);
+
+  //         const monthSurveys = surveys.filter((survey: any) => {
+  //           const surveyDate = new Date(survey.created);
+  //           return surveyDate >= monthStart && surveyDate <= monthEnd;
+  //         });
+
+  //         groups.push(...getSurveyCountsByUser(monthSurveys));
+  //       }
+  //       break;
+  //     case "year":
+  //       const yearStart = new Date(year, 0, 1);
+  //       const yearEnd = new Date(year, 11, 31);
+
+  //       const yearSurveys = surveys.filter((survey: any) => {
+  //         const surveyDate = new Date(survey.created);
+  //         return surveyDate >= yearStart && surveyDate <= yearEnd;
+  //       });
+
+  //       groups.push(...getSurveyCountsByUser(yearSurveys));
+  //       break;
+  //     default:
+  //       throw new Error(`Invalid time period: ${timePeriod}`);
+  //   }
+
+  //   return groups;
+  // };
 
   const getSurveyCountsByUser = (surveys: any) => {
     const surveyCountsByUser: any = {};
@@ -116,50 +193,39 @@ export default function Conversion(props: { [x: string]: any }) {
   ) => {
     const groups: any[] = [];
     switch (timePeriod) {
-      case "week":
-        for (let week = 1; week <= 5; week++) {
-          const weekStart = new Date(year, month || 0, week * 7 - 6);
-          const weekEnd = new Date(year, month || 0, week * 7);
-          // const weekSurveys = surveys.map((element: any) =>
-          const weekSurveys = surveys.filter((survey: any) => {
-            const surveyDate = new Date(survey.created);
-            return surveyDate >= weekStart && surveyDate <= weekEnd;
-          });
-          // );
+      // case "week":
+      //   const weekStart = new Date(year, month || 0, 3 * 7 - 6);
+      //   const weekEnd = new Date(year, month || 0, 3 * 7);
+      //   const weekSurveys = surveys.filter((survey: any) => {
+      //     const surveyDate = new Date(survey.created);
+      //     return surveyDate >= weekStart && surveyDate <= weekEnd;
+      //   });
+      //   groups.push(getSurveyCountsByUser(weekSurveys));
+      //   break;
 
-          groups.push(getSurveyCountsByUser(weekSurveys));
-        }
-        break;
       case "month":
-        for (let month = 0; month <= 11; month++) {
-          const monthStart = new Date(year, month, 1);
-          const monthEnd = new Date(year, month + 1, 0);
-          // const monthSurveys = surveys.map((element: any) =>
-          const monthSurveys = surveys.filter((survey: any) => {
-            const surveyDate = new Date(survey.created);
-            return surveyDate >= monthStart && surveyDate <= monthEnd;
-          });
-          // );
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
+        const monthSurveys = surveys.filter((survey: any) => {
+          const surveyDate = new Date(survey.created);
+          return surveyDate >= monthStart && surveyDate <= monthEnd;
+        });
+        groups.push(getSurveyCountsByUser(monthSurveys));
 
-          groups.push(getSurveyCountsByUser(monthSurveys));
-        }
         break;
       case "year":
         const yearStart = new Date(year, 0, 1);
         const yearEnd = new Date(year, 11, 31);
-        // const yearSurveys = surveys.map((element: any) =>
         const yearSurveys = surveys.filter((survey: any) => {
           const surveyDate = new Date(survey.created);
           return surveyDate >= yearStart && surveyDate <= yearEnd;
         });
-        // );
         groups.push(getSurveyCountsByUser(yearSurveys));
         break;
       default:
         throw new Error(`Invalid time period: ${timePeriod}`);
     }
 
-    // const merged = groups.flat(1);
     const labels = groups[0].map((item: any) => item?.count?.name);
     const counts = groups[0].map((item: any) => item?.count?.count);
 
@@ -190,27 +256,21 @@ export default function Conversion(props: { [x: string]: any }) {
     []
   );
 
-  // const data = useMemo(
-  //   () => getAnalysis(mergedCompanyHistory, period, year, month),
-  //   [mergedCompanyHistory, period, year, month, getAnalysis]
-  // );
+  const data = useMemo(
+    () => getAnalysis(mergedCompanyHistory, period, year, month),
+    [mergedCompanyHistory, period, year, month, getAnalysis]
+  );
 
   useEffect(() => {
-    // console.log("usememo", data);
     let month = new Date().getMonth();
     setMonth(month);
-
-    if (mergedCompanyHistory) {
-      let data = getAnalysis(mergedCompanyHistory, period, year, month);
-      // console.log(data);
-      setPieData(data);
-    } else getCompanySurvey();
   }, []);
 
   const CalculatePieWeekData = (cperiod: string) => {
     // let mperiod = 'week'
-    let data = getAnalysis(mergedCompanyHistory, cperiod, year, month);
-    setPieData(data);
+    // let data = getAnalysis(mergedCompanyHistory, cperiod, year, month);
+    // setPieData(data);
+    setPeriod(cperiod);
     // console.log("week", data);
   };
 
@@ -256,7 +316,7 @@ export default function Conversion(props: { [x: string]: any }) {
         />
 
         <Box bg="#F7F7FC" borderRadius="20px" py="1">
-          <Button
+          {/* <Button
             color={period === "week" ? "white" : "black"}
             bg={period === "week" ? "primary.600" : "#F7F7FC"}
             _hover={bgHover}
@@ -267,7 +327,7 @@ export default function Conversion(props: { [x: string]: any }) {
             }}
           >
             Week
-          </Button>
+          </Button> */}
           <Button
             color={period === "month" ? "white" : "black"}
             bg={period === "month" ? "primary.600" : "#F7F7FC"}
@@ -294,110 +354,16 @@ export default function Conversion(props: { [x: string]: any }) {
         </Box>
       </Flex>
 
-      {pieData && (
+      {/* {pieData && <DonutChart data={pieData} width={400} height={400} />} */}
+
+      {data && (
         <PieChart
           h="100%"
           w="100%"
-          chartData={pieData.counts}
+          chartData={data.counts}
           chartOptions={pieChartOptions}
         />
       )}
-      {/* <Card
-        bg={cardColor}
-        flexDirection="row"
-        justifyContent="space-evenly"
-        boxShadow={cardShadow}
-        w="100%"
-        p="15px"
-        px="20px"
-        mt="15px"
-        mx="auto"
-      >
-        <Flex direction="column" py="5px">
-          <Flex align="center">
-            <Box h="8px" w="8px" bg="brand.500" borderRadius="50%" me="4px" />
-            <Text
-              fontSize="xs"
-              color="secondaryGray.600"
-              fontWeight="700"
-              mb="5px"
-            >
-              User 1
-            </Text>
-          </Flex>
-          <Text fontSize="lg" color={textColor} fontWeight="700">
-            8%
-          </Text>
-        </Flex>
-        <VSeparator mx={{ base: "20px", xl: "20px", "2xl": "20px" }} />
-        <Flex direction="column" py="5px" me="10px">
-          <Flex align="center">
-            <Box h="8px" w="8px" bg="#6AD2FF" borderRadius="50%" me="4px" />
-            <Text
-              fontSize="xs"
-              color="secondaryGray.600"
-              fontWeight="700"
-              mb="5px"
-            >
-              User 2
-            </Text>
-          </Flex>
-          <Text fontSize="lg" color={textColor} fontWeight="700">
-            10%
-          </Text>
-        </Flex>
-        <VSeparator mx={{ base: "20px", xl: "20px", "2xl": "20px" }} />
-        <Flex direction="column" py="5px" me="10px">
-          <Flex align="center">
-            <Box h="8px" w="8px" bg="#6AD2FF" borderRadius="50%" me="4px" />
-            <Text
-              fontSize="xs"
-              color="secondaryGray.600"
-              fontWeight="700"
-              mb="5px"
-            >
-              User 3
-            </Text>
-          </Flex>
-          <Text fontSize="lg" color={textColor} fontWeight="700">
-            12%
-          </Text>
-        </Flex>
-        <VSeparator mx={{ base: "20px", xl: "20px", "2xl": "20px" }} />
-        <Flex direction="column" py="5px" me="10px">
-          <Flex align="center">
-            <Box h="8px" w="8px" bg="#6AD2FF" borderRadius="50%" me="4px" />
-            <Text
-              fontSize="xs"
-              color="secondaryGray.600"
-              fontWeight="700"
-              mb="5px"
-            >
-              User 4
-            </Text>
-          </Flex>
-          <Text fontSize="lg" color={textColor} fontWeight="700">
-            14%
-          </Text>
-        </Flex>
-        <VSeparator mx={{ base: "20px", xl: "20px", "2xl": "20px" }} />
-        <Flex direction="column" py="5px" me="10px">
-          <Flex align="center">
-            <Box h="8px" w="8px" bg="#6AD2FF" borderRadius="50%" me="4px" />
-            <Text
-              fontSize="xs"
-              color="secondaryGray.600"
-              fontWeight="700"
-              mb="5px"
-            >
-              User 5
-            </Text>
-          </Flex>
-          <Text fontSize="lg" color={textColor} fontWeight="700">
-            12%
-          </Text>
-        </Flex>
-      </Card> */}
     </Card>
   );
 }

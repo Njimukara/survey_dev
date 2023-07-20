@@ -2,6 +2,7 @@ import dynamic from "next/dist/shared/lib/dynamic";
 import React from "react";
 import { isWindowAvailable } from "utils/navigation";
 import { ChartProps, ChartState } from "./LineAreaChart";
+import NoData from "layouts/admin/noData";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 class ColumnChart extends React.Component<ChartProps, ChartState> {
@@ -35,6 +36,10 @@ class ColumnChart extends React.Component<ChartProps, ChartState> {
 
   render() {
     if (!isWindowAvailable()) return <></>;
+
+    if (this.state.chartData.length <= 0) {
+      return <NoData title="No survey data yet" />;
+    }
 
     return (
       <Chart
