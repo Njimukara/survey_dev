@@ -93,81 +93,12 @@ export default function Conversion(props: { [x: string]: any }) {
 
   const changeMonth = (e: any) => {
     setMonth(e.value);
-    // setPeriod("month");
     // let data = getAnalysis(mergedCompanyHistory, period, year, e.value);
     // setPieData(data);
   };
 
-  // const getSurveyCountsByUser = (surveys: any) => {
-  //   const surveyCountsByUser: { [userId: string]: DonutChartData } = {};
-  //   surveys.forEach((survey: any) => {
-  //     const userId = survey.user?.id;
-  //     const userName = survey.user?.name;
-
-  //     if (surveyCountsByUser[userId]) {
-  //       surveyCountsByUser[userId].count++;
-  //     } else {
-  //       surveyCountsByUser[userId] = { name: userName, count: 1 };
-  //     }
-  //   });
-
-  //   return Object.values(surveyCountsByUser);
-  // };
-
-  // const groupSurveysByTimePeriod = (
-  //   surveys: any[],
-  //   timePeriod: string,
-  //   year: number,
-  //   month?: number
-  // ): DonutChartData[] => {
-  //   const groups: DonutChartData[] = [];
-  //   switch (timePeriod) {
-  //     case "week":
-  //       for (let week = 1; week <= 5; week++) {
-  //         const weekStart = new Date(year, month || 0, week * 7 - 6);
-  //         const weekEnd = new Date(year, month || 0, week * 7);
-
-  //         const weekSurveys = surveys.filter((survey: any) => {
-  //           const surveyDate = new Date(survey.created);
-  //           return surveyDate >= weekStart && surveyDate <= weekEnd;
-  //         });
-
-  //         groups.push(...getSurveyCountsByUser(weekSurveys));
-  //       }
-  //       break;
-  //     case "month":
-  //       for (let month = 0; month <= 11; month++) {
-  //         const monthStart = new Date(year, month, 1);
-  //         const monthEnd = new Date(year, month + 1, 0);
-
-  //         const monthSurveys = surveys.filter((survey: any) => {
-  //           const surveyDate = new Date(survey.created);
-  //           return surveyDate >= monthStart && surveyDate <= monthEnd;
-  //         });
-
-  //         groups.push(...getSurveyCountsByUser(monthSurveys));
-  //       }
-  //       break;
-  //     case "year":
-  //       const yearStart = new Date(year, 0, 1);
-  //       const yearEnd = new Date(year, 11, 31);
-
-  //       const yearSurveys = surveys.filter((survey: any) => {
-  //         const surveyDate = new Date(survey.created);
-  //         return surveyDate >= yearStart && surveyDate <= yearEnd;
-  //       });
-
-  //       groups.push(...getSurveyCountsByUser(yearSurveys));
-  //       break;
-  //     default:
-  //       throw new Error(`Invalid time period: ${timePeriod}`);
-  //   }
-
-  //   return groups;
-  // };
-
   const getSurveyCountsByUser = (surveys: any) => {
-    const surveyCountsByUser: any = {};
+    const surveyCountsByUser: { [userId: string]: DonutChartData } = {};
     surveys.forEach((survey: any) => {
       const userId = survey.user?.id;
       const userName = survey.user?.name;
@@ -179,66 +110,132 @@ export default function Conversion(props: { [x: string]: any }) {
       }
     });
 
-    return Object.entries(surveyCountsByUser).map(([userId, count]) => ({
-      userId,
-      count,
-    }));
+    return Object.values(surveyCountsByUser);
   };
 
   const groupSurveysByTimePeriod = (
-    surveys: any,
+    surveys: any[],
     timePeriod: string,
     year: number,
     month?: number
-  ) => {
-    const groups: any[] = [];
+  ): DonutChartData[] => {
+    const groups: DonutChartData[] = [];
     switch (timePeriod) {
-      // case "week":
-      //   const weekStart = new Date(year, month || 0, 3 * 7 - 6);
-      //   const weekEnd = new Date(year, month || 0, 3 * 7);
-      //   const weekSurveys = surveys.filter((survey: any) => {
-      //     const surveyDate = new Date(survey.created);
-      //     return surveyDate >= weekStart && surveyDate <= weekEnd;
-      //   });
-      //   groups.push(getSurveyCountsByUser(weekSurveys));
-      //   break;
+      case "week":
+        for (let week = 1; week <= 5; week++) {
+          const weekStart = new Date(year, month || 0, week * 7 - 6);
+          const weekEnd = new Date(year, month || 0, week * 7);
 
+          const weekSurveys = surveys.filter((survey: any) => {
+            const surveyDate = new Date(survey.created);
+            return surveyDate >= weekStart && surveyDate <= weekEnd;
+          });
+
+          groups.push(...getSurveyCountsByUser(weekSurveys));
+        }
+        break;
       case "month":
         const monthStart = new Date(year, month, 1);
         const monthEnd = new Date(year, month + 1, 0);
+
         const monthSurveys = surveys.filter((survey: any) => {
           const surveyDate = new Date(survey.created);
           return surveyDate >= monthStart && surveyDate <= monthEnd;
         });
-        groups.push(getSurveyCountsByUser(monthSurveys));
 
+        groups.push(...getSurveyCountsByUser(monthSurveys));
         break;
       case "year":
         const yearStart = new Date(year, 0, 1);
         const yearEnd = new Date(year, 11, 31);
+
         const yearSurveys = surveys.filter((survey: any) => {
           const surveyDate = new Date(survey.created);
           return surveyDate >= yearStart && surveyDate <= yearEnd;
         });
-        groups.push(getSurveyCountsByUser(yearSurveys));
+
+        groups.push(...getSurveyCountsByUser(yearSurveys));
         break;
       default:
         throw new Error(`Invalid time period: ${timePeriod}`);
     }
 
-    const labels = groups[0].map((item: any) => item?.count?.name);
-    const counts = groups[0].map((item: any) => item?.count?.count);
-
-    pieChartOptions.labels = labels;
-
-    const newColors = [];
-    for (let i = 0; i < labels.length; i++) {
-      newColors.push(generateRandomColor());
-    }
-
-    pieChartOptions.colors = newColors;
-    return { labels, counts };
+    return groups;
   };
+
+  // const getSurveyCountsByUser = (surveys: any) => {
+  //   const surveyCountsByUser: any = {};
+  //   surveys.forEach((survey: any) => {
+  //     const userId = survey.user?.id;
+  //     const userName = survey.user?.name;
+
+  //     if (surveyCountsByUser[userId]) {
+  //       surveyCountsByUser[userId].count++;
+  //     } else {
+  //       surveyCountsByUser[userId] = { name: userName, count: 1 };
+  //     }
+  //   });
+
+  //   return Object.entries(surveyCountsByUser).map(([userId, count]) => ({
+  //     userId,
+  //     count,
+  //   }));
+  // };
+
+  // const groupSurveysByTimePeriod = (
+  //   surveys: any,
+  //   timePeriod: string,
+  //   year: number,
+  //   month?: number
+  // ) => {
+  //   const groups: any[] = [];
+  //   switch (timePeriod) {
+  //     // case "week":
+  //     //   const weekStart = new Date(year, month || 0, 3 * 7 - 6);
+  //     //   const weekEnd = new Date(year, month || 0, 3 * 7);
+  //     //   const weekSurveys = surveys.filter((survey: any) => {
+  //     //     const surveyDate = new Date(survey.created);
+  //     //     return surveyDate >= weekStart && surveyDate <= weekEnd;
+  //     //   });
+  //     //   groups.push(getSurveyCountsByUser(weekSurveys));
+  //     //   break;
+
+  //     case "month":
+  //       const monthStart = new Date(year, month, 1);
+  //       const monthEnd = new Date(year, month + 1, 0);
+  //       const monthSurveys = surveys.filter((survey: any) => {
+  //         const surveyDate = new Date(survey.created);
+  //         return surveyDate >= monthStart && surveyDate <= monthEnd;
+  //       });
+  //       groups.push(getSurveyCountsByUser(monthSurveys));
+
+  //       break;
+  //     case "year":
+  //       const yearStart = new Date(year, 0, 1);
+  //       const yearEnd = new Date(year, 11, 31);
+  //       const yearSurveys = surveys.filter((survey: any) => {
+  //         const surveyDate = new Date(survey.created);
+  //         return surveyDate >= yearStart && surveyDate <= yearEnd;
+  //       });
+  //       groups.push(getSurveyCountsByUser(yearSurveys));
+  //       break;
+  //     default:
+  //       throw new Error(`Invalid time period: ${timePeriod}`);
+  //   }
+
+  //   const labels = groups[0].map((item: any) => item?.count?.name);
+  //   const counts = groups[0].map((item: any) => item?.count?.count);
+
+  //   pieChartOptions.labels = labels;
+
+  //   const newColors = [];
+  //   for (let i = 0; i < labels.length; i++) {
+  //     newColors.push(generateRandomColor());
+  //   }
+
+  //   pieChartOptions.colors = newColors;
+  //   return { labels, counts };
+  // };
 
   function generateRandomColor() {
     const red = Math.floor(Math.random() * 256);
@@ -258,13 +255,14 @@ export default function Conversion(props: { [x: string]: any }) {
 
   const data = useMemo(
     () => getAnalysis(mergedCompanyHistory, period, year, month),
-    [mergedCompanyHistory, period, year, month, getAnalysis]
+    [mergedCompanyHistory, period, year, month]
   );
 
   useEffect(() => {
-    let month = new Date().getMonth();
-    setMonth(month);
-  }, []);
+    // let month = new Date().getMonth();
+    // setMonth(month);
+    console.log(data);
+  }, [data]);
 
   const CalculatePieWeekData = (cperiod: string) => {
     // let mperiod = 'week'
@@ -354,16 +352,16 @@ export default function Conversion(props: { [x: string]: any }) {
         </Box>
       </Flex>
 
-      {/* {pieData && <DonutChart data={pieData} width={400} height={400} />} */}
+      {data && <DonutChart data={data} width={300} height={300} />}
 
-      {data && (
+      {/* {data && (
         <PieChart
           h="100%"
           w="100%"
           chartData={data.counts}
           chartOptions={pieChartOptions}
         />
-      )}
+      )} */}
     </Card>
   );
 }

@@ -236,7 +236,7 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Surveys"
-              value={history ? history.length : "-"}
+              value={history ? history.length : 0}
             />
             {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
@@ -339,16 +339,23 @@ export default function UserReports(props: { [x: string]: any }) {
               </SimpleGrid>
             ))} */}
 
-          <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            {invertedArray.length > 0 ? (
-              <TransactionTable
-                columnsData={columnsDataComplex}
-                tableData={invertedArray}
-              />
-            ) : (
-              <NoData title="No subscription history" />
-            )}
-          </SimpleGrid>
+          {(user?.user_profile?.user_type == companyUser ||
+            user?.user_profile?.user_type == individualUser) && (
+            <SimpleGrid
+              columns={{ base: 1, md: 1, xl: 1 }}
+              gap="20px"
+              mb="30px"
+            >
+              {invertedArray.length > 0 ? (
+                <TransactionTable
+                  columnsData={columnsDataComplex}
+                  tableData={invertedArray}
+                />
+              ) : (
+                <NoData title="No subscription history" />
+              )}
+            </SimpleGrid>
+          )}
         </>
       </Box>
     </AdminLayout>
