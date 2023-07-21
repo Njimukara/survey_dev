@@ -188,14 +188,16 @@ export default function EditUser() {
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
             <Flex alignItems="center" flexDirection="column">
-              <Image
-                src={createObjectURL || "/profile.png"}
-                objectFit="contain"
-                bg="transparent"
-                width="370px"
-                height="230px"
-                borderRadius="lg"
-              />
+              {createObjectURL && (
+                <Image
+                  src={createObjectURL || "/profile.png"}
+                  objectFit="contain"
+                  bg="transparent"
+                  width="370px"
+                  height="230px"
+                  borderRadius="lg"
+                />
+              )}
               <Box position="relative" overflow="hidden" my="3">
                 {!canEdit && (
                   <Button ml="10px" cursor="pointer">
@@ -212,12 +214,11 @@ export default function EditUser() {
                   accept="image/x-png,image/gif,image/jpeg,image/avif"
                 />
               </Box>
-              {image ||
-                (createObjectURL && !canEdit && (
-                  <Button onClick={removeAvatar} ml="10px" cursor="pointer">
-                    Remove Avatar
-                  </Button>
-                ))}
+              {(image || (createObjectURL && !canEdit)) && (
+                <Button onClick={removeAvatar} ml="10px" cursor="pointer">
+                  Remove Avatar
+                </Button>
+              )}
             </Flex>
 
             {/* user details */}
