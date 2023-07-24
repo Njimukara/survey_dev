@@ -19,8 +19,8 @@ const MenuItem = ({
 }: MenuItemsProps): JSX.Element => {
   return (
     <Text
-      pt={["1px", "5px", 4, 16]}
-      pb={["1px", "5px", 4, 6]}
+      // pt={["1px", "5px", 4, 16]}
+      // pb={["1px", "5px", 4, 6]}
       px={8}
       fontSize="18px"
       fontWeight="600"
@@ -67,10 +67,12 @@ const Navbar = (): JSX.Element => {
     <Flex
       zIndex={111}
       mb={8}
+      pt={[6, 6, 6, 8]}
+      pb={[6, 6, 6, 8]}
       pr={[1, 2, 6, isLargerThan992 ? "5rem" : "5rem"]}
       pl={[1, 8, 8, isLargerThan992 ? "5rem" : "7rem"]}
       as="nav"
-      align="center"
+      alignItems="center"
       justify="space-between"
       wrap="wrap"
       w={["100vw"]}
@@ -82,13 +84,7 @@ const Navbar = (): JSX.Element => {
       boxShadow="sm"
       color={navScroll ? "" : ""}
     >
-      <Text
-        mt={[6, 6, 6, 8]}
-        mb={4}
-        color="primary.500"
-        fontSize="32px"
-        fontWeight="800"
-      >
+      <Text color="primary.500" fontSize="32px" fontWeight="800">
         SurveyPlanner
       </Text>
 
@@ -108,7 +104,6 @@ const Navbar = (): JSX.Element => {
           justify={["center", "space-between", "flex-end", "flex-end"]}
           alignItems="center"
           direction={["column", "column", "column", "row"]}
-          pt={[4, 4, 0, 0]}
           color={isLargerThan992 ? "black" : "white"}
         >
           <MenuItem to="/">Home</MenuItem>
@@ -126,10 +121,8 @@ const Navbar = (): JSX.Element => {
               _focus={{ bg: "gray.100" }}
               cursor={"pointer"}
               ml={[0, 0, 4, 8]}
-              mt={10}
-              mb={4}
               w="36"
-              py="6"
+              py="5"
             >
               Login
             </Button>
@@ -138,9 +131,7 @@ const Navbar = (): JSX.Element => {
             <Button
               ml={[0, 0, 4, 8]}
               w="36"
-              mt={10}
-              mb={4}
-              py="6"
+              py="4"
               variant={"homePrimary"}
               _active={{ bg: "white" }}
               size="lg"

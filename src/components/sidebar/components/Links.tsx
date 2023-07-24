@@ -11,24 +11,16 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { IRoute } from "../../../../types/navigation";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
-import { useSession } from "next-auth/react";
-import axios from "axios";
 
 interface SidebarLinksProps {
   routes: IRoute[];
 }
 
 export function SidebarLinks(props: SidebarLinksProps) {
-  // const { subscription, fetchSubscription } = useSubscription();
-  const [subscriptions, setSubscriptions] = useState<any>([]);
-  const [loading, setLoading] = useState<any>(false);
-
-  var { data: session, status } = useSession();
-
   const { routes } = props;
 
   //   Chakra color mode
@@ -41,48 +33,15 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
   // console.log(session);
 
-  let activeColor = useColorModeValue("gray.700", "white");
-  let inactiveColor = useColorModeValue(
-    "secondaryGray.600",
-    "secondaryGray.600"
-  );
-  let activeIcon = useColorModeValue("brand.500", "white");
-  let textColor = useColorModeValue("secondaryGray.500", "white");
-  let brandColor = useColorModeValue("brand.500", "brand.400");
+  let activeColor = useColorModeValue("primary.500", "white");
+  let activeIcon = useColorModeValue("primary.500", "white");
+  let textColor = useColorModeValue("gray.500", "white");
+  let brandColor = useColorModeValue("primary.500", "primary.400");
 
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName: string) => {
     return router.pathname.includes(routeName);
   };
-
-  const fetchSubscription = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
-      .then((response) => {
-        setSubscriptions(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setSubscriptions([]);
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchSubscription();
-    // setSubscriptions(subscription);
-  }, []);
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
   const createLinks = (routes: IRoute[]) => {
@@ -173,7 +132,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                                   color={
                                     activeRoute(routes.path.toLowerCase())
                                       ? activeColor
-                                      : inactiveColor
+                                      : textColor
                                   }
                                   fontWeight={
                                     activeRoute(routes.path.toLowerCase())
@@ -289,7 +248,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       color={
                         activeRoute(route.path.toLowerCase())
                           ? activeColor
-                          : inactiveColor
+                          : textColor
                       }
                       fontWeight={
                         activeRoute(route.path.toLowerCase())

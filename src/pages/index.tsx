@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { VSeparator } from "../components/separator/Separator";
-// import Image from 'next/image'
 import {
   Button,
   Container,
@@ -9,19 +7,14 @@ import {
   Box,
   SimpleGrid,
   Text,
-  Icon,
-  VStack,
-  Square,
   Tab,
   Tabs,
   TabList,
   TabPanel,
   TabPanels,
   Heading,
-  Stack,
   FormControl,
   FormLabel,
-  FormHelperText,
   Input,
   Textarea,
   Flex,
@@ -313,7 +306,7 @@ export default function Home() {
     return (
       <>
         <Navbar />
-        <Box>
+        <Box w="100vw">
           <Hero />
 
           {/* Pattern design */}
