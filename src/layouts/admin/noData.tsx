@@ -4,7 +4,14 @@ import React from "react";
 const NoData = (props: { [x: string]: any }) => {
   const { title, ...rest } = props;
   return (
-    <Card w="100%" borderRadius={10} {...rest}>
+    <Card
+      w="100%"
+      borderRadius={10}
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
+      fontFamily="inter"
+      {...rest}
+    >
       <Flex
         flexDirection="column"
         justifyContent="center"

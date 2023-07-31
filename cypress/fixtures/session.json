@@ -1,0 +1,11 @@
+{
+    "user": {
+      "id": 123,
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    },
+    "expires": "2023-07-31T12:00:00.000Z",
+    "accessToken": "dummy-access-token",
+    "refreshToken": "dummy-refresh-token"
+  }
+  

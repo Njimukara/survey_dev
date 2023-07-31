@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "title": "Survey 1",
+      "date": "2023-07-25",
+      "responses": 10
+    },
+    {
+      "id": 2,
+      "title": "Survey 2",
+      "date": "2023-07-26",
+      "responses": 15
+    }
+  ]
+  

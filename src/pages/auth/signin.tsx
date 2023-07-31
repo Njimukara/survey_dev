@@ -331,6 +331,7 @@ export default function SignIn() {
                   type="email"
                   placeholder="Enter your Email"
                   mb="24px"
+                  px="2"
                   fontWeight="500"
                   size="lg"
                   value={formData.email}
@@ -348,6 +349,7 @@ export default function SignIn() {
                   fontSize="sm"
                   placeholder="Password (Min. 8 characters)"
                   mb="24px"
+                  px="2"
                   size="lg"
                   type={show ? "text" : "password"}
                   variant="flushed"

@@ -480,6 +480,7 @@ export default function PaymentPlan(props: Props) {
                   </InputLeftElement>
 
                   <Input
+                    data-cy="plan-price"
                     type="number"
                     isDisabled
                     variant="rounded"

@@ -19,7 +19,7 @@ export const globalStyles = {
       300: "#9b84ff",
       400: "#7353ff",
       500: "#3203fc",
-      600: "#2706b3",
+      600: "#3A2FB7",
       700: "#1c0580",
       800: "#10034c",
       900: "#050119",
@@ -75,6 +75,7 @@ export const globalStyles = {
     },
     green: {
       100: "#E6FAF5",
+      400: "#00C914",
       500: "#01B574",
     },
     navy: {
@@ -99,14 +100,14 @@ export const globalStyles = {
       body: {
         overflowX: "hidden",
         bg: mode("secondaryGray.300", "navy.900")(props),
-        fontFamily: "Inter",
         letterSpacing: "-0.5px",
+        lineHeight: "27px",
       },
       input: {
         color: "gray.700",
       },
       html: {
-        fontFamily: "Inter",
+        lineHeight: "27px",
       },
     }),
   },

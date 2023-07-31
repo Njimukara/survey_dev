@@ -19,6 +19,8 @@ import {
   Textarea,
   Flex,
   Divider,
+  Stack,
+  Icon,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -42,6 +44,7 @@ import { WorkCard } from "components/card/WorkCard";
 // import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
 
 const slides = [
   {
@@ -326,7 +329,13 @@ export default function Home() {
           <Section bg="white">
             <Box w="100vw" py="1%">
               <Box my="5px" px="6%" mb="2%">
-                <Heading as="h2" size="sm" color="primary.500">
+                <Heading
+                  as="h2"
+                  size="sm"
+                  color="primary.500"
+                  fontSize="20px"
+                  fontWeight="500"
+                >
                   How it works ?
                 </Heading>
                 <Heading
@@ -334,6 +343,9 @@ export default function Home() {
                   as="h2"
                   mb={{ base: "15px", md: "8px", lg: "0px" }}
                   size={{ base: "md", md: "lg", lg: "xl" }}
+                  fontWeight="600"
+                  fontSize="32px"
+                  lineHeight="48px"
                 >
                   Here is our simple 3-step process
                 </Heading>
@@ -358,24 +370,29 @@ export default function Home() {
             <Flex
               flexDirection={{ base: "column", md: "row", lg: "row" }}
               w="100vw"
-              // pt="5"
               mb="8%"
-              px="6%"
+              // px="6%"
+              pl="8%"
             >
               <Box
                 w={{ base: "100%", md: "50%", lg: "50%" }}
                 mt={{ base: 0, lg: "2%" }}
               >
-                <Heading py="2" size={{ base: "md", md: "lg", lg: "lg" }}>
+                <Heading
+                  py="2"
+                  size={{ base: "md", md: "lg", lg: "lg" }}
+                  fontWeight="600"
+                  fontSize="32px"
+                >
                   Introducing survey planner
                 </Heading>
                 <Text
                   pt="4"
                   pb={{ base: "4", lg: "8" }}
                   textAlign="justify"
-                  fontSize={{ base: "14px", md: "16px", lg: "17px" }}
-                  fontWeight="normal"
-                  lineHeight={{ base: "20px", lg: "29px" }}
+                  fontSize={{ base: "16px", md: "16px", lg: "16 px" }}
+                  fontWeight="400"
+                  lineHeight={{ base: "20px", lg: "34px" }}
                 >
                   Our company provides innovative software solutions for
                   hydrographic surveying, enabling users to easily collect and
@@ -388,7 +405,12 @@ export default function Home() {
                 <Button
                   _active={{ bg: "white" }}
                   variant="homePrimary"
-                  py={{ base: "4px", md: "6px", lg: "6" }}
+                  fontWeight="500"
+                  fontSize="16px"
+                  lineHeight="24px"
+                  h="48px"
+                  py="0"
+                  dropShadow="#1448FF1A"
                 >
                   Read more
                 </Button>
@@ -417,10 +439,11 @@ export default function Home() {
               {slides.map((slide, sid) => (
                 <Card
                   key={`slide-${sid}`}
-                  fontSize="18px"
+                  // fontSize="18px"
+                  fontFamily="poppins"
                   bg="transparent"
                   borderRadius="0"
-                  w="250px"
+                  w="282px"
                   p="0"
                   _hover={{
                     scale: 1.5,
@@ -429,7 +452,7 @@ export default function Home() {
                   <Image
                     src={slide.image}
                     alt="holder image"
-                    w="250px"
+                    w="100%"
                     h="200px"
                     borderRadius="7px"
                     boxShadow="lg"
@@ -438,11 +461,20 @@ export default function Home() {
                     <Text
                       my={{ base: "2", lg: "3" }}
                       color="primary.500"
-                      fontWeight="bold"
+                      fontWeight="500"
+                      fontSize="20px"
+                      lineHeight="30px"
                     >
                       {slide.name}
                     </Text>
-                    <Text textAlign="justify">{slide.description}</Text>
+                    <Text
+                      textAlign="left"
+                      fontWeight="400"
+                      fontSize="16px"
+                      lineHeight="27px"
+                    >
+                      {slide.description}
+                    </Text>
                   </Box>
                 </Card>
               ))}
@@ -470,17 +502,17 @@ export default function Home() {
             <Tabs variant="unstyled" w="full">
               <TabList
                 justifyContent="center"
-                mb={{ base: "40px", lg: "70px" }}
+                mb={{ base: "40px", lg: "40px" }}
               >
                 <Tab
                   bg="white"
                   borderLeftRadius="10px"
                   shadow="md"
                   color="primary.500"
-                  py="3"
+                  h="48px"
                   px={{ base: "5", md: "10", lg: "20" }}
-                  fontSize={{ base: "15px", md: "18px", lg: "20px" }}
-                  fontWeight="semibold"
+                  fontSize="16px"
+                  fontWeight="500"
                   _selected={{
                     bg: "primary.500",
                     color: "white",
@@ -494,10 +526,10 @@ export default function Home() {
                   borderRightRadius="10px"
                   shadow="md"
                   color="primary.500"
-                  py="3"
+                  h="48px"
                   px={{ base: "5", md: "10", lg: "20" }}
-                  fontSize={{ base: "15px", md: "18px", lg: "20px" }}
-                  fontWeight="semibold"
+                  fontSize="16px"
+                  fontWeight="500"
                   _selected={{
                     bg: "primary.500",
                     color: "white",
@@ -509,7 +541,7 @@ export default function Home() {
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <SimpleGrid columns={4} spacing="15" minChildWidth="250px">
+                  <SimpleGrid columns={4} spacing="10px">
                     {plans &&
                       plans.map((x: PricingProps) => (
                         <PricingCard
@@ -565,45 +597,52 @@ export default function Home() {
               >
                 <Box w="70%">
                   <Heading
+                    as="h2"
+                    lineHeight="48px"
                     size={{ base: "md", md: "lg", lg: "lg" }}
                     textAlign="center"
-                    as="h2"
-                    lineHeight="50px"
+                    fontWeight="600"
+                    fontSize="32px"
                     mb="23px"
                   >
                     Fast, Secured and Easy Access to our platform
                   </Heading>
                   <Text
                     textAlign="center"
-                    lineHeight={{ base: "base", lg: "35px" }}
+                    fontWeight="400"
                     mb="23px"
-                    fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                    lineHeight={{ base: "base", lg: "35px" }}
+                    fontSize="16px"
+                    px="10"
                   >
                     You need a to have an active account to get access to our
                     platform. Creating an account is simple. Click on the button
                     below to create an account.
                   </Text>
-                  <Flex justifyContent="center" alignItems="center" gap="10">
+                  <Flex justifyContent="center" alignItems="center" gap="5">
                     <Button
                       variant="homeWhite"
-                      py={{ base: "4px", md: "6px", lg: "6" }}
-                      // bg="white"
-                      _focus={{ bg: "gray.100" }}
-                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       color="primary.500"
+                      fontWeight="500"
+                      h="48px"
                       border="2px"
                       borderColor="white"
+                      _focus={{ bg: "gray.100" }}
+                      py={{ base: "4px", md: "6px", lg: "0" }}
+                      fontSize="16px"
                     >
                       {" "}
                       Get Started
                     </Button>
                     <Button
                       variant="homeWhite"
-                      py={{ base: "4px", md: "6px", lg: "6" }}
-                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      py="0"
+                      h="48px"
+                      fontSize="16px"
                       bg="transparent"
                       color="white"
                       border="2px"
+                      fontWeight="500"
                       borderColor="white"
                       _focus={{ bg: "primary.400" }}
                       _hover={{ bg: "primary.400" }}
@@ -617,59 +656,226 @@ export default function Home() {
             </Container>
           </Box>
 
+          {/* Contect section  */}
           <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "6%" }}>
-            <Container maxW="container.xl" centerContent>
-              <Card boxShadow="2xl" borderRadius="5px">
-                <Flex direction={{ base: "column", md: "column", lg: "row" }}>
-                  <Box
-                    width={{ base: "100%", md: "100%", lg: "600px" }}
-                    px="95px"
-                    mt="50px"
+            <Container maxW="container.xl">
+              <Heading color="primary.500" fontWeight="500" fontSize="20px">
+                Lets get in touch
+              </Heading>
+              <Heading
+                mb="5"
+                fontWeight="600"
+                fontSize="32px"
+                lineHeight="48px"
+              >
+                Got any questions for use? let us know
+              </Heading>
+              <Stack
+                spacing={5}
+                direction={{ base: "column", md: "row", lg: "row" }}
+              >
+                <Card
+                  borderRadius="0"
+                  w={{ base: "100%", md: "700px", lg: "900px" }}
+                  position="relative"
+                  zIndex={23}
+                >
+                  <Flex
+                    w="100%"
+                    justifyContent="center"
+                    flexDirection="column"
+                    px={{ base: "5px", md: "30px", lg: "50px" }}
+                    py="3%"
                   >
+                    <Heading
+                      as="h3"
+                      size="md"
+                      mt={{ base: "30px", lg: "60px" }}
+                      fontWeight="600"
+                      fontSize="24px"
+                    >
+                      Do you have a question ?
+                    </Heading>
+
+                    <Text
+                      mt="20px"
+                      mb="80px"
+                      w="100%"
+                      fontWeight="400"
+                      fontSize="16px"
+                      lineHeight="27px"
+                      fontFamily="poppins"
+                    >
+                      Thank you for reaching out to us! We value your inquiry
+                      and strive to provide prompt assistance. our dedicated
+                      team will review your message and respond to you shortly
+                    </Text>
+
+                    <Flex flexDir="column" gap="5">
+                      <Flex alignItems="center">
+                        <span>
+                          <Icon
+                            as={MdPhone}
+                            h="32px"
+                            w="32px"
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span" fontSize="20px" fontWeight="400">
+                          +1 (555) 123-4567
+                        </Text>
+                      </Flex>
+                      <Flex>
+                        <span>
+                          <Icon
+                            as={MdEmail}
+                            h="32px"
+                            w="32px"
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span" fontSize="20px" fontWeight="400">
+                          surveyplanner@gmail.com
+                        </Text>
+                      </Flex>
+                      <Flex>
+                        <span>
+                          <Icon
+                            as={MdMyLocation}
+                            h="32px"
+                            w="32px"
+                            color="primary.500"
+                            mr="8px"
+                          />
+                        </span>
+                        <Text as="span" fontSize="20px" fontWeight="400">
+                          12/3-A South RD, NYC2312
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                  <>
+                    <Box
+                      position="absolute"
+                      borderRadius="full"
+                      width={{ base: "20px", lg: "30px" }}
+                      height={{ base: "20px", lg: "30px" }}
+                      left={{ base: "240px", lg: "400px" }}
+                      top={{ base: "250px", lg: "300px" }}
+                      zIndex={10}
+                      background=" rgba(50, 3, 252, 0.08)"
+                    ></Box>
+                    <Box
+                      position="absolute"
+                      borderRadius="full"
+                      width={{ base: "40px", lg: "80px" }}
+                      height={{ base: "40px", lg: "80px" }}
+                      left={{ base: "190px", lg: "315px" }}
+                      top={{ base: "270px", lg: "350px" }}
+                      zIndex={10}
+                      background=" rgba(50, 3, 252, 0.08)"
+                    ></Box>
+                    <Box
+                      position="absolute"
+                      className={styles.circle_clip}
+                      borderRadius="full"
+                      width={{ base: "181px", lg: "281px" }}
+                      height={{ base: "181px", lg: "281px" }}
+                      left={{ base: "188px", lg: "320px" }}
+                      top={{ base: "270px", lg: "335px" }}
+                      zIndex={10}
+                      background=" rgba(50, 3, 252, 0.08)"
+                    ></Box>
+                  </>
+                </Card>
+
+                <Card
+                  w={{ base: "100%", md: "700px", lg: "100%" }}
+                  zIndex={23}
+                  bg="transparent"
+                >
+                  <Box px={{ base: "10px", md: "50px", lg: "0" }} mt="50px">
                     <form onSubmit={handleSubmit}>
-                      <Heading as="h2" my="30px">
-                        Lets get in touch
-                      </Heading>
-                      <Text>Got any questions for use? let us know</Text>
-                      <Box mt="25px" mb="100px">
-                        <FormControl isRequired mb="25px">
-                          <FormLabel color="#3C3C3C">Name</FormLabel>
+                      <Flex
+                        w={{ base: "100%", md: "100%", lg: "100%" }}
+                        flexDirection={{ base: "column", md: "row", lg: "row" }}
+                        gap="5"
+                      >
+                        <FormControl isRequired mb="35px">
+                          <FormLabel color="#3C3C3C" mb="0" pb="0">
+                            First Name
+                          </FormLabel>
                           <Input
                             id="firstName"
                             name="firstName"
-                            variant="rounded"
+                            variant="flushed"
                             type="text"
                             px="1"
+                            mt="-2.5"
+                            borderColor="#ACAEAF"
                             fontSize="sm"
                             value={values.firstName}
                             onChange={handleChange}
                             onBlur={handleBlur}
                           />
                         </FormControl>
-
-                        <FormControl isRequired mb="25px">
-                          <FormLabel color="#3C3C3C">Email</FormLabel>
+                        <FormControl isRequired mb="35px">
+                          <FormLabel color="#3C3C3C" mb="0" pb="0">
+                            Last Name
+                          </FormLabel>
+                          <Input
+                            id="lastName"
+                            name="lastName"
+                            variant="flushed"
+                            type="text"
+                            px="1"
+                            mt="-2.5"
+                            borderColor="#ACAEAF"
+                            fontSize="sm"
+                            value={values.lastName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          />
+                        </FormControl>
+                      </Flex>
+                      <Flex
+                        w={{ base: "100%", md: "100%", lg: "100%" }}
+                        flexDirection={{ base: "column", md: "row", lg: "row" }}
+                        gap="5"
+                        mb="35px"
+                      >
+                        <FormControl isRequired>
+                          <FormLabel color="#3C3C3C" mb="0" pb="0">
+                            Email
+                          </FormLabel>
                           <Input
                             id="email"
                             name="email"
-                            variant="rounded"
+                            variant="flushed"
                             type="email"
                             px="1"
+                            mt="-2.5"
+                            borderColor="#ACAEAF"
                             fontSize="sm"
                             value={values.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
                           />
                         </FormControl>
-
-                        <FormControl mb="25px">
-                          <FormLabel color="#3C3C3C">Telephone</FormLabel>
+                        <FormControl>
+                          <FormLabel color="#3C3C3C" mb="0" pb="0">
+                            Telephone
+                          </FormLabel>
                           <Input
                             id="phoneNumber"
                             name="phoneNumber"
-                            variant="rounded"
+                            variant="flushed"
                             type="tel"
                             px="1"
+                            mt="-2.5"
+                            borderColor="#ACAEAF"
                             fontSize="sm"
                             placeholder="+1(567)123-4567"
                             value={values.phoneNumber}
@@ -677,76 +883,54 @@ export default function Home() {
                             onBlur={handleBlur}
                           />
                         </FormControl>
+                      </Flex>
+                      <FormControl isRequired>
+                        <FormLabel color="#3C3C3C" mb="0" pb="0">
+                          message
+                        </FormLabel>
+                        <Textarea
+                          id="message"
+                          name="message"
+                          px="1"
+                          mt="-2.5"
+                          borderColor="#ACAEAF"
+                          fontSize="sm"
+                          variant="flushed"
+                          value={values.message}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </FormControl>
 
-                        <FormControl isRequired>
-                          <FormLabel color="#3C3C3C">message</FormLabel>
-                          <Textarea
-                            id="message"
-                            name="message"
-                            px="1"
-                            fontSize="sm"
-                            value={values.message}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        </FormControl>
+                      <Button
+                        variant="homePrimary"
+                        disabled={isSubmitting}
+                        type="submit"
+                        py="0"
+                        h="52px"
+                        fontWeight="500"
+                        fontSize="16px"
+                        mt="10"
+                        px="70px"
+                        mb={2}
+                      >
+                        Contact Us
+                      </Button>
 
-                        <Button
-                          variant="homePrimary"
-                          w="full"
-                          disabled={isSubmitting}
-                          type="submit"
-                          py="6px"
-                          mt="10"
-                          px="70px"
-                          mb={2}
-                        >
-                          Contact us
-                        </Button>
-
-                        <Text textAlign="center">
-                          We will reply as soon as possible we promise
-                        </Text>
-                      </Box>
+                      <Text
+                        fontFamily="poppins"
+                        fontSize="16px"
+                        fontWeight="400"
+                        color="#757575"
+                      >
+                        We will reply as soon as possible we promise
+                      </Text>
                     </form>
                   </Box>
-
-                  <Divider orientation="vertical" colorScheme="gray" />
-
-                  <Box
-                    width={{ base: "100%", md: "100%", lg: "600px" }}
-                    px="95px"
-                    mt="60px"
-                  >
-                    <Image
-                      src="/contact.jpg"
-                      alt="contact image"
-                      width="450px"
-                      height="330px"
-                      objectFit="cover"
-                      borderRadius="16px"
-                    />
-                    <Heading as="h3" fontSize="64px" mt="40px">
-                      Do you have a question ?
-                    </Heading>
-                    <Text mt="20px" mb="30px">
-                      Thank you for reaching out to us! We value your inquiry
-                      and strive to provide prompt assistance. our dedicated
-                      team will review your message and respond to you shortly
-                    </Text>
-                    <Text mb="12px">Feel free to contact us here</Text>
-                    <Text fontSize="22px">
-                      Call:{" "}
-                      <Text as="span" color="primary.500">
-                        +1 (555) 123-4567
-                      </Text>
-                    </Text>
-                  </Box>
-                </Flex>
-              </Card>
+                </Card>
+              </Stack>
             </Container>
           </Box>
-
           <Footer />
         </Box>
       </>

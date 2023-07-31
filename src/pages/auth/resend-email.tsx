@@ -177,6 +177,7 @@ export default function resendEmail({ providers }: any) {
             </Flex>
             <Flex justifyContent="center">
               <Button
+                data-testid="cancel-button"
                 variant="outline"
                 py="5"
                 px="4"

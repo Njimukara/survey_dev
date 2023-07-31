@@ -16,6 +16,10 @@ import { inputTheme } from "./components/Inputs";
 import { globalStyles } from "./styles";
 export default extendTheme(
   {
+    fonts: {
+      heading: `'Poppins', sans-serif`,
+      body: `'Poppins', sans-serif`,
+    },
     breakpoints,
     colors: {
       primary: {
@@ -23,8 +27,8 @@ export default extendTheme(
         200: "#c3b5ff",
         300: "#9b84ff",
         400: "#7353ff",
-        500: "#3203fc",
-        600: "#2706b3",
+        500: "#3203FC",
+        600: "#3A2FB7",
         700: "#1c0580",
         800: "#10034c",
         900: "#050119",

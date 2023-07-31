@@ -85,8 +85,8 @@ export default function PlanDetails(props: { [x: string]: any }) {
       mb={{ base: "0px", lg: "20px" }}
       borderRadius="10"
       bgGradient={mainBg}
-      border="1px"
-      borderColor="rgba(0, 0, 0, 0.11)"
+      // borderColor="rgba(0, 0, 0, 0.11)"
+      border="1px solid"
       {...rest}
     >
       <Flex justifyContent="space-between" alignItems="center" p={2}>

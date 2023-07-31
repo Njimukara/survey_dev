@@ -3,7 +3,14 @@ import React from "react";
 import Link from "next/link";
 
 // Chakra imports
-import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 // Assets
 import { MdArrowRight } from "react-icons/md";
@@ -42,15 +49,16 @@ export default function Users(props: { [x: string]: any }) {
       mb={{ base: "0px", "2xl": "20px" }}
       bg="transparent"
       borderRadius="10"
+      fontFamily="inter"
       {...rest}
     >
       <>
-        <Flex justifyContent="space-between" alignItems="center">
+        <Flex justifyContent="space-between" alignItems="center" mb="3">
           <Box>
             <Text
               color={textColorPrimary}
-              fontWeight="bold"
-              fontSize="2xl"
+              fontWeight="600"
+              fontSize="24px"
               mt="10px"
               mb="4px"
             >
@@ -59,9 +67,18 @@ export default function Users(props: { [x: string]: any }) {
           </Box>
           <Flex gap={3}>
             <Link href={`/company/users`}>
-              <Button variant="homePrimary" py="6" px="5" bg="#3A2FB7">
+              <Button
+                variant="homePrimary"
+                py="0"
+                h="48px"
+                borderRadius="10px"
+                fontWeight="500"
+                fontSize="16px"
+                px="5"
+                bg="primary.600"
+              >
                 All Users
-                <MdArrowRight />
+                <Icon as={MdArrowRight} boxSize={8} />
               </Button>
             </Link>
           </Flex>

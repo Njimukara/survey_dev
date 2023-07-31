@@ -276,6 +276,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Company Name *</FormLabel>
                   <Input
+                    data-cy="company-name-input"
                     id="name"
                     name="name"
                     variant="rounded"
@@ -297,7 +298,7 @@ export default function EditCompany({ providers }: any) {
               <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="160px">Country</FormLabel>
-                  <Box w="100%">
+                  <Box w="100%" data-cy="country-select">
                     <Select
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
@@ -313,7 +314,7 @@ export default function EditCompany({ providers }: any) {
               <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="160px">City</FormLabel>
-                  <Box w="100%">
+                  <Box w="100%" data-cy="city-select">
                     <Select
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
@@ -347,6 +348,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">state</FormLabel>
                   <Input
+                    data-cy="state-input"
                     id="state"
                     name="state"
                     variant="rounded"
@@ -366,6 +368,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Zip Code</FormLabel>
                   <Input
+                    data-cy="zip-code-input"
                     id="zipCode"
                     name="zipCode"
                     variant="rounded"
@@ -385,6 +388,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Street Address</FormLabel>
                   <Input
+                    data-cy="street-address-input"
                     id="streetAddress"
                     name="streetAddress"
                     variant="rounded"

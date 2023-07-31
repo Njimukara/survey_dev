@@ -81,7 +81,7 @@ export default function UserReports(props: { [x: string]: any }) {
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.500", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const boxBg = useColorModeValue("#F7F7FC", "whiteAlpha.100");
 
   const [user, setUser] = useState<User>(currentUser);
   const [companyUser, setCompanyUser] = useState(2);
@@ -191,31 +191,29 @@ export default function UserReports(props: { [x: string]: any }) {
 
   return (
     <AdminLayout>
-      <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+      <Box pt={{ base: "130px", md: "80px", xl: "80px" }} fontFamily="inter">
         <>
           {/* <Flex> */}
           <Card
             mb="3%"
-            py="10"
+            h="144px"
             borderRadius="10"
             bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
           >
-            <Flex
-              gap={3}
-              alignItems="center"
-              justifyContent="space-between"
-              // position="relative"
-            >
-              <Box pt="3" color="white" pl="10">
-                <Heading data-cy="dashboard-heading" size="lg" mb="4">
-                  Hello {user?.name}!
-                </Heading>
-                <Text>
-                  This is your survey planner dashboard, where you can see an
-                  overview of your account details
-                </Text>
-              </Box>
-            </Flex>
+            <Box py="2" color="#F7F7F7" pl="10">
+              <Heading
+                data-cy="dashboard-heading"
+                fontWeight="600"
+                fontSize="24px"
+                mb="3"
+              >
+                Hello {user?.name}!
+              </Heading>
+              <Text fontSize="18px" fontWeight="500" fontFamily="inter">
+                This is your survey planner dashboard, where you can see an
+                overview of your account details
+              </Text>
+            </Box>
           </Card>
           {/* </Flex> */}
           <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="3%">
@@ -230,7 +228,7 @@ export default function UserReports(props: { [x: string]: any }) {
                       w="32px"
                       h="32px"
                       as={MdFileCopy}
-                      color={brandColor}
+                      color="primary.600"
                     />
                   }
                 />
@@ -246,7 +244,12 @@ export default function UserReports(props: { [x: string]: any }) {
                     h="56px"
                     bg={boxBg}
                     icon={
-                      <Icon w="32px" h="32px" as={FaUsers} color={brandColor} />
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={FaUsers}
+                        color="primary.600"
+                      />
                     }
                   />
                 }
@@ -267,7 +270,7 @@ export default function UserReports(props: { [x: string]: any }) {
                       w="32px"
                       h="32px"
                       as={MdAttachMoney}
-                      color={brandColor}
+                      color="primary.600"
                     />
                   }
                 />

@@ -12,6 +12,13 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.Commands.add("login", (email, password) => {
+  cy.visit("http://localhost:3000/auth/signin");
+  // cy.get('[data-cy="login-state"]').contains("Welcome Back!");
+  cy.get('[data-cy="login-email"]').type(email);
+  cy.get('[data-cy="login-password"]').type(password);
+  cy.get('[data-cy="login-button"]').click();
+});
 //
 //
 // -- This is a child command --
@@ -42,4 +49,5 @@
 //   // ie: return mount(<MyProvider>{component}</MyProvider>, options)
 //   return mount(component, options);
 // });
+
 export {};

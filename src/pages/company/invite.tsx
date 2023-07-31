@@ -263,6 +263,7 @@ export default function SignIn({ providers }: any) {
             mb="auto"
           >
             <Button
+              data-cy="google-signin-button"
               fontSize="sm"
               me="0px"
               mb="26px"
@@ -301,6 +302,7 @@ export default function SignIn({ providers }: any) {
             <form onSubmit={handleSubmit}>
               <FormControl>
                 <Input
+                  data-cy="name"
                   id="name"
                   name="name"
                   variant="flushed"
@@ -316,7 +318,12 @@ export default function SignIn({ providers }: any) {
                   onBlur={handleBlur}
                 />
                 {errors.name && touched.name ? (
-                  <FormHelperText color="red.400" mt="0" mb="2px">
+                  <FormHelperText
+                    data-cy="name-error"
+                    color="red.400"
+                    mt="0"
+                    mb="2px"
+                  >
                     {errors.name}
                   </FormHelperText>
                 ) : (
@@ -325,6 +332,7 @@ export default function SignIn({ providers }: any) {
               </FormControl>
               <FormControl>
                 <Input
+                  data-cy="email"
                   id="email"
                   name="email"
                   variant="flushed"
@@ -340,7 +348,12 @@ export default function SignIn({ providers }: any) {
                   onBlur={handleBlur}
                 />
                 {errors.email && touched.email && (
-                  <FormHelperText color="red.400" mt="0" mb="2px">
+                  <FormHelperText
+                    data-cy="email-error"
+                    color="red.400"
+                    mt="0"
+                    mb="2px"
+                  >
                     {errors.email}.
                   </FormHelperText>
                 )}
@@ -349,6 +362,7 @@ export default function SignIn({ providers }: any) {
                 <FormControl mr="4px">
                   <InputGroup size="md">
                     <Input
+                      data-cy="password"
                       id="password"
                       name="password"
                       fontSize="sm"
@@ -375,7 +389,12 @@ export default function SignIn({ providers }: any) {
                     </InputRightElement>
                   </InputGroup>
                   {errors.password && touched.password ? (
-                    <FormHelperText color="red.400" mt="0" mb="0px">
+                    <FormHelperText
+                      data-cy="password-error"
+                      color="red.400"
+                      mt="0"
+                      mb="0px"
+                    >
                       {errors.password}
                     </FormHelperText>
                   ) : (
@@ -385,6 +404,7 @@ export default function SignIn({ providers }: any) {
                 <FormControl>
                   <InputGroup size="md">
                     <Input
+                      data-cy="confirm-password"
                       id="confirm_Password"
                       name="confirm_Password"
                       fontSize="sm"
@@ -411,7 +431,12 @@ export default function SignIn({ providers }: any) {
                     </InputRightElement>
                   </InputGroup>
                   {errors.confirm_Password && touched.confirm_Password ? (
-                    <FormHelperText color="red.400" mt="0" mb="0px">
+                    <FormHelperText
+                      data-cy="confirm-password-error"
+                      color="red.400"
+                      mt="0"
+                      mb="0px"
+                    >
                       {errors.confirm_Password}
                     </FormHelperText>
                   ) : (
@@ -420,6 +445,7 @@ export default function SignIn({ providers }: any) {
                 </FormControl>
               </Flex>
               <Button
+                data-cy="signup-button"
                 type="submit"
                 isLoading={isSubmitting}
                 isDisabled={!verified && !isVerifying}

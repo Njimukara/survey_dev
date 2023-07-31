@@ -81,7 +81,7 @@ export default function Offers(props: { [x: string]: any }) {
       flexDirection="column"
       borderRadius="10"
     >
-      <Icon as={BiErrorCircle} boxSize={24} color="gray" />
+      <Icon as={BiErrorCircle} boxSize={24} color="#3A2FB71F" />
       <Text fontSize="large" fontWeight="bold">
         No offers currently available
       </Text>

@@ -19,11 +19,9 @@ const MenuItem = ({
 }: MenuItemsProps): JSX.Element => {
   return (
     <Text
-      // pt={["1px", "5px", 4, 16]}
-      // pb={["1px", "5px", 4, 6]}
       px={8}
-      fontSize="18px"
-      fontWeight="600"
+      fontSize="16px"
+      fontWeight="400"
       borderBottom="8px solid rgba(96, 94, 97, 0.0)"
       _hover={{
         color: "primary.500",
@@ -67,10 +65,10 @@ const Navbar = (): JSX.Element => {
     <Flex
       zIndex={111}
       mb={8}
-      pt={[6, 6, 6, 8]}
-      pb={[6, 6, 6, 8]}
-      pr={[1, 2, 6, isLargerThan992 ? "5rem" : "5rem"]}
-      pl={[1, 8, 8, isLargerThan992 ? "5rem" : "7rem"]}
+      pt={[6, 6, 6, 7]}
+      pb={[6, 6, 6, 7]}
+      pr={[1, 2, 8, isLargerThan992 ? "7rem" : "5rem"]}
+      pl={[1, 8, 8, isLargerThan992 ? "6rem" : "7rem"]}
       as="nav"
       alignItems="center"
       justify="space-between"
@@ -84,7 +82,7 @@ const Navbar = (): JSX.Element => {
       boxShadow="sm"
       color={navScroll ? "" : ""}
     >
-      <Text color="primary.500" fontSize="32px" fontWeight="800">
+      <Text color="primary.500" fontSize="25px" fontWeight="500">
         SurveyPlanner
       </Text>
 
@@ -113,16 +111,17 @@ const Navbar = (): JSX.Element => {
           <Link as={NextLink} href="/auth/signin">
             <Button
               data-cy="login-button"
-              fontWeight="700"
-              fontSize="18px"
+              fontWeight="500"
+              fontSize="16px"
               variant={navScroll ? "homeWhite" : "homeWhite"}
               color="primary.500"
               border="2px"
               _focus={{ bg: "gray.100" }}
               cursor={"pointer"}
               ml={[0, 0, 4, 8]}
-              w="36"
-              py="5"
+              w="150px"
+              py="0"
+              h="48px"
             >
               Login
             </Button>
@@ -130,11 +129,13 @@ const Navbar = (): JSX.Element => {
           <Link as={NextLink} href="/auth/signin">
             <Button
               ml={[0, 0, 4, 8]}
-              w="36"
-              py="4"
               variant={"homePrimary"}
               _active={{ bg: "white" }}
-              size="lg"
+              w="150px"
+              py="0"
+              h="48px"
+              fontSize="16px"
+              fontWeight="500"
             >
               Try It Now
             </Button>

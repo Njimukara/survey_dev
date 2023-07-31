@@ -14,22 +14,32 @@ export default function User(props: {
   const bg = useColorModeValue("white", "navy.700");
 
   return (
-    <Card bg={bg} {...rest} borderRadius="10px" p="14px">
+    <Card
+      bg={bg}
+      {...rest}
+      borderRadius="10px"
+      px="14px"
+      py="2"
+      fontFamily="inter"
+      h="78px"
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
+    >
       <Flex align="center" px="5" direction={{ base: "column", md: "row" }}>
         <Box mt={{ base: "10px", md: "0" }}>
           <Text
             color={textColorPrimary}
             fontWeight="600"
-            fontSize="md"
-            mb="4px"
+            fontSize="16px"
+            mb="2px"
           >
             {name}
           </Text>
           <Text
             color={textColorPrimary}
-            fontWeight="400"
-            fontSize="sm"
-            mb="4px"
+            fontWeight="500"
+            fontSize="16px"
+            // mb="4px"
           >
             {email}
           </Text>

@@ -33,10 +33,12 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
   // console.log(session);
 
-  let activeColor = useColorModeValue("primary.500", "white");
-  let activeIcon = useColorModeValue("primary.500", "white");
+  let activeColor = useColorModeValue("primary.600", "white");
+  let activeIcon = useColorModeValue("primary.600", "white");
   let textColor = useColorModeValue("gray.500", "white");
-  let brandColor = useColorModeValue("primary.500", "primary.400");
+  let brandColor = useColorModeValue("primary.600", "primary.400");
+
+  const activebg = useColorModeValue("#F7F7FC", "#F7F7FC");
 
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName: string) => {
@@ -48,11 +50,18 @@ export function SidebarLinks(props: SidebarLinksProps) {
     return routes.map((route, index: number) => {
       if (route.layout === "/admin" || route.layout === "/auth") {
         return route.subRoutes ? (
-          <Box key={index}>
+          <Box key={index} pl="16px">
             <HStack
               spacing={activeRoute(route.path.toLowerCase()) ? "22px" : "26px"}
               py="5px"
-              ps="10px"
+              // ps="10px"
+              my="1"
+              bg={
+                activeRoute(route.path.toLowerCase()) ? activebg : "transparent"
+              }
+              color={
+                activeRoute(route.path.toLowerCase()) ? activeColor : textColor
+              }
             >
               <Flex w="100%" alignItems="center" justifyContent="space">
                 <Flex w="100%" alignItems="center" justifyContent="space">
@@ -172,13 +181,26 @@ export function SidebarLinks(props: SidebarLinksProps) {
           <Link key={index} href={route.layout + route.path}>
             <a>
               {route.icon ? (
-                <Box>
+                <Box
+                  bg={
+                    activeRoute(route.path.toLowerCase())
+                      ? activebg
+                      : "transparent"
+                  }
+                  color={
+                    activeRoute(route.path.toLowerCase())
+                      ? activeColor
+                      : textColor
+                  }
+                  my="1"
+                  pl="16px"
+                >
                   <HStack
                     spacing={
                       activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
                     }
                     py="5px"
-                    ps="10px"
+                    // ps="10px"
                   >
                     <Flex w="100%" alignItems="center" justifyContent="center">
                       <Box
@@ -210,7 +232,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                     </Flex>
                     <Box
                       h="36px"
-                      w="4px"
+                      w="6px"
                       bg={
                         activeRoute(route.path.toLowerCase())
                           ? brandColor
@@ -235,7 +257,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   )}
                 </Box>
               ) : (
-                <Box>
+                <Box pl="16px">
                   <HStack
                     spacing={
                       activeRoute(route.path.toLowerCase()) ? "22px" : "26px"

@@ -194,8 +194,16 @@ export default function ColumnsTable(props: TableProps) {
       overflowX={{ sm: "scroll", lg: "hidden" }}
       h="max-content"
       max-h="500"
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
     >
-      <Flex px="25px" justify="space-between" mb="10px" align="center">
+      <Flex
+        data-testid="survey-history-table"
+        px="25px"
+        justify="space-between"
+        mb="10px"
+        align="center"
+      >
         <Text
           color={textColor}
           fontSize="2xl"

@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
   ListItem,
   SimpleGrid,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import { MdFacebook, MdSend } from "react-icons/md";
 
@@ -29,13 +30,28 @@ const Footer = () => {
         {/*  */}
         <Box>
           <Heading color="white" size="md">
-            <Link href="/">SurveyPlanner</Link>
+            <Link href="/" fontWeight="500" fontSize="25px">
+              SurveyPlanner
+            </Link>
           </Heading>
-          <Text data-cy="footer-info" my="5">
+          <Text
+            data-cy="footer-info"
+            my="5"
+            fontWeight="400"
+            fontSize="16px"
+            lineHeight="27px"
+          >
             For any questions or assistance, please do not hesitate to reach out
             to us. We are here to help and would love to hear from you.
           </Text>
-          <Flex color="white" alignItems="center" gap="5">
+          <Flex
+            color="white"
+            alignItems="center"
+            gap="5"
+            fontWeight="400"
+            fontSize="16px"
+            lineHeight="27px"
+          >
             <Icon as={MdFacebook} />
             <Icon as={MdFacebook} />
             <Icon as={MdFacebook} />
@@ -44,10 +60,16 @@ const Footer = () => {
         </Box>
         {/*  */}
         <Box ml={{ base: 0, md: "20%", lg: "30%" }}>
-          <Heading color="white" size="md">
+          <Heading color="white" fontWeight="500" fontSize="20px">
             Page Link
           </Heading>
-          <List spacing={4} my="5">
+          <List
+            spacing={4}
+            my="5"
+            fontWeight="400"
+            fontSize="16px"
+            lineHeight="27px"
+          >
             <ListItem>
               <Link href="/">Home</Link>
             </ListItem>
@@ -64,10 +86,16 @@ const Footer = () => {
         </Box>
         {/*  */}
         <Box>
-          <Heading color="white" size="md">
+          <Heading color="white" fontWeight="500" fontSize="20px">
             Contact{" "}
           </Heading>
-          <List spacing={3} my="5">
+          <List
+            spacing={3}
+            my="5"
+            fontWeight="400"
+            fontSize="16px"
+            lineHeight="27px"
+          >
             <ListItem>
               <Text>
                 <span style={{ color: "white" }}> Cell:</span> +1 (555) 123-4567
@@ -90,7 +118,7 @@ const Footer = () => {
         </Box>
         {/*  */}
         <Box>
-          <Heading color="white" size="md">
+          <Heading color="white" fontWeight="500" fontSize="20px">
             Get in touch with us{" "}
           </Heading>
           <InputGroup size="md" my="5">
@@ -109,7 +137,7 @@ const Footer = () => {
         </Box>
       </SimpleGrid>
       <Box px="10%" py="2%" color="#B1B6C2">
-        <Heading color="white" size="sm">
+        <Heading color="white" fontWeight="500" fontSize="20px">
           Resources
         </Heading>
         <Text fontSize="sm" py="2">

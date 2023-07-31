@@ -35,6 +35,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
   };
   return (
     <Card
+      data-cy="subscription-card"
       transition="all .2s ease-in-out"
       width="100%"
       _hover={{
@@ -75,6 +76,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
 
           <Center>
             <Button
+              data-cy="subscription-card-btn"
               onClick={() => {
                 props.getplan(props);
                 props.changeStep(2);

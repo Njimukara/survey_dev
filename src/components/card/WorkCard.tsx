@@ -33,6 +33,7 @@ export const WorkCard = (props: WorkCardProps) => {
     <Card
       transition="all .2s ease-in-out"
       borderRadius={15}
+      // w="384px"
       _hover={{
         transform: "scale(1.05)",
       }}
@@ -60,15 +61,16 @@ export const WorkCard = (props: WorkCardProps) => {
           <Box>
             <Text
               mb="15px"
-              fontSize={{ base: "18px", md: "20px", lg: "25px" }}
-              fontWeight="600"
+              fontSize={{ base: "16px", md: "20px", lg: "24px" }}
+              fontWeight="500"
             >
               {props.title}
             </Text>
             <Text
               mb="15px"
               fontWeight="400"
-              fontSize={{ base: "13px", md: "15px", lg: "15px" }}
+              fontSize={{ base: "16px", md: "16px", lg: "16px" }}
+              lineHeight="27px"
             >
               {props.description}
             </Text>
