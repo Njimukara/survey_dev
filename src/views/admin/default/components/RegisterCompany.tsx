@@ -206,7 +206,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
           backdropInvert="30%"
           backdropBlur="2px"
         />
-        <ModalContent>
+        <ModalContent fontFamily="inter">
           <ModalHeader>Register Company</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

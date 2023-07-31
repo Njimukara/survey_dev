@@ -222,7 +222,7 @@ export default function EditCompany({ providers }: any) {
 
   return (
     <AdminLayout>
-      <Card mt={20}>
+      <Card mt={20} fontFamily="inter">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}

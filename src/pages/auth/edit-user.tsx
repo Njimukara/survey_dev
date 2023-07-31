@@ -183,7 +183,7 @@ export default function EditUser() {
 
   return (
     <AdminLayout>
-      <Card mt={20} borderRadius="10">
+      <Card mt={20} borderRadius="10" fontFamily="inter">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
@@ -333,6 +333,7 @@ export default function EditUser() {
                     onClick={toggleEdit}
                     fontSize="sm"
                     variant="homePrimary"
+                    bg="primary.600"
                     fontWeight="500"
                     py="5"
                   >
@@ -356,6 +357,7 @@ export default function EditUser() {
                     onClick={updateUser}
                     fontSize="sm"
                     variant="homePrimary"
+                    bg="primary.600"
                     fontWeight="500"
                     py="5"
                   >

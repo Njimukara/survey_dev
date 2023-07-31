@@ -38,6 +38,8 @@ import { useCurrentUser } from "contexts/UserContext";
 import axiosConfig from "axiosConfig";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import CompletePayment from "pages/admin/completePayment";
+import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 
 // Assets
 // import { MultiSelect } from "chakra-multiselect";
@@ -76,6 +78,7 @@ export default function PaymentPlan(props: Props) {
   const [serverError, setServerError] = useState("");
   const [total, setTotal] = useState(0);
   const { surveys, getAllSurveys } = useAllSurveysContext();
+  const { updateSurveyOrder } = useSurveyHistoryContext();
 
   // subscription variables
   const [customerName, setCustomerName] = useState("");
@@ -157,13 +160,6 @@ export default function PaymentPlan(props: Props) {
 
     try {
       await axiosConfig.patch(`/auth/users/me/`, data);
-      toast({
-        position: "bottom-right",
-        description: "Phone number saved",
-        status: "info",
-        duration: 4000,
-        isClosable: true,
-      });
     } catch (err) {
       return;
     }
@@ -231,7 +227,9 @@ export default function PaymentPlan(props: Props) {
         });
         // router.push("/admin/default");
         // .then(() => router.reload())
-        router.replace("/admin/default");
+
+        router.replace("/admin/completePayment");
+        updateSurveyOrder(res);
       })
       .catch((err) => {
         // console.log(err);
@@ -281,7 +279,7 @@ export default function PaymentPlan(props: Props) {
     }
     setCustomerName(currentUser.name);
     setCustomerEmail(currentUser.email);
-    setPhone(currentUser.phone_number);
+    setPhone(currentUser?.user_profile?.phone_number);
     setCancelAt(cancelDate);
     setTotal(plan?.price);
     setPlanID(plan.id);
@@ -296,6 +294,7 @@ export default function PaymentPlan(props: Props) {
       mb="20"
       mt="5"
       borderRadius="10"
+      fontFamily="inter"
       {...rest}
     >
       <form onSubmit={handleSubmit}>
@@ -304,7 +303,7 @@ export default function PaymentPlan(props: Props) {
             <Text
               w="100%"
               textAlign="left"
-              fontWeight="bold"
+              fontWeight="600"
               pb="10px"
               fontSize="lg"
               color={textColordark}
@@ -314,15 +313,15 @@ export default function PaymentPlan(props: Props) {
             <Text
               w="100%"
               textAlign="left"
-              fontWeight="bold"
+              fontWeight="600"
               py="15px"
-              fontSize="sm"
+              fontSize="16px"
               color={textColordark}
             >
               User Details
             </Text>
             <FormControl pb="10px">
-              <FormLabel fontSize="sm" color={textColorSecondary}>
+              <FormLabel fontSize="16px" color={textColorSecondary}>
                 Name
               </FormLabel>
               <Input
@@ -343,7 +342,7 @@ export default function PaymentPlan(props: Props) {
             </FormControl>
             <Flex w="100%" pb="10px">
               <FormControl mr="4">
-                <FormLabel fontSize="sm" color={textColorSecondary}>
+                <FormLabel fontSize="16px" color={textColorSecondary}>
                   Email
                 </FormLabel>
                 <Input
@@ -364,7 +363,7 @@ export default function PaymentPlan(props: Props) {
                 )}
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm" color={textColorSecondary}>
+                <FormLabel fontSize="16px" color={textColorSecondary}>
                   Phone Number *
                 </FormLabel>
                 <PhoneInput
@@ -393,7 +392,7 @@ export default function PaymentPlan(props: Props) {
             <Text
               w="100%"
               textAlign="left"
-              fontWeight="bold"
+              fontWeight="600"
               py="15px"
               fontSize="sm"
               color={textColordark}
@@ -402,7 +401,7 @@ export default function PaymentPlan(props: Props) {
             </Text>
 
             <FormControl py="2" mb="2">
-              <FormLabel fontSize="sm" color={textColorSecondary}>
+              <FormLabel fontSize="16px" color={textColorSecondary}>
                 Select Survey(s). max {plan.max_products}
               </FormLabel>
               <Stack spacing={5} direction="row">
@@ -428,7 +427,7 @@ export default function PaymentPlan(props: Props) {
             </FormControl>
 
             <FormControl>
-              <FormLabel fontSize="sm" color={textColorSecondary}>
+              <FormLabel fontSize="16px" color={textColorSecondary}>
                 Have a coupon code?
               </FormLabel>
               <Input
@@ -450,7 +449,7 @@ export default function PaymentPlan(props: Props) {
 
             <HStack my="3">
               <FormControl w="20%">
-                <FormLabel fontSize="sm" color={textColorSecondary}>
+                <FormLabel fontSize="16px" color={textColorSecondary}>
                   Select Currency
                 </FormLabel>
                 <HStack>
@@ -465,7 +464,7 @@ export default function PaymentPlan(props: Props) {
                 </HStack>
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm" color={textColorSecondary}>
+                <FormLabel fontSize="16px" color={textColorSecondary}>
                   Total
                 </FormLabel>
                 <InputGroup>

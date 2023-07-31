@@ -21,6 +21,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");
   const whiteText = useColorModeValue("white", "white");
+  const lighttext = useColorModeValue("#757575", "gray.200");
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
   const bgHover = useColorModeValue(
@@ -85,14 +86,24 @@ export default function PlanDetails(props: { [x: string]: any }) {
       mb={{ base: "0px", lg: "20px" }}
       borderRadius="10"
       bgGradient={mainBg}
-      // borderColor="rgba(0, 0, 0, 0.11)"
-      border="1px solid"
       {...rest}
     >
-      <Flex justifyContent="space-between" alignItems="center" p={2}>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        p={2}
+        fontFamily="inter"
+      >
         <Flex flexDirection="column" w="100%">
           <Card bg="transparent">
-            <Text data-cy="subscription-card" mb={2} color={textColorSecondary}>
+            <Text
+              data-cy="subscription-card"
+              fontFamily="inter"
+              fontSize="16px"
+              fontWeight="500"
+              mb={2}
+              color={textColorSecondary}
+            >
               Subscirption Details
             </Text>
 
@@ -107,6 +118,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                     <Text mb="4">You do not have any subscription yet</Text>
                     <Button
                       variant="homePrimary"
+                      bg="primary.600"
                       py="5"
                       onClick={() => {
                         router.push("/admin/transactions");
@@ -116,7 +128,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                     </Button>
                   </Box>
                 ) : (
-                  <Box>
+                  <Box fontFamily="inter">
                     <Flex
                       w="100%"
                       justify="space-between"
@@ -127,7 +139,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         fontWeight="bold"
                         flexDirection="column"
                       >
-                        <Text fontSize="larger" fontWeight="bold">
+                        <Text fontSize="24px" fontWeight="600">
                           {presentSubscription?.plan?.name}
                         </Text>
                         <Text
@@ -137,6 +149,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                           py="1"
                           w="max-content"
                           borderRadius="10px"
+                          color="primary.600"
                         >
                           ${" "}
                           {formatPrice(
@@ -159,6 +172,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                             fontSize="small"
                             variant="homePrimary"
                             py="5"
+                            bg="primary.600"
                             color={whiteText}
                             _hover={bgHover}
                             _focus={bgFocus}
@@ -173,6 +187,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                             w="150px"
                             fontSize="small"
                             variant="homePrimary"
+                            bg="primary.600"
                             py="5"
                             color={whiteText}
                             _hover={bgHover}
@@ -200,11 +215,12 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
                     <Flex align="left" flexDirection="column">
                       <HStack spacing="5px">
-                        <Text>Status : </Text>
-
+                        <Text fontSize="16px" color={lighttext}>
+                          Status :{" "}
+                        </Text>
                         <Text
-                          fontSize="large"
-                          fontWeight="bold"
+                          fontSize="24px"
+                          fontWeight="600"
                           color={
                             presentSubscription?.subscription_data?.status ===
                             "active"
@@ -224,24 +240,42 @@ export default function PlanDetails(props: { [x: string]: any }) {
                             : presentSubscription?.subscription_data?.status.toUpperCase()}
                         </Text>
                       </HStack>
-                      <Text>
+                      <Text fontSize="16px" color={lighttext}>
                         Payment Method :{" "}
-                        <span style={{ fontWeight: "bold" }}>
+                        <span
+                          style={{
+                            fontWeight: "600",
+                            fontSize: "24px",
+                            color: "black",
+                          }}
+                        >
                           Stripe Invoice
                         </span>
                       </Text>
-                      <Text>
+                      <Text fontSize="16px" color={lighttext}>
                         Licence bought on:{" "}
-                        <span style={{ fontWeight: "bold" }}>
+                        <span
+                          style={{
+                            fontWeight: "600",
+                            color: "black",
+                            fontSize: "24px",
+                          }}
+                        >
                           <>{formatDate(presentSubscription?.start_date)}</>
                         </span>
                       </Text>
-                      <Text>
+                      <Text color={lighttext}>
                         {presentSubscription?.subscription_data[0]?.status ==
                         "trialing"
                           ? "Confirm License by:"
                           : "Renew License by:"}{" "}
-                        <span style={{ fontWeight: "bold" }}>
+                        <span
+                          style={{
+                            fontWeight: "600",
+                            fontSize: "24px",
+                            color: "black",
+                          }}
+                        >
                           <>{formatDate(presentSubscription?.end_date)}</>
                         </span>
                       </Text>

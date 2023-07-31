@@ -137,6 +137,7 @@ export default function SetPassword(props: any) {
         alignItems="center"
         justifyContent="center"
         flexDirection="column"
+        fontFamily="inter"
       >
         <Box w="30%">
           <Flex justifyContent="center" alignItems="center">

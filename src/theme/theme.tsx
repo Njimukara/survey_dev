@@ -17,8 +17,8 @@ import { globalStyles } from "./styles";
 export default extendTheme(
   {
     fonts: {
-      heading: `'Poppins', sans-serif`,
-      body: `'Poppins', sans-serif`,
+      heading: `'inter'`,
+      body: `'inter'`,
     },
     breakpoints,
     colors: {

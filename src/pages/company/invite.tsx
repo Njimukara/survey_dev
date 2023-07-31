@@ -184,6 +184,7 @@ export default function SignIn({ providers }: any) {
           px="0px"
           mt={"8vh"}
           flexDirection="column"
+          fontFamily="inter"
         >
           <Box w="60vh" h="300px" mt="100px" bg="primary.200" borderRadius={10}>
             <Flex
@@ -224,6 +225,7 @@ export default function SignIn({ providers }: any) {
           px="0px"
           mt={"8vh"}
           flexDirection="column"
+          fontFamily="inter"
         >
           <Box w="100%">
             <Text textAlign="center" pb="10px">

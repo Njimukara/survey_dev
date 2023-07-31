@@ -200,12 +200,12 @@ export default function UserReports(props: { [x: string]: any }) {
             borderRadius="10"
             bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
           >
-            <Box py="2" color="#F7F7F7" pl="10">
+            <Box py="3" color="white" pl="10">
               <Heading
                 data-cy="dashboard-heading"
                 fontWeight="600"
                 fontSize="24px"
-                mb="3"
+                mb="4"
               >
                 Hello {user?.name}!
               </Heading>
