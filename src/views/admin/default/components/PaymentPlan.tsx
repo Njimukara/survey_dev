@@ -225,10 +225,9 @@ export default function PaymentPlan(props: Props) {
           duration: 4000,
           isClosable: true,
         });
-        // router.push("/admin/default");
-        // .then(() => router.reload())
+        router.push("/admin/default").then(() => router.reload());
 
-        router.replace("/admin/completePayment");
+        // router.replace("/admin/completePayment");
         updateSurveyOrder(res);
       })
       .catch((err) => {
@@ -351,6 +350,7 @@ export default function PaymentPlan(props: Props) {
                   type="email"
                   variant="rounded"
                   placeholder=""
+                  isDisabled
                   required
                   value={values.email}
                   onChange={handleChange}

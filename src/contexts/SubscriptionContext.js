@@ -8,30 +8,59 @@ export const SubscriptionProvider = ({ children }) => {
   const [currentSubscription, setCurrentSubscription] = React.useState();
   const [loading, setLoading] = React.useState(true);
 
+  // const fetchSubscriptions = async () => {
+  //   await axiosConfig
+  //     .get("/api/plans/subscription/")
+  //     .then((response) => {
+  //       // Add it to the context
+  //       let tempSUb = response.data[response.data.length - 1];
+  //       let id = tempSUb?.id;
+  //       axiosConfig
+  //         .get(`/api/plans/subscription/${id}/`)
+  //         .then((res) => {
+  //           setCurrentSubscription(res.data);
+  //           setLoading(false);
+  //         })
+  //         .catch((err) => {
+  //           setLoading(false);
+  //         });
+  //       setSubscriptions(response.data);
+  //       return;
+  //     })
+  //     .catch((err) => {
+  //       setSubscriptions([]);
+  //       setLoading(false);
+  //       return;
+  //     });
+  // };
+
   const fetchSubscriptions = async () => {
-    await axiosConfig
-      .get("/api/plans/subscription/")
-      .then((response) => {
-        // Add it to the context
-        let tempSUb = response.data[response.data.length - 1];
-        let id = tempSUb?.id;
-        axiosConfig
-          .get(`/api/plans/subscription/${id}/`)
-          .then((res) => {
-            setCurrentSubscription(res.data);
-            setLoading(false);
-          })
-          .catch((err) => {
-            setLoading(false);
-          });
+    try {
+      const response = await axiosConfig.get(`/api/plans/subscription/`);
+
+      if (response.data.length > 0) {
+        const tempSub = response.data[response.data.length - 1];
+        const id = tempSub?.id;
+
+        try {
+          const res = await axiosConfig.get(`/api/plans/subscription/${id}/`);
+          setCurrentSubscription(res.data);
+        } catch (err) {
+          setCurrentSubscription(null);
+        }
+
         setSubscriptions(response.data);
-        return;
-      })
-      .catch((err) => {
+      } else {
+        setCurrentSubscription(null);
         setSubscriptions([]);
-        setLoading(false);
-        return;
-      });
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setCurrentSubscription(null);
+      setSubscriptions([]);
+      setLoading(false);
+    }
   };
 
   return (

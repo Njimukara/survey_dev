@@ -228,7 +228,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setCalibrationForm(updatedForm);
   };
@@ -271,7 +270,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setLeverForm(updatedForm);
   };
@@ -314,7 +312,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setOperationalForm(updatedForm);
   };
@@ -357,7 +354,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setPerformanceForm(updatedForm);
   };
@@ -400,7 +396,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setPlatformForm(updatedForm);
   };
@@ -443,7 +438,6 @@ export default function AcousticSonar() {
         ? parseFloat(value)
         : value;
     }
-    console.log("Form changed: ", updatedForm);
     // Update state
     setSSPerformanceForm(updatedForm);
   };
@@ -466,20 +460,42 @@ export default function AcousticSonar() {
     });
   };
 
+  // useEffect(() => {
+  //   if (!surveys) {
+  //     getAllSurveys();
+  //   }
+
+  //   if (subscription && acoustic) {
+  //     checkSubscription();
+  //   }
+
+  //   if (acoustic) {
+  //     setSurveyCode(acoustic.code);
+  //     setSurveyID(acoustic.id);
+  //   }
+  // }, [surveys, acoustic, getAllSurveys]);
+
+  // Fetch surveys if not already fetched
   useEffect(() => {
     if (!surveys) {
       getAllSurveys();
     }
+  }, [surveys, getAllSurveys]);
 
-    if (subscription && acoustic) {
-      checkSubscription();
-    }
-
+  // Handle acoustic-related logic
+  useEffect(() => {
     if (acoustic) {
       setSurveyCode(acoustic.code);
       setSurveyID(acoustic.id);
     }
-  }, [surveys, acoustic, subscription, getAllSurveys]);
+  }, [acoustic]);
+
+  // Check subscription when both subscription and acoustic are available
+  useEffect(() => {
+    if (subscription && acoustic) {
+      checkSubscription();
+    }
+  }, [subscription, acoustic]);
 
   // to prefill form with survey past survey data
   const loadSurveyData = (event: any) => {
@@ -575,7 +591,7 @@ export default function AcousticSonar() {
     setSubscription(subscriptions[subscriptions.length - 1]);
 
     sub();
-  }, [loading, subscriptions]);
+  }, [subscriptions]);
 
   if (loading) {
     return (

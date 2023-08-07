@@ -80,7 +80,7 @@ export default function UserReports(props: { [x: string]: any }) {
     useSurveyHistoryContext();
 
   // Chakra Color Mode
-  const brandColor = useColorModeValue("primary.500", "white");
+  const brandColor = useColorModeValue("primary.600", "#271E67");
   const boxBg = useColorModeValue("#F7F7FC", "whiteAlpha.100");
 
   const [user, setUser] = useState<User>(currentUser);
@@ -144,7 +144,7 @@ export default function UserReports(props: { [x: string]: any }) {
     if (history) {
       setSurveyHistory(history);
     }
-  }, [history, getSurveyHistory]);
+  }, [history]);
 
   useEffect(() => {
     if (!surveys) {
@@ -156,21 +156,24 @@ export default function UserReports(props: { [x: string]: any }) {
     if (!subscriptions) {
       fetchSubscriptions();
     }
-  }, [surveys, fetchSubscriptions, subscriptions, getAllSurveys]);
+  }, [surveys, subscriptions]);
 
   useEffect(() => {
     if (!currentUser) {
       fetchCurrentUser();
     }
     setUser(currentUser);
-  }, [currentUser, fetchCurrentUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (session?.user?.data?.user_profile?.user_type === companyUser) {
           await getCompanyMembers();
-          if (!companySurveyHistory) {
+          // if (!companySurveyHistory) {
+          //   getCompanySurvey();
+          // }
+          if (companySurveyHistory === null) {
             getCompanySurvey();
           }
         }
@@ -181,13 +184,7 @@ export default function UserReports(props: { [x: string]: any }) {
     };
 
     fetchUser();
-  }, [
-    companyUser,
-    session,
-    companySurveyHistory,
-    getCompanyMembers,
-    getCompanySurvey,
-  ]);
+  }, []);
 
   return (
     <AdminLayout>
@@ -198,7 +195,8 @@ export default function UserReports(props: { [x: string]: any }) {
             mb="3%"
             h="144px"
             borderRadius="10"
-            bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
+            bg={brandColor}
+            // bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
           >
             <Box py="3" color="white" pl="10">
               <Heading

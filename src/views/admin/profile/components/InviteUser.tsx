@@ -72,13 +72,9 @@ export default function InviteUser(props: { [x: string]: any }) {
       email: guestUser.email,
     };
 
-    try {
-      const res = await axiosConfig.post("/api/company/send-invitation/", body);
-      router.push("/company/users");
-      getInvitations();
-      closeModal();
-      console.log(res);
-      if (res) {
+    await axiosConfig
+      .post("/api/company/send-invitation/", body)
+      .then((res) => {
         toast({
           position: "bottom-right",
           description: "Invite sent successfully.",
@@ -86,33 +82,70 @@ export default function InviteUser(props: { [x: string]: any }) {
           duration: 5000,
           isClosable: true,
         });
-      }
-      toast({
-        position: "bottom-right",
-        description: "Something went wrong, please try again",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
+        router.push("/company/users");
+        getInvitations();
+        closeModal();
+        setGuestUser((prevState) => ({
+          ...prevState,
+          submitting: false,
+        }));
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          position: "bottom-right",
+          description: "Something went wrong, please try again",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setGuestUser((prevState) => ({
+          ...prevState,
+          error: err?.respose?.data?.error,
+          submitting: false,
+        }));
       });
-      setGuestUser((prevState) => ({
-        ...prevState,
-        submitting: false,
-      }));
-    } catch (error: any) {
-      console.log(error);
-      toast({
-        position: "bottom-right",
-        description: "Something went wrong, please try again",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-      setGuestUser((prevState) => ({
-        ...prevState,
-        error: error.respose.data.error,
-        submitting: false,
-      }));
-    }
+
+    // router.push("/company/users");
+    // getInvitations();
+    // closeModal();
+    // console.log(res);
+    // if (res) {
+    // toast({
+    //   position: "bottom-right",
+    //   description: "Invite sent successfully.",
+    //   status: "success",
+    //   duration: 5000,
+    //   isClosable: true,
+    // });
+    //   }
+    //   toast({
+    //     position: "bottom-right",
+    //     description: "Something went wrong, please try again",
+    //     status: "error",
+    //     duration: 5000,
+    //     isClosable: true,
+    //   });
+    //   setGuestUser((prevState) => ({
+    //     ...prevState,
+    //     submitting: false,
+    //   }));
+    // } catch (error: any) {
+    //   console.log(error);
+    //   toast({
+    //     position: "bottom-right",
+    //     description: "Something went wrong, please try again",
+    //     status: "error",
+    //     duration: 5000,
+    //     isClosable: true,
+    //   });
+    //   setGuestUser((prevState) => ({
+    //     ...prevState,
+    //     error: error.respose.data.error,
+    //     submitting: false,
+    //   }));
+    // }
   };
 
   return (

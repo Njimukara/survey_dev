@@ -21,6 +21,7 @@ import {
   Divider,
   Stack,
   Icon,
+  Center,
 } from "@chakra-ui/react";
 import { HiUserPlus } from "react-icons/hi2";
 import { ImKey } from "react-icons/im";
@@ -45,6 +46,7 @@ import { WorkCard } from "components/card/WorkCard";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdEmail, MdMyLocation, MdPhone } from "react-icons/md";
+import NoData from "layouts/admin/noData";
 
 const slides = [
   {
@@ -380,9 +382,9 @@ export default function Home() {
               >
                 <Heading
                   py="2"
-                  size={{ base: "md", md: "lg", lg: "lg" }}
+                  // size={{ base: "md", md: "lg", lg: "lg" }}
                   fontWeight="600"
-                  fontSize="32px"
+                  fontSize="42px"
                 >
                   Introducing survey planner
                 </Heading>
@@ -390,7 +392,7 @@ export default function Home() {
                   pt="4"
                   pb={{ base: "4", lg: "8" }}
                   textAlign="justify"
-                  fontSize={{ base: "16px", md: "16px", lg: "16 px" }}
+                  fontSize={{ base: "16px", md: "16px", lg: "18 px" }}
                   fontWeight="400"
                   lineHeight={{ base: "20px", lg: "34px" }}
                 >
@@ -435,7 +437,13 @@ export default function Home() {
             title="All The Assitance You Need For Your Hydrolic Surveys Inspections"
             bg="#F6F8FA"
           >
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+            <SimpleGrid
+              w="100vw"
+              px="4%"
+              pl="8%"
+              columns={{ base: 1, md: 2, lg: 4 }}
+              // spacing={8}
+            >
               {slides.map((slide, sid) => (
                 <Card
                   key={`slide-${sid}`}
@@ -443,7 +451,7 @@ export default function Home() {
                   fontFamily="poppins"
                   bg="transparent"
                   borderRadius="0"
-                  w="282px"
+                  w="302px"
                   p="0"
                   _hover={{
                     scale: 1.5,
@@ -499,7 +507,7 @@ export default function Home() {
             bg="white"
             title="A simple and transaparent pricing just for you"
           >
-            <Tabs variant="unstyled" w="full">
+            <Tabs variant="unstyled" w="100vw" px="8%">
               <TabList
                 justifyContent="center"
                 mb={{ base: "40px", lg: "40px" }}
@@ -508,13 +516,13 @@ export default function Home() {
                   bg="white"
                   borderLeftRadius="10px"
                   shadow="md"
-                  color="primary.500"
+                  color="primary.600"
                   h="48px"
                   px={{ base: "5", md: "10", lg: "20" }}
                   fontSize="16px"
                   fontWeight="500"
                   _selected={{
-                    bg: "primary.500",
+                    bg: "primary.600",
                     color: "white",
                     borderLeftRadius: "10px",
                   }}
@@ -525,13 +533,13 @@ export default function Home() {
                   bg="white"
                   borderRightRadius="10px"
                   shadow="md"
-                  color="primary.500"
+                  color="primary.600"
                   h="48px"
                   px={{ base: "5", md: "10", lg: "20" }}
                   fontSize="16px"
                   fontWeight="500"
                   _selected={{
-                    bg: "primary.500",
+                    bg: "primary.600",
                     color: "white",
                     borderRightRadius: "10px",
                   }}
@@ -541,8 +549,8 @@ export default function Home() {
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <SimpleGrid columns={4} spacing="10px">
-                    {plans &&
+                  <SimpleGrid columns={plans.length > 0 ? 4 : 1} spacing="10px">
+                    {plans.length > 0 ? (
                       plans.map((x: PricingProps) => (
                         <PricingCard
                           data-cy="pricing-cards"
@@ -553,11 +561,14 @@ export default function Home() {
                           description={x?.stripe_plan_id?.description}
                           advantages={x.features}
                         ></PricingCard>
-                      ))}
+                      ))
+                    ) : (
+                      <NoData title="No plans set" />
+                    )}
                   </SimpleGrid>
                 </TabPanel>
                 <TabPanel>
-                  <Button variant="homePrimary" size="lg">
+                  <Button variant="homePrimary" h="48px" py="0">
                     Annually!
                   </Button>
                 </TabPanel>
@@ -622,7 +633,7 @@ export default function Home() {
                   <Flex justifyContent="center" alignItems="center" gap="5">
                     <Button
                       variant="homeWhite"
-                      color="primary.500"
+                      color="primary.600"
                       fontWeight="500"
                       h="48px"
                       border="2px"
@@ -644,8 +655,8 @@ export default function Home() {
                       border="2px"
                       fontWeight="500"
                       borderColor="white"
-                      _focus={{ bg: "primary.400" }}
-                      _hover={{ bg: "primary.400" }}
+                      _focus={{ bg: "primary.600" }}
+                      _hover={{ bg: "primary.600" }}
                     >
                       Show More
                     </Button>
@@ -656,9 +667,9 @@ export default function Home() {
             </Container>
           </Box>
 
-          {/* Contect section  */}
-          <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "6%" }}>
-            <Container maxW="container.xl">
+          {/* Contact section  */}
+          <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "4%" }}>
+            <Box w="100%" px="4%">
               <Heading color="primary.500" fontWeight="500" fontSize="20px">
                 Lets get in touch
               </Heading>
@@ -796,7 +807,11 @@ export default function Home() {
                   zIndex={23}
                   bg="transparent"
                 >
-                  <Box px={{ base: "10px", md: "50px", lg: "0" }} mt="50px">
+                  <Box
+                    px={{ base: "10px", md: "50px", lg: "0" }}
+                    mt="50px"
+                    fontFamily="inter"
+                  >
                     <form onSubmit={handleSubmit}>
                       <Flex
                         w={{ base: "100%", md: "100%", lg: "100%" }}
@@ -907,11 +922,11 @@ export default function Home() {
                         disabled={isSubmitting}
                         type="submit"
                         py="0"
-                        h="52px"
+                        h="48px"
                         fontWeight="500"
                         fontSize="16px"
                         mt="10"
-                        px="70px"
+                        px="40px"
                         mb={2}
                       >
                         Contact Us
@@ -929,7 +944,7 @@ export default function Home() {
                   </Box>
                 </Card>
               </Stack>
-            </Container>
+            </Box>
           </Box>
           <Footer />
         </Box>

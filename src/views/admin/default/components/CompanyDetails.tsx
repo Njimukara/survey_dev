@@ -1,5 +1,6 @@
 // Chakra imports
 import {
+  Avatar,
   Box,
   Button,
   Flex,
@@ -114,9 +115,10 @@ export default function CompanyDetails(props: {
             mt={{ base: "12", lg: "12" }}
           >
             <Box mx="auto" w="87px" h="87px">
-              <NextAvatar
-                src={company?.logo}
-                alt={company?.name}
+              <Avatar
+                src={company.logo ? company?.logo : ""}
+                size="2xl"
+                name={company?.name}
                 h="100%"
                 w="100%"
                 border="4px solid"

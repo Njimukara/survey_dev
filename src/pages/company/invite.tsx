@@ -54,7 +54,7 @@ import axiosConfig from "axiosConfig";
 
 export default function SignIn({ providers }: any) {
   // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
+  const btnbgColor = useColorModeValue("primary.600", "white");
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
   const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
@@ -150,7 +150,7 @@ export default function SignIn({ providers }: any) {
         setVerified(true);
         toast({
           position: "bottom-right",
-          description: "Token has been sent successfully.",
+          description: "Token Verified.",
           status: "success",
           duration: 7000,
           isClosable: true,
@@ -177,16 +177,13 @@ export default function SignIn({ providers }: any) {
           maxW="max-content"
           w="100%"
           mx="0px"
-          h="100vh"
           alignItems="center"
           justifyContent="center"
-          mb="200px"
           px="0px"
-          mt={"8vh"}
           flexDirection="column"
           fontFamily="inter"
         >
-          <Box w="60vh" h="300px" mt="100px" bg="primary.200" borderRadius={10}>
+          <Box w="60vh" h="300px" bg="primary.200" borderRadius={10}>
             <Flex
               pt={30}
               h="100%"
@@ -218,12 +215,9 @@ export default function SignIn({ providers }: any) {
           maxW="max-content"
           w="100%"
           mx="0px"
-          h="100vh"
           alignItems="center"
           justifyContent="center"
-          mb="100px"
           px="0px"
-          mt={"8vh"}
           flexDirection="column"
           fontFamily="inter"
         >
@@ -313,6 +307,7 @@ export default function SignIn({ providers }: any) {
                   type="text"
                   placeholder="Your name*"
                   mr="2px"
+                  px="2"
                   fontWeight="500"
                   size="lg"
                   value={values.name}
@@ -343,6 +338,7 @@ export default function SignIn({ providers }: any) {
                   type="email"
                   placeholder="Email*"
                   mt="12px"
+                  px="2"
                   fontWeight="500"
                   size="lg"
                   value={values.email}
@@ -371,6 +367,7 @@ export default function SignIn({ providers }: any) {
                       placeholder="Password*(Min. 8 characters)"
                       size="lg"
                       mt="12px"
+                      px="2"
                       type={show ? "text" : "password"}
                       variant="flushed"
                       value={values.password}
@@ -413,6 +410,7 @@ export default function SignIn({ providers }: any) {
                       placeholder="Confirm Password"
                       size="lg"
                       mt="12px"
+                      px="2"
                       type={show ? "text" : "password"}
                       variant="flushed"
                       value={values.confirm_Password}
@@ -451,12 +449,13 @@ export default function SignIn({ providers }: any) {
                 type="submit"
                 isLoading={isSubmitting}
                 isDisabled={!verified && !isVerifying}
-                fontSize="sm"
+                fontSize="16px"
                 variant="homePrimary"
                 fontWeight="500"
                 my="5"
+                py="0"
                 w="100%"
-                h="30px"
+                h="48px"
               >
                 Sign Up
               </Button>

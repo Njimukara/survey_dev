@@ -89,7 +89,7 @@ export default function Users() {
     setLoading(true);
     try {
       const response = await axiosConfig.get(
-        "/api/company/companymembers/companymember/"
+        "/api/company/companymembers/invitations/"
       );
       let result = response.data.filter((invite: any) => {
         return invite.status == 1;
@@ -107,7 +107,7 @@ export default function Users() {
       getCompanyMembers();
       setUser(session?.user?.data);
     }
-  }, [session, getInvitations, getCompanyMembers]);
+  }, []);
 
   if (session == null || session === undefined) {
     return (

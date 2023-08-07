@@ -43,6 +43,7 @@ import {
 import { TableProps } from "views/admin/default/variables/columnsData";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import axiosConfig from "axiosConfig";
 export default function PendingUserInvite(props: TableProps) {
   const { getInvitations, columnsData, tableData } = props;
 
@@ -138,18 +139,14 @@ export default function PendingUserInvite(props: TableProps) {
 
     // console.log(body, id);
     setSending(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .put(
-        `https://surveyplanner.pythonanywhere.com/api/company/invitations/${id}/renew/`,
-        body,
-        config
-      )
+    // const config = {
+    //   headers: {
+    //     Accept: "application/json;charset=UTF-8",
+    //     Authorization: `Token ${session?.user?.auth_token}`,
+    //   },
+    // };
+    await axiosConfig
+      .put(`/api/company/invitations/${id}/renew/`, body)
       .then((res) => {
         // setCompanyMembers(res.data.members);
         // console.log(res);
@@ -193,18 +190,14 @@ export default function PendingUserInvite(props: TableProps) {
 
     // console.log(body, id);
     setSending(true);
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .put(
-        `https://surveyplanner.pythonanywhere.com/api/company/invitations/${id}/cancel/`,
-        body,
-        config
-      )
+    // const config = {
+    //   headers: {
+    //     Accept: "application/json;charset=UTF-8",
+    //     Authorization: `Token ${session?.user?.auth_token}`,
+    //   },
+    // };
+    await axiosConfig
+      .put(`/api/company/invitations/${id}/cancel/`, body)
       .then((res) => {
         // setCompanyMembers(res.data.members);
         // console.log(res);
@@ -240,6 +233,7 @@ export default function PendingUserInvite(props: TableProps) {
       overflowX={{ sm: "scroll", lg: "hidden" }}
       h="max-content"
       max-h="500"
+      fontFamily="inter"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         {/* Alert user on invite cancellation */}

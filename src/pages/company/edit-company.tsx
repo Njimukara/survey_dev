@@ -203,7 +203,9 @@ export default function EditCompany({ providers }: any) {
         setName(res?.data?.name);
         let tempcountry = countryNameFromIso(res?.data?.country);
         let tempIso = res?.data?.country;
+        setIso(res?.data?.country);
         setCountry({ value: tempIso, label: tempcountry });
+        setSelectedCity({ label: city, value: tempIso });
 
         setCity(res?.data?.city);
         setState(res?.data?.state);
@@ -319,25 +321,16 @@ export default function EditCompany({ providers }: any) {
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
                       options={City.getCitiesOfCountry(iso)?.map(
-                        (state: {
-                          latitude: any;
-                          longitude: any;
-                          name: any;
-                          stateCode: any;
-                          countryCode: any;
-                        }) => ({
+                        (state: { name: any; countryCode: any }) => ({
                           value: {
-                            latitude: state.latitude,
-                            longitude: state.longitude,
                             name: state.name,
-                            stateCode: state.stateCode,
                             countryCode: state.countryCode,
                           },
                           label: state.name,
                         })
                       )}
                       placeholder="select city"
-                      value={city}
+                      value={selectedCity}
                       onChange={handleSelectedCity}
                     />
                   </Box>

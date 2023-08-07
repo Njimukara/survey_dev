@@ -11,9 +11,10 @@ import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
 import { signOut } from "next-auth/react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useSubscription } from "contexts/SubscriptionContext";
+import axiosConfig from "axiosConfig";
 
 export default function PlanDetails(props: { [x: string]: any }) {
   const { ...rest } = props;
@@ -55,8 +56,8 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
   // delete user acount
   const deleteAccount = async () => {
-    await axios
-      .delete(`https://surveyplanner.pythonanywhere.com/auth/users/me/`)
+    await axiosConfig
+      .delete(`/auth/users/me/`)
       .then(() => {
         signOut({ callbackUrl: "http://localhost:3000" });
       })
@@ -73,13 +74,29 @@ export default function PlanDetails(props: { [x: string]: any }) {
     }
   };
 
+  // useEffect(() => {
+  //   if (subscriptions.length <= 0) {
+  //     fetchSubscriptions();
+  //   }
+  //   setSubscription(subscriptions[subscriptions.length - 1]);
+  //   setPresentSubscription(currentSubscription);
+  // }, [loading, subscriptions, fetchSubscriptions, currentSubscription]);
+
   useEffect(() => {
-    if (subscriptions.length <= 0) {
-      fetchSubscriptions();
+    if (subscriptions.length > 0) {
+      setSubscription(subscriptions[subscriptions.length - 1]);
     }
-    setSubscription(subscriptions[subscriptions.length - 1]);
-    setPresentSubscription(currentSubscription);
-  }, [loading, subscriptions, fetchSubscriptions, currentSubscription]);
+  }, [subscriptions]);
+
+  useEffect(() => {
+    if (currentSubscription) {
+      setPresentSubscription(currentSubscription);
+    }
+  }, [currentSubscription]);
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   return (
     <Card
@@ -114,12 +131,13 @@ export default function PlanDetails(props: { [x: string]: any }) {
             ) : (
               <>
                 {!presentSubscription ? (
-                  <Box py="5">
+                  <Box py="5" fontFamily="inter">
                     <Text mb="4">You do not have any subscription yet</Text>
                     <Button
                       variant="homePrimary"
                       bg="primary.600"
-                      py="5"
+                      h="48px"
+                      py="0"
                       onClick={() => {
                         router.push("/admin/transactions");
                       }}
@@ -219,7 +237,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                           Status :{" "}
                         </Text>
                         <Text
-                          fontSize="24px"
+                          fontSize="16px"
                           fontWeight="600"
                           color={
                             presentSubscription?.subscription_data?.status ===
@@ -245,7 +263,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         <span
                           style={{
                             fontWeight: "600",
-                            fontSize: "24px",
+                            fontSize: "16px",
                             color: "black",
                           }}
                         >
@@ -258,7 +276,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                           style={{
                             fontWeight: "600",
                             color: "black",
-                            fontSize: "24px",
+                            fontSize: "16px",
                           }}
                         >
                           <>{formatDate(presentSubscription?.start_date)}</>
@@ -272,7 +290,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         <span
                           style={{
                             fontWeight: "600",
-                            fontSize: "24px",
+                            fontSize: "16px",
                             color: "black",
                           }}
                         >

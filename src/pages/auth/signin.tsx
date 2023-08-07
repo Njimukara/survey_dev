@@ -94,7 +94,7 @@ const CustomInput = forwardRef(
 
 export default function SignIn() {
   // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
+  const btnbgColor = useColorModeValue("primary.600", "white");
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
   const textColorBrand = useColorModeValue("brand.500", "white");

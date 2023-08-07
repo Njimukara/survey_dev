@@ -243,12 +243,12 @@ export const barChartOptionsConsumption: ApexGeneric = {
   tooltip: {
     style: {
       fontSize: "12px",
-      fontFamily: undefined,
+      fontFamily: "inter",
     },
     onDatasetHover: {
       style: {
         fontSize: "12px",
-        fontFamily: undefined,
+        fontFamily: "inter",
       },
     },
     theme: "dark",

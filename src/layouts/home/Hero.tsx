@@ -7,10 +7,12 @@ import {
   VStack,
   Text,
   Flex,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 const Hero = () => {
   const router = useRouter();
+  const primaryTextColor = useColorModeValue("gray.500", "gray.500");
   // return (
   //   <Center
   //     as="header"
@@ -61,11 +63,12 @@ const Hero = () => {
       <Flex
         // flex="20%"
         display={{ base: "none", md: "none", lg: "flex" }}
-        flex={{ base: "0", md: "0", lg: "20%" }}
+        flex={{ base: "0", md: "0", lg: "24%" }}
         flexDirection="column"
         // alignItems="center"
         justifyContent="center"
         bg={"#F5F5F5"}
+        zIndex={10}
       >
         {/* <VStack textAlign="center" mt="8rem" spacing="9"> */}
         <Box ml={{ base: "5%", md: "10%", lg: "15%" }} pr="5">
@@ -73,23 +76,46 @@ const Hero = () => {
             data-cy="welcome-text"
             as="h1"
             mt="15%"
-            fontSize={{ base: "32px", md: "32px", lg: "44px" }}
-            fontWeight="600"
+            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
             textTransform="capitalize"
-            mb="10"
           >
-            The Fastest solution to generate
-            <span style={{ color: "#3203FC" }}> hydrographic surveys</span>
+            The Fastest solution to
+          </Heading>
+          <Heading
+            data-cy="welcome-text"
+            as="h1"
+            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontWeight="700"
+            letterSpacing="2px"
+            lineHeight={"72px"}
+            textTransform="capitalize"
+          >
+            generate
+            <span style={{ color: "#3203FC" }}> hydrographic </span>
+          </Heading>
+          <Heading
+            data-cy="welcome-text"
+            as="h1"
+            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontWeight="700"
+            letterSpacing="2px"
+            lineHeight={"72px"}
+            textTransform="capitalize"
+            mb="5"
+          >
+            <span style={{ color: "#3203FC" }}> surveys</span>
           </Heading>
 
           <Text
             w="40rem"
             fontSize="16px"
             lineHeight="27px"
-            color="#3C3C3C"
-            mb="10%"
+            color={primaryTextColor}
+            overflowX="hidden"
+            mb="5%"
           >
             Much more than just a software, we provide an easy made solution for
             you to generate your surveys
@@ -126,10 +152,6 @@ const Hero = () => {
         {/* </VStack> */}
       </Flex>
 
-      {/* 
-        This is the mobile view of the Hero section
-       */}
-
       <Center
         // flex="70%"
         flex={{ base: "100%", md: "100%", lg: "70%" }}
@@ -140,6 +162,9 @@ const Hero = () => {
         h="100vh"
         w="100%"
       >
+        {/* 
+        This is the mobile view of the Hero section
+       */}
         <Flex
           display={{ base: "flex", md: "flex", lg: "none" }}
           flex={{ base: "0", md: "0", lg: "20%" }}
@@ -164,7 +189,7 @@ const Hero = () => {
 
             <Text
               fontSize={{ base: "16px", md: "16px", lg: "20px" }}
-              color="#3C3C3C"
+              color={primaryTextColor}
               lineHeight="27px"
               mb="10%"
             >

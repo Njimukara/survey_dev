@@ -22,7 +22,7 @@ export const globalStyles = {
       600: "#3A2FB7",
       700: "#1c0580",
       800: "#10034c",
-      900: "#050119",
+      900: "#1E1A4D",
     },
     brandScheme: {
       100: "#E9E3FF",
@@ -92,6 +92,8 @@ export const globalStyles = {
     },
     gray: {
       100: "#FAFCFE",
+      500: "#3C3C3C",
+      600: "#323232",
       900: "#1A202C",
     },
   },
@@ -102,12 +104,14 @@ export const globalStyles = {
         bg: mode("#F7F7FC", "navy.900")(props),
         letterSpacing: "-0.5px",
         lineHeight: "27px",
+        fontFamily: "inter",
       },
       input: {
         color: "gray.700",
       },
       html: {
         lineHeight: "27px",
+        fontFamily: "inter",
       },
     }),
   },

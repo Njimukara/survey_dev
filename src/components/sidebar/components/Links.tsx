@@ -35,10 +35,10 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
   let activeColor = useColorModeValue("primary.600", "white");
   let activeIcon = useColorModeValue("primary.600", "white");
-  let textColor = useColorModeValue("gray.500", "white");
+  let textColor = useColorModeValue("gray.600", "white");
   let brandColor = useColorModeValue("primary.600", "primary.400");
 
-  const activebg = useColorModeValue("#F7F7FC", "#F7F7FC");
+  const activebg = useColorModeValue("#F7F7FC", "primary.900");
 
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName: string) => {

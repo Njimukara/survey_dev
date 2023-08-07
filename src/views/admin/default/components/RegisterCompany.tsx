@@ -36,6 +36,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
 
   const [companyData, setCompanyData] = useState({
     country: null,
+    countryState: null,
     iso: null,
     name: "",
     city: null,
@@ -62,6 +63,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
       iso: null,
       image: null,
       createObjectURL: null,
+      submitting: false,
     }));
   };
   // display uploaded logo on frontend
@@ -88,13 +90,16 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const onSubmit = async () => {
     const { image, name, city, iso, state, streetAddress, zipCode } =
       companyData;
+    var formdata = new FormData();
 
     if (!image) {
-      setCompanyData((prevState) => ({
-        ...prevState,
-        imageError: "Please upload your company logo",
-      }));
-      return;
+      // setCompanyData((prevState) => ({
+      //   ...prevState,
+      //   imageError: "Please upload your company logo",
+      // }));
+      formdata.append("logo", "");
+    } else {
+      formdata.append("logo", image);
     }
 
     setCompanyData((prevState) => ({
@@ -103,8 +108,6 @@ export default function RegisterCompany(props: { [x: string]: any }) {
       submitting: true,
     }));
 
-    var formdata = new FormData();
-    formdata.append("logo", image);
     formdata.append("name", name);
     formdata.append("city", city);
     formdata.append("country", iso);
@@ -186,6 +189,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   const handleSelectedCity = (option: cityOption) => {
     setCompanyData((prevState) => ({
       ...prevState,
+      countryState: option,
       city: option?.value?.name,
     }));
   };
@@ -196,7 +200,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
         onClose={() => toggleModal(false)}
         isOpen={opened}
         motionPreset="slideInBottom"
-        size="xl"
+        size="3xl"
         isCentered
         closeOnOverlayClick={false}
       >
@@ -206,7 +210,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
           backdropInvert="30%"
           backdropBlur="2px"
         />
-        <ModalContent fontFamily="inter">
+        <ModalContent>
           <ModalHeader>Register Company</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -224,12 +228,19 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                     textAlign="left"
                     fontWeight="bold"
                     color={textColordark}
+                    fontFamily="inter"
                   >
                     Company Details
                   </Text>
                   <form>
-                    <FormControl pb="3">
-                      <FormLabel w="160px">Name</FormLabel>
+                    <FormControl pb="3" fontFamily="inter">
+                      <FormLabel
+                        w="160px"
+                        fontSize="16px"
+                        color={textColorSecondary}
+                      >
+                        Name
+                      </FormLabel>
                       <Input
                         id="name"
                         name="name"
@@ -248,9 +259,9 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                         }
                       />
                     </FormControl>
-                    <Flex w="100%">
+                    <Flex w="100%" fontFamily="inter">
                       <FormControl mr="4">
-                        <FormLabel fontSize="sm" color={textColorSecondary}>
+                        <FormLabel fontSize="16px" color={textColorSecondary}>
                           Country
                         </FormLabel>
                         <Select
@@ -263,7 +274,9 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                       </FormControl>
 
                       <FormControl pb="3">
-                        <FormLabel w="160px">City</FormLabel>
+                        <FormLabel w="160px" color={textColorSecondary}>
+                          City
+                        </FormLabel>
                         <Box w="100%">
                           <Select
                             id="companyCity"
@@ -282,14 +295,22 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                               label: state.name,
                             }))}
                             placeholder="select city"
-                            value={companyData.city}
+                            value={companyData.countryState}
                             onChange={handleSelectedCity}
                           />
                         </Box>
                       </FormControl>
+                    </Flex>
 
+                    <Flex gap="4" fontFamily="inter">
                       <FormControl pb="3">
-                        <FormLabel w="160px">State</FormLabel>
+                        <FormLabel
+                          w="160px"
+                          fontSize="16px"
+                          color={textColorSecondary}
+                        >
+                          State
+                        </FormLabel>
                         <Input
                           id="state"
                           name="state"
@@ -310,7 +331,13 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                       </FormControl>
 
                       <FormControl pb="3">
-                        <FormLabel w="160px">Zip Code</FormLabel>
+                        <FormLabel
+                          w="160px"
+                          fontSize="16px"
+                          color={textColorSecondary}
+                        >
+                          Zip Code
+                        </FormLabel>
                         <Input
                           id="zipCode"
                           name="zipCode"
@@ -331,7 +358,13 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                       </FormControl>
 
                       <FormControl pb="3">
-                        <FormLabel w="160px">Street Address</FormLabel>
+                        <FormLabel
+                          w="160px"
+                          fontSize="16px"
+                          color={textColorSecondary}
+                        >
+                          Street Address
+                        </FormLabel>
                         <Input
                           id="streetAddress"
                           name="streetAddress"
@@ -351,7 +384,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                         />
                       </FormControl>
                     </Flex>
-                    <Flex alignItems="center" w="100%">
+                    <Flex alignItems="center" w="100%" fontFamily="inter">
                       <Image
                         src={
                           companyData.createObjectURL == null
@@ -381,6 +414,9 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           accept="image/*"
                         />
                       </Box>
+                      {companyData.image && (
+                        <Button onClick={removeAvatar}>Discard Logo</Button>
+                      )}
                     </Flex>
                     {companyData.imageError && (
                       <Text color="red.400" mt="0" mb="5px">
