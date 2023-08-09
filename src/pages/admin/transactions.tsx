@@ -101,6 +101,7 @@ export default function Transactions() {
   }, [toast]);
 
   useEffect(() => {
+    console.log(subscriptions);
     if (!currentUser) {
       fetchCurrentUser();
     }
@@ -112,7 +113,7 @@ export default function Transactions() {
       fetchSubscriptions();
     }
     setLocalSubscriptions(subscriptions);
-  }, []);
+  }, [subscriptions]);
 
   if (localSubscriptions.length != 0) {
     return (

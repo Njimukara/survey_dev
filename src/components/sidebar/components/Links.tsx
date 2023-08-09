@@ -124,7 +124,14 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       <Flex key={index}>
                         <Link key={index} href={route.layout + routes.path}>
                           <a style={{ width: "100%" }}>
-                            <Box w="100%">
+                            <Box
+                              w="100%"
+                              bg={
+                                activeRoute(route.path.toLowerCase())
+                                  ? activebg
+                                  : "transparent"
+                              }
+                            >
                               <HStack
                                 spacing={
                                   activeRoute(routes.path.toLowerCase())

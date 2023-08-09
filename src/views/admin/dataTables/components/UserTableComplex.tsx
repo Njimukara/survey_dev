@@ -334,9 +334,14 @@ export default function UserTableComplex(props: TableProps) {
           placeholder="Search"
           value={searchTerm}
           w="50%"
+          mr="2"
           variant="flushed"
           onChange={(e) => setSearchTerm(e.target.value)}
-          mr="2"
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <Button onClick={handleSearch} variant="outline" py="4" px="6" mr="2">
           Search

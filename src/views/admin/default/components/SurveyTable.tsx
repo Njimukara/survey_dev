@@ -214,9 +214,14 @@ export default function ColumnsTable(props: TableProps) {
           placeholder="Input Search"
           value={searchTerm}
           w="50%"
+          mr="2"
           variant="flushed"
           onChange={(e) => setSearchTerm(e.target.value)}
-          mr="2"
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <Box>
           <Button onClick={handleSearch} variant="outline" py="3" px="6" mr="2">

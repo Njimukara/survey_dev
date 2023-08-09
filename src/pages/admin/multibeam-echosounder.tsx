@@ -41,11 +41,18 @@ export default function MultibeamEchoSounder() {
   const [subscription, setSubscription] = useState<any>();
   const [calibrations, setCalibrations] = useState<any>({
     roll_boresight: { type: "number" },
+    pitch_boresight: { type: "number" },
     yaw_boresight: { type: "number" },
     pitch_boresight_uncertainty: { type: "number" },
     roll_boresight_uncertainty: { type: "number" },
     yaw_boresight_uncertainty: { type: "number" },
+    ford_gnss_usbl_transducer: { type: "number" },
+    ford_ins_of_the_usbl_and_gnss: { type: "number" },
+    std_gnss_and_usbl_transducer: { type: "number" },
+    std_ins_of_the_usbl_the_gnss: { type: "number" },
     "latency_gnss-smf": { type: "number" },
+    "latency_gnss-usbl": { type: "number" },
+    "latency_gnss-ins-of-usbl": { type: "number" },
     "uncty_of_latency_gnss-smf": { type: "number" },
     "latency_gnss-ins": { type: "number" },
     "uncty_of_latency_gnss-ins": { type: "number" },
@@ -65,7 +72,9 @@ export default function MultibeamEchoSounder() {
     tide_uncertainty: { type: "number" },
     co_tidal_uncertainty: { type: "number" },
     depth: { type: "number" },
+    altitude_of_sss: { type: "number" },
     incidence_angle_of_mbes: { type: "number" },
+    distance_x_between_sss_and_usbl: { type: "number" },
   });
   const [performance_ins, setPerformance_ins] = useState<any>({
     yaw_uncertainty: { type: "number" },
@@ -74,11 +83,19 @@ export default function MultibeamEchoSounder() {
     positioning_uncertainty_in_h: { type: "number" },
     positioning_uncertainty_in_v: { type: "number" },
     heave_uncertainty: { type: "number" },
+    slant_range_uncertainty_of_the_usbl: { type: "number" },
+    angle_uncertainty_of_the_usbl: { type: "number" },
   });
 
   const [performanceCard, setPerformanceCard] = useState<any>([
     {
       defined_operating_frequency: { type: "number" },
+      horizontal_field_of_view: { type: "number" },
+      vertical_field_of_view: { type: "number" },
+      pulse_duration: { type: "number" },
+      beamwidth: { type: "number" },
+      depression_angle: { type: "number" },
+      max_range_of_sss: { type: "number" },
       along_track_beanwidth: { type: "number" },
       accross_track_beanwidth: { type: "number" },
       beams_number: { type: "number" },
@@ -98,6 +115,12 @@ export default function MultibeamEchoSounder() {
     },
     {
       defined_operating_frequency: { type: "number" },
+      horizontal_field_of_view: { type: "number" },
+      vertical_field_of_view: { type: "number" },
+      pulse_duration: { type: "number" },
+      beamwidth: { type: "number" },
+      depression_angle: { type: "number" },
+      max_range_of_sss: { type: "number" },
       along_track_beanwidth: { type: "number" },
       accross_track_beanwidth: { type: "number" },
       beams_number: { type: "number" },
@@ -117,6 +140,12 @@ export default function MultibeamEchoSounder() {
     },
     {
       defined_operating_frequency: { type: "number" },
+      horizontal_field_of_view: { type: "number" },
+      vertical_field_of_view: { type: "number" },
+      pulse_duration: { type: "number" },
+      beamwidth: { type: "number" },
+      depression_angle: { type: "number" },
+      max_range_of_sss: { type: "number" },
       along_track_beanwidth: { type: "number" },
       accross_track_beanwidth: { type: "number" },
       beams_number: { type: "number" },
@@ -136,6 +165,12 @@ export default function MultibeamEchoSounder() {
     },
     {
       defined_operating_frequency: { type: "number" },
+      horizontal_field_of_view: { type: "number" },
+      vertical_field_of_view: { type: "number" },
+      pulse_duration: { type: "number" },
+      beamwidth: { type: "number" },
+      depression_angle: { type: "number" },
+      max_range_of_sss: { type: "number" },
       along_track_beanwidth: { type: "number" },
       accross_track_beanwidth: { type: "number" },
       beams_number: { type: "number" },

@@ -47,7 +47,7 @@ function SubscriptionDetails({
     return price / 100;
   };
   return (
-    <Card>
+    <Card fontFamily="inter">
       <Text mb={2} color={textColorSecondary}>
         Subscription Details
       </Text>
