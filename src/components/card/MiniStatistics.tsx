@@ -23,7 +23,7 @@ export default function Default(props: {
 
   return (
     <Card
-      fontFamily="inter"
+      fontFamily="Poppins"
       py="20px"
       borderRadius="10"
       border="1px solid"

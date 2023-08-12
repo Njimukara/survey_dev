@@ -40,6 +40,7 @@ import {
   MdOutlineDetails,
   MdMore,
   MdMoreHoriz,
+  MdSearch,
 } from "react-icons/md";
 import { TableProps } from "../variables/columnsData";
 import { useAllSurveysContext } from "contexts/SurveyContext";
@@ -56,6 +57,8 @@ interface survey {
 
 export default function ColumnsTable(props: TableProps) {
   const { columnsData, tableData } = props;
+
+  const font_family = "Poppins";
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -196,6 +199,7 @@ export default function ColumnsTable(props: TableProps) {
       max-h="500"
       border="1px solid"
       borderColor="rgba(0, 0, 0, 0.11)"
+      fontFamily={font_family}
     >
       <Flex
         data-testid="survey-history-table"
@@ -225,7 +229,10 @@ export default function ColumnsTable(props: TableProps) {
         />
         <Box>
           <Button onClick={handleSearch} variant="outline" py="3" px="6" mr="2">
-            Search
+            <Flex alignItems="center" gap="1" justifyContent="center">
+              <Icon as={MdSearch} w={5} h={5} color={"primary.600"} />
+              Search
+            </Flex>
           </Button>
           <Button
             onClick={cancelSearch}

@@ -35,6 +35,8 @@ function SubscriptionDetails({
   textColorSecondary,
   upgrade,
 }: Props) {
+  const font_family = "Poppins";
+
   const formatDate = (date: any) => {
     let newDate = new Date(date).toDateString();
     return newDate;
@@ -47,7 +49,7 @@ function SubscriptionDetails({
     return price / 100;
   };
   return (
-    <Card fontFamily="inter">
+    <Card fontFamily={font_family}>
       <Text mb={2} color={textColorSecondary}>
         Subscription Details
       </Text>
@@ -56,7 +58,7 @@ function SubscriptionDetails({
           <Text color={textColorSecondary} fontSize="sm">
             Plan
           </Text>
-          <Text fontWeight="bold" fontSize="lg">
+          <Text fontWeight="600" fontSize="lg">
             {subscription?.plan?.name}
           </Text>
         </Box>
@@ -64,7 +66,7 @@ function SubscriptionDetails({
           <Text color={textColorSecondary} fontSize="sm">
             Cost
           </Text>
-          <Text fontWeight="bold" fontSize="lg">
+          <Text fontWeight="600" fontSize="lg">
             ${formatPrice(subscription?.subscription_data?.plan?.amount)} /{" "}
             {subscription?.subscription_data?.plan?.interval}
           </Text>
@@ -73,7 +75,7 @@ function SubscriptionDetails({
           <Text color={textColorSecondary} fontSize="sm">
             Purchased on
           </Text>
-          <Text fontWeight="bold" fontSize="lg">
+          <Text fontWeight="600" fontSize="lg">
             {formatDate(subscription?.start_date)}
           </Text>
         </Box>
@@ -81,7 +83,7 @@ function SubscriptionDetails({
           <Text color={textColorSecondary} fontSize="sm">
             Renewal Date
           </Text>
-          <Text fontWeight="bold" fontSize="lg">
+          <Text fontWeight="600" fontSize="lg">
             {formatDate(subscription?.end_date)}
           </Text>
         </Box>
@@ -96,11 +98,11 @@ function SubscriptionDetails({
             <Text pl="5" pb="2" key="">
               <Icon
                 as={MdCheckCircle}
-                color="primary.500"
+                color="primary.600"
                 fontSize="18px"
                 mx="1"
               />
-              {benefit.description}
+              {benefit?.description}
             </Text>
           ))}
         </Flex>

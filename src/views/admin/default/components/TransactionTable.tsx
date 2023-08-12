@@ -25,10 +25,17 @@ import {
 import Card from "components/card/Card";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdSearch,
+} from "react-icons/md";
 import { TableProps } from "../variables/columnsData";
 export default function TransactionTable(props: TableProps) {
   const { columnsData, tableData } = props;
+
+  const font_family = `'Poppins', sans-serif'`;
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -97,7 +104,7 @@ export default function TransactionTable(props: TableProps) {
       px="0px"
       borderRadius="10"
       overflowX={{ sm: "scroll", lg: "hidden" }}
-      fontFamily="inter"
+      fontFamily={font_family}
       // overflowY={{ sm: "scroll", lg: "scroll" }}
     >
       <Flex px="25px" justify="space-between" mb="10px" align="center">
@@ -123,8 +130,18 @@ export default function TransactionTable(props: TableProps) {
           }}
         />
         <Box>
-          <Button onClick={handleSearch} variant="outline" py="3" px="6" mr="2">
-            Search
+          <Button
+            onClick={handleSearch}
+            variant="outline"
+            fontSize={12}
+            py="1"
+            px="3"
+            mr="2"
+          >
+            <Flex alignItems="center" gap="1" justifyContent="center">
+              <Icon as={MdSearch} w={5} h={5} color={"primary.600"} />
+              Search
+            </Flex>
           </Button>
           <Button
             onClick={cancelSearch}

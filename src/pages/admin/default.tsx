@@ -73,6 +73,8 @@ export default function UserReports(props: { [x: string]: any }) {
     };
   }
 
+  const font_family = "Poppins";
+
   const { currentUser, fetchCurrentUser } = useCurrentUser();
   const { surveys, getAllSurveys } = useAllSurveysContext();
   const { subscriptions, fetchSubscriptions } = useSubscription();
@@ -188,7 +190,10 @@ export default function UserReports(props: { [x: string]: any }) {
 
   return (
     <AdminLayout>
-      <Box pt={{ base: "130px", md: "80px", xl: "80px" }} fontFamily="inter">
+      <Box
+        pt={{ base: "130px", md: "80px", xl: "80px" }}
+        fontFamily={font_family}
+      >
         <>
           {/* <Flex> */}
           <Card
@@ -207,7 +212,7 @@ export default function UserReports(props: { [x: string]: any }) {
               >
                 Hello {user?.name}!
               </Heading>
-              <Text fontSize="18px" fontWeight="500" fontFamily="inter">
+              <Text fontSize="18px" fontWeight="500" fontFamily={font_family}>
                 This is your survey planner dashboard, where you can see an
                 overview of your account details
               </Text>

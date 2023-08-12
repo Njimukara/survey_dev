@@ -61,6 +61,8 @@ interface Props {
 export default function PaymentPlan(props: Props) {
   const { plan, getplan, changeStep, handleUpgrade, ...rest } = props;
 
+  const font_family = "Poppins";
+
   type subscriptionData = {
     [key: string]: any; //  variable key
   };
@@ -293,7 +295,7 @@ export default function PaymentPlan(props: Props) {
       mb="20"
       mt="5"
       borderRadius="10"
-      fontFamily="inter"
+      fontFamily={font_family}
       {...rest}
     >
       <form onSubmit={handleSubmit}>

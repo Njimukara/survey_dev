@@ -12,6 +12,7 @@ export default function User(props: {
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const bg = useColorModeValue("white", "navy.700");
+  const font_family = "Poppins";
 
   return (
     <Card
@@ -20,7 +21,7 @@ export default function User(props: {
       borderRadius="10px"
       px="14px"
       py="2"
-      fontFamily="inter"
+      fontFamily={font_family}
       h="78px"
       border="1px solid"
       borderColor="rgba(0, 0, 0, 0.11)"

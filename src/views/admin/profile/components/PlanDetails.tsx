@@ -19,6 +19,8 @@ import axiosConfig from "axiosConfig";
 export default function PlanDetails(props: { [x: string]: any }) {
   const { ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");
   const whiteText = useColorModeValue("white", "white");
@@ -109,13 +111,13 @@ export default function PlanDetails(props: { [x: string]: any }) {
         justifyContent="space-between"
         alignItems="center"
         p={2}
-        fontFamily="inter"
+        fontFamily={font_family}
       >
         <Flex flexDirection="column" w="100%">
           <Card bg="transparent">
             <Text
               data-cy="subscription-card"
-              fontFamily="inter"
+              fontFamily={font_family}
               fontSize="16px"
               fontWeight="500"
               mb={2}
@@ -131,7 +133,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
             ) : (
               <>
                 {!presentSubscription ? (
-                  <Box py="5" fontFamily="inter">
+                  <Box py="5" fontFamily={font_family}>
                     <Text mb="4">You do not have any subscription yet</Text>
                     <Button
                       variant="homePrimary"
@@ -146,7 +148,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                     </Button>
                   </Box>
                 ) : (
-                  <Box fontFamily="inter">
+                  <Box fontFamily={font_family}>
                     <Flex
                       w="100%"
                       justify="space-between"

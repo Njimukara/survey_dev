@@ -37,6 +37,8 @@ export default function Banner(props: {
     "#111C44 !important"
   );
 
+  const font_family = "Poppins";
+
   const date = new Date(date_joined)?.toLocaleDateString() ?? "Loading";
   const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber) ?? "Not Set";
   const router = useRouter();
@@ -113,7 +115,7 @@ export default function Banner(props: {
           />
         </Flex>
         <Box h="100%" mx="10px" w="2px" bg="gray.200" />
-        <Box w="80%" px={20} fontFamily="inter">
+        <Box w="80%" px={20} fontFamily={font_family}>
           <Text
             data-cy="user-name"
             pb={4}

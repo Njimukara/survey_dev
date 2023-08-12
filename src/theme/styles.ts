@@ -104,14 +104,12 @@ export const globalStyles = {
         bg: mode("#F7F7FC", "navy.900")(props),
         letterSpacing: "-0.5px",
         lineHeight: "27px",
-        fontFamily: "Poppins', sans-serif",
       },
       input: {
         color: "gray.700",
       },
       html: {
         lineHeight: "27px",
-        fontFamily: "Poppins', sans-serif",
       },
     }),
   },

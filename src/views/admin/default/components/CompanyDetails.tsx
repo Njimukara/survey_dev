@@ -41,6 +41,8 @@ export default function CompanyDetails(props: {
 }) {
   const { hasDetails, toggleHasDetails, company, ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const borderColor = useColorModeValue(
     "white !important",
@@ -76,7 +78,7 @@ export default function CompanyDetails(props: {
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
-          fontFamily="inter"
+          fontFamily={font_family}
           py={15}
         >
           <Text py={4}>No Company associated with this account yet</Text>
@@ -109,7 +111,7 @@ export default function CompanyDetails(props: {
             w="95%"
             bg="gray.50"
             h="100"
-            fontFamily="inter"
+            fontFamily={font_family}
             borderRadius="10"
             boxShadow="sm"
             mt={{ base: "12", lg: "12" }}
@@ -127,7 +129,7 @@ export default function CompanyDetails(props: {
               />
             </Box>
           </Box>
-          <Box mt="10" px="5" fontFamily="inter">
+          <Box mt="10" px="5" fontFamily={font_family}>
             <Text
               pb={4}
               fontWeight="600"
@@ -194,7 +196,7 @@ export default function CompanyDetails(props: {
             h="48px"
             bg="primary.600"
             color="white"
-            fontFamily="inter"
+            fontFamily={font_family}
           >
             Edit info
           </Button>

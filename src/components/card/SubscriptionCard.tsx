@@ -30,6 +30,7 @@ type SubscriptionProps = {
 };
 
 export const SubscriptionCard = (props: SubscriptionProps) => {
+  const font_family = "Poppins";
   const formatPrice = (price: number) => {
     return price / 100;
   };
@@ -38,12 +39,12 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
       data-cy="subscription-card"
       transition="all .2s ease-in-out"
       width="100%"
-      fontFamily="inter"
+      fontFamily={font_family}
       _hover={{
         transform: "scale(1.05)",
       }}
     >
-      <Flex width="100%" fontFamily="inter">
+      <Flex width="100%" fontFamily={font_family}>
         <Box>
           <Box>
             <Text mb="25px" fontSize="20px" fontWeight="600">

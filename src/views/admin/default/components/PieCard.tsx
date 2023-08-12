@@ -61,6 +61,8 @@ const pieChartOptions: ApexGeneric = {
 export default function Conversion(props: { [x: string]: any }) {
   const { companySurvey, ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");

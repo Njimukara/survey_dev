@@ -30,6 +30,8 @@ import axiosConfig from "axiosConfig";
 export default function RegisterCompany(props: { [x: string]: any }) {
   let { toggleModal, opened, toggleDetails, ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
   const textColordark = useColorModeValue("black", "white");
@@ -195,253 +197,251 @@ export default function RegisterCompany(props: { [x: string]: any }) {
   };
 
   return (
-    <Card mb={{ base: "0px", lg: "20px" }} {...rest}>
-      <Modal
-        onClose={() => toggleModal(false)}
-        isOpen={opened}
-        motionPreset="slideInBottom"
-        size="3xl"
-        isCentered
-        closeOnOverlayClick={false}
-      >
-        <ModalOverlay
-          bg="none"
-          backdropFilter="auto"
-          backdropInvert="30%"
-          backdropBlur="2px"
-        />
-        <ModalContent>
-          <ModalHeader>Register Company</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Card
-              justifyContent="center"
-              flexDirection="column"
-              w="100%"
-              mb="0px"
-              {...rest}
-            >
-              <Flex>
-                <VStack flex="1">
-                  <Text
-                    w="100%"
-                    textAlign="left"
-                    fontWeight="bold"
-                    color={textColordark}
-                    fontFamily="inter"
-                  >
-                    Company Details
-                  </Text>
-                  <form>
-                    <FormControl pb="3" fontFamily="inter">
+    <Modal
+      onClose={() => toggleModal(false)}
+      isOpen={opened}
+      motionPreset="slideInBottom"
+      size="3xl"
+      isCentered
+      closeOnOverlayClick={false}
+    >
+      <ModalOverlay
+        bg="none"
+        backdropFilter="auto"
+        backdropInvert="30%"
+        backdropBlur="2px"
+      />
+      <ModalContent>
+        <ModalHeader>Register Company</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Card
+            justifyContent="center"
+            flexDirection="column"
+            w="100%"
+            mb="0px"
+            {...rest}
+          >
+            <Flex>
+              <VStack flex="1">
+                <Text
+                  w="100%"
+                  textAlign="left"
+                  fontWeight="bold"
+                  color={textColordark}
+                  fontFamily={font_family}
+                >
+                  Company Details
+                </Text>
+                <form>
+                  <FormControl pb="3" fontFamily={font_family}>
+                    <FormLabel
+                      w="160px"
+                      fontSize="16px"
+                      color={textColorSecondary}
+                    >
+                      Name
+                    </FormLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      variant="rounded"
+                      fontSize="sm"
+                      type="text"
+                      placeholder="Name"
+                      fontWeight="500"
+                      size="lg"
+                      value={companyData.name}
+                      onChange={(e) =>
+                        setCompanyData((prevState) => ({
+                          ...prevState,
+                          name: e.target.value,
+                        }))
+                      }
+                    />
+                  </FormControl>
+                  <Flex w="100%" fontFamily={font_family}>
+                    <FormControl mr="4">
+                      <FormLabel fontSize="16px" color={textColorSecondary}>
+                        Country
+                      </FormLabel>
+                      <Select
+                        styles={reactSelectStyles}
+                        options={options}
+                        placeholder="select country"
+                        value={companyData.country}
+                        onChange={changeHandler}
+                      />
+                    </FormControl>
+
+                    <FormControl pb="3">
+                      <FormLabel w="160px" color={textColorSecondary}>
+                        City
+                      </FormLabel>
+                      <Box w="100%">
+                        <Select
+                          id="companyCity"
+                          name="companyCity"
+                          styles={reactSelectStyles}
+                          options={City.getCitiesOfCountry(
+                            companyData.iso
+                          )?.map((state: any) => ({
+                            value: {
+                              latitude: state.latitude,
+                              longitude: state.longitude,
+                              name: state.name,
+                              stateCode: state.stateCode,
+                              countryCode: state.countryCode,
+                            },
+                            label: state.name,
+                          }))}
+                          placeholder="select city"
+                          value={companyData.countryState}
+                          onChange={handleSelectedCity}
+                        />
+                      </Box>
+                    </FormControl>
+                  </Flex>
+
+                  <Flex gap="4" fontFamily={font_family}>
+                    <FormControl pb="3">
                       <FormLabel
                         w="160px"
                         fontSize="16px"
                         color={textColorSecondary}
                       >
-                        Name
+                        State
                       </FormLabel>
                       <Input
-                        id="name"
-                        name="name"
+                        id="state"
+                        name="state"
                         variant="rounded"
                         fontSize="sm"
                         type="text"
-                        placeholder="Name"
+                        placeholder="State"
                         fontWeight="500"
                         size="lg"
-                        value={companyData.name}
+                        value={companyData.state}
                         onChange={(e) =>
                           setCompanyData((prevState) => ({
                             ...prevState,
-                            name: e.target.value,
+                            state: e.target.value,
                           }))
                         }
                       />
                     </FormControl>
-                    <Flex w="100%" fontFamily="inter">
-                      <FormControl mr="4">
-                        <FormLabel fontSize="16px" color={textColorSecondary}>
-                          Country
-                        </FormLabel>
-                        <Select
-                          styles={reactSelectStyles}
-                          options={options}
-                          placeholder="select country"
-                          value={companyData.country}
-                          onChange={changeHandler}
-                        />
-                      </FormControl>
 
-                      <FormControl pb="3">
-                        <FormLabel w="160px" color={textColorSecondary}>
-                          City
-                        </FormLabel>
-                        <Box w="100%">
-                          <Select
-                            id="companyCity"
-                            name="companyCity"
-                            styles={reactSelectStyles}
-                            options={City.getCitiesOfCountry(
-                              companyData.iso
-                            )?.map((state: any) => ({
-                              value: {
-                                latitude: state.latitude,
-                                longitude: state.longitude,
-                                name: state.name,
-                                stateCode: state.stateCode,
-                                countryCode: state.countryCode,
-                              },
-                              label: state.name,
-                            }))}
-                            placeholder="select city"
-                            value={companyData.countryState}
-                            onChange={handleSelectedCity}
-                          />
-                        </Box>
-                      </FormControl>
-                    </Flex>
-
-                    <Flex gap="4" fontFamily="inter">
-                      <FormControl pb="3">
-                        <FormLabel
-                          w="160px"
-                          fontSize="16px"
-                          color={textColorSecondary}
-                        >
-                          State
-                        </FormLabel>
-                        <Input
-                          id="state"
-                          name="state"
-                          variant="rounded"
-                          fontSize="sm"
-                          type="text"
-                          placeholder="State"
-                          fontWeight="500"
-                          size="lg"
-                          value={companyData.state}
-                          onChange={(e) =>
-                            setCompanyData((prevState) => ({
-                              ...prevState,
-                              state: e.target.value,
-                            }))
-                          }
-                        />
-                      </FormControl>
-
-                      <FormControl pb="3">
-                        <FormLabel
-                          w="160px"
-                          fontSize="16px"
-                          color={textColorSecondary}
-                        >
-                          Zip Code
-                        </FormLabel>
-                        <Input
-                          id="zipCode"
-                          name="zipCode"
-                          variant="rounded"
-                          fontSize="sm"
-                          type="text"
-                          placeholder="Zip Code"
-                          fontWeight="500"
-                          size="lg"
-                          value={companyData.zipCode}
-                          onChange={(e) =>
-                            setCompanyData((prevState) => ({
-                              ...prevState,
-                              zipCode: e.target.value,
-                            }))
-                          }
-                        />
-                      </FormControl>
-
-                      <FormControl pb="3">
-                        <FormLabel
-                          w="160px"
-                          fontSize="16px"
-                          color={textColorSecondary}
-                        >
-                          Street Address
-                        </FormLabel>
-                        <Input
-                          id="streetAddress"
-                          name="streetAddress"
-                          variant="rounded"
-                          fontSize="sm"
-                          type="text"
-                          placeholder="Street Address"
-                          fontWeight="500"
-                          size="lg"
-                          value={companyData.streetAddress}
-                          onChange={(e) =>
-                            setCompanyData((prevState) => ({
-                              ...prevState,
-                              streetAddress: e.target.value,
-                            }))
-                          }
-                        />
-                      </FormControl>
-                    </Flex>
-                    <Flex alignItems="center" w="100%" fontFamily="inter">
-                      <Image
-                        src={
-                          companyData.createObjectURL == null
-                            ? "/profile.png"
-                            : companyData.createObjectURL
+                    <FormControl pb="3">
+                      <FormLabel
+                        w="160px"
+                        fontSize="16px"
+                        color={textColorSecondary}
+                      >
+                        Zip Code
+                      </FormLabel>
+                      <Input
+                        id="zipCode"
+                        name="zipCode"
+                        variant="rounded"
+                        fontSize="sm"
+                        type="text"
+                        placeholder="Zip Code"
+                        fontWeight="500"
+                        size="lg"
+                        value={companyData.zipCode}
+                        onChange={(e) =>
+                          setCompanyData((prevState) => ({
+                            ...prevState,
+                            zipCode: e.target.value,
+                          }))
                         }
-                        borderRadius="10px"
-                        objectFit="cover"
-                        width="50px"
-                        height="50px"
-                        borderColor="primary.500"
-                        alt=""
                       />
-                      <Box position="relative" overflow="hidden" my="3">
-                        <Button ml="10px" cursor="pointer">
-                          {companyData.image
-                            ? companyData.image.name
-                            : "Upload logo"}
-                        </Button>
-                        <Input
-                          onChange={uploadToClient}
-                          position="absolute"
-                          left="0"
-                          opacity="0"
-                          type="file"
-                          name="myfile"
-                          accept="image/*"
-                        />
-                      </Box>
-                      {companyData.image && (
-                        <Button onClick={removeAvatar}>Discard Logo</Button>
-                      )}
-                    </Flex>
-                    {companyData.imageError && (
-                      <Text color="red.400" mt="0" mb="5px">
-                        {companyData.imageError}
-                      </Text>
+                    </FormControl>
+
+                    <FormControl pb="3">
+                      <FormLabel
+                        w="160px"
+                        fontSize="16px"
+                        color={textColorSecondary}
+                      >
+                        Street Address
+                      </FormLabel>
+                      <Input
+                        id="streetAddress"
+                        name="streetAddress"
+                        variant="rounded"
+                        fontSize="sm"
+                        type="text"
+                        placeholder="Street Address"
+                        fontWeight="500"
+                        size="lg"
+                        value={companyData.streetAddress}
+                        onChange={(e) =>
+                          setCompanyData((prevState) => ({
+                            ...prevState,
+                            streetAddress: e.target.value,
+                          }))
+                        }
+                      />
+                    </FormControl>
+                  </Flex>
+                  <Flex alignItems="center" w="100%" fontFamily={font_family}>
+                    <Image
+                      src={
+                        companyData.createObjectURL == null
+                          ? "/profile.png"
+                          : companyData.createObjectURL
+                      }
+                      borderRadius="10px"
+                      objectFit="cover"
+                      width="50px"
+                      height="50px"
+                      borderColor="primary.500"
+                      alt=""
+                    />
+                    <Box position="relative" overflow="hidden" my="3">
+                      <Button ml="10px" cursor="pointer">
+                        {companyData.image
+                          ? companyData.image.name
+                          : "Upload logo"}
+                      </Button>
+                      <Input
+                        onChange={uploadToClient}
+                        position="absolute"
+                        left="0"
+                        opacity="0"
+                        type="file"
+                        name="myfile"
+                        accept="image/*"
+                      />
+                    </Box>
+                    {companyData.image && (
+                      <Button onClick={removeAvatar}>Discard Logo</Button>
                     )}
-                  </form>
-                </VStack>
-              </Flex>
-            </Card>
-          </ModalBody>
-          <ModalFooter>
-            <ButtonGroup variant="homePrimary" spacing="6">
-              <Button
-                isLoading={companyData.submitting}
-                colorScheme="blue"
-                onClick={onSubmit}
-              >
-                Register Company
-              </Button>
-              <Button onClick={closeModal}>Close</Button>
-            </ButtonGroup>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Card>
+                  </Flex>
+                  {companyData.imageError && (
+                    <Text color="red.400" mt="0" mb="5px">
+                      {companyData.imageError}
+                    </Text>
+                  )}
+                </form>
+              </VStack>
+            </Flex>
+          </Card>
+        </ModalBody>
+        <ModalFooter>
+          <ButtonGroup variant="homePrimary" spacing="6">
+            <Button
+              isLoading={companyData.submitting}
+              colorScheme="blue"
+              onClick={onSubmit}
+            >
+              Register Company
+            </Button>
+            <Button onClick={closeModal}>Close</Button>
+          </ButtonGroup>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

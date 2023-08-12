@@ -25,6 +25,8 @@ import NoData from "layouts/admin/noData";
 export default function WeeklyRevenue(props: { [x: string]: any }) {
   const { ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const iconColor = useColorModeValue("brand.500", "white");
@@ -223,7 +225,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
         w="100%"
         px="15px"
         py="10px"
-        fontFamily="inter"
+        fontFamily={font_family}
       >
         {/* <Text
             me="auto"

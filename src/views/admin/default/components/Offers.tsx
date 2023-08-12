@@ -22,6 +22,8 @@ import { BiErrorCircle } from "react-icons/bi";
 export default function Offers(props: { [x: string]: any }) {
   const { ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const iconColor = useColorModeValue("brand.500", "white");
@@ -39,7 +41,7 @@ export default function Offers(props: { [x: string]: any }) {
   return offers ? (
     <Card
       mb={{ base: "0px", lg: "20px" }}
-      fontFamily="inter"
+      fontFamily={font_family}
       borderRadius="10"
       {...rest}
     >
@@ -85,7 +87,7 @@ export default function Offers(props: { [x: string]: any }) {
       justifyContent="center"
       flexDirection="column"
       borderRadius="10"
-      fontFamily="inter"
+      fontFamily={font_family}
     >
       <Icon as={BiErrorCircle} boxSize={24} color="#3A2FB71F" />
       <Text fontSize="16px" fontWeight="400">

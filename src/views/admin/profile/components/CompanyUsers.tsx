@@ -13,6 +13,8 @@ import User from "views/admin/default/components/User";
 export default function CompanyUsers(props: { [x: string]: any }) {
   const { toggleModal, isOpen, company, ...rest } = props;
 
+  const font_family = "Poppins";
+
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const cardShadow = useColorModeValue(
@@ -33,7 +35,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} bg="transparent" {...rest}>
-      <Flex flexDirection="column" alignItems="center" fontFamily="inter">
+      <Flex flexDirection="column" alignItems="center" fontFamily={font_family}>
         <Flex
           w="100%"
           justifyContent="space-between"
