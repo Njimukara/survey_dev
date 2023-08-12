@@ -37,6 +37,7 @@ export default function LeverarmCard(props: Props) {
             inputName={lever}
             value={value && value[lever] ? value[lever] : ""}
             handleChange={handleform}
+            options={lever?.option}
           />
         ))}
         {/* {Leverarm.map((lever) => (

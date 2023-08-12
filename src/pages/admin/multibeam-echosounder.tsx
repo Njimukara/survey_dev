@@ -198,7 +198,7 @@ export default function MultibeamEchoSounder() {
     down_gnss_and_smf: { type: "number" },
     std_ins_and_gnss: { type: "number" },
     std_gnss_and_smf: { type: "number" },
-    sounding_reduction: { type: "text", option: ["gnss"] },
+    sounding_reduction: { type: "select", option: ["gnss"] },
   });
 
   const [surveyParameters, setSurveyParameters] = useState<any>({
@@ -578,6 +578,7 @@ export default function MultibeamEchoSounder() {
   // };
 
   // Helper function to determine if a value should be converted to a float
+
   const shouldConvertToFloat = (inputField: string): boolean => {
     // Add conditions for the input fields where conversion is not required
     const fieldsRequiringFloatConversion = [
@@ -611,6 +612,16 @@ export default function MultibeamEchoSounder() {
 
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
+    let datum = [];
+
+    for (let key in ssPerformanceForm) {
+      if (
+        typeof ssPerformanceForm[key] === "object" &&
+        !Array.isArray(ssPerformanceForm[key])
+      ) {
+        datum.push(ssPerformanceForm[key]);
+      }
+    }
 
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
@@ -618,7 +629,7 @@ export default function MultibeamEchoSounder() {
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_mbess-s1-s2-s3-s4": ssPerformanceForm,
+      "performance_of_mbess-s1-s2-s3-s4": datum,
     };
 
     let data = {

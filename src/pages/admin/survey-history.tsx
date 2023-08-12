@@ -21,7 +21,7 @@ export default function SurveyHistory() {
     } else {
       setAllsurveyHistory(arrayHistory);
     }
-  }, [arrayHistory, getSurveyHistory]);
+  }, []);
 
   return (
     <AdminLayout>

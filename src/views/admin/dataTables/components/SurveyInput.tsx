@@ -18,6 +18,7 @@ export default function SurveyInput(props: { [x: string]: any }) {
     size,
     type,
     value,
+    options,
     inputName,
     placeholder,
     handleChange,
@@ -37,23 +38,44 @@ export default function SurveyInput(props: { [x: string]: any }) {
       .replace(/\b\w/g, (match) => match.toUpperCase());
   };
 
-  return (
-    <FormControl display="flex" mb="1">
-      <FormLabel flex={1} fontSize="sm">
-        {formattedString(label)}
-      </FormLabel>
-      <Input
-        color={textColorSecondary}
-        w="20%"
-        value={value || ""}
-        fontSize={size}
-        variant="flushed"
-        size={size}
-        type={type}
-        placeholder={placeholder}
-        name={inputName}
+  if (type != "select") {
+    return (
+      <FormControl display="flex" mb="1">
+        <FormLabel flex={1} fontSize="sm" fontWeight="400">
+          {formattedString(label)}
+        </FormLabel>
+        <Input
+          color={textColorSecondary}
+          w="20%"
+          value={value || ""}
+          fontSize={size}
+          variant="flushed"
+          size={size}
+          type={type}
+          placeholder={placeholder}
+          name={inputName}
+          onChange={(e) => handleChange(e)}
+        />
+      </FormControl>
+    );
+  }
+
+  if (type == "select") {
+    return (
+      <Select
         onChange={(e) => handleChange(e)}
-      />
-    </FormControl>
-  );
+        name={inputName}
+        size="xs"
+        fontSize="xs"
+        variant="flushed"
+        value={value || ""}
+      >
+        {options?.map((opt: string, index: number) => (
+          <option value={opt} key={index}>
+            {opt}
+          </option>
+        ))}
+      </Select>
+    );
+  }
 }

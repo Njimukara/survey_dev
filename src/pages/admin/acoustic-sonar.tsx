@@ -476,26 +476,51 @@ export default function AcousticSonar() {
   // }, [surveys, acoustic, getAllSurveys]);
 
   // Fetch surveys if not already fetched
+  // useEffect(() => {
+  //   if (!surveys) {
+  //     getAllSurveys();
+  //   }
+  // }, [surveys, getAllSurveys]);
+
+  // // Handle acoustic-related logic
+  // useEffect(() => {
+  //   if (acoustic) {
+  //     setSurveyCode(acoustic.code);
+  //     setSurveyID(acoustic.id);
+  //   }
+  // }, [acoustic]);
+
+  // // Check subscription when both subscription and acoustic are available
+  // useEffect(() => {
+  //   if (subscription && acoustic) {
+  //     checkSubscription();
+  //   }
+  // }, [subscription, acoustic]);
+
   useEffect(() => {
     if (!surveys) {
       getAllSurveys();
     }
-  }, [surveys, getAllSurveys]);
 
-  // Handle acoustic-related logic
-  useEffect(() => {
+    if (subscription && acoustic) {
+      checkSubscription();
+    }
+
     if (acoustic) {
       setSurveyCode(acoustic.code);
       setSurveyID(acoustic.id);
     }
-  }, [acoustic]);
+  }, [surveys, subscription]);
 
-  // Check subscription when both subscription and acoustic are available
   useEffect(() => {
-    if (subscription && acoustic) {
-      checkSubscription();
-    }
-  }, [subscription, acoustic]);
+    const sub = async () => {
+      await fetchSubscriptions();
+    };
+    setSubscription(subscriptions[subscriptions.length - 1]);
+
+    sub();
+    // console.log("formside scan", form);
+  }, [loading, subscription]);
 
   // to prefill form with survey past survey data
   const loadSurveyData = (event: any) => {
@@ -524,13 +549,24 @@ export default function AcousticSonar() {
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
 
+    let datum = [];
+
+    for (let key in ssPerformanceForm) {
+      if (
+        typeof ssPerformanceForm[key] === "object" &&
+        !Array.isArray(ssPerformanceForm[key])
+      ) {
+        datum.push(ssPerformanceForm[key]);
+      }
+    }
+
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
       calibration_parameters: calibrationForm,
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_cameras-a1-a2-a3-a4": ssPerformanceForm,
+      "performance_of_cameras-a1-a2-a3-a4": datum,
     };
 
     let data = {
@@ -582,16 +618,6 @@ export default function AcousticSonar() {
     }),
     singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
   };
-
-  useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
-    // setSurveys([4]);
-    setSubscription(subscriptions[subscriptions.length - 1]);
-
-    sub();
-  }, [subscriptions]);
 
   if (loading) {
     return (

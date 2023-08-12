@@ -499,13 +499,25 @@ function EchoSounder() {
 
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
+
+    let datum = [];
+
+    for (let key in ssPerformanceForm) {
+      if (
+        typeof ssPerformanceForm[key] === "object" &&
+        !Array.isArray(ssPerformanceForm[key])
+      ) {
+        datum.push(ssPerformanceForm[key]);
+      }
+    }
+
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
       calibration_parameters: calibrationForm,
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_ssss-s1-s2-s3-s4": ssPerformanceForm,
+      "performance_of_ssss-s1-s2-s3-s4": datum,
     };
 
     let data = {
