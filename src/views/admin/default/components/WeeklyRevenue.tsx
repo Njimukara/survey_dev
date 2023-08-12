@@ -22,6 +22,21 @@ import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import NoData from "layouts/admin/noData";
 
+const monthOptions = [
+  { value: 0, label: "January" },
+  { value: 1, label: "February" },
+  { value: 2, label: "March" },
+  { value: 3, label: "April" },
+  { value: 4, label: "May" },
+  { value: 5, label: "June" },
+  { value: 6, label: "July" },
+  { value: 7, label: "August" },
+  { value: 8, label: "September" },
+  { value: 9, label: "October" },
+  { value: 10, label: "November" },
+  { value: 11, label: "December" },
+];
+
 export default function WeeklyRevenue(props: { [x: string]: any }) {
   const { ...rest } = props;
 
@@ -56,6 +71,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 
   const getMonthlyAnalysis = (surveys: any, month: number) => {
     const surveyCount: any[] = [];
+    console.log("weekly", surveys);
     surveys.forEach((element: any) => {
       const elementArray = element.filter((survey: any) => {
         const surveyDate = new Date(survey.created).getMonth();
@@ -157,11 +173,12 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 
   useEffect(() => {
     if (!arrayHistory) {
-      getSurveyHistory().catch((error: any) => {
-        // Handle error
-        console.error("Failed to fetch survey history:", error);
-      });
+      // getSurveyHistory().catch((error: any) => {
+      //   // Handle error
+      console.error("Failed to fetch survey history:");
+      // });
     } else {
+      console.log(arrayHistory);
       setSurveyHistory(arrayHistory);
       let date = new Date().getMonth();
       let chart = getMonthlyAnalysis(arrayHistory, date);
@@ -173,21 +190,6 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
   const options = [
     { value: 1, label: "Weekly Analysis" },
     { value: 2, label: "Monthly Analysis" },
-  ];
-
-  const monthOptions = [
-    { value: 0, label: "January" },
-    { value: 1, label: "February" },
-    { value: 2, label: "March" },
-    { value: 3, label: "April" },
-    { value: 4, label: "May" },
-    { value: 5, label: "June" },
-    { value: 6, label: "July" },
-    { value: 7, label: "August" },
-    { value: 8, label: "September" },
-    { value: 9, label: "October" },
-    { value: 10, label: "November" },
-    { value: 11, label: "December" },
   ];
 
   const changeMonth = (e: any) => {
@@ -269,7 +271,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
           <BarChart chartData={surveyChartData} chartOptions={chatOptions} />
         ) : (
           <NoData
-            title="No survey history data"
+            title="No company survey data"
             bg="transparent"
             border="none"
             boxShadow="none"

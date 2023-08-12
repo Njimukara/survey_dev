@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Spinner,
   Card,
   Flex,
   FormControl,
@@ -10,10 +11,10 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
-import Spinner from "components/spinner";
+// import Spinner from "components/spinner";
 import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 // import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
@@ -29,6 +30,7 @@ import { useSession } from "next-auth/react";
 import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useRouter } from "next/router";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+import useSurveyHistory from "utils/useSurveyHistory";
 
 const jsonData = {
   name: "my test survey",
@@ -280,6 +282,7 @@ export default function MultibeamEchoSounder() {
   const [leverForm, setLeverForm] = useState<any>({});
   const [operationalForm, setOperationalForm] = useState<any>({});
   const [form, setForm] = useState<any>({});
+  const [loading, setLoading] = useState(true);
 
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
@@ -304,140 +307,185 @@ export default function MultibeamEchoSounder() {
   });
   const [surveyID, setSurveyID] = useState<number>(1);
   const [surveyName, setSurveyName] = useState("");
-  // const [planning, setPlanning] = useState(false);
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-  const { data: session } = useSession();
+  const { subscriptions } = useSubscription();
   // const [user, setUser] = useState(null);
   // const [result, setResult] = useState(null);
   const [resultID, setResultID] = useState(null);
-  // const [surveyCode, setSurveyCode] = useState("S01");
-  const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { history, getSurveyHistory } = useSurveyHistoryContext();
+  const { surveys, getAllSurveys } = useAllSurveysContext();
+  const { surveyHistory } = useSurveyHistory();
 
-  // chakra toast
-  // const toast = useToast();
   const router = useRouter();
 
-  // const [isChecked, setIsChecked] = React.useState(false);
+  // const checkSurvey = () => {
+  //   let url: any = router.query;
+  //   let result_id = Number(url.result_id);
+  //   setResultID(result_id);
+  //   let survey_id = Number(url.survey_id);
 
-  const checkSurvey = () => {
-    let url: any = router.query;
-    let result_id = Number(url.result_id);
-    setResultID(result_id);
-    let survey_id = Number(url.survey_id);
+  //   const foundSurvey = surveys.find(
+  //     (survey: Survey) => survey.id === survey_id
+  //   );
+  //   if (foundSurvey) {
+  //     setSurvey(foundSurvey);
+  //   }
+  // };
 
-    surveys.map((survey: Survey) => {
-      if (survey.id == survey_id) {
-        setSurvey(survey);
+  const getSurveyResults = useCallback(() => {
+    const requestedSurvey = surveyHistory.find(
+      (item: any) => item.id === resultID
+    );
+
+    if (requestedSurvey) {
+      const { name, survey, results, parameters } = requestedSurvey;
+
+      // Destructure the item based on survey type
+      // if (survey === 1) {
+      //   const {
+      //     calibration_parameters,
+      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
+      //     survey_platform_performance,
+      //     lever_arm_measures_between,
+      //     operational_conditions,
+      //     "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
+      //   } = parameters;
+
+      //   setCalibrationForm(calibration_parameters);
+      //   setPerformanceForm(performance_gnss_usbl);
+      //   setPlatformForm(survey_platform_performance);
+      //   setOperationalForm(operational_conditions);
+      //   setSSPerformanceForm(performance_ssss);
+      //   setLeverForm(lever_arm_measures_between);
+      // } else if (survey === 2) {
+      //   //lydar
+      //   const {
+      //     calibration_parameters,
+      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
+      //     survey_platform_performance,
+      //     lever_arm_measures_between,
+      //     operational_conditions,
+      //     "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
+      //   } = parameters;
+
+      //   setCalibrationForm(calibration_parameters);
+      //   setPerformanceForm(performance_gnss_usbl);
+      //   setPlatformForm(survey_platform_performance);
+      //   setOperationalForm(operational_conditions);
+      //   setSSPerformanceForm(performance_ssss);
+      //   setLeverForm(lever_arm_measures_between);
+      // } else if (survey === 3) {
+      //   //side scan
+      //   const {
+      //     calibration_parameters,
+      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
+      //     survey_platform_performance,
+      //     lever_arm_measures_between,
+      //     operational_conditions,
+      //     "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
+      //   } = parameters;
+
+      //   setCalibrationForm(calibration_parameters);
+      //   setPerformanceForm(performance_gnss_usbl);
+      //   setPlatformForm(survey_platform_performance);
+      //   setOperationalForm(operational_conditions);
+      //   setSSPerformanceForm(performance_ssss);
+      //   setLeverForm(lever_arm_measures_between);
+      // } else if (survey === 4) {
+      //   //acoustc
+      //   const {
+      //     calibration_parameters,
+      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
+      //     survey_platform_performance,
+      //     lever_arm_measures_between,
+      //     operational_conditions,
+      //     "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
+      //   } = parameters;
+
+      //   setCalibrationForm(calibration_parameters);
+      //   setPerformanceForm(performance_gnss_usbl);
+      //   setPlatformForm(survey_platform_performance);
+      //   setOperationalForm(operational_conditions);
+      //   setSSPerformanceForm(performance_ssss);
+      //   setLeverForm(lever_arm_measures_between);
+      // }
+
+      const parameterMappings: {
+        [key: number]: { formKey: string; performanceKey: string };
+      } = {
+        1: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_mbess-s1-s2-s3-s4",
+        },
+        2: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_lidars-l1-l2-l3-l4",
+        },
+        3: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_ssss-s1-s2-s3-s4",
+        },
+        4: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_cameras-a1-a2-a3-a4",
+        },
+      };
+
+      if (survey >= 1 && survey <= 4) {
+        const {
+          calibration_parameters,
+          survey_platform_performance,
+          lever_arm_measures_between,
+          operational_conditions,
+        } = parameters;
+
+        const { formKey, performanceKey } = parameterMappings[survey];
+        const performance_gnss_usbl = parameters[formKey];
+        const performance_ssss = parameters[performanceKey];
+
+        setCalibrationForm(calibration_parameters);
+        setPerformanceForm(performance_gnss_usbl);
+        setPlatformForm(survey_platform_performance);
+        setOperationalForm(operational_conditions);
+        setSSPerformanceForm(performance_ssss);
+        setLeverForm(lever_arm_measures_between);
       }
-    });
-  };
 
-  const getSurveyResults = () => {
-    history.forEach((item: any) => {
-      if (item.id == resultID) {
-        console.log(item);
-        // destructure the results
-        const { name, survey, results, parameters } = item;
-
-        // Destructure the item based on survey type
-        if (survey === 1) {
-          const {
-            calibration_parameters,
-            "performance_ins-gnss-usbl": performance_gnss_usbl,
-            survey_platform_performance,
-            lever_arm_measures_between,
-            operational_conditions,
-            "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
-          } = parameters;
-
-          setCalibrationForm(calibration_parameters);
-          setPerformanceForm(performance_gnss_usbl);
-          setPlatformForm(survey_platform_performance);
-          setOperationalForm(operational_conditions);
-          setSSPerformanceForm(performance_ssss);
-          setLeverForm(lever_arm_measures_between);
-        } else if (survey === 2) {
-          //lydar
-          const {
-            calibration_parameters,
-            "performance_ins-gnss-usbl": performance_gnss_usbl,
-            survey_platform_performance,
-            lever_arm_measures_between,
-            operational_conditions,
-            "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
-          } = parameters;
-
-          setCalibrationForm(calibration_parameters);
-          setPerformanceForm(performance_gnss_usbl);
-          setPlatformForm(survey_platform_performance);
-          setOperationalForm(operational_conditions);
-          setSSPerformanceForm(performance_ssss);
-          setLeverForm(lever_arm_measures_between);
-        } else if (survey === 3) {
-          //side scan
-          const {
-            calibration_parameters,
-            "performance_ins-gnss-usbl": performance_gnss_usbl,
-            survey_platform_performance,
-            lever_arm_measures_between,
-            operational_conditions,
-            "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
-          } = parameters;
-
-          setCalibrationForm(calibration_parameters);
-          setPerformanceForm(performance_gnss_usbl);
-          setPlatformForm(survey_platform_performance);
-          setOperationalForm(operational_conditions);
-          setSSPerformanceForm(performance_ssss);
-          setLeverForm(lever_arm_measures_between);
-        } else if (survey === 4) {
-          //acoustc
-          const {
-            calibration_parameters,
-            "performance_ins-gnss-usbl": performance_gnss_usbl,
-            survey_platform_performance,
-            lever_arm_measures_between,
-            operational_conditions,
-            "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
-          } = parameters;
-
-          setCalibrationForm(calibration_parameters);
-          setPerformanceForm(performance_gnss_usbl);
-          setPlatformForm(survey_platform_performance);
-          setOperationalForm(operational_conditions);
-          setSSPerformanceForm(performance_ssss);
-          setLeverForm(lever_arm_measures_between);
-        }
-
-        setSurveyName(name);
-        setSurveyParameters(results);
-      }
-    });
-  };
+      setSurveyName(name);
+      setSurveyParameters(results);
+      setLoading(false);
+      // Rest of your code for handling the found survey
+    }
+  }, [resultID, surveyHistory]);
 
   useEffect(() => {
     if (!surveys) {
       getAllSurveys();
     } else {
-      checkSurvey();
+      let url: any = router.query;
+      let result_id = Number(url.result_id);
+      setResultID(result_id);
+      let survey_id = Number(url.survey_id);
+
+      const foundSurvey = surveys.find(
+        (survey: Survey) => survey.id === survey_id
+      );
+      if (foundSurvey && surveyHistory && resultID) {
+        setSurvey(foundSurvey);
+        getSurveyResults();
+      }
     }
-    if (survey && history && resultID) {
-      getSurveyResults();
-    } else {
-      getSurveyHistory();
-    }
-  }, [surveys, survey, history, getAllSurveys]);
+  }, [
+    surveys,
+    survey,
+    surveyHistory,
+    getAllSurveys,
+    router.query,
+    resultID,
+    getSurveyResults,
+  ]);
 
   useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
     setSubscription(subscriptions[subscriptions.length - 1]);
-
-    sub();
-    // console.log("formside scan", form);
-  }, [loading, subscription]);
+  }, [subscriptions]);
 
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
@@ -708,38 +756,17 @@ export default function MultibeamEchoSounder() {
     return !fieldsRequiringFloatConversion.includes(inputField);
   };
 
-  const loadSurveyData = () => {
-    setForm(calibrations);
-    const {
-      parameters: {
-        calibration_parameters,
-        "performance_ins-gnss-usbl": performance_gnss_usbl,
-        survey_platform_performance,
-        lever_arm_measures_between,
-        operational_conditions,
-        "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
-      },
-    } = jsonData;
-
-    setCalibrationForm(calibration_parameters);
-    setPerformanceForm(performance_gnss_usbl);
-    setPlatformForm(survey_platform_performance);
-    setOperationalForm(operational_conditions);
-    setSSPerformanceForm(performance_ssss);
-    setLeverForm(lever_arm_measures_between);
-
-    // console.log("calibration_parameters:", calibration_parameters);
-    // console.log("performance_gnss_usbl:", performance_gnss_usbl);
-    // console.log("survey_platform_performance:", survey_platform_performance);
-    // console.log("operational_conditions:", operational_conditions);
-    // console.log("performance_ssss:", performance_ssss);
-  };
-
   if (loading) {
     return (
       <AdminLayout>
         <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">
-          <Spinner />
+          <Spinner
+            thickness="2px"
+            speed="0.95s"
+            emptyColor="gray.200"
+            color="primary.600"
+            size="sm"
+          />
         </Flex>
       </AdminLayout>
     );

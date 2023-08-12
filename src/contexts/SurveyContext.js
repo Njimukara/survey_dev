@@ -1,15 +1,18 @@
 import axiosConfig from "axiosConfig";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSubscription } from "./SubscriptionContext";
 
 export const AllSurveys = React.createContext();
 
 export const AllSurveysProvider = ({ children }) => {
-  const [surveys, setSurveys] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
-  const [lidar, setLidar] = React.useState(null);
-  const [multibeam, setMultibeam] = React.useState(null);
-  const [sideScan, setSideScan] = React.useState(null);
-  const [acoustic, setAcoustic] = React.useState(null);
+  const [surveys, setSurveys] = useState(null);
+  const [surveyError, setSurveyError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [lidar, setLidar] = useState(null);
+  const [multibeam, setMultibeam] = useState(null);
+  const [sideScan, setSideScan] = useState(null);
+  const [acoustic, setAcoustic] = useState(null);
+  // const { subscriptions } = useSubscription();
 
   const getAllSurveys = async () => {
     setLoading(true);
@@ -34,10 +37,15 @@ export const AllSurveysProvider = ({ children }) => {
       await Promise.all(promises);
     } catch (error) {
       console.error("Failed to fetch surveys:", error);
+      setSurveyError("Failed to get surveys");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getAllSurveys();
+  }, []);
 
   return (
     <AllSurveys.Provider
@@ -48,6 +56,7 @@ export const AllSurveysProvider = ({ children }) => {
         lidar,
         acoustic,
         sideScan,
+        surveyError,
         getAllSurveys,
       }}
     >

@@ -76,10 +76,8 @@ export default function UserReports(props: { [x: string]: any }) {
   const font_family = "Poppins";
 
   const { currentUser, fetchCurrentUser } = useCurrentUser();
-  const { surveys, getAllSurveys } = useAllSurveysContext();
   const { subscriptions, fetchSubscriptions } = useSubscription();
-  const { history, companySurveyHistory, getSurveyHistory, getCompanySurvey } =
-    useSurveyHistoryContext();
+  const { getCompanySurvey } = useSurveyHistoryContext();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.600", "#271E67");
@@ -89,8 +87,11 @@ export default function UserReports(props: { [x: string]: any }) {
   const [companyUser, setCompanyUser] = useState(2);
   const [individualUser, setIndividualUser] = useState(1);
   const [companyMembers, setCompanyMembers] = useState([]);
-  const [surveyHistory, setSurveyHistory] = useState([]);
+  const [, setSurveyHistory] = useState([]);
   const { data: session } = useSession();
+
+  const { getSurveyHistory, surveyHistory, companySurveyHistory } =
+    useSurveyHistoryContext();
 
   // chakra toast
   const toast = useToast();
@@ -135,35 +136,13 @@ export default function UserReports(props: { [x: string]: any }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (!history) {
-      getSurveyHistory().catch((error: any) => {
-        // Handle error
-        console.error("Failed to fetch survey history:", error);
-      });
-    }
+  // useEffect(() => {
 
-    if (history) {
-      setSurveyHistory(history);
-    }
-  }, [history]);
+  //   getSurveyHistory();
+  //   console.log(surveyHistory);
+  // }, [subscriptions]);
 
   useEffect(() => {
-    if (!surveys) {
-      getAllSurveys().catch((error: any) => {
-        // Handle error
-        console.error("Failed to fetch all surveys:", error);
-      });
-    }
-    if (!subscriptions) {
-      fetchSubscriptions();
-    }
-  }, [surveys, subscriptions]);
-
-  useEffect(() => {
-    if (!currentUser) {
-      fetchCurrentUser();
-    }
     setUser(currentUser);
   }, [currentUser]);
 
@@ -172,12 +151,6 @@ export default function UserReports(props: { [x: string]: any }) {
       try {
         if (session?.user?.data?.user_profile?.user_type === companyUser) {
           await getCompanyMembers();
-          // if (!companySurveyHistory) {
-          //   getCompanySurvey();
-          // }
-          if (companySurveyHistory === null) {
-            getCompanySurvey();
-          }
         }
       } catch (error) {
         // Handle error
@@ -237,7 +210,7 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Surveys"
-              value={history ? history.length : 0}
+              value={surveyHistory ? surveyHistory.length : 0}
             />
             {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
@@ -288,23 +261,23 @@ export default function UserReports(props: { [x: string]: any }) {
               gap="20px"
               mb="20px"
             >
-              {companySurveyHistory ? (
+              {companySurveyHistory.length > 0 ? (
                 <PieCard companySurvey={companySurveyHistory} />
               ) : (
-                <NoData title="No sompany survey data yet" />
+                <NoData title="No company survey data" />
               )}
               <Users members={companyMembers} />
             </SimpleGrid>
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            {surveyHistory.length > 0 ? (
+            {surveyHistory ? (
               <SurveyTable
                 columnsData={columnsDataSurvey}
                 tableData={surveyHistory as unknown as TableData[]}
               />
             ) : (
-              <NoData title="No survey history" />
+              <NoData title="No company survey data" />
             )}
           </SimpleGrid>
 
