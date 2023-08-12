@@ -12,6 +12,8 @@ export const SurveyHistoryProvider = ({ children }) => {
   const [companySurveyHistory, setCompanySurveyHistory] = useState(null);
   const [mergedCompanyHistory, setMergedCompanyHistory] = useState(null);
 
+  const [surveyOrder, setSurveyOrder] = useState("null");
+
   const getSurveyHistory = async () => {
     setLoading(true);
     try {
@@ -73,16 +75,8 @@ export const SurveyHistoryProvider = ({ children }) => {
     setSurveyOptions(options);
   };
 
-  const formatSurveyType = (surveytype) => {
-    let name = "";
-    if (surveys) {
-      surveys.map((survey) => {
-        if (survey.id == surveytype) {
-          name = survey.name;
-        }
-      });
-      return name;
-    }
+  const updateSurveyOrder = (data) => {
+    setSurveyOrder(data);
   };
 
   return (
@@ -97,6 +91,8 @@ export const SurveyHistoryProvider = ({ children }) => {
         mergedCompanyHistory,
         getSurveyHistory,
         getCompanySurvey,
+        surveyOrder,
+        updateSurveyOrder,
       }}
     >
       {children}

@@ -94,7 +94,7 @@ const CustomInput = forwardRef(
 
 export default function SignIn() {
   // Chakra color mode
-  const btnbgColor = useColorModeValue("primary.500", "white");
+  const btnbgColor = useColorModeValue("primary.600", "white");
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
   const textColorBrand = useColorModeValue("brand.500", "white");
@@ -331,6 +331,7 @@ export default function SignIn() {
                   type="email"
                   placeholder="Enter your Email"
                   mb="24px"
+                  px="2"
                   fontWeight="500"
                   size="lg"
                   value={formData.email}
@@ -348,6 +349,7 @@ export default function SignIn() {
                   fontSize="sm"
                   placeholder="Password (Min. 8 characters)"
                   mb="24px"
+                  px="2"
                   size="lg"
                   type={show ? "text" : "password"}
                   variant="flushed"

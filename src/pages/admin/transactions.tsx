@@ -101,6 +101,7 @@ export default function Transactions() {
   }, [toast]);
 
   useEffect(() => {
+    console.log(subscriptions);
     if (!currentUser) {
       fetchCurrentUser();
     }
@@ -112,7 +113,7 @@ export default function Transactions() {
       fetchSubscriptions();
     }
     setLocalSubscriptions(subscriptions);
-  }, []);
+  }, [subscriptions]);
 
   if (localSubscriptions.length != 0) {
     return (
@@ -131,30 +132,28 @@ export default function Transactions() {
                 <TabList justifyContent="center" mb="30px">
                   <Tab
                     bg="white"
-                    borderLeftRadius="20px"
-                    pt="5"
-                    pb="5"
+                    borderLeftRadius="10px"
+                    h="48px"
                     px="20"
                     fontSize="20px"
                     fontWeight="semibold"
                     _selected={{
-                      bg: "primary.500",
+                      bg: "primary.600",
                       color: "white",
-                      borderLeftRadius: "20px",
+                      borderLeftRadius: "10px",
                     }}
                   >
                     Monthly
                   </Tab>
                   <Tab
                     bg="white"
-                    borderRightRadius="20px"
-                    pt="5"
-                    pb="5"
+                    borderRightRadius="10px"
+                    h="48px"
                     px="20"
                     fontSize="20px"
                     fontWeight="semibold"
                     _selected={{
-                      bg: "primary.500",
+                      bg: "primary.600",
                       color: "white",
                     }}
                   >
@@ -172,7 +171,7 @@ export default function Transactions() {
                       thickness="2px"
                       speed="0.95s"
                       emptyColor="gray.200"
-                      color="blue.500"
+                      color="primary.600"
                       size="sm"
                     />
                   </Flex>
@@ -237,30 +236,28 @@ export default function Transactions() {
                 <TabList justifyContent="center" mb="30px">
                   <Tab
                     bg="white"
-                    borderLeftRadius="20px"
-                    pt="5"
-                    pb="5"
+                    borderLeftRadius="10px"
+                    h="48px"
                     px="20"
                     fontSize="20px"
-                    fontWeight="semibold"
+                    fontWeight="600"
                     _selected={{
-                      bg: "primary.500",
+                      bg: "primary.600",
                       color: "white",
-                      borderLeftRadius: "20px",
+                      borderLeftRadius: "10px",
                     }}
                   >
                     Monthly
                   </Tab>
                   <Tab
                     bg="white"
-                    borderRightRadius="20px"
-                    pt="5"
-                    pb="5"
+                    borderRightRadius="10px"
+                    h="48px"
                     px="20"
                     fontSize="20px"
-                    fontWeight="semibold"
+                    fontWeight="600"
                     _selected={{
-                      bg: "primary.500",
+                      bg: "primary.600",
                       color: "white",
                     }}
                   >
@@ -278,7 +275,7 @@ export default function Transactions() {
                       thickness="2px"
                       speed="0.95s"
                       emptyColor="gray.200"
-                      color="blue.500"
+                      color="primary.600"
                       size="sm"
                     />
                   </Flex>

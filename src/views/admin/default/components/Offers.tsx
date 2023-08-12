@@ -37,7 +37,12 @@ export default function Offers(props: { [x: string]: any }) {
   const [offers, setOffers] = useState(false);
 
   return offers ? (
-    <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10" {...rest}>
+    <Card
+      mb={{ base: "0px", lg: "20px" }}
+      fontFamily="inter"
+      borderRadius="10"
+      {...rest}
+    >
       <Flex align="center" w="100%" px="15px" py="10px">
         <Text
           me="auto"
@@ -80,9 +85,10 @@ export default function Offers(props: { [x: string]: any }) {
       justifyContent="center"
       flexDirection="column"
       borderRadius="10"
+      fontFamily="inter"
     >
-      <Icon as={BiErrorCircle} boxSize={24} color="gray" />
-      <Text fontSize="large" fontWeight="bold">
+      <Icon as={BiErrorCircle} boxSize={24} color="#3A2FB71F" />
+      <Text fontSize="16px" fontWeight="400">
         No offers currently available
       </Text>
     </Card>

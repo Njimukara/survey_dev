@@ -203,7 +203,9 @@ export default function EditCompany({ providers }: any) {
         setName(res?.data?.name);
         let tempcountry = countryNameFromIso(res?.data?.country);
         let tempIso = res?.data?.country;
+        setIso(res?.data?.country);
         setCountry({ value: tempIso, label: tempcountry });
+        setSelectedCity({ label: city, value: tempIso });
 
         setCity(res?.data?.city);
         setState(res?.data?.state);
@@ -222,7 +224,7 @@ export default function EditCompany({ providers }: any) {
 
   return (
     <AdminLayout>
-      <Card mt={20}>
+      <Card mt={20} fontFamily="inter">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
@@ -276,6 +278,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Company Name *</FormLabel>
                   <Input
+                    data-cy="company-name-input"
                     id="name"
                     name="name"
                     variant="rounded"
@@ -297,7 +300,7 @@ export default function EditCompany({ providers }: any) {
               <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="160px">Country</FormLabel>
-                  <Box w="100%">
+                  <Box w="100%" data-cy="country-select">
                     <Select
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
@@ -313,30 +316,21 @@ export default function EditCompany({ providers }: any) {
               <FormControl pb="3">
                 <HStack spacing="10px">
                   <FormLabel w="160px">City</FormLabel>
-                  <Box w="100%">
+                  <Box w="100%" data-cy="city-select">
                     <Select
                       isDisabled={canEdit}
                       styles={reactSelectStyles}
                       options={City.getCitiesOfCountry(iso)?.map(
-                        (state: {
-                          latitude: any;
-                          longitude: any;
-                          name: any;
-                          stateCode: any;
-                          countryCode: any;
-                        }) => ({
+                        (state: { name: any; countryCode: any }) => ({
                           value: {
-                            latitude: state.latitude,
-                            longitude: state.longitude,
                             name: state.name,
-                            stateCode: state.stateCode,
                             countryCode: state.countryCode,
                           },
                           label: state.name,
                         })
                       )}
                       placeholder="select city"
-                      value={city}
+                      value={selectedCity}
                       onChange={handleSelectedCity}
                     />
                   </Box>
@@ -347,6 +341,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">state</FormLabel>
                   <Input
+                    data-cy="state-input"
                     id="state"
                     name="state"
                     variant="rounded"
@@ -366,6 +361,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Zip Code</FormLabel>
                   <Input
+                    data-cy="zip-code-input"
                     id="zipCode"
                     name="zipCode"
                     variant="rounded"
@@ -385,6 +381,7 @@ export default function EditCompany({ providers }: any) {
                 <HStack spacing="10px">
                   <FormLabel w="160px">Street Address</FormLabel>
                   <Input
+                    data-cy="street-address-input"
                     id="streetAddress"
                     name="streetAddress"
                     variant="rounded"

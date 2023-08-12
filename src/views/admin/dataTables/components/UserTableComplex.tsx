@@ -45,6 +45,7 @@ import Menu from "components/menu/MainMenu";
 import { TableProps } from "views/admin/default/variables/columnsData";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import axiosConfig from "axiosConfig";
 
 interface user {
   date_joined?: string;
@@ -146,20 +147,16 @@ export default function UserTableComplex(props: TableProps) {
         setSending(true);
         setSending(true);
         // headers
-        const config = {
-          headers: {
-            Accept: "application/json;charset=UTF-8",
-            Authorization: `Token ${session?.user?.auth_token}`,
-          },
-        };
+        // const config = {
+        //   headers: {
+        //     Accept: "application/json;charset=UTF-8",
+        //     Authorization: `Token ${session?.user?.auth_token}`,
+        //   },
+        // };
 
         let body = {};
-        await axios
-          .patch(
-            `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/block/`,
-            body,
-            config
-          )
+        await axiosConfig
+          .patch(`/api/company/companymember/${id}/block/`, body)
           .then((res) => {
             // refresh the table to show recent updates
             getCompanyMembers();
@@ -189,20 +186,16 @@ export default function UserTableComplex(props: TableProps) {
       // else unblock User
       console.log("unblock user please");
       setSending(true);
-      const config = {
-        headers: {
-          Accept: "application/json;charset=UTF-8",
-          Authorization: `Token ${session?.user?.auth_token}`,
-        },
-      };
+      // const config = {
+      //   headers: {
+      //     Accept: "application/json;charset=UTF-8",
+      //     Authorization: `Token ${session?.user?.auth_token}`,
+      //   },
+      // };
 
       let body = {};
-      await axios
-        .patch(
-          `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/unblock/`,
-          body,
-          config
-        )
+      await axiosConfig
+        .patch(`/api/company/companymember/${id}/unblock/`, body)
         .then((res) => {
           // refresh the table to show recent updates
           getCompanyMembers();
@@ -235,17 +228,14 @@ export default function UserTableComplex(props: TableProps) {
     setLoading(true);
     const id = data.user_id;
 
-    const config = {
-      headers: {
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-    await axios
-      .delete(
-        `https://surveyplanner.pythonanywhere.com/api/company/companymember/${id}/delete/`,
-        config
-      )
+    // const config = {
+    //   headers: {
+    //     Accept: "application/json;charset=UTF-8",
+    //     Authorization: `Token ${session?.user?.auth_token}`,
+    //   },
+    // };
+    await axiosConfig
+      .delete(`/api/company/companymember/${id}/delete/`)
       .then((res) => {
         // setCompanyMembers(res.data.members);
         // console.log(res);
@@ -288,6 +278,7 @@ export default function UserTableComplex(props: TableProps) {
       overflowX={{ sm: "scroll", lg: "hidden" }}
       h="max-content"
       max-h="500"
+      fontFamily="inter"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         <AlertDialog
@@ -343,9 +334,14 @@ export default function UserTableComplex(props: TableProps) {
           placeholder="Search"
           value={searchTerm}
           w="50%"
+          mr="2"
           variant="flushed"
           onChange={(e) => setSearchTerm(e.target.value)}
-          mr="2"
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <Button onClick={handleSearch} variant="outline" py="4" px="6" mr="2">
           Search

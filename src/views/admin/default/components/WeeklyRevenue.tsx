@@ -223,6 +223,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
         w="100%"
         px="15px"
         py="10px"
+        fontFamily="inter"
       >
         {/* <Text
             me="auto"

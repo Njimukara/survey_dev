@@ -19,10 +19,10 @@ export const globalStyles = {
       300: "#9b84ff",
       400: "#7353ff",
       500: "#3203fc",
-      600: "#2706b3",
+      600: "#3A2FB7",
       700: "#1c0580",
       800: "#10034c",
-      900: "#050119",
+      900: "#1E1A4D",
     },
     brandScheme: {
       100: "#E9E3FF",
@@ -75,6 +75,7 @@ export const globalStyles = {
     },
     green: {
       100: "#E6FAF5",
+      400: "#00C914",
       500: "#01B574",
     },
     navy: {
@@ -91,6 +92,8 @@ export const globalStyles = {
     },
     gray: {
       100: "#FAFCFE",
+      500: "#3C3C3C",
+      600: "#323232",
       900: "#1A202C",
     },
   },
@@ -98,15 +101,17 @@ export const globalStyles = {
     global: (props: StyleFunctionProps) => ({
       body: {
         overflowX: "hidden",
-        bg: mode("secondaryGray.300", "navy.900")(props),
-        fontFamily: "DM Sans",
+        bg: mode("#F7F7FC", "navy.900")(props),
         letterSpacing: "-0.5px",
+        lineHeight: "27px",
+        fontFamily: "poppins",
       },
       input: {
         color: "gray.700",
       },
       html: {
-        fontFamily: "DM Sans",
+        lineHeight: "27px",
+        fontFamily: "poppins",
       },
     }),
   },

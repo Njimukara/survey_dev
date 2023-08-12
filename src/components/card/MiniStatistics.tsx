@@ -18,15 +18,17 @@ export default function Default(props: {
   value: string | number;
 }) {
   const { startContent, endContent, name, growth, value } = props;
-  const textColor = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = "secondaryGray.600";
+  const textColor = useColorModeValue("black", "white");
+  const textColorSecondary = "#757575";
 
   return (
     <Card
+      fontFamily="inter"
       py="20px"
       borderRadius="10"
       border="1px solid"
       borderColor="rgba(0, 0, 0, 0.11)"
+      // color=""
     >
       <Flex
         my="auto"
@@ -41,8 +43,9 @@ export default function Default(props: {
             lineHeight="100%"
             color={textColorSecondary}
             fontSize={{
-              base: "lg",
+              base: "16px",
             }}
+            pb="4"
           >
             {name}
           </StatLabel>

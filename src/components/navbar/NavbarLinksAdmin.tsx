@@ -12,6 +12,7 @@ import {
   Text,
   useColorModeValue,
   useColorMode,
+  Box,
 } from "@chakra-ui/react";
 // Custom Components
 import { ItemContent } from "components/menu/ItemContent";
@@ -48,6 +49,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
     "14px 17px 40px 4px rgba(112, 144, 176, 0.18)",
     "14px 17px 40px 4px rgba(112, 144, 176, 0.06)"
   );
+  const circularbg = useColorModeValue("#EDEDED", "navy.800");
 
   // Variables
   const [user, setUser] = useState<any>();
@@ -96,11 +98,9 @@ export default function HeaderLinks(props: { secondary: boolean }) {
       w={{ sm: "100%", md: "auto" }}
       alignItems="center"
       flexDirection="row"
-      bg={menuBg}
+      gap="5"
       flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
       p="10px"
-      borderRadius="30px"
-      boxShadow={shadow}
     >
       <SearchBar
         mb={() => {
@@ -147,147 +147,170 @@ export default function HeaderLinks(props: { secondary: boolean }) {
         </Text>
       </Flex>
       <SidebarResponsive routes={routes} />
-      <Menu>
-        <MenuButton p="0px">
-          <Icon
-            mt="6px"
-            as={MdNotificationsNone}
-            color={navbarIcon}
-            w="18px"
-            h="18px"
-            me="10px"
-          />
-        </MenuButton>
-        <MenuList
-          boxShadow={shadow}
-          p="20px"
-          borderRadius="20px"
-          bg={menuBg}
-          border="none"
-          mt="22px"
-          me={{ base: "30px", md: "unset" }}
-          minW={{ base: "unset", md: "400px", xl: "450px" }}
-          maxW={{ base: "360px", md: "unset" }}
-        >
-          <Flex w="100%" mb="20px">
-            <Text fontSize="md" fontWeight="600" color={textColor}>
-              Notifications
-            </Text>
-            <Text
-              fontSize="sm"
-              fontWeight="500"
-              color={textColorBrand}
-              ms="auto"
-              cursor="pointer"
-            >
-              Mark all read
-            </Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              px="0"
-              borderRadius="8px"
-              mb="10px"
-            >
-              <ItemContent info="Horizon UI Dashboard PRO" />
-            </MenuItem>
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              px="0"
-              borderRadius="8px"
-              mb="10px"
-            >
-              <ItemContent info="Horizon Design System Free" />
-            </MenuItem>
-          </Flex>
-        </MenuList>
-      </Menu>
 
-      <Button
-        variant="no-hover"
-        bg="transparent"
-        p="0px"
-        minW="unset"
-        minH="unset"
-        h="18px"
-        w="max-content"
-        onClick={toggleColorMode}
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        bg={circularbg}
+        w="48px"
+        h="48px"
+        borderRadius="50%"
       >
-        <Icon
-          me="10px"
-          h="18px"
-          w="18px"
-          color={navbarIcon}
-          as={colorMode === "light" ? IoMdMoon : IoMdSunny}
-        />
-      </Button>
-      <Menu>
-        <MenuButton p="0px">
-          <Avatar
-            _hover={{ cursor: "pointer" }}
-            color="white"
-            src={user?.user_profile?.avatar}
-            name={user?.name}
-            bg="#11047A"
-            size="sm"
-            w="40px"
-            h="40px"
-          />
-          {/* <Image src={user.user_profile.avatar} alt={user.name} w={10} h={10} /> */}
-        </MenuButton>
-        <MenuList
-          boxShadow={shadow}
+        <Menu>
+          <MenuButton p="0px">
+            <Icon
+              mt="6px"
+              as={MdNotificationsNone}
+              color={navbarIcon}
+              w="18px"
+              h="18px"
+            />
+          </MenuButton>
+          <MenuList
+            boxShadow={shadow}
+            p="20px"
+            borderRadius="20px"
+            bg={menuBg}
+            border="none"
+            mt="22px"
+            me={{ base: "30px", md: "unset" }}
+            minW={{ base: "unset", md: "400px", xl: "450px" }}
+            maxW={{ base: "360px", md: "unset" }}
+          >
+            <Flex w="100%" mb="20px">
+              <Text fontSize="md" fontWeight="600" color={textColor}>
+                Notifications
+              </Text>
+              <Text
+                fontSize="sm"
+                fontWeight="500"
+                color={textColorBrand}
+                ms="auto"
+                cursor="pointer"
+              >
+                Mark all read
+              </Text>
+            </Flex>
+            <Flex flexDirection="column">
+              <MenuItem
+                _hover={{ bg: "none" }}
+                _focus={{ bg: "none" }}
+                px="0"
+                borderRadius="8px"
+                mb="10px"
+              >
+                <ItemContent info="Horizon UI Dashboard PRO" />
+              </MenuItem>
+              <MenuItem
+                _hover={{ bg: "none" }}
+                _focus={{ bg: "none" }}
+                px="0"
+                borderRadius="8px"
+                mb="10px"
+              >
+                <ItemContent info="Horizon Design System Free" />
+              </MenuItem>
+            </Flex>
+          </MenuList>
+        </Menu>
+      </Flex>
+
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        bg={circularbg}
+        w="48px"
+        h="48px"
+        borderRadius="50%"
+      >
+        <Button
+          variant="no-hover"
+          bg="transparent"
           p="0px"
-          mt="10px"
-          borderRadius="20px"
-          bg={menuBg}
-          border="none"
+          onClick={toggleColorMode}
         >
-          <Flex w="100%" mb="0px">
-            <Text
-              ps="20px"
-              pt="16px"
-              pb="10px"
-              w="100%"
-              borderBottom="1px solid"
-              borderColor={borderColor}
-              fontSize="sm"
-              fontWeight="700"
-              color={textColor}
-            >
-              👋&nbsp; Hello, {user?.name}
-            </Text>
-          </Flex>
-          <Flex flexDirection="column" p="10px">
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              borderRadius="8px"
-              px="14px"
-            >
-              <Link href="/admin/profile" fontSize="sm">
-                Profile Settings
-              </Link>
-            </MenuItem>
-            <MenuItem
-              _hover={{ bg: "none" }}
-              _focus={{ bg: "none" }}
-              color="red.400"
-              borderRadius="8px"
-              onClick={logOut}
-            >
-              <Flex w="100$">
-                <Text bg="none" _hover={{ bg: "none" }} onClick={logOut}>
-                  Log out
-                </Text>
-              </Flex>
-            </MenuItem>
-          </Flex>
-        </MenuList>
-      </Menu>
+          <Icon
+            h="22px"
+            w="22px"
+            color={navbarIcon}
+            as={colorMode === "light" ? IoMdMoon : IoMdSunny}
+          />
+        </Button>
+      </Flex>
+
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        bg={circularbg}
+        w="48px"
+        h="48px"
+        borderRadius="50%"
+      >
+        <Menu>
+          <MenuButton p="0px">
+            <Avatar
+              _hover={{ cursor: "pointer" }}
+              color="white"
+              src={user?.user_profile?.avatar}
+              name={user?.name}
+              bg="#11047A"
+              size="sm"
+              w="40px"
+              h="40px"
+            />
+            {/* <Image src={user.user_profile.avatar} alt={user.name} w={10} h={10} /> */}
+          </MenuButton>
+          <MenuList
+            boxShadow={shadow}
+            p="0px"
+            mt="10px"
+            borderRadius="20px"
+            bg={menuBg}
+            border="none"
+          >
+            <Flex w="100%" mb="0px">
+              <Text
+                ps="20px"
+                pt="16px"
+                pb="10px"
+                w="100%"
+                borderBottom="1px solid"
+                borderColor={borderColor}
+                fontSize="sm"
+                fontWeight="700"
+                color={textColor}
+              >
+                👋&nbsp; Hello, {user?.name}
+              </Text>
+            </Flex>
+            <Flex flexDirection="column" p="10px">
+              <MenuItem
+                _hover={{ bg: "none" }}
+                _focus={{ bg: "none" }}
+                borderRadius="8px"
+                px="14px"
+              >
+                <Link href="/admin/profile" fontSize="sm">
+                  Profile Settings
+                </Link>
+              </MenuItem>
+              <MenuItem
+                _hover={{ bg: "none" }}
+                _focus={{ bg: "none" }}
+                color="red.400"
+                borderRadius="8px"
+                onClick={logOut}
+              >
+                <Flex w="100$">
+                  <Text bg="none" _hover={{ bg: "none" }} onClick={logOut}>
+                    Log out
+                  </Text>
+                </Flex>
+              </MenuItem>
+            </Flex>
+          </MenuList>
+        </Menu>
+      </Flex>
     </Flex>
   );
 }

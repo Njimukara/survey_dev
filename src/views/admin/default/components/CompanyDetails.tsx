@@ -1,5 +1,6 @@
 // Chakra imports
 import {
+  Avatar,
   Box,
   Button,
   Flex,
@@ -75,12 +76,14 @@ export default function CompanyDetails(props: {
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
+          fontFamily="inter"
           py={15}
         >
           <Text py={4}>No Company associated with this account yet</Text>
           <Button
             variant="outline"
-            py="6"
+            py="0"
+            h="48px"
             px="4"
             onClick={() => {
               toggleModal(true);
@@ -106,14 +109,16 @@ export default function CompanyDetails(props: {
             w="95%"
             bg="gray.50"
             h="100"
+            fontFamily="inter"
             borderRadius="10"
             boxShadow="sm"
             mt={{ base: "12", lg: "12" }}
           >
             <Box mx="auto" w="87px" h="87px">
-              <NextAvatar
-                src={company?.logo}
-                alt={company?.name}
+              <Avatar
+                src={company.logo ? company?.logo : ""}
+                size="2xl"
+                name={company?.name}
                 h="100%"
                 w="100%"
                 border="4px solid"
@@ -122,11 +127,11 @@ export default function CompanyDetails(props: {
               />
             </Box>
           </Box>
-          <Box mt="10" px="5">
+          <Box mt="10" px="5" fontFamily="inter">
             <Text
               pb={4}
-              fontWeight="bold"
-              color="primary.500"
+              fontWeight="600"
+              color="primary.600"
               fontSize="23px"
               textAlign="center"
             >
@@ -182,11 +187,14 @@ export default function CompanyDetails(props: {
           <Button
             onClick={() => router.push("/company/edit-company")}
             mb={2}
-            mt={{ base: "6", lg: "8" }}
+            mt={{ base: "2", lg: "4" }}
             variant="homePrimary"
-            py="5"
-            bg="primary.500"
+            py="0"
+            ml="6"
+            h="48px"
+            bg="primary.600"
             color="white"
+            fontFamily="inter"
           >
             Edit info
           </Button>

@@ -93,7 +93,7 @@ export default function ProfileOverview() {
 
   return (
     <AdminLayout>
-      <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+      <Box pt={{ base: "130px", md: "80px", xl: "80px" }} fontFamily="inter">
         <Grid
           templateColumns={{
             base: "1fr",

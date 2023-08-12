@@ -279,6 +279,8 @@ export default function Conversion(props: { [x: string]: any }) {
         justifyContent="center"
         flexDirection="column"
         borderRadius="10"
+        border="1px solid"
+        borderColor="rgba(0, 0, 0, 0.11)"
         {...rest}
       >
         <Text color={textColorPrimary} mb="4" fontWeight="bold" fontSize="2xl">
@@ -290,6 +292,8 @@ export default function Conversion(props: { [x: string]: any }) {
 
   return (
     <Card
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
       p="20px"
       alignItems="center"
       flexDirection="column"

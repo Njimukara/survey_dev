@@ -8,6 +8,7 @@ import { MdAdd } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import InviteUser from "./InviteUser";
+import User from "views/admin/default/components/User";
 
 export default function CompanyUsers(props: { [x: string]: any }) {
   const { toggleModal, isOpen, company, ...rest } = props;
@@ -32,7 +33,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} bg="transparent" {...rest}>
-      <Flex flexDirection="column" alignItems="center">
+      <Flex flexDirection="column" alignItems="center" fontFamily="inter">
         <Flex
           w="100%"
           justifyContent="space-between"
@@ -42,8 +43,8 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           <Flex>
             <Text
               color={textColorPrimary}
-              fontWeight="bold"
-              fontSize="2xl"
+              fontWeight="600"
+              fontSize="24px"
               mt="10px"
               mb="4px"
             >
@@ -53,7 +54,10 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           <Flex>
             <Button
               variant="homePrimary"
-              py="5"
+              bg="primary.600"
+              fontWeight="400"
+              py="0"
+              h="48px"
               px="3"
               fontSize="sm"
               mr="10px"
@@ -65,7 +69,9 @@ export default function CompanyUsers(props: { [x: string]: any }) {
             </Button>
             <Button
               variant="outline"
-              py="4"
+              fontWeight="400"
+              h="48px"
+              py="0"
               px="4"
               fontSize="sm"
               onClick={() => {
@@ -81,15 +87,17 @@ export default function CompanyUsers(props: { [x: string]: any }) {
         </Flex>
         <Box w="100%">
           {companyMembers.length != 0 ? (
-            companyMembers.map((member) => (
-              <Project
-                key={member.email}
-                boxShadow={cardShadow}
-                mb="20px"
-                position={member?.email}
-                name={member?.name}
-              />
-            ))
+            companyMembers
+              .slice(0, 5)
+              .map((member) => (
+                <User
+                  key={member?.email}
+                  boxShadow="sm"
+                  my="1"
+                  name={member?.name}
+                  email={member?.email}
+                />
+              ))
           ) : (
             <Flex justifyContent="center" alignItems="center" pt={32}>
               <Text>No users yet</Text>

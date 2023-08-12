@@ -97,6 +97,7 @@ export default function TransactionTable(props: TableProps) {
       px="0px"
       borderRadius="10"
       overflowX={{ sm: "scroll", lg: "hidden" }}
+      fontFamily="inter"
       // overflowY={{ sm: "scroll", lg: "scroll" }}
     >
       <Flex px="25px" justify="space-between" mb="10px" align="center">
@@ -110,11 +111,16 @@ export default function TransactionTable(props: TableProps) {
         </Text>
         <Input
           placeholder="Input Search"
-          value={searchTerm}
+          mr="2"
           w="50%"
+          value={searchTerm}
           variant="flushed"
           onChange={(e) => setSearchTerm(e.target.value)}
-          mr="2"
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <Box>
           <Button onClick={handleSearch} variant="outline" py="3" px="6" mr="2">

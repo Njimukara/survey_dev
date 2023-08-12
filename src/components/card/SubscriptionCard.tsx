@@ -35,16 +35,18 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
   };
   return (
     <Card
+      data-cy="subscription-card"
       transition="all .2s ease-in-out"
       width="100%"
+      fontFamily="inter"
       _hover={{
         transform: "scale(1.05)",
       }}
     >
-      <Flex width="100%">
+      <Flex width="100%" fontFamily="inter">
         <Box>
           <Box>
-            <Text mb="25px" fontSize="16px" fontWeight="600">
+            <Text mb="25px" fontSize="20px" fontWeight="600">
               {props.title}
             </Text>
             <Heading mb="20px" fontSize="16px">
@@ -53,7 +55,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
               </Text>
               / {props.period}
             </Heading>
-            <Text mb="15px" fontSize="sm" px="3" fontWeight="400">
+            <Text mb="15px" fontSize="16px" px="3" fontWeight="400">
               {props.description}
             </Text>
             <Box>
@@ -75,6 +77,7 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
 
           <Center>
             <Button
+              data-cy="subscription-card-btn"
               onClick={() => {
                 props.getplan(props);
                 props.changeStep(2);
@@ -82,7 +85,8 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
               variant="outline"
               bg="white"
               px="7"
-              py="6"
+              py="0"
+              h="48px"
               mb="20px"
               mt="30px"
             >

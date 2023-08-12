@@ -12,7 +12,7 @@ export const barChartDataDailyTraffic = [
 export const barChartOptionsDailyTraffic: ApexGeneric = {
   chart: {
     toolbar: {
-      show: true,
+      show: false,
     },
   },
   tooltip: {
@@ -30,12 +30,20 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
   },
   xaxis: {
     categories: [
-      "Multibeam",
-      "Dynamic Lydar",
-      "Side Scan Sonar",
-      "Acoustic Sonar",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
     ],
-    show: true,
+    show: false,
     labels: {
       show: true,
       style: {
@@ -45,14 +53,14 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
       },
     },
     axisBorder: {
-      show: true,
+      show: false,
     },
     axisTicks: {
-      show: true,
+      show: false,
     },
   },
   yaxis: {
-    show: true,
+    show: false,
     color: "black",
     labels: {
       show: true,
@@ -72,7 +80,7 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
     },
     xaxis: {
       lines: {
-        show: true,
+        show: false,
       },
     },
   },
@@ -100,7 +108,7 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
     },
   },
   dataLabels: {
-    enabled: true,
+    enabled: false,
   },
   plotOptions: {
     bar: {
@@ -208,6 +216,7 @@ export const barChartOptionsUserActivity = {
     },
   },
 };
+// Consumption Users Reports
 
 export const barChartDataConsumption = [
   {
@@ -234,19 +243,19 @@ export const barChartOptionsConsumption: ApexGeneric = {
   tooltip: {
     style: {
       fontSize: "12px",
-      fontFamily: undefined,
+      fontFamily: "inter",
     },
     onDatasetHover: {
       style: {
         fontSize: "12px",
-        fontFamily: undefined,
+        fontFamily: "inter",
       },
     },
     theme: "dark",
   },
   xaxis: {
-    categories: ["Multibeam", "", "3", "4", "5"],
-    show: true,
+    categories: ["17", "18", "19", "20", "21", "22", "23", "24", "25"],
+    show: false,
     labels: {
       show: true,
       style: {
@@ -256,17 +265,17 @@ export const barChartOptionsConsumption: ApexGeneric = {
       },
     },
     axisBorder: {
-      show: true,
+      show: false,
     },
     axisTicks: {
       show: false,
     },
   },
   yaxis: {
-    show: true,
+    show: false,
     color: "black",
     labels: {
-      show: true,
+      show: false,
       style: {
         colors: "#A3AED0",
         fontSize: "14px",
@@ -289,7 +298,7 @@ export const barChartOptionsConsumption: ApexGeneric = {
     },
     xaxis: {
       lines: {
-        show: true,
+        show: false,
       },
     },
   },
@@ -298,11 +307,11 @@ export const barChartOptionsConsumption: ApexGeneric = {
     colors: ["#5E37FF", "#6AD2FF", "#E1E9F8"],
   },
   legend: {
-    show: true,
+    show: false,
   },
   colors: ["#5E37FF", "#6AD2FF", "#E1E9F8"],
   dataLabels: {
-    enabled: true,
+    enabled: false,
   },
   plotOptions: {
     bar: {
@@ -316,8 +325,7 @@ export const pieChartOptions: ApexGeneric = {
   labels: ["User 1", "User 2", "User 3", "User 4", "User 5"],
   colors: ["#4318FF", "#6AD2FF", "#9e04c4", "#c49104", "#c49104"],
   chart: {
-    type: "donut",
-    width: "100px",
+    width: "50px",
   },
   states: {
     hover: {
@@ -335,11 +343,10 @@ export const pieChartOptions: ApexGeneric = {
   hover: { mode: null },
   plotOptions: {
     donut: {
-      expandOnClick: true,
+      expandOnClick: false,
       donut: {
         labels: {
-          size: "65%",
-          show: true,
+          show: false,
         },
       },
     },
@@ -354,6 +361,8 @@ export const pieChartOptions: ApexGeneric = {
 };
 
 export const pieChartData = [8, 10, 12, 14, 12];
+
+// Total Spent Default
 
 export const lineChartDataTotalSpent = [
   {

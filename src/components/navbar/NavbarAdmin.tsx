@@ -39,7 +39,7 @@ export default function AdminNavbar(props: {
 
   // Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
   let mainText = useColorModeValue("navy.700", "white");
-  let secondaryText = useColorModeValue("gray.700", "white");
+  let secondaryText = useColorModeValue("#000000", "white");
   let navbarPosition = "fixed" as const;
   let navbarFilter = "none";
   let navbarBackdrop = "blur(20px)";
@@ -112,7 +112,7 @@ export default function AdminNavbar(props: {
         alignItems={{ xl: "center" }}
         mb={gap}
       >
-        <Box mb={{ sm: "8px", md: "0px" }}>
+        <Box mb={{ sm: "8px", md: "0px" }} fontSize="20px" fontWeight="500">
           <Breadcrumb>
             <BreadcrumbItem color={secondaryText} fontSize="sm" mb="5px">
               <BreadcrumbLink href="#" color={secondaryText}>
@@ -127,7 +127,7 @@ export default function AdminNavbar(props: {
             </BreadcrumbItem>
           </Breadcrumb>
           {/* Here we create navbar brand, based on route name */}
-          <Link
+          {/* <Link
             color={mainText}
             href="#"
             bg="inherit"
@@ -145,7 +145,7 @@ export default function AdminNavbar(props: {
             }}
           >
             {brandText}
-          </Link>
+          </Link> */}
         </Box>
       </Flex>
       <Box ms="auto" w={{ sm: "100%", md: "unset" }}>

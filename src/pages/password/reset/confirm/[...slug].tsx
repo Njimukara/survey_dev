@@ -137,6 +137,7 @@ export default function SetPassword(props: any) {
         alignItems="center"
         justifyContent="center"
         flexDirection="column"
+        fontFamily="inter"
       >
         <Box w="30%">
           <Flex justifyContent="center" alignItems="center">
@@ -182,6 +183,7 @@ export default function SetPassword(props: any) {
                 />
                 <InputRightElement display="flex" alignItems="center" mt="4px">
                   <Icon
+                    data-testid="toggle-password-visibility"
                     color={textColorSecondary}
                     _hover={{ cursor: "pointer" }}
                     as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
@@ -207,7 +209,7 @@ export default function SetPassword(props: any) {
                 ms={{ base: "0px", md: "0px" }}
                 mb="5px"
                 type={show ? "text" : "password"}
-                placeholder="name@mail.com"
+                placeholder="Password (Min. 8 characters)"
                 fontWeight="400"
                 size="md"
                 value={values.confirmPassword}

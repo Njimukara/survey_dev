@@ -52,17 +52,22 @@ export default function SuccesVerifyEmail({ providers }: any) {
   const display = async () => {
     setLoading(true);
     const { slug } = router.query;
-    const [uid, token] = slug;
+    if (!Array.isArray(slug) || slug.length < 3) {
+      setError("Invalid slug format");
+      setLoading(false);
+      return;
+    }
+    const [link, uid, token] = slug;
     const data = {
       uid,
       token,
     };
     let respond;
-    if (!uid && !token) {
+    if (uid && token) {
       await axiosConfig
         .post("/auth/users/activation/", data)
         .then((res) => {
-          respond = res;
+          respond = res?.data;
           setLoading(false);
           setError("");
         })

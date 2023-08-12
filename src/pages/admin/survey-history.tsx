@@ -2,7 +2,6 @@ import { Box, Flex, Spinner } from "@chakra-ui/react";
 import React from "react";
 import AdminLayout from "layouts/admin";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import SurveyTable from "views/admin/default/components/SurveyTable";
 import {
   columnsDataSurvey,
@@ -13,12 +12,8 @@ import NoData from "layouts/admin/noData";
 
 export default function SurveyHistory() {
   // component variables
-  const [user, setUser] = useState(null);
   const [allSurveyHistory, setAllsurveyHistory] = useState([]);
   const { arrayHistory, getSurveyHistory } = useSurveyHistoryContext();
-
-  // session hook
-  const { data: session } = useSession();
 
   useEffect(() => {
     if (!arrayHistory) {
@@ -27,28 +22,6 @@ export default function SurveyHistory() {
       setAllsurveyHistory(arrayHistory);
     }
   }, [arrayHistory, getSurveyHistory]);
-
-  useEffect(() => {
-    if (session != null) {
-      setUser(session?.user?.data);
-    }
-  }, [session]);
-
-  if (!session) {
-    return (
-      <AdminLayout>
-        <Flex h="100vh" w="100%" justifyContent="center" alignItems="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
-      </AdminLayout>
-    );
-  }
 
   return (
     <AdminLayout>

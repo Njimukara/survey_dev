@@ -113,7 +113,7 @@ export default function Banner(props: {
           />
         </Flex>
         <Box h="100%" mx="10px" w="2px" bg="gray.200" />
-        <Box w="80%" px={20}>
+        <Box w="80%" px={20} fontFamily="inter">
           <Text
             data-cy="user-name"
             pb={4}
@@ -149,7 +149,7 @@ export default function Banner(props: {
               data-cy="edit-info"
               onClick={() => router.push("/auth/edit-user")}
               mr={2}
-              bg="primary.500"
+              bg="primary.600"
               variant="homePrimary"
               py="5"
               color="white"

@@ -12,15 +12,18 @@ const Section = ({ title, children, bg }: sectionProps) => {
       <Container
         maxW="container.xl"
         centerContent
-        px={{ base: "2%", md: "3%", lg: "4%" }}
+        px={{ base: "2%", md: "3%", lg: "0%" }}
         py={{ base: "30px", md: "40px", lg: "50px" }}
       >
         <Heading
-          size={{ base: "lg", md: "xl", lg: "xl" }}
+          // size={{ base: "lg", md: "xl", lg: "xl" }}
           as="h2"
-          mb={{ base: "30px", md: "50px", lg: "100px" }}
+          mb={{ base: "30px", md: "50px", lg: "80px" }}
           textAlign="center"
           w={{ base: "100%", lg: "75%" }}
+          fontWeight="600"
+          fontSize="32px"
+          textTransform="capitalize"
         >
           {title}
         </Heading>

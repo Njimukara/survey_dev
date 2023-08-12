@@ -11,24 +11,16 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { IRoute } from "../../../../types/navigation";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
-import { useSession } from "next-auth/react";
-import axios from "axios";
 
 interface SidebarLinksProps {
   routes: IRoute[];
 }
 
 export function SidebarLinks(props: SidebarLinksProps) {
-  // const { subscription, fetchSubscription } = useSubscription();
-  const [subscriptions, setSubscriptions] = useState<any>([]);
-  const [loading, setLoading] = useState<any>(false);
-
-  var { data: session, status } = useSession();
-
   const { routes } = props;
 
   //   Chakra color mode
@@ -41,59 +33,35 @@ export function SidebarLinks(props: SidebarLinksProps) {
 
   // console.log(session);
 
-  let activeColor = useColorModeValue("gray.700", "white");
-  let inactiveColor = useColorModeValue(
-    "secondaryGray.600",
-    "secondaryGray.600"
-  );
-  let activeIcon = useColorModeValue("brand.500", "white");
-  let textColor = useColorModeValue("secondaryGray.500", "white");
-  let brandColor = useColorModeValue("brand.500", "brand.400");
+  let activeColor = useColorModeValue("primary.600", "white");
+  let activeIcon = useColorModeValue("primary.600", "white");
+  let textColor = useColorModeValue("gray.600", "white");
+  let brandColor = useColorModeValue("primary.600", "primary.400");
+
+  const activebg = useColorModeValue("#F7F7FC", "primary.900");
 
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName: string) => {
     return router.pathname.includes(routeName);
   };
 
-  const fetchSubscription = async () => {
-    const config = {
-      headers: {
-        "Content-Type": "json",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
-    await axios
-      .get(
-        "https://surveyplanner.pythonanywhere.com/api/plans/subscription/",
-        config
-      )
-      .then((response) => {
-        setSubscriptions(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setSubscriptions([]);
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchSubscription();
-    // setSubscriptions(subscription);
-  }, []);
-
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
   const createLinks = (routes: IRoute[]) => {
     return routes.map((route, index: number) => {
       if (route.layout === "/admin" || route.layout === "/auth") {
         return route.subRoutes ? (
-          <Box key={index}>
+          <Box key={index} pl="16px">
             <HStack
               spacing={activeRoute(route.path.toLowerCase()) ? "22px" : "26px"}
               py="5px"
-              ps="10px"
+              // ps="10px"
+              my="1"
+              bg={
+                activeRoute(route.path.toLowerCase()) ? activebg : "transparent"
+              }
+              color={
+                activeRoute(route.path.toLowerCase()) ? activeColor : textColor
+              }
             >
               <Flex w="100%" alignItems="center" justifyContent="space">
                 <Flex w="100%" alignItems="center" justifyContent="space">
@@ -156,7 +124,14 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       <Flex key={index}>
                         <Link key={index} href={route.layout + routes.path}>
                           <a style={{ width: "100%" }}>
-                            <Box w="100%">
+                            <Box
+                              w="100%"
+                              bg={
+                                activeRoute(route.path.toLowerCase())
+                                  ? activebg
+                                  : "transparent"
+                              }
+                            >
                               <HStack
                                 spacing={
                                   activeRoute(routes.path.toLowerCase())
@@ -173,7 +148,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                                   color={
                                     activeRoute(routes.path.toLowerCase())
                                       ? activeColor
-                                      : inactiveColor
+                                      : textColor
                                   }
                                   fontWeight={
                                     activeRoute(routes.path.toLowerCase())
@@ -213,13 +188,26 @@ export function SidebarLinks(props: SidebarLinksProps) {
           <Link key={index} href={route.layout + route.path}>
             <a>
               {route.icon ? (
-                <Box>
+                <Box
+                  bg={
+                    activeRoute(route.path.toLowerCase())
+                      ? activebg
+                      : "transparent"
+                  }
+                  color={
+                    activeRoute(route.path.toLowerCase())
+                      ? activeColor
+                      : textColor
+                  }
+                  my="1"
+                  pl="16px"
+                >
                   <HStack
                     spacing={
                       activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
                     }
                     py="5px"
-                    ps="10px"
+                    // ps="10px"
                   >
                     <Flex w="100%" alignItems="center" justifyContent="center">
                       <Box
@@ -251,7 +239,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                     </Flex>
                     <Box
                       h="36px"
-                      w="4px"
+                      w="6px"
                       bg={
                         activeRoute(route.path.toLowerCase())
                           ? brandColor
@@ -276,7 +264,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                   )}
                 </Box>
               ) : (
-                <Box>
+                <Box pl="16px">
                   <HStack
                     spacing={
                       activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
@@ -289,7 +277,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       color={
                         activeRoute(route.path.toLowerCase())
                           ? activeColor
-                          : inactiveColor
+                          : textColor
                       }
                       fontWeight={
                         activeRoute(route.path.toLowerCase())
