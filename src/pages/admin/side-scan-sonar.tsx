@@ -76,7 +76,7 @@ function EchoSounder() {
     positioning_uncertainty_in_h: 54,
     positioning_uncertainty_in_v: 54,
     heave_uncertainty: 54,
-    "slant_range_uncertainty_of_the_usbl-usbl": 54,
+    slant_range_uncertainty_of_the_usbl: 54,
     angle_uncertainty_of_the_usbl: 54,
   });
 
@@ -500,14 +500,14 @@ function EchoSounder() {
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
 
-    let datum = [];
+    let performanceValues = [];
 
     for (let key in ssPerformanceForm) {
       if (
         typeof ssPerformanceForm[key] === "object" &&
         !Array.isArray(ssPerformanceForm[key])
       ) {
-        datum.push(ssPerformanceForm[key]);
+        performanceValues.push(ssPerformanceForm[key]);
       }
     }
 
@@ -517,7 +517,7 @@ function EchoSounder() {
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_ssss-s1-s2-s3-s4": datum,
+      "performance_of_ssss-s1-s2-s3-s4": performanceValues,
     };
 
     let data = {

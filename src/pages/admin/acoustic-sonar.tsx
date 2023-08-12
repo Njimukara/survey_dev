@@ -549,14 +549,14 @@ export default function AcousticSonar() {
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
 
-    let datum = [];
+    let performanceValues = [];
 
     for (let key in ssPerformanceForm) {
       if (
         typeof ssPerformanceForm[key] === "object" &&
         !Array.isArray(ssPerformanceForm[key])
       ) {
-        datum.push(ssPerformanceForm[key]);
+        performanceValues.push(ssPerformanceForm[key]);
       }
     }
 
@@ -566,7 +566,7 @@ export default function AcousticSonar() {
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_cameras-a1-a2-a3-a4": datum,
+      "performance_of_cameras-a1-a2-a3-a4": performanceValues,
     };
 
     let data = {

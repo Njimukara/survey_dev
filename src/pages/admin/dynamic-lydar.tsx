@@ -542,13 +542,24 @@ function DynamicLydar() {
   const handleSubmit = async (surveyCode: string) => {
     setPlanning(true);
 
+    let performanceValues = [];
+
+    for (let key in ssPerformanceForm) {
+      if (
+        typeof ssPerformanceForm[key] === "object" &&
+        !Array.isArray(ssPerformanceForm[key])
+      ) {
+        performanceValues.push(ssPerformanceForm[key]);
+      }
+    }
+
     let formData = {
       "performance_ins-gnss-usbl": performanceForm,
       calibration_parameters: calibrationForm,
       survey_platform_performance: platformForm,
       operational_conditions: operationalForm,
       lever_arm_measures_between: leverForm,
-      "performance_of_lidars-l1-l2-l3-l4": ssPerformanceForm,
+      "performance_of_lidars-l1-l2-l3-l4": performanceValues,
     };
 
     let data = {

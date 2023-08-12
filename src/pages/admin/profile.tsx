@@ -42,7 +42,7 @@ export default function ProfileOverview() {
   const [company, setCompany] = useState();
   const [hasDetails, setHasDetails] = useState(false);
   const [companyUser, setCompanyUser] = useState(2);
-  const [companyMembers, setCompanyMembers] = useState();
+  const [companyMembers, setCompanyMembers] = useState([]);
   const [individualUser, setIndividualUser] = useState(1);
 
   const { data: session } = useSession();
@@ -146,12 +146,12 @@ export default function ProfileOverview() {
                 toggleHasDetails={toggleHasDetails}
                 company={company}
               />
-              {hasDetails && (
+              {hasDetails && companyMembers.length > 0 && (
                 <CompanyUsers
                   borderRadius="10"
                   toggleModal={toggleCompanyUserModal}
                   isOpen={modalState}
-                  company={companyMembers}
+                  companyMembers={companyMembers}
                 />
               )}
             </Grid>

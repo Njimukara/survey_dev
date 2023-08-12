@@ -5,13 +5,13 @@ import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import Project from "views/admin/profile/components/Project";
 import { MdAdd } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import InviteUser from "./InviteUser";
 import User from "views/admin/default/components/User";
 
 export default function CompanyUsers(props: { [x: string]: any }) {
-  const { toggleModal, isOpen, company, ...rest } = props;
+  const { toggleModal, isOpen, companyMembers, ...rest } = props;
 
   const font_family = "Poppins";
 
@@ -22,16 +22,16 @@ export default function CompanyUsers(props: { [x: string]: any }) {
     "unset"
   );
 
-  const [companyMembers, setCompanyMembers] = useState([]);
+  // const [companyMembers, setCompanyMembers] = useState([]);
   const router = useRouter();
 
-  useEffect(() => {
-    if (!company) {
-      return;
-    } else {
-      setCompanyMembers(company);
-    }
-  }, [company]);
+  // useEffect(() => {
+  //   if (!company) {
+  //     return;
+  //   } else {
+  //     setCompanyMembers(company);
+  //   }
+  // }, [company]);
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} bg="transparent" {...rest}>
@@ -91,7 +91,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           {companyMembers.length != 0 ? (
             companyMembers
               .slice(0, 5)
-              .map((member) => (
+              .map((member: { email: string; name: string }) => (
                 <User
                   key={member?.email}
                   boxShadow="sm"

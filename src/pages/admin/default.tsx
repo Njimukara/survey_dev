@@ -219,7 +219,7 @@ export default function UserReports(props: { [x: string]: any }) {
             </Box>
           </Card>
           {/* </Flex> */}
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap="20px" mb="3%">
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="3%">
             <MiniStatistics
               startContent={
                 <IconBox
@@ -262,25 +262,6 @@ export default function UserReports(props: { [x: string]: any }) {
             ) : (
               ""
             )}
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color="primary.600"
-                    />
-                  }
-                />
-              }
-              name="Total Spent"
-              value={totalExpenditure ? `$${totalExpenditure}` : 0}
-            />
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
