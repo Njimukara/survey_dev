@@ -118,7 +118,7 @@ export default function CompanyDetails(props: {
           >
             <Box mx="auto" w="87px" h="87px">
               <Avatar
-                src={company.logo ? company?.logo : ""}
+                src={company?.logo ?? ""}
                 size="2xl"
                 name={company?.name}
                 h="100%"
