@@ -271,7 +271,7 @@ export default function UserReports(props: { [x: string]: any }) {
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            {surveyHistory ? (
+            {surveyHistory && surveyHistory.length > 0 ? (
               <SurveyTable
                 columnsData={columnsDataSurvey}
                 tableData={surveyHistory as unknown as TableData[]}

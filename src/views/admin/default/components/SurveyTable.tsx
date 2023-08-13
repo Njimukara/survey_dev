@@ -124,13 +124,13 @@ export default function ColumnsTable(props: TableProps) {
     const { id, name, created, survey, status } = row?.original;
     let code: string;
 
-    if (surveys) {
-      surveys.map((uniqueSurvey: survey) => {
-        if (uniqueSurvey.id == survey) {
-          code = uniqueSurvey.code;
-        }
-      });
-    }
+    const matchingSurvey = surveys.find(
+      (uniqueSurvey: survey) => uniqueSurvey.id === survey
+    );
+
+    if (matchingSurvey) {
+      code = matchingSurvey.code;
+    } else return;
 
     await axiosConfig
       .delete(`/api/surveys/${code}/${id}/`)
@@ -291,13 +291,13 @@ export default function ColumnsTable(props: TableProps) {
                   let data;
                   if (cell.column.Header === "NAME") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {cell.value || "NA"}
                       </Text>
                     );
                   } else if (cell.column.Header === "TYPE") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {formatSurveyType(cell.value)}
                       </Text>
                     );
@@ -323,7 +323,7 @@ export default function ColumnsTable(props: TableProps) {
                     );
                   } else if (cell.column.Header === "DATE GENERATED") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {formatDate(cell.value)}
                       </Text>
                     );

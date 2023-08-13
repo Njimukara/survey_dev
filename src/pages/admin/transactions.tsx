@@ -49,6 +49,7 @@ import TransactionTable from "views/admin/default/components/TransactionTable";
 import { useCurrentUser } from "contexts/UserContext";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
+import { usePlanContext } from "contexts/PlanContext";
 
 export default function Transactions() {
   // component variables
@@ -57,12 +58,14 @@ export default function Transactions() {
   const [upgrade, setUpgrade] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [step, setStep] = useState(1);
-  const [plans, setPlans] = useState([]);
+  // const [plans, setPlans] = useState([]);
 
   // get user subscription from store
   const [localSubscriptions, setLocalSubscriptions] = useState([]);
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+  const { subscriptions, fetchSubscriptions } = useSubscription();
   const { currentUser, fetchCurrentUser } = useCurrentUser();
+
+  const { plans, errors, loading } = usePlanContext();
 
   // chakra toast
   const toast = useToast();
@@ -81,13 +84,10 @@ export default function Transactions() {
     setUpgrade(state);
     // setStep(newstep);
   };
-  // get subscription plans from database
-  const getPlans = useCallback(async () => {
-    setFetching(true);
-    try {
-      const response = await axiosConfig.get("/api/plans/list-with-price");
-      setPlans(response.data);
-    } catch (error) {
+
+  useEffect(() => {
+    if (plans.length <= 0 && errors) {
+      // getPlans();
       toast({
         position: "bottom-right",
         description: "Error getting plans",
@@ -95,22 +95,13 @@ export default function Transactions() {
         duration: 4000,
         isClosable: true,
       });
-    } finally {
-      setFetching(false);
     }
-  }, [toast]);
+  }, [errors, plans, toast]);
 
   useEffect(() => {
     console.log(subscriptions);
     if (!currentUser) {
       fetchCurrentUser();
-    }
-    if (plans.length <= 0) {
-      getPlans();
-    }
-
-    if (subscriptions.length <= 0) {
-      fetchSubscriptions();
     }
     setLocalSubscriptions(subscriptions);
   }, [subscriptions]);
@@ -264,7 +255,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {fetching ? (
+                {loading ? (
                   <Flex
                     h="200"
                     w="100%"
