@@ -75,9 +75,8 @@ export default function UserReports(props: { [x: string]: any }) {
 
   const font_family = "Poppins";
 
-  const { currentUser, fetchCurrentUser } = useCurrentUser();
+  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
   const { subscriptions, fetchSubscriptions } = useSubscription();
-  const { getCompanySurvey } = useSurveyHistoryContext();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("primary.600", "#271E67");
@@ -90,7 +89,7 @@ export default function UserReports(props: { [x: string]: any }) {
   const [, setSurveyHistory] = useState([]);
   const { data: session } = useSession();
 
-  const { getSurveyHistory, surveyHistory, companySurveyHistory } =
+  const { mergedCompanyHistory, pending, surveyHistory, companySurveyHistory } =
     useSurveyHistoryContext();
 
   // chakra toast
@@ -144,21 +143,13 @@ export default function UserReports(props: { [x: string]: any }) {
 
   useEffect(() => {
     setUser(currentUser);
+    // console.log("default, companyhistory", companySurveyHistory);
   }, [currentUser]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (session?.user?.data?.user_profile?.user_type === companyUser) {
-          await getCompanyMembers();
-        }
-      } catch (error) {
-        // Handle error
-        console.error("Failed to fetch user or company data:", error);
-      }
-    };
-
-    fetchUser();
+    if (session?.user?.data?.user_profile?.user_type === companyUser) {
+      getCompanyMembers();
+    }
   }, []);
 
   return (
@@ -210,7 +201,7 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Surveys"
-              value={surveyHistory ? surveyHistory.length : 0}
+              value={!pending ? surveyHistory.length : 0}
             />
             {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
@@ -261,43 +252,39 @@ export default function UserReports(props: { [x: string]: any }) {
               gap="20px"
               mb="20px"
             >
-              {companySurveyHistory.length > 0 ? (
-                <PieCard companySurvey={companySurveyHistory} />
-              ) : (
+              {mergedCompanyHistory && mergedCompanyHistory.length <= 0 ? (
                 <NoData title="No company survey data" />
+              ) : (
+                <PieCard companySurvey={mergedCompanyHistory} />
+                // <NoData title="Pie data" />
               )}
               <Users members={companyMembers} />
             </SimpleGrid>
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            {surveyHistory && surveyHistory.length > 0 ? (
+            {user?.user_profile?.user_type == companyUser &&
+            mergedCompanyHistory &&
+            mergedCompanyHistory.length > 0 ? (
+              <SurveyTable
+                columnsData={columnsDataSurvey}
+                tableData={mergedCompanyHistory as unknown as TableData[]}
+              />
+            ) : user?.user_profile?.user_type == individualUser &&
+              surveyHistory &&
+              surveyHistory.length > 0 ? (
               <SurveyTable
                 columnsData={columnsDataSurvey}
                 tableData={surveyHistory as unknown as TableData[]}
               />
             ) : (
-              <NoData title="No company survey data" />
+              <NoData title="No survey data" />
             )}
           </SimpleGrid>
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
             <WeeklyRevenue />
           </SimpleGrid>
-
-          {/* {user?.user_profile?.user_type == companyUser ||
-            (user?.user_profile?.user_type == individualUser && (
-              <SimpleGrid
-                columns={{ base: 1, md: 1, xl: 1 }}
-                gap="20px"
-                mb="20px"
-              >
-                <ComplexTable
-                  columnsData={columnsDataComplex}
-                  tableData={tableDataComplex as unknown as TableData[]}
-                />
-              </SimpleGrid>
-            ))} */}
 
           {(user?.user_profile?.user_type == companyUser ||
             user?.user_profile?.user_type == individualUser) && (

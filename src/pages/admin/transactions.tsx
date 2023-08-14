@@ -56,7 +56,7 @@ export default function Transactions() {
 
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [upgrade, setUpgrade] = useState(false);
-  const [fetching, setFetching] = useState(true);
+  // const [fetching, setFetching] = useState(true);
   const [step, setStep] = useState(1);
   // const [plans, setPlans] = useState([]);
 
@@ -151,7 +151,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {fetching ? (
+                {loading ? (
                   <Flex
                     h="200"
                     w="100%"

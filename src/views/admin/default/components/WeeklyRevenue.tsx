@@ -21,6 +21,10 @@ import { MdBarChart } from "react-icons/md";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import NoData from "layouts/admin/noData";
+import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { ApexOptions } from "apexcharts";
+
+// type ApexGeneric = ApexOptions & any;
 
 const monthOptions = [
   { value: 0, label: "January" },
@@ -36,6 +40,102 @@ const monthOptions = [
   { value: 10, label: "November" },
   { value: 11, label: "December" },
 ];
+
+// const barChartOptionsDailyTraffic: ApexGeneric = {
+//   chart: {
+//     toolbar: {
+//       show: false,
+//     },
+//   },
+//   tooltip: {
+//     style: {
+//       fontSize: "12px",
+//       fontFamily: "Poppins",
+//     },
+//     onDatasetHover: {
+//       style: {
+//         fontSize: "14px",
+//         fontFamily: "Poppins",
+//       },
+//     },
+//     theme: "dark",
+//   },
+//   xaxis: {
+//     categories: [],
+//     show: false,
+//     labels: {
+//       show: true,
+//       style: {
+//         colors: "#A3AED0",
+//         fontSize: "14px",
+//         fontWeight: "500",
+//       },
+//     },
+//     axisBorder: {
+//       show: false,
+//     },
+//     axisTicks: {
+//       show: false,
+//     },
+//   },
+//   yaxis: {
+//     show: true,
+//     color: "black",
+//     labels: {
+//       show: true,
+//       style: {
+//         colors: "#CBD5E0",
+//         fontSize: "14px",
+//       },
+//     },
+//   },
+//   grid: {
+//     show: false,
+//     strokeDashArray: 5,
+//     yaxis: {
+//       lines: {
+//         show: true,
+//       },
+//     },
+//     xaxis: {
+//       lines: {
+//         show: false,
+//       },
+//     },
+//   },
+//   fill: {
+//     type: "gradient",
+//     gradient: {
+//       type: "vertical",
+//       shadeIntensity: 1,
+//       opacityFrom: 0.7,
+//       opacityTo: 0.9,
+//       colorStops: [
+//         [
+//           {
+//             offset: 0,
+//             color: "#4318FF",
+//             opacity: 1,
+//           },
+//           {
+//             offset: 100,
+//             color: "rgba(67, 24, 255, 1)",
+//             opacity: 0.28,
+//           },
+//         ],
+//       ],
+//     },
+//   },
+//   dataLabels: {
+//     enabled: false,
+//   },
+//   plotOptions: {
+//     bar: {
+//       borderRadius: 10,
+//       columnWidth: "40px",
+//     },
+//   },
+// };
 
 export default function WeeklyRevenue(props: { [x: string]: any }) {
   const { ...rest } = props;
@@ -57,12 +157,21 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 
   const [surveyHistory, setSurveyHistory] = useState(null);
   const [surveyChartData, setSurveyChartData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState({
+    value: 2,
+    label: "Monthly Analysis",
+  });
   const [period, setPeriod] = useState(2);
   const [currentMonth, setCurrentMonth] = useState(null);
   const [chatOptions, setChatOptions] = useState(barChartOptionsDailyTraffic);
 
   const { arrayHistory, getSurveyHistory } = useSurveyHistoryContext();
+  const { surveys } = useAllSurveysContext();
+
+  const surveyNameMapping: Record<number, string> = {};
+  surveys?.forEach((survey: any) => {
+    surveyNameMapping[survey.id] = survey.name;
+  });
 
   const getdates = (date: string, surveyData: string) => {
     const thisMonth = new Date(date).getMonth();
@@ -71,7 +180,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 
   const getMonthlyAnalysis = (surveys: any, month: number) => {
     const surveyCount: any[] = [];
-    console.log("weekly", surveys);
+    // console.log("weekly", surveys);
     surveys.forEach((element: any) => {
       const elementArray = element.filter((survey: any) => {
         const surveyDate = new Date(survey.created).getMonth();
@@ -93,12 +202,16 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
       name: "Monthly Analysis",
       data: [],
     };
+    chatOptions.xaxis.categories = [];
 
     surveyData.forEach((surveyWeek: any[], index: number) => {
       if (surveyWeek[0]) {
-        chartdata.name = surveyWeek[0].survey;
+        // chartdata.name = surveyWeek[0].survey;
+        chartdata.name = surveyNameMapping[surveyWeek[0].survey];
+        chatOptions.xaxis.categories.push(chartdata.name);
       }
       chartdata.data.push(surveyWeek.length);
+      console.log(surveyWeek);
     });
 
     data.push(chartdata);
@@ -154,12 +267,14 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 
   const formatData = (surveyData: any[]) => {
     const data: any[] = [];
+    chatOptions.xaxis.categories = [];
 
     surveyData.forEach((surveyWeek: any[], index: number) => {
       const chartdata: { name: string; data: number[] } = {
         name: `Week ${index + 1}`,
         data: [],
       };
+      chatOptions.xaxis.categories.push(chartdata.name);
 
       surveyWeek.forEach((survey: any) => {
         chartdata.data.push(survey.length);
@@ -175,17 +290,19 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
     if (!arrayHistory) {
       // getSurveyHistory().catch((error: any) => {
       //   // Handle error
-      console.error("Failed to fetch survey history:");
+      // console.error("Failed to fetch survey history:");
       // });
     } else {
-      console.log(arrayHistory);
+      // console.log(arrayHistory);
       setSurveyHistory(arrayHistory);
       let date = new Date().getMonth();
+      setPeriod(2);
       let chart = getMonthlyAnalysis(arrayHistory, date);
+      // console.log("bar", chart);
       setCurrentMonth(date);
       setSurveyChartData(chart);
     }
-  }, [arrayHistory, getSurveyHistory]);
+  }, [arrayHistory]);
 
   const options = [
     { value: 1, label: "Weekly Analysis" },
@@ -205,17 +322,24 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
     }
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = async (e: any) => {
     setSelectedOption(e);
     setPeriod(e.value);
-    if (arrayHistory && e.value == 1) {
+
+    if (!arrayHistory) return;
+
+    if (e.value === 1) {
       let chart = getWeeklyAnalysis(arrayHistory, currentMonth);
       setSurveyChartData(chart);
       setChatOptions(barChartOptionsConsumption);
-    } else if (arrayHistory && e.value == 2) {
-      let chart = getMonthlyAnalysis(arrayHistory, currentMonth);
-      setSurveyChartData(chart);
-      setChatOptions(barChartOptionsDailyTraffic);
+    } else if (e.value === 2) {
+      try {
+        let chart = await getMonthlyAnalysis(arrayHistory, currentMonth);
+        setSurveyChartData(chart);
+        setChatOptions(barChartOptionsDailyTraffic);
+      } catch (error) {
+        // Handle error if needed
+      }
     }
   };
 
@@ -239,14 +363,30 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
             Monthly Analysis
           </Text> */}
         <Select
-          defaultValue={selectedOption}
           onChange={(e: any) => handleChange(e)}
+          value={selectedOption}
           options={options}
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              width: "200px",
+              borderRadius: "10px",
+            }),
+          }}
         />
+
         <Select
+          placeholder="Select month"
           defaultValue={currentMonth}
           onChange={(e: any) => changeMonth(e)}
           options={monthOptions}
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              width: "200px",
+              borderRadius: "10px",
+            }),
+          }}
         />
 
         <Button

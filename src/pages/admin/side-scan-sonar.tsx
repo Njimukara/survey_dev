@@ -171,7 +171,8 @@ function EchoSounder() {
   const [surveyCode, setSurveyCode] = useState("S02");
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { surveys, sideScan, getAllSurveys } = useAllSurveysContext();
-  const { surveyOptions } = useSurveyHistoryContext();
+  const { surveyOptions, getCompanySurvey, getSurveyHistory } =
+    useSurveyHistoryContext();
 
   // chakra toast
   const toast = useToast();
@@ -531,6 +532,8 @@ function EchoSounder() {
       .then((res) => {
         setResults(res.data);
         setPlanning(false);
+        getCompanySurvey();
+        getSurveyHistory();
       })
       .catch((error) => {
         setPlanning(false);

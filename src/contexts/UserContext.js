@@ -24,7 +24,7 @@ export const CurrentUserProvider = ({ children }) => {
 
   useEffect(() => {
     fetchCurrentUser();
-  }, [subscriptions]);
+  }, []);
 
   return (
     <CurrentUserContext.Provider

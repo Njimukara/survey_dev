@@ -16,42 +16,6 @@ export const SurveyHistoryProvider = ({ children }) => {
 
   const [surveyOrder, setSurveyOrder] = useState("null");
 
-  // const getSurveyHistory = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axiosConfig.get("/api/surveys");
-  //     const surveyData = response.data;
-
-  //     const requests = surveyData.map((survey) =>
-  //       axiosConfig.get(`api/surveys/${survey.code}/results/`)
-  //     );
-
-  //     const results = await Promise.all(requests);
-
-  //     // const surveyHistory = results.map((res) => res.data);
-
-  //     const surveyHistory = results
-  //       .map((res) => {
-  //         if (res.error) {
-  //           // Handle the error here, e.g., logging or handling failed result
-  //           return null; // Return null for failed requests
-  //         }
-  //         return res.data; // Return data for successful requests
-  //       })
-  //       .filter(Boolean); // Remove null values from the array
-
-  //     const merged = surveyHistory.flat(1);
-
-  //     getOptions(merged);
-
-  //     setHistory(merged);
-  //     setArrayHistory(surveyHistory);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setLoading(false);
-  //   }
-  // };
-
   const { data: session } = useSession();
 
   const [companyUser] = useState(2);
@@ -60,49 +24,62 @@ export const SurveyHistoryProvider = ({ children }) => {
   const { subscriptions } = useSubscription();
 
   const getSurveyHistory = useCallback(async () => {
-    if (subscriptions.length <= 0) {
-      return;
-    } else {
-      setArrayHistory([]);
-      setSurveyHistory([]);
-      setCompanySurveyHistory([]);
-      let assignedSurveys = subscriptions[0]?.assigned_surveys;
+    setArrayHistory([]);
+    setSurveyHistory([]);
+    setCompanySurveyHistory([]);
+    let assignedSurveys = subscriptions[0]?.assigned_surveys;
 
+    try {
+      const fetchPromises = assignedSurveys.map(async (survey) => {
+        const result = await axiosConfig.get(
+          `api/surveys/${survey.code}/results/`
+        );
+        return result.data;
+      });
+
+      const results = await Promise.all(fetchPromises);
+
+      const combinedResults = results.reduce(
+        (acc, cur) => [...acc, ...cur],
+        []
+      );
+
+      setSurveyHistory(combinedResults);
+      setArrayHistory(results);
+      getOptions(combinedResults);
+    } catch (err) {
+      setError(err);
+    }
+  }, [
+    // companyUser,
+    // session?.user?.data?.user_profile?.user_type,
+    subscriptions,
+  ]);
+
+  const getCompanySurvey = useCallback(async () => {
+    setCompanySurveyHistory([]);
+    setMergedCompanyHistory([]);
+    let assignedSurveys = subscriptions[0]?.assigned_surveys;
+
+    if (session?.user?.data?.user_profile?.user_type === companyUser) {
       try {
-        const fetchPromises = assignedSurveys.map(async (survey) => {
+        const surveyRequests = assignedSurveys.map(async (survey) => {
           const result = await axiosConfig.get(
-            `api/surveys/${survey.code}/results/`
+            `api/surveys/${survey.code}/company-results/`
           );
           return result.data;
         });
 
-        const results = await Promise.all(fetchPromises);
-
+        const results = await Promise.all(surveyRequests);
         const combinedResults = results.reduce(
           (acc, cur) => [...acc, ...cur],
           []
         );
 
-        setSurveyHistory(combinedResults);
-        setArrayHistory(results);
+        setCompanySurveyHistory((prevHistory) => [...prevHistory, ...results]);
+        setMergedCompanyHistory(combinedResults);
       } catch (err) {
         setError(err);
-      }
-
-      if (session?.user?.data?.user_profile?.user_type === companyUser) {
-        assignedSurveys.forEach(async (survey) => {
-          try {
-            let result = await axiosConfig.get(
-              `api/surveys/${survey.code}/company-results/`
-            );
-            setCompanySurveyHistory((prevHistory) => [
-              ...prevHistory,
-              ...result.data,
-            ]);
-          } catch (err) {
-            setError(err);
-          }
-        });
       }
     }
   }, [
@@ -112,8 +89,19 @@ export const SurveyHistoryProvider = ({ children }) => {
   ]);
 
   useEffect(() => {
-    getSurveyHistory();
-  }, [getSurveyHistory]);
+    if (subscriptions.length > 0) {
+      getSurveyHistory();
+      getCompanySurvey();
+    }
+  }, [subscriptions, getSurveyHistory, getCompanySurvey]);
+
+  // useEffect(() => {
+  //   getSurveyHistory();
+  // }, [getSurveyHistory]);
+
+  // useEffect(() => {
+  //   getCompanySurvey();
+  // }, [getCompanySurvey]);
 
   const getOptions = (allSurvey) => {
     const options = [];
@@ -143,7 +131,7 @@ export const SurveyHistoryProvider = ({ children }) => {
         mergedCompanyHistory,
         getSurveyHistory,
         surveyHistory,
-        // getCompanySurvey,
+        getCompanySurvey,
         surveyOrder,
         updateSurveyOrder,
       }}

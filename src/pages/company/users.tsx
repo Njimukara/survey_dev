@@ -27,6 +27,7 @@ import { useSession } from "next-auth/react";
 import Router from "next/router";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
+import useInvitations from "utils/useInvitations";
 
 const LoadingSpinner = () => (
   <Card w="100%" borderRadius={10}>
@@ -55,9 +56,11 @@ export default function Users() {
   const [loading, setLoading] = useState(false);
   const [companyMembers, setCompanyMembers] = useState([]);
   const [hasDetails, setHasDetails] = useState(false);
-  const [invitations, setInvitations] = useState([]);
+  // const [invitations, setInvitations] = useState([]);
   const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
+
+  const { fetching, invitations } = useInvitations();
   // const [companyUserLength, setCompanyUserLength] = useState(0);
   // const [companyUser] = useState(2);
 
@@ -85,25 +88,25 @@ export default function Users() {
   }, []);
 
   //   get invitations
-  const getInvitations = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axiosConfig.get(
-        "/api/company/companymembers/invitations/"
-      );
-      let result = response.data.filter((invite: any) => {
-        return invite.status == 1;
-      });
-      setInvitations(result);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  }, []);
+  // const getInvitations = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axiosConfig.get(
+  //       "/api/company/companymembers/invitations/"
+  //     );
+  //     let result = response.data.filter((invite: any) => {
+  //       return invite.status == 1;
+  //     });
+  //     setInvitations(result);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (session != null) {
-      getInvitations();
+      // getInvitations();
       getCompanyMembers();
       setUser(session?.user?.data);
     }
@@ -149,7 +152,7 @@ export default function Users() {
               </Button>
             )}
             <InviteUser
-              getInvitations={getInvitations}
+              // getInvitations={getInvitations}
               opened={isOpen}
               toggleModal={toggleModal}
             />
@@ -183,10 +186,10 @@ export default function Users() {
           {invitations && invitations.length != 0 ? (
             <PendingUserInvite
               columnsData={PendingInvite}
-              getInvitations={getInvitations}
+              // getInvitations={getInvitations}
               tableData={invitations as unknown as TableData[]}
             />
-          ) : loading ? (
+          ) : fetching ? (
             <LoadingSpinner />
           ) : (
             <NoData title="No pending invies in your company" />

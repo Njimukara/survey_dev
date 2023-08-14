@@ -61,10 +61,9 @@ export const SubscriptionCard = (props: SubscriptionProps) => {
             </Text>
             <Box>
               <List spacing={2}>
-                {props.advantages?.map((x) => (
-                  <ListItem key={x.id} fontSize="sm">
+                {props.advantages?.map((x, index) => (
+                  <ListItem key={index} fontSize="sm">
                     <ListIcon
-                      key={x.id}
                       as={MdCheckCircle}
                       color="primary.500"
                       fontSize="18px"

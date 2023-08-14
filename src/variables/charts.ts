@@ -29,21 +29,8 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
     theme: "dark",
   },
   xaxis: {
-    categories: [
-      "01",
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-    ],
-    show: false,
+    categories: [],
+    show: true,
     labels: {
       show: true,
       style: {
@@ -53,14 +40,14 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
       },
     },
     axisBorder: {
-      show: false,
+      show: true,
     },
     axisTicks: {
-      show: false,
+      show: true,
     },
   },
   yaxis: {
-    show: false,
+    show: true,
     color: "black",
     labels: {
       show: true,
@@ -85,27 +72,7 @@ export const barChartOptionsDailyTraffic: ApexGeneric = {
     },
   },
   fill: {
-    type: "gradient",
-    gradient: {
-      type: "vertical",
-      shadeIntensity: 1,
-      opacityFrom: 0.7,
-      opacityTo: 0.9,
-      colorStops: [
-        [
-          {
-            offset: 0,
-            color: "#4318FF",
-            opacity: 1,
-          },
-          {
-            offset: 100,
-            color: "rgba(67, 24, 255, 1)",
-            opacity: 0.28,
-          },
-        ],
-      ],
-    },
+    type: "solid",
   },
   dataLabels: {
     enabled: false,
@@ -243,19 +210,19 @@ export const barChartOptionsConsumption: ApexGeneric = {
   tooltip: {
     style: {
       fontSize: "12px",
-      fontFamily: "inter",
+      fontFamily: "Poppins",
     },
     onDatasetHover: {
       style: {
-        fontSize: "12px",
-        fontFamily: "inter",
+        fontSize: "14px",
+        fontFamily: "Poppins",
       },
     },
     theme: "dark",
   },
   xaxis: {
-    categories: ["17", "18", "19", "20", "21", "22", "23", "24", "25"],
-    show: false,
+    categories: [],
+    show: true,
     labels: {
       show: true,
       style: {
@@ -272,10 +239,10 @@ export const barChartOptionsConsumption: ApexGeneric = {
     },
   },
   yaxis: {
-    show: false,
+    show: true,
     color: "black",
     labels: {
-      show: false,
+      show: true,
       style: {
         colors: "#A3AED0",
         fontSize: "14px",
@@ -311,7 +278,7 @@ export const barChartOptionsConsumption: ApexGeneric = {
   },
   colors: ["#5E37FF", "#6AD2FF", "#E1E9F8"],
   dataLabels: {
-    enabled: false,
+    enabled: true,
   },
   plotOptions: {
     bar: {

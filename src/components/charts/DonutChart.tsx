@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
+import stringHash from "string-hash";
 
 interface DataItem {
   name: string;
@@ -17,7 +18,11 @@ const DonutChart = ({ data, width = 400, height = 400 }: DonutChartProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const color = d3.scaleOrdinal<string>().range(d3.schemeCategory10);
+    // const color = d3.scaleOrdinal<string>().range(d3.schemeCategory10);
+    const color = d3
+      .scaleOrdinal<string>()
+      .domain(data.map((d) => d.name))
+      .range(data.map((d) => d3.schemeCategory10[stringHash(d.name) % 10]));
     const pie = d3.pie<DataItem>().value((d: any) => d.count);
 
     // Update the chart with the new data and add an animation

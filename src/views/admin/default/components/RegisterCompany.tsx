@@ -61,6 +61,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
     setCompanyData((prevState) => ({
       ...prevState,
       country: null,
+      city: null,
       name: null,
       iso: null,
       image: null,
@@ -274,7 +275,7 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                       />
                     </FormControl>
 
-                    <FormControl pb="3">
+                    {/* <FormControl pb="3">
                       <FormLabel w="160px" color={textColorSecondary}>
                         City
                       </FormLabel>
@@ -300,6 +301,32 @@ export default function RegisterCompany(props: { [x: string]: any }) {
                           onChange={handleSelectedCity}
                         />
                       </Box>
+                    </FormControl> */}
+                    <FormControl pb="3" fontFamily={font_family}>
+                      <FormLabel
+                        w="160px"
+                        fontSize="16px"
+                        color={textColorSecondary}
+                      >
+                        City
+                      </FormLabel>
+                      <Input
+                        id="city"
+                        name="city"
+                        variant="rounded"
+                        fontSize="sm"
+                        type="text"
+                        placeholder="city"
+                        fontWeight="500"
+                        size="lg"
+                        value={companyData.city}
+                        onChange={(e) =>
+                          setCompanyData((prevState) => ({
+                            ...prevState,
+                            city: e.target.value,
+                          }))
+                        }
+                      />
                     </FormControl>
                   </Flex>
 

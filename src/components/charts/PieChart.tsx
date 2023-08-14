@@ -68,7 +68,7 @@ const PieChart: React.FC<ChartProps> = (props) => {
       series={chartData}
       type="donut"
       width="100%"
-      height="100%"
+      height="150%"
     />
   );
 };

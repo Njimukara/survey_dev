@@ -43,7 +43,8 @@ export default function AcousticSonar() {
   const [surveyID, setSurveyID] = useState(4);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { surveys, acoustic, getAllSurveys } = useAllSurveysContext();
-  const { surveyOptions } = useSurveyHistoryContext();
+  const { surveyOptions, getCompanySurvey, getSurveyHistory } =
+    useSurveyHistoryContext();
   const [surveyCode, setSurveyCode] = useState("S04");
   const [planning, setPlanning] = useState(false);
   const [surveyName, setSurveyName] = useState("");
@@ -591,6 +592,8 @@ export default function AcousticSonar() {
           isClosable: true,
         });
         setPlanning(false);
+        getCompanySurvey();
+        getSurveyHistory();
       })
       .catch((error) => {
         console.log(error);

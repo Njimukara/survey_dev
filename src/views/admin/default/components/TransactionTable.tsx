@@ -190,7 +190,7 @@ export default function TransactionTable(props: TableProps) {
                   let data;
                   if (cell.column.Header === "AMOUNT") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         ${formatPrice(cell.value?.amount)}
                       </Text>
                     );
@@ -231,7 +231,7 @@ export default function TransactionTable(props: TableProps) {
                               : null
                           }
                           fontSize="sm"
-                          fontWeight="700"
+                          fontWeight="400"
                         >
                           {cell.value.toUpperCase()}
                         </Text>
@@ -239,13 +239,13 @@ export default function TransactionTable(props: TableProps) {
                     );
                   } else if (cell.column.Header === "DATE") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {formatDate(cell.value)}
                       </Text>
                     );
                   } else if (cell.column.Header === "PAYMENT") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {/* {cell.value} */}
                         Stripe Invoice
                       </Text>

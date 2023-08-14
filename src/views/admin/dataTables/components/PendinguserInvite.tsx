@@ -44,8 +44,11 @@ import { TableProps } from "views/admin/default/variables/columnsData";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import axiosConfig from "axiosConfig";
+import useInvitations from "utils/useInvitations";
 export default function PendingUserInvite(props: TableProps) {
-  const { getInvitations, columnsData, tableData } = props;
+  const { columnsData, tableData } = props;
+
+  const { fetching, invitations, fetchInvitations } = useInvitations();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -150,7 +153,7 @@ export default function PendingUserInvite(props: TableProps) {
       .then((res) => {
         // setCompanyMembers(res.data.members);
         // console.log(res);
-        getInvitations();
+        fetchInvitations();
         setSending(false);
         toast({
           position: "bottom-right",
@@ -201,7 +204,7 @@ export default function PendingUserInvite(props: TableProps) {
       .then((res) => {
         // setCompanyMembers(res.data.members);
         // console.log(res);
-        getInvitations();
+        fetchInvitations();
         setSending(false);
         toast({
           position: "bottom-right",

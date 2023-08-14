@@ -244,7 +244,8 @@ export default function MultibeamEchoSounder() {
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const [surveyCode, setSurveyCode] = useState("S01");
   const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { surveyOptions } = useSurveyHistoryContext();
+  const { surveyOptions, getCompanySurvey, getSurveyHistory } =
+    useSurveyHistoryContext();
 
   // chakra toast
   const toast = useToast();
@@ -652,6 +653,8 @@ export default function MultibeamEchoSounder() {
           isClosable: true,
         });
         setPlanning(false);
+        getCompanySurvey();
+        getSurveyHistory();
       })
       .catch((error) => {
         toast({

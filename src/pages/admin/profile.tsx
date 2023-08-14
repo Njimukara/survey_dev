@@ -146,7 +146,7 @@ export default function ProfileOverview() {
                 toggleHasDetails={toggleHasDetails}
                 company={company}
               />
-              {hasDetails && companyMembers.length > 0 && (
+              {hasDetails && (
                 <CompanyUsers
                   borderRadius="10"
                   toggleModal={toggleCompanyUserModal}

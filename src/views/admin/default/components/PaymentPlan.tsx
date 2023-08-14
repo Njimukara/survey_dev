@@ -450,7 +450,7 @@ export default function PaymentPlan(props: Props) {
             </FormControl>
 
             <HStack my="3">
-              <FormControl w="20%">
+              {/* <FormControl w="20%">
                 <FormLabel fontSize="16px" color={textColorSecondary}>
                   Select Currency
                 </FormLabel>
@@ -464,7 +464,7 @@ export default function PaymentPlan(props: Props) {
                     );
                   })}
                 </HStack>
-              </FormControl>
+              </FormControl> */}
               <FormControl>
                 <FormLabel fontSize="16px" color={textColorSecondary}>
                   Total
@@ -472,7 +472,7 @@ export default function PaymentPlan(props: Props) {
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <Icon
-                      as={currency == "usd" ? FaDollarSign : FaEuroSign}
+                      as={FaDollarSign}
                       color="gray.300"
                       bg="none"
                       mt="2"

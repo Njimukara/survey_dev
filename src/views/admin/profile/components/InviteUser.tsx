@@ -24,9 +24,12 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 import axiosConfig from "axiosConfig";
+import useInvitations from "utils/useInvitations";
 
 export default function InviteUser(props: { [x: string]: any }) {
   let { getInvitations, toggleModal, opened, ...rest } = props;
+
+  const { fetching, invitations, fetchInvitations } = useInvitations();
 
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
@@ -72,80 +75,40 @@ export default function InviteUser(props: { [x: string]: any }) {
       email: guestUser.email,
     };
 
-    await axiosConfig
-      .post("/api/company/send-invitation/", body)
-      .then((res) => {
-        toast({
-          position: "bottom-right",
-          description: "Invite sent successfully.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        router.push("/company/users");
-        getInvitations();
-        closeModal();
-        setGuestUser((prevState) => ({
-          ...prevState,
-          submitting: false,
-        }));
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast({
-          position: "bottom-right",
-          description: "Something went wrong, please try again",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        setGuestUser((prevState) => ({
-          ...prevState,
-          error: err?.respose?.data?.error,
-          submitting: false,
-        }));
+    try {
+      const res = await axiosConfig.post("/api/company/send-invitation/", body);
+
+      toast({
+        position: "bottom-right",
+        description: "Invite sent successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
       });
 
-    // router.push("/company/users");
-    // getInvitations();
-    // closeModal();
-    // console.log(res);
-    // if (res) {
-    // toast({
-    //   position: "bottom-right",
-    //   description: "Invite sent successfully.",
-    //   status: "success",
-    //   duration: 5000,
-    //   isClosable: true,
-    // });
-    //   }
-    //   toast({
-    //     position: "bottom-right",
-    //     description: "Something went wrong, please try again",
-    //     status: "error",
-    //     duration: 5000,
-    //     isClosable: true,
-    //   });
-    //   setGuestUser((prevState) => ({
-    //     ...prevState,
-    //     submitting: false,
-    //   }));
-    // } catch (error: any) {
-    //   console.log(error);
-    //   toast({
-    //     position: "bottom-right",
-    //     description: "Something went wrong, please try again",
-    //     status: "error",
-    //     duration: 5000,
-    //     isClosable: true,
-    //   });
-    //   setGuestUser((prevState) => ({
-    //     ...prevState,
-    //     error: error.respose.data.error,
-    //     submitting: false,
-    //   }));
-    // }
+      router.push("/company/users");
+      fetchInvitations();
+      closeModal();
+
+      setGuestUser((prevState) => ({
+        ...prevState,
+        submitting: false,
+      }));
+    } catch (err) {
+      toast({
+        position: "bottom-right",
+        description: "Something went wrong, please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      setGuestUser((prevState) => ({
+        ...prevState,
+        // error: err?.response?.data?.error,
+        submitting: false,
+      }));
+    }
   };
 
   return (

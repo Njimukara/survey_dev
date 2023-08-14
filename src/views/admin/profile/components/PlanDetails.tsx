@@ -1,5 +1,7 @@
 // Chakra imports
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -69,6 +71,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
   };
 
   const makePayment = () => {
+    console.log(currentSubscription);
     let url =
       currentSubscription?.invoices[0]?.invoice_data?.hosted_invoice_url;
     if (url) {
@@ -300,6 +303,31 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         </span>
                       </Text>
                     </Flex>
+                    {presentSubscription?.subscription_data?.status.toLowerCase() !=
+                      "active" && (
+                      <Alert
+                        status="info"
+                        fontSize="14px"
+                        py={1}
+                        mt={2}
+                        borderRadius="6px"
+                      >
+                        <AlertIcon />
+                        Just made payment? Click{" "}
+                        <Button
+                          onClick={() => {
+                            router.reload();
+                          }}
+                          py={0}
+                          px={1}
+                          bg="none"
+                          textDecoration="underline"
+                        >
+                          HERE
+                        </Button>{" "}
+                        to refresh
+                      </Alert>
+                    )}
                   </Box>
                 )}
               </>

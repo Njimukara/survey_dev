@@ -43,7 +43,8 @@ function DynamicLydar() {
   const [survey, setSurvey] = useState([]);
   const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const { surveys, lidar, getAllSurveys } = useAllSurveysContext();
-  const { surveyOptions } = useSurveyHistoryContext();
+  const { surveyOptions, getSurveyHistory, getCompanySurvey } =
+    useSurveyHistoryContext();
 
   const [surveyCode, setSurveyCode] = useState("S03");
   const [planning, setPlanning] = useState(false);
@@ -584,6 +585,8 @@ function DynamicLydar() {
           isClosable: true,
         });
         setPlanning(false);
+        getCompanySurvey();
+        getSurveyHistory();
       })
       .catch((error) => {
         console.log(error);

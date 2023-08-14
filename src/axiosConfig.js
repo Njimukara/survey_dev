@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { getSession } from "next-auth/react";
 
 const base_url = process.env.NEXT_PUBLIC_API_URL;
@@ -19,6 +20,7 @@ const ApiClient = () => {
     return request;
   });
 
+  axiosRetry(instance, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
   return instance;
 };
 

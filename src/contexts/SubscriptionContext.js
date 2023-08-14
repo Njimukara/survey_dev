@@ -20,10 +20,9 @@ export const SubscriptionProvider = ({ children }) => {
 
         try {
           const res = await axiosConfig.get(`/api/plans/subscription/${id}/`);
-          console.log(res.data);
           setCurrentSubscription(res.data);
         } catch (err) {
-          console.log("sub error", err);
+          // console.log("sub error", err);
           setCurrentSubscription(null);
         }
 
@@ -35,7 +34,7 @@ export const SubscriptionProvider = ({ children }) => {
 
       setLoading(false);
     } catch (err) {
-      console.log("sub error", err);
+      // console.log("sub error", err);
       setCurrentSubscription(null);
       setSubscriptions([]);
       setLoading(false);

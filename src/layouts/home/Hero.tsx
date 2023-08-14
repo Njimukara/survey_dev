@@ -76,7 +76,7 @@ const Hero = () => {
             data-cy="welcome-text"
             as="h1"
             mt="15%"
-            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
@@ -87,7 +87,7 @@ const Hero = () => {
           <Heading
             data-cy="welcome-text"
             as="h1"
-            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
@@ -99,7 +99,7 @@ const Hero = () => {
           <Heading
             data-cy="welcome-text"
             as="h1"
-            fontSize={{ base: "32px", md: "32px", lg: "43px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
