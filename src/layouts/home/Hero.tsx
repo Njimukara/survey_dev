@@ -8,8 +8,10 @@ import {
   Text,
   Flex,
   useColorModeValue,
+  Link,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 const Hero = () => {
   const router = useRouter();
   const primaryTextColor = useColorModeValue("gray.500", "gray.500");
@@ -76,7 +78,7 @@ const Hero = () => {
             data-cy="welcome-text"
             as="h1"
             mt="15%"
-            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "41px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
@@ -87,7 +89,7 @@ const Hero = () => {
           <Heading
             data-cy="welcome-text"
             as="h1"
-            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "41px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
@@ -99,7 +101,7 @@ const Hero = () => {
           <Heading
             data-cy="welcome-text"
             as="h1"
-            fontSize={{ base: "32px", md: "32px", lg: "40px" }}
+            fontSize={{ base: "32px", md: "32px", lg: "41px" }}
             fontWeight="700"
             letterSpacing="2px"
             lineHeight={"72px"}
@@ -122,16 +124,19 @@ const Hero = () => {
           </Text>
 
           <Flex alignItems="center" gap="5">
-            <Button
-              variant="homePrimary"
-              py="0"
-              w="150px"
-              h="48px"
-              fontSize="16px"
-              fontWeight="500"
-            >
-              Buy a licence
-            </Button>
+            <Link as={NextLink} href="#pricing">
+              <Button
+                variant="homePrimary"
+                py="0"
+                w="150px"
+                h="48px"
+                fontSize="16px"
+                fontWeight="500"
+              >
+                Buy a licence
+              </Button>
+            </Link>
+
             <Button
               variant="homeWhite"
               py="0"
@@ -144,6 +149,7 @@ const Hero = () => {
               borderColor="primary.500"
               backgroundColor="transparent"
               border="2px"
+              onClick={() => router.push("/auth/signin")}
             >
               Try Now
             </Button>

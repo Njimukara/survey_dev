@@ -9,17 +9,23 @@ import {
 } from "views/admin/default/variables/columnsData";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import NoData from "layouts/admin/noData";
+import { useSession } from "next-auth/react";
 
 export default function SurveyHistory() {
   // component variables
+  const { data: session } = useSession();
+
   const [allSurveyHistory, setAllsurveyHistory] = useState([]);
-  const { arrayHistory, getSurveyHistory } = useSurveyHistoryContext();
+  const [companyUser, setCompanyUser] = useState(2);
+
+  const { mergedCompanyHistory, pending, surveyHistory, companySurveyHistory } =
+    useSurveyHistoryContext();
 
   useEffect(() => {
-    if (!arrayHistory) {
-      getSurveyHistory();
+    if (session?.user?.data?.user_profile?.user_type === companyUser) {
+      setAllsurveyHistory(companySurveyHistory);
     } else {
-      setAllsurveyHistory(arrayHistory);
+      setAllsurveyHistory(surveyHistory);
     }
   }, []);
 

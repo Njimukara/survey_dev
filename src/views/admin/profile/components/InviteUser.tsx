@@ -133,6 +133,7 @@ export default function InviteUser(props: { [x: string]: any }) {
           <Card
             justifyContent="center"
             flexDirection="column"
+            fontFamily="Poppins"
             w="100%"
             mb="0px"
             {...rest}

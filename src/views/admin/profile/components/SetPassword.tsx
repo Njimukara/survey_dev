@@ -39,7 +39,13 @@ function PasswordCard({
   show,
 }: any) {
   return (
-    <Card justifyContent="center" flexDirection="column" w="100%" mb="0px">
+    <Card
+      justifyContent="center"
+      fontFamily="Poppins"
+      flexDirection="column"
+      w="100%"
+      mb="0px"
+    >
       {error &&
         Object.keys(error).map((err) => (
           <>

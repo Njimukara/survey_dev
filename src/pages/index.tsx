@@ -438,6 +438,7 @@ export default function Home() {
             bg="#F6F8FA"
           >
             <SimpleGrid
+              id="services"
               w="100vw"
               px="4%"
               pl="8%"
@@ -507,7 +508,7 @@ export default function Home() {
             bg="white"
             title="A simple and transaparent pricing just for you"
           >
-            <Tabs variant="unstyled" w="100vw" px="8%">
+            <Tabs id="pricing" variant="unstyled" w="100vw" px="8%">
               <TabList
                 justifyContent="center"
                 mb={{ base: "40px", lg: "40px" }}
@@ -668,7 +669,12 @@ export default function Home() {
           </Box>
 
           {/* Contact section  */}
-          <Box bg="#F6F8FA" py="5%" px={{ base: "2%", md: "3%", lg: "4%" }}>
+          <Box
+            id="resources"
+            bg="#F6F8FA"
+            py="5%"
+            px={{ base: "2%", md: "3%", lg: "4%" }}
+          >
             <Box w="100%" px="4%">
               <Heading color="primary.500" fontWeight="500" fontSize="20px">
                 Lets get in touch
@@ -722,7 +728,7 @@ export default function Home() {
                       team will review your message and respond to you shortly
                     </Text>
 
-                    <Flex flexDir="column" gap="5">
+                    <Flex flexDir="column" gap="5" fontFamily="Poppins">
                       <Flex alignItems="center">
                         <span>
                           <Icon
@@ -793,8 +799,8 @@ export default function Home() {
                       className={styles.circle_clip}
                       borderRadius="full"
                       width={{ base: "181px", lg: "281px" }}
-                      height={{ base: "181px", lg: "281px" }}
-                      left={{ base: "188px", lg: "320px" }}
+                      height={{ base: "181px", lg: "290px" }}
+                      left={{ base: "188px", lg: "340px" }}
                       top={{ base: "270px", lg: "335px" }}
                       zIndex={10}
                       background=" rgba(50, 3, 252, 0.08)"
@@ -818,7 +824,7 @@ export default function Home() {
                         flexDirection={{ base: "column", md: "row", lg: "row" }}
                         gap="5"
                       >
-                        <FormControl isRequired mb="35px">
+                        <FormControl isRequired mb="35px" fontFamily="Poppins">
                           <FormLabel color="#3C3C3C" mb="0" pb="0">
                             First Name
                           </FormLabel>
@@ -836,7 +842,7 @@ export default function Home() {
                             onBlur={handleBlur}
                           />
                         </FormControl>
-                        <FormControl isRequired mb="35px">
+                        <FormControl isRequired mb="35px" fontFamily="Poppins">
                           <FormLabel color="#3C3C3C" mb="0" pb="0">
                             Last Name
                           </FormLabel>
@@ -861,7 +867,7 @@ export default function Home() {
                         gap="5"
                         mb="35px"
                       >
-                        <FormControl isRequired>
+                        <FormControl isRequired fontFamily="Poppins">
                           <FormLabel color="#3C3C3C" mb="0" pb="0">
                             Email
                           </FormLabel>
@@ -879,7 +885,7 @@ export default function Home() {
                             onBlur={handleBlur}
                           />
                         </FormControl>
-                        <FormControl>
+                        <FormControl fontFamily="Poppins">
                           <FormLabel color="#3C3C3C" mb="0" pb="0">
                             Telephone
                           </FormLabel>
@@ -899,7 +905,7 @@ export default function Home() {
                           />
                         </FormControl>
                       </Flex>
-                      <FormControl isRequired>
+                      <FormControl isRequired fontFamily="Poppins">
                         <FormLabel color="#3C3C3C" mb="0" pb="0">
                           message
                         </FormLabel>
@@ -928,6 +934,7 @@ export default function Home() {
                         mt="10"
                         px="40px"
                         mb={2}
+                        fontFamily="Poppins"
                       >
                         Contact Us
                       </Button>

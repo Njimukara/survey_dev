@@ -21,6 +21,9 @@ export default extendTheme(
       body: `'Poppins', sans-serif`,
       html: `'Poppins', sans-serif`,
       p: `'Poppins', sans-serif`,
+      Text: `'Poppins', sans-serif`,
+      input: `'Poppins', sans-serif`,
+      label: `'Poppins', sans-serif`,
     },
     breakpoints,
     // colors: {

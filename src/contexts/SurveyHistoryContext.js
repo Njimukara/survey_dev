@@ -6,30 +6,28 @@ import { useSession } from "next-auth/react";
 export const SurveyHistory = React.createContext();
 
 export const SurveyHistoryProvider = ({ children }) => {
-  const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState(null);
-  const [pending, setPending] = useState(false);
-  const [arrayHistory, setArrayHistory] = useState(null);
-  const [surveyOptions, setSurveyOptions] = useState([]);
-  const [companySurveyHistory, setCompanySurveyHistory] = useState([]);
-  const [mergedCompanyHistory, setMergedCompanyHistory] = useState(null);
-
-  const [surveyOrder, setSurveyOrder] = useState("null");
-
+  const { subscriptions } = useSubscription();
   const { data: session } = useSession();
 
-  const [companyUser] = useState(2);
+  const [pending, setPending] = useState(true); // Set initial pending state to true
+  const [companyUser, setCompanyUser] = useState(2);
   const [surveyHistory, setSurveyHistory] = useState([]);
-  const [error, setError] = useState(null);
-  const { subscriptions } = useSubscription();
+  const [companySurveyHistory, setCompanySurveyHistory] = useState([]);
+  const [mergedCompanyHistory, setMergedCompanyHistory] = useState([]);
 
   const getSurveyHistory = useCallback(async () => {
-    setArrayHistory([]);
+    setPending(true); // Start pending
     setSurveyHistory([]);
     setCompanySurveyHistory([]);
-    let assignedSurveys = subscriptions[0]?.assigned_surveys;
 
+    // if (subscriptions.length === 0) {
+    //   setPending(false); // Set pending to false if no subscriptions
+    //   return;
+    // }
+
+    // Fetch survey history
     try {
+      const assignedSurveys = subscriptions[0]?.assigned_surveys;
       const fetchPromises = assignedSurveys.map(async (survey) => {
         const result = await axiosConfig.get(
           `api/surveys/${survey.code}/results/`
@@ -38,31 +36,26 @@ export const SurveyHistoryProvider = ({ children }) => {
       });
 
       const results = await Promise.all(fetchPromises);
-
       const combinedResults = results.reduce(
         (acc, cur) => [...acc, ...cur],
         []
       );
-
+      console.log(combinedResults);
       setSurveyHistory(combinedResults);
-      setArrayHistory(results);
-      getOptions(combinedResults);
+      setPending(false); // Fetching complete, set pending to false
     } catch (err) {
-      setError(err);
+      console.error("surveyhistory", err);
+      setPending(false); // Fetching failed, set pending to false
     }
-  }, [
-    // companyUser,
-    // session?.user?.data?.user_profile?.user_type,
-    subscriptions,
-  ]);
+  }, [subscriptions]);
 
   const getCompanySurvey = useCallback(async () => {
     setCompanySurveyHistory([]);
     setMergedCompanyHistory([]);
-    let assignedSurveys = subscriptions[0]?.assigned_surveys;
 
-    if (session?.user?.data?.user_profile?.user_type === companyUser) {
+    if (subscriptions.length > 0) {
       try {
+        const assignedSurveys = subscriptions[0]?.assigned_surveys;
         const surveyRequests = assignedSurveys.map(async (survey) => {
           const result = await axiosConfig.get(
             `api/surveys/${survey.code}/company-results/`
@@ -76,64 +69,34 @@ export const SurveyHistoryProvider = ({ children }) => {
           []
         );
 
-        setCompanySurveyHistory((prevHistory) => [...prevHistory, ...results]);
+        setCompanySurveyHistory(results);
         setMergedCompanyHistory(combinedResults);
       } catch (err) {
-        setError(err);
+        console.error(err);
       }
+    }
+  }, [subscriptions]);
+
+  useEffect(() => {
+    if (session?.user?.data?.user_profile?.user_type === companyUser) {
+      getCompanySurvey();
+    } else {
+      getSurveyHistory();
     }
   }, [
     companyUser,
     session?.user?.data?.user_profile?.user_type,
-    subscriptions,
+    getSurveyHistory,
+    getCompanySurvey,
   ]);
-
-  useEffect(() => {
-    if (subscriptions.length > 0) {
-      getSurveyHistory();
-      getCompanySurvey();
-    }
-  }, [subscriptions, getSurveyHistory, getCompanySurvey]);
-
-  // useEffect(() => {
-  //   getSurveyHistory();
-  // }, [getSurveyHistory]);
-
-  // useEffect(() => {
-  //   getCompanySurvey();
-  // }, [getCompanySurvey]);
-
-  const getOptions = (allSurvey) => {
-    const options = [];
-    allSurvey.map((survey) => {
-      let data = {
-        label: `${survey.name} - ${survey.survey}`,
-        value: survey,
-      };
-      options.push(data);
-    });
-    setSurveyOptions(options);
-  };
-
-  const updateSurveyOrder = (data) => {
-    setSurveyOrder(data);
-  };
 
   return (
     <SurveyHistory.Provider
       value={{
-        loading,
-        history,
         pending,
-        arrayHistory,
-        surveyOptions,
+        surveyHistory,
         companySurveyHistory,
         mergedCompanyHistory,
-        getSurveyHistory,
-        surveyHistory,
-        getCompanySurvey,
-        surveyOrder,
-        updateSurveyOrder,
       }}
     >
       {children}

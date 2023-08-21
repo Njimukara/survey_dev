@@ -33,6 +33,7 @@ const pieChartOptions: ApexGeneric = {
     position: "bottom",
     horizontalAlign: "center",
     fontSize: "14px",
+    fontFamily: "Poppins",
   },
   dataLabels: {
     enabled: true,
@@ -321,9 +322,7 @@ export default function Conversion(props: { [x: string]: any }) {
     [getAnalysis, mergedCompanyHistory, period, year, month]
   );
 
-  useEffect(() => {
-    console.log("piedata", data);
-  }, [data]);
+  useEffect(() => {}, [data]);
 
   const CalculatePieWeekData = (cperiod: string) => {
     setPeriod(cperiod);

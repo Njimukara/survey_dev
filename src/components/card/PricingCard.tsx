@@ -10,6 +10,7 @@ import {
   ListIcon,
   Card,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { MdCheckCircle, MdCheckCircleOutline } from "react-icons/md";
 // import Card from './Card'
 type ArrayObject = {
@@ -30,6 +31,7 @@ export const PricingCard = (props: PricingProps) => {
   const formatPrice = (price: number | any) => {
     return price / 100;
   };
+  const router = useRouter();
   return (
     <Card
       transition="all .2s ease-in-out"
@@ -102,6 +104,7 @@ export const PricingCard = (props: PricingProps) => {
               mx="5"
               mb="10px"
               mt="30px"
+              onClick={() => router.push("/auth/signin")}
             >
               Get Licence
             </Button>

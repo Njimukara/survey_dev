@@ -153,14 +153,16 @@ export default function Banner(props: {
               mr={2}
               bg="primary.600"
               variant="homePrimary"
-              py="5"
+              py="0"
+              h="48px"
               color="white"
             >
               Edit info
             </Button>
             <Button
               color="red.500"
-              py="4"
+              py="0"
+              h="48px"
               px="4"
               isDisabled
               borderColor="red.500"

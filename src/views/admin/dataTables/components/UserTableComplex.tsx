@@ -116,6 +116,7 @@ export default function UserTableComplex(props: TableProps) {
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const deleteTextColor = useColorModeValue("red.600", "red.600");
   const borderColor = useColorModeValue("gray.200", "gray.50");
+  const headerColor = useColorModeValue("gray.900", "secondary.600");
 
   // chakra toast
   const toast = useToast();
@@ -278,7 +279,6 @@ export default function UserTableComplex(props: TableProps) {
       overflowX={{ sm: "scroll", lg: "hidden" }}
       h="max-content"
       max-h="500"
-      fontFamily="inter"
     >
       <Flex px="25px" justify="space-between" mb="20px" align="center">
         <AlertDialog
@@ -329,7 +329,7 @@ export default function UserTableComplex(props: TableProps) {
           </AlertDialogOverlay>
         </AlertDialog>
       </Flex>
-      <Flex align="flex-end" px="5" pb="10">
+      <Flex align="flex-end" px="5" pb="10" fontFamily="Poppins">
         <Input
           placeholder="Search"
           value={searchTerm}
@@ -372,7 +372,9 @@ export default function UserTableComplex(props: TableProps) {
                     justify="space-between"
                     align="center"
                     fontSize={{ sm: "10px", lg: "12px" }}
-                    color="gray.400"
+                    fontFamily="Poppins"
+                    fontWeight="600"
+                    color={headerColor}
                   >
                     {column.render("Header")}
                   </Flex>
@@ -385,26 +387,26 @@ export default function UserTableComplex(props: TableProps) {
           {page.map((row, index) => {
             prepareRow(row);
             return (
-              <Tr {...row.getRowProps()} key={index}>
+              <Tr {...row.getRowProps()} key={index} fontFamily="Poppins">
                 {row.cells.map((cell, index) => {
                   let data;
                   if (cell.column.Header === "NAME") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "EMAIL") {
                     data = (
                       <Flex align="center">
-                        <Text color={textColor} fontSize="sm" fontWeight="700">
+                        <Text color={textColor} fontSize="sm" fontWeight="400">
                           {cell.value}
                         </Text>
                       </Flex>
                     );
                   } else if (cell.column.Header === "DATE JOINED") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {formatDate(cell.value)}
                       </Text>
                     );
@@ -423,7 +425,7 @@ export default function UserTableComplex(props: TableProps) {
                         px={0}
                         bgColor="transparent"
                         fontSize="sm"
-                        fontWeight="700"
+                        fontWeight="400"
                       >
                         {/* {cell.row.original?.is_active
                           ? "Block User"
@@ -444,7 +446,7 @@ export default function UserTableComplex(props: TableProps) {
                         px={0}
                         bgColor="transparent"
                         fontSize="sm"
-                        fontWeight="700"
+                        fontWeight="400"
                       >
                         Delete
                       </Button>

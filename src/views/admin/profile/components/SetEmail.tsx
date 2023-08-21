@@ -34,7 +34,13 @@ function EmailCard({
   closeModal,
 }: any) {
   return (
-    <Card justifyContent="center" flexDirection="column" w="100%" mb="0px">
+    <Card
+      justifyContent="center"
+      flexDirection="column"
+      fontFamily="Poppins"
+      w="100%"
+      mb="0px"
+    >
       {error &&
         Object.keys(error).map((err) => (
           <>

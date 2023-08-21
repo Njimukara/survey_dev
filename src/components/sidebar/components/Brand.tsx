@@ -10,7 +10,7 @@ export function SidebarBrand() {
   return (
     <Flex alignItems="center" flexDirection="column">
       <Box>
-        <Text mb="30px" fontSize="larger" fontWeight="bold">
+        <Text mb="30px" fontSize="larger" fontWeight="500">
           Survey Planner
         </Text>
       </Box>

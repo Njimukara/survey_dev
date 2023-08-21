@@ -88,18 +88,18 @@ const routes: IRoute[] = [
     ],
   },
   {
-    name: "Profile",
-    layout: "/admin",
-    path: "/profile",
-    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
-    component: Profile,
-  },
-  {
     name: "Survey History",
     layout: "/admin",
     path: "/survey-history",
     icon: <Icon as={MdHistory} width="20px" height="20px" color="inherit" />,
     component: SurveyHistory,
+  },
+  {
+    name: "Profile",
+    layout: "/admin",
+    path: "/profile",
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    component: Profile,
   },
 ];
 

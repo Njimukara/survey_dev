@@ -171,8 +171,9 @@ export default function TransactionTable(props: TableProps) {
                   <Flex
                     justify="space-between"
                     align="center"
-                    fontSize={{ sm: "10px", lg: "12px" }}
-                    color="gray.400"
+                    fontSize={{ sm: "10px", lg: "14px" }}
+                    color="gray.900"
+                    fontWeight="600"
                   >
                     {column.render("Header")}
                   </Flex>

@@ -302,7 +302,9 @@ export default function PendingUserInvite(props: TableProps) {
                     justify="space-between"
                     align="center"
                     fontSize={{ sm: "10px", lg: "12px" }}
-                    color="gray.400"
+                    fontFamily="Poppins"
+                    fontWeight="600"
+                    // color="gray.400"
                   >
                     {column.render("Header")}
                   </Flex>
@@ -315,19 +317,19 @@ export default function PendingUserInvite(props: TableProps) {
           {page.map((row, index) => {
             prepareRow(row);
             return (
-              <Tr {...row.getRowProps()} key={index}>
+              <Tr {...row.getRowProps()} key={index} fontFamily="Poppins">
                 {row.cells.map((cell, index) => {
                   let data;
                   if (cell.column.Header === "EMAIL") {
                     data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                      <Text color={textColor} fontSize="sm" fontWeight="400">
                         {cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "EXPIRY") {
                     data = (
                       <Flex align="center">
-                        <Text color={textColor} fontSize="sm" fontWeight="700">
+                        <Text color={textColor} fontSize="sm" fontWeight="400">
                           {formatDate(cell.value)}
                         </Text>
                       </Flex>
@@ -338,7 +340,8 @@ export default function PendingUserInvite(props: TableProps) {
                         bg="none"
                         onClick={() => copyToClipboard(cell.value)}
                         _hover={btnTransBgHover}
-                        py="1"
+                        py="0"
+                        h="48px"
                         px="0"
                         fontSize="sm"
                       >
@@ -355,7 +358,8 @@ export default function PendingUserInvite(props: TableProps) {
                         isDisabled={checkExpiry(cell.row.original)}
                         variant="homePrimary"
                         px="3"
-                        py="1"
+                        py="0"
+                        h="48px"
                         fontSize="sm"
                       >
                         resend
@@ -376,8 +380,9 @@ export default function PendingUserInvite(props: TableProps) {
                         border="solid"
                         color="red.300"
                         borderColor="red.300"
-                        py="1"
+                        py="0"
                         px="3"
+                        height="48px"
                         fontSize="sm"
                       >
                         revoke

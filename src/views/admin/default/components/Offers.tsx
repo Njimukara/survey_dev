@@ -91,7 +91,7 @@ export default function Offers(props: { [x: string]: any }) {
     >
       <Icon as={BiErrorCircle} boxSize={24} color="#3A2FB71F" />
       <Text fontSize="16px" fontWeight="400">
-        No offers currently available
+        No discounts or promotions or now
       </Text>
     </Card>
   );

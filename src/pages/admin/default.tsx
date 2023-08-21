@@ -95,27 +95,8 @@ export default function UserReports(props: { [x: string]: any }) {
   // chakra toast
   const toast = useToast();
 
-  const formatPrice = (price: number) => {
-    return price / 100;
-  };
-
   const invertedArray = useMemo(() => {
     return [...subscriptions].reverse();
-  }, [subscriptions]);
-
-  const totalExpenditure = useMemo(() => {
-    let expenditure = 0;
-    subscriptions.forEach((sub: any) => {
-      if (
-        !sub?.subscription_data?.status
-          .toLowerCase()
-          .includes("trialing" || "incomplete")
-      ) {
-        expenditure = expenditure + sub?.subscription_data?.plan?.amount;
-      }
-    });
-    expenditure = formatPrice(expenditure);
-    return expenditure;
   }, [subscriptions]);
 
   const getCompanyMembers = useCallback(async () => {
@@ -201,7 +182,11 @@ export default function UserReports(props: { [x: string]: any }) {
                 />
               }
               name="Surveys"
-              value={!pending ? surveyHistory.length : 0}
+              value={
+                !pending && user?.user_profile?.user_type != companyUser
+                  ? surveyHistory.length
+                  : mergedCompanyHistory.length
+              }
             />
             {user?.user_profile?.user_type == companyUser ? (
               <MiniStatistics
