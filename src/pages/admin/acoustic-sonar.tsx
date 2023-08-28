@@ -583,7 +583,7 @@ export default function AcousticSonar() {
       .then((res) => {
         setResults(res.data);
         setSurveyParameters(res.data.results);
-        // console.log(res);
+        console.log(res);
         toast({
           position: "bottom-right",
           description: "Successful",
@@ -592,8 +592,8 @@ export default function AcousticSonar() {
           isClosable: true,
         });
         setPlanning(false);
-        getCompanySurvey();
-        getSurveyHistory();
+        // getCompanySurvey();
+        // getSurveyHistory();
       })
       .catch((error) => {
         console.log(error);

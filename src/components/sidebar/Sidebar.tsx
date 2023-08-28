@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { Button, IconButton } from "@chakra-ui/react";
+import { IoMenuOutline, IoArrowBackOutline } from "react-icons/io5";
 
 // chakra imports
 import {
@@ -22,7 +24,6 @@ import {
 import { Scrollbars } from "react-custom-scrollbars-2";
 
 // Assets
-import { IoMenuOutline } from "react-icons/io5";
 import { IRoute } from "../../../types/navigation";
 import { isWindowAvailable } from "utils/navigation";
 
@@ -36,6 +37,7 @@ interface SidebarProps extends SidebarResponsiveProps {
 
 function Sidebar(props: SidebarProps) {
   const { routes } = props;
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   let variantChange = "0.2s linear";
   let shadow = useColorModeValue(
@@ -52,17 +54,20 @@ function Sidebar(props: SidebarProps) {
       display={{ sm: "none", xl: "block" }}
       position="fixed"
       minH="100%"
-      fontFamily="inter"
+      fontFamily="Poppins"
     >
       <Box
         bg={sidebarBg}
-        transition={variantChange}
-        w="300px"
+        // transition={variantChange}
+        // w="300px"
+        w={isCollapsed ? "60px" : "300px"}
         h="100vh"
         m={sidebarMargins}
         minH="100%"
         overflowX="hidden"
         boxShadow={shadow}
+        position="relative"
+        transition="width 0.2s linear"
       >
         <Scrollbars
           autoHide
@@ -72,6 +77,20 @@ function Sidebar(props: SidebarProps) {
         >
           <Content routes={routes} />
         </Scrollbars>
+
+        <IconButton
+          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          icon={isCollapsed ? <IoArrowBackOutline /> : <IoMenuOutline />}
+          my="auto"
+          w="20px"
+          h="20px"
+          me="10px"
+          _hover={{ cursor: "pointer" }}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          position="absolute"
+          bottom="0" // Position the button at the bottom
+          left={isCollapsed ? "0" : "270px"}
+        />
       </Box>
     </Box>
   );

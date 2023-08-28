@@ -4,24 +4,24 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 // Custom components
 import Card from "components/card/Card";
 import PieChart from "components/charts/PieChart";
-// import { pieChartData, pieChartOptions } from "variables/charts";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import { ApexOptions } from "apexcharts";
-import DonutChart from "components/charts/DonutChart";
 
 type ApexGeneric = ApexOptions & any;
 
-interface DonutChartData {
-  name: string;
-  count: number;
-}
+const defaultColors = [
+  "#C478FF",
+  "#0096FF",
+  "#301934",
+  "#00A92F",
+  "#3A2FB7",
+  "#FFC300",
+  "#4CAF50",
+  "#E91E63",
+  "#9C27B0",
+];
 
-interface SurveyCountByUser {
-  userId: string;
-  name: string;
-  count: number;
-}
 const pieChartOptions: ApexGeneric = {
   labels: ["User 1", "User 2", "User 3", "User 4", "User 5"],
   colors: [],
@@ -38,7 +38,7 @@ const pieChartOptions: ApexGeneric = {
   dataLabels: {
     enabled: true,
     formatter: function (val: number) {
-      return val + "%";
+      return val.toFixed(2) + "%";
     },
   },
   hover: { mode: true },
@@ -74,18 +74,8 @@ const monthOptions = [
   { value: 11, label: "December" },
 ];
 
-function generateRandomColor() {
-  const red = Math.floor(Math.random() * 256);
-  const green = Math.floor(Math.random() * 256);
-  const blue = Math.floor(Math.random() * 256);
-  const newColor = `rgb(${red}, ${green}, ${blue})`;
-  return newColor;
-}
-
 export default function Conversion(props: { [x: string]: any }) {
   const { companySurvey, ...rest } = props;
-
-  const font_family = "Poppins";
 
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -95,145 +85,15 @@ export default function Conversion(props: { [x: string]: any }) {
     { bg: "primary.700", color: "secondaryGray.900" }
   );
 
-  const { getCompanySurvey, mergedCompanyHistory } = useSurveyHistoryContext();
+  const { mergedCompanyHistory } = useSurveyHistoryContext();
 
-  const [pieData, setPieData] = useState(null);
   const [period, setPeriod] = useState("year");
   const [month, setMonth] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
 
   const changeMonth = (e: any) => {
     setMonth(e.value);
-    // let data = getAnalysis(mergedCompanyHistory, period, year, e.value);
-    // setPieData(data);
   };
-
-  // const getSurveyCountsByUser = (surveys: any) => {
-  //   const surveyCountsByUser: { [userId: string]: DonutChartData } = {};
-  //   surveys.forEach((survey: any) => {
-  //     const userId = survey.user?.id;
-  //     const userName = survey.user?.name;
-
-  //     if (surveyCountsByUser[userId]) {
-  //       surveyCountsByUser[userId].count++;
-  //     } else {
-  //       surveyCountsByUser[userId] = { name: userName, count: 1 };
-  //     }
-  //   });
-
-  //   return Object.values(surveyCountsByUser);
-  // };
-
-  // useEffect(() => {
-  //   console.log("pie", companySurvey);
-  // });
-
-  // const groupSurveysByTimePeriod = (
-  //   surveys: any[],
-  //   timePeriod: string,
-  //   year: number,
-  //   month?: number
-  // ): DonutChartData[] => {
-  //   const groups: DonutChartData[] = [];
-  //   if (surveys && surveys.length > 0) {
-  //     switch (timePeriod) {
-  //       case "week":
-  //         for (let week = 1; week <= 5; week++) {
-  //           const weekStart = new Date(year, month || 0, week * 7 - 6);
-  //           const weekEnd = new Date(year, month || 0, week * 7);
-
-  //           const weekSurveys = surveys.filter((survey: any) => {
-  //             const surveyDate = new Date(survey.created);
-  //             return surveyDate >= weekStart && surveyDate <= weekEnd;
-  //           });
-
-  //           groups.push(...getSurveyCountsByUser(weekSurveys));
-  //         }
-  //         break;
-  //       case "month":
-  //         const monthStart = new Date(year, month, 1);
-  //         const monthEnd = new Date(year, month + 1, 0);
-
-  //         const monthSurveys = surveys.filter((survey: any) => {
-  //           const surveyDate = new Date(survey.created);
-  //           return surveyDate >= monthStart && surveyDate <= monthEnd;
-  //         });
-
-  //         groups.push(...getSurveyCountsByUser(monthSurveys));
-  //         break;
-  //       case "year":
-  //         const yearStart = new Date(year, 0, 1);
-  //         const yearEnd = new Date(year, 11, 31);
-
-  //         const yearSurveys = surveys.filter((survey: any) => {
-  //           const surveyDate = new Date(survey.created);
-  //           return surveyDate >= yearStart && surveyDate <= yearEnd;
-  //         });
-
-  //         groups.push(...getSurveyCountsByUser(yearSurveys));
-  //         break;
-  //       default:
-  //         throw new Error(`Invalid time period: ${timePeriod}`);
-  //     }
-  //     return groups;
-  //   }
-  //   return;
-  // };
-
-  // const groupSurveysByTimePeriod = useCallback(
-  //   (
-  //     surveys: any[],
-  //     timePeriod: string,
-  //     year: number,
-  //     month?: number
-  //   ): DonutChartData[] | undefined => {
-  //     const groups: DonutChartData[] = [];
-  //     if (surveys && surveys.length > 0) {
-  //       switch (timePeriod) {
-  //         case "week":
-  //           for (let week = 1; week <= 5; week++) {
-  //             const weekStart = new Date(year, month || 0, week * 7 - 6);
-  //             const weekEnd = new Date(year, month || 0, week * 7);
-
-  //             const weekSurveys = surveys.filter((survey: any) => {
-  //               const surveyDate = new Date(survey.created);
-  //               return surveyDate >= weekStart && surveyDate <= weekEnd;
-  //             });
-
-  //             groups.push(...getSurveyCountsByUser(weekSurveys));
-  //           }
-  //           break;
-  //         case "month":
-  //           const monthStart = new Date(year, month, 1);
-  //           const monthEnd = new Date(year, month + 1, 0);
-
-  //           const monthSurveys = surveys.filter((survey: any) => {
-  //             const surveyDate = new Date(survey.created);
-  //             return surveyDate >= monthStart && surveyDate <= monthEnd;
-  //           });
-
-  //           groups.push(...getSurveyCountsByUser(monthSurveys));
-  //           break;
-  //         case "year":
-  //           const yearStart = new Date(year, 0, 1);
-  //           const yearEnd = new Date(year, 11, 31);
-
-  //           const yearSurveys = surveys.filter((survey: any) => {
-  //             const surveyDate = new Date(survey.created);
-  //             return surveyDate >= yearStart && surveyDate <= yearEnd;
-  //           });
-
-  //           groups.push(...getSurveyCountsByUser(yearSurveys));
-  //           break;
-  //         default:
-  //           throw new Error(`Invalid time period: ${timePeriod}`);
-  //       }
-  //       return groups;
-  //     }
-  //     return undefined;
-  //   },
-  //   []
-  // );
 
   const getSurveyCountsByUser = (surveys: any) => {
     const surveyCountsByUser: any = {};
@@ -259,16 +119,6 @@ export default function Conversion(props: { [x: string]: any }) {
       const groups: any[] = [];
       if (surveys && surveys.length > 0) {
         switch (timePeriod) {
-          // case "week":
-          //   const weekStart = new Date(year, month || 0, 3 * 7 - 6);
-          //   const weekEnd = new Date(year, month || 0, 3 * 7);
-          //   const weekSurveys = surveys.filter((survey: any) => {
-          //     const surveyDate = new Date(survey.created);
-          //     return surveyDate >= weekStart && surveyDate <= weekEnd;
-          //   });
-          //   groups.push(getSurveyCountsByUser(weekSurveys));
-          //   break;
-
           case "month":
             const monthStart = new Date(year, month, 1);
             const monthEnd = new Date(year, month + 1, 0);
@@ -297,10 +147,7 @@ export default function Conversion(props: { [x: string]: any }) {
 
         pieChartOptions.labels = labels;
 
-        const newColors = [];
-        for (let i = 0; i < labels.length; i++) {
-          newColors.push(generateRandomColor());
-        }
+        const newColors = defaultColors.slice(0, labels.length);
 
         pieChartOptions.colors = newColors;
         return { labels, counts };
@@ -321,8 +168,6 @@ export default function Conversion(props: { [x: string]: any }) {
     () => getAnalysis(mergedCompanyHistory, period, year, month),
     [getAnalysis, mergedCompanyHistory, period, year, month]
   );
-
-  useEffect(() => {}, [data]);
 
   const CalculatePieWeekData = (cperiod: string) => {
     setPeriod(cperiod);
@@ -409,8 +254,6 @@ export default function Conversion(props: { [x: string]: any }) {
           </Button>
         </Box>
       </Flex>
-
-      {/* {data && <DonutChart data={data} width={300} height={300} />} */}
 
       {data && (
         <PieChart

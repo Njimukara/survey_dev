@@ -14,11 +14,13 @@ export const SurveyHistoryProvider = ({ children }) => {
   const [surveyHistory, setSurveyHistory] = useState([]);
   const [companySurveyHistory, setCompanySurveyHistory] = useState([]);
   const [mergedCompanyHistory, setMergedCompanyHistory] = useState([]);
+  const [surveyOptions, setSurveyOptions] = useState([]);
 
   const getSurveyHistory = useCallback(async () => {
     setPending(true); // Start pending
     setSurveyHistory([]);
     setCompanySurveyHistory([]);
+    setSurveyOptions([]);
 
     // if (subscriptions.length === 0) {
     //   setPending(false); // Set pending to false if no subscriptions
@@ -42,6 +44,7 @@ export const SurveyHistoryProvider = ({ children }) => {
       );
       console.log(combinedResults);
       setSurveyHistory(combinedResults);
+      getOptions(combinedResults);
       setPending(false); // Fetching complete, set pending to false
     } catch (err) {
       console.error("surveyhistory", err);
@@ -52,6 +55,7 @@ export const SurveyHistoryProvider = ({ children }) => {
   const getCompanySurvey = useCallback(async () => {
     setCompanySurveyHistory([]);
     setMergedCompanyHistory([]);
+    setSurveyOptions([]);
 
     if (subscriptions.length > 0) {
       try {
@@ -71,11 +75,24 @@ export const SurveyHistoryProvider = ({ children }) => {
 
         setCompanySurveyHistory(results);
         setMergedCompanyHistory(combinedResults);
+        getOptions(combinedResults);
       } catch (err) {
         console.error(err);
       }
     }
   }, [subscriptions]);
+
+  const getOptions = (allSurvey) => {
+    const options = [];
+    allSurvey.map((survey) => {
+      let data = {
+        label: `${survey.name} - ${survey.survey}`,
+        value: survey,
+      };
+      options.push(data);
+    });
+    setSurveyOptions(options);
+  };
 
   useEffect(() => {
     if (session?.user?.data?.user_profile?.user_type === companyUser) {
@@ -95,6 +112,7 @@ export const SurveyHistoryProvider = ({ children }) => {
       value={{
         pending,
         surveyHistory,
+        surveyOptions,
         companySurveyHistory,
         mergedCompanyHistory,
       }}

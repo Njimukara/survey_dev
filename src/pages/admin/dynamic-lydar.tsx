@@ -585,8 +585,8 @@ function DynamicLydar() {
           isClosable: true,
         });
         setPlanning(false);
-        getCompanySurvey();
-        getSurveyHistory();
+        // getCompanySurvey();
+        // getSurveyHistory();
       })
       .catch((error) => {
         console.log(error);

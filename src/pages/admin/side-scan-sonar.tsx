@@ -532,8 +532,8 @@ function EchoSounder() {
       .then((res) => {
         setResults(res.data);
         setPlanning(false);
-        getCompanySurvey();
-        getSurveyHistory();
+        // getCompanySurvey();
+        // getSurveyHistory();
       })
       .catch((error) => {
         setPlanning(false);

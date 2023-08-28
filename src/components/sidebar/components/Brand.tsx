@@ -6,11 +6,18 @@ import { HSeparator } from "components/separator/Separator";
 
 export function SidebarBrand() {
   //   Chakra color mode
+  const font_family = "Poppins";
 
   return (
     <Flex alignItems="center" flexDirection="column">
-      <Box>
-        <Text mb="30px" fontSize="larger" fontWeight="500">
+      <Box pe={{ lg: "20px", "2xl": "20px" }}>
+        <Text
+          mb="30px"
+          fontFamily={font_family}
+          fontSize="32px"
+          textAlign="center"
+          fontWeight="600"
+        >
           Survey Planner
         </Text>
       </Box>

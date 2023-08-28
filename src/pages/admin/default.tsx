@@ -32,7 +32,13 @@ import {
 } from "@chakra-ui/react";
 
 // Assets
-import { MdAttachMoney, MdFileCopy } from "react-icons/md";
+import {
+  MdAttachMoney,
+  MdCancel,
+  MdCheckCircle,
+  MdFileCopy,
+  MdOutlineError,
+} from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 
 // Custom components
@@ -45,7 +51,11 @@ import AdminLayout from "layouts/admin";
 import Card from "components/card/Card";
 import PieCard from "views/admin/default/components/PieCard";
 import Offers from "views/admin/default/components/Offers";
-import { columnsDataComplex } from "views/admin/default/variables/columnsData";
+import {
+  columnsDataComplex,
+  RealComplexHeader,
+  TableColumn,
+} from "views/admin/default/variables/columnsData";
 import Users from "views/admin/default/components/Users";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
@@ -60,6 +70,58 @@ import TransactionTable from "views/admin/default/components/TransactionTable";
 import { useSubscription } from "contexts/SubscriptionContext";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
+import ReusableTable from "views/admin/dataTables/components/Table";
+
+const columnsData: TableColumn[] = [
+  {
+    Header: "Status",
+    accessor: "status",
+    Cell: ({ value }) => {
+      let icon;
+      let color;
+      switch (value) {
+        case "active":
+          icon = <MdCheckCircle />;
+          color = "green.500";
+          break;
+        case "past_due":
+          icon = <MdOutlineError />;
+          color = "orange.500";
+          break;
+        case "canceled":
+        case "trialing":
+          icon = <MdCancel />;
+          color = "red.500";
+          break;
+        default:
+          icon = null;
+          color = "gray.500";
+          break;
+      }
+
+      return (
+        <Flex align="center">
+          {icon}
+          <Text color={color} fontSize="sm" fontWeight="400">
+            {value.toUpperCase()}
+          </Text>
+        </Flex>
+      );
+    },
+  },
+  {
+    Header: "AMOUNT",
+    accessor: "plan",
+  },
+  {
+    Header: "DATE",
+    accessor: "start_date",
+  },
+  {
+    Header: "PAYMENT",
+    accessor: "payment",
+  },
+];
 
 export default function UserReports(props: { [x: string]: any }) {
   interface User {
@@ -279,9 +341,15 @@ export default function UserReports(props: { [x: string]: any }) {
               mb="30px"
             >
               {invertedArray.length > 0 ? (
-                <TransactionTable
-                  columnsData={columnsDataComplex}
-                  tableData={invertedArray}
+                // <TransactionTable
+                //   columnsData={columnsDataComplex}
+                //   tableData={invertedArray}
+                // />
+                <ReusableTable
+                  columns={columnsData}
+                  data={invertedArray}
+                  searchPlaceholder="Input Search"
+                  tableName="Transaction Data"
                 />
               ) : (
                 <NoData title="No subscription history" />

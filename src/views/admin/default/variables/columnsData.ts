@@ -38,6 +38,25 @@ export const columnsDataComplex = [
   },
 ];
 
+export const RealComplexHeader = [
+  {
+    Header: "AMOUNT",
+    accessor: "plan",
+  },
+  {
+    Header: "STATUS",
+    accessor: "status",
+  },
+  {
+    Header: "DATE",
+    accessor: "start_date",
+  },
+  {
+    Header: "PAYMENT",
+    accessor: "payment",
+  },
+];
+
 export const columnsDataSurvey = [
   {
     Header: "NAME",
@@ -85,3 +104,10 @@ export type TableProps = {
   getInvitations?: any;
   getCompanyMembers?: [] | any;
 };
+
+export interface TableColumn {
+  Header: string;
+  accessor: string;
+  Cell?: (cellProps: any) => JSX.Element;
+  icon?: JSX.Element;
+}

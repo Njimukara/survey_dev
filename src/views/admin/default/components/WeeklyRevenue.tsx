@@ -1,34 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { Box, Button, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
 import Card from "components/card/Card";
-import BarChart from "components/charts/BarChart";
-import {
-  barChartOptionsConsumption,
-  barChartOptionsDailyTraffic,
-} from "variables/charts";
+
 import { MdBarChart } from "react-icons/md";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import NoData from "layouts/admin/noData";
 import { useAllSurveysContext } from "contexts/SurveyContext";
-import DBarChart from "components/charts/DBarChart";
+import ABarChart from "components/charts/ABarChart";
 
 interface SurveyOptions {
   value: number;
   label: string;
-}
-
-interface ChatOptions {
-  xaxis: {
-    categories: string[];
-  };
 }
 
 interface WeeklyRevenueProps {
@@ -62,29 +45,23 @@ const calculateWeeksInMonth = (year: number, month: number): number => {
   return weeksInMonth;
 };
 
-// Calculate the start date of a specific week in a given month and year
-const getWeekStartDate = (year: number, month: number, week: number): Date => {
+// Calculate the week number within a month
+const calculateWeekNumber = (
+  year: number,
+  month: number,
+  day: number
+): number => {
   const firstDayOfMonth = new Date(year, month, 1);
-  const firstDayOfWeek = new Date(year, month, (week - 1) * 7 + 1);
-  const startDiff = firstDayOfWeek.getDay() - firstDayOfMonth.getDay();
-  const startDate = new Date(firstDayOfWeek);
-  startDate.setDate(firstDayOfWeek.getDate() - startDiff);
-  return startDate;
+  const dayOfWeek = firstDayOfMonth.getDay();
+  const firstWeekDays = 7 - dayOfWeek;
+  return Math.ceil((day + firstWeekDays) / 7);
 };
 
-// Calculate the end date of a specific week in a given month and year
-const getWeekEndDate = (year: number, month: number, week: number): Date => {
-  const startDate = getWeekStartDate(year, month, week);
-  const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + 6);
-  return endDate;
-};
 export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   const { ...rest } = props;
 
   const font_family: string = "Poppins";
 
-  const textColor: string = useColorModeValue("secondaryGray.900", "white");
   const iconColor: string = useColorModeValue("brand.500", "white");
   const bgButton: string = useColorModeValue(
     "secondaryGray.300",
@@ -99,52 +76,24 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
     { bg: "whiteAlpha.100" }
   );
 
-  const [surveyHistory, setSurveyHistory] = useState<any>(null);
+  const [, setSurveyHistory] = useState<any>(null);
   const [surveyChartData, setSurveyChartData] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<number>(2); // 2 for Monthly Analysis, 1 for Weekly Analysis
   const [currentMonth, setCurrentMonth] = useState<number>(
     new Date().getMonth()
   );
-  const [currentYear, setCurrentYear] = useState<number>(
-    new Date().getFullYear()
-  );
-  const [chatOptions, setChatOptions] = useState<ChatOptions>(
-    barChartOptionsDailyTraffic
-  );
+  const [currentYear] = useState<number>(new Date().getFullYear());
 
   const { companySurveyHistory, getSurveyHistory } = useSurveyHistoryContext();
   const { surveys } = useAllSurveysContext();
 
-  const surveyNameMapping: { [key: number]: string } = {};
-  surveys?.forEach((survey: any) => {
-    surveyNameMapping[survey.id] = survey.name;
-  });
-
-  // const getAnalysisData = (
-  //   surveys: any[],
-  //   analysisType: number,
-  //   month: number
-  // ) => {
-  //   const analysisData: any[][] = [];
-
-  //   for (let i = 0; i < (analysisType === 2 ? 1 : 5); i++) {
-  //     const startDate = new Date(2023, month, i * 7 + 1);
-  //     const endDate = new Date(2023, month, i * 7 + 7);
-
-  //     const weekData = surveys.map((element: any[]) => {
-  //       return element.filter((survey: any) => {
-  //         const surveyDate = new Date(survey.created);
-  //         return surveyDate >= startDate && surveyDate <= endDate;
-  //       });
-  //     });
-
-  //     analysisData.push(weekData);
-  //   }
-
-  //   return analysisData;
-  // };
-
-  // Calculate the number of weeks in a given month and year
+  const surveyNameMapping = useMemo(() => {
+    const mapping: { [key: number]: string } = {};
+    surveys?.forEach((survey: any) => {
+      mapping[survey.id] = survey.name;
+    });
+    return mapping;
+  }, [surveys]);
 
   const getAnalysisData = (
     surveys: any[],
@@ -185,209 +134,56 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
     return analysisData;
   };
 
-  // Calculate the week number within a month
-  const calculateWeekNumber = (
-    year: number,
-    month: number,
-    day: number
-  ): number => {
-    const firstDayOfMonth = new Date(year, month, 1);
-    const dayOfWeek = firstDayOfMonth.getDay();
-    const firstWeekDays = 7 - dayOfWeek;
-    return Math.ceil((day + firstWeekDays) / 7);
-  };
+  const getMonthlyData = useCallback(
+    (surveyData: any[], selectedMonth: number) => {
+      const formattedData: { label: string; value: number }[] = [];
 
-  // const getMonthlyData = (surveyData: any[]): any[] => {
-  //   const data: any[] = [];
-  //   const chartData: any = {
-  //     name: "Monthly Analysis",
-  //     data: [],
-  //   };
+      const surveyTypeCounts: Record<string, number> = {};
 
-  //   chartData.data = surveyData.map((surveyWeek: any[]) => {
-  //     if (surveyWeek[0]) {
-  //       const surveyName = surveyNameMapping[surveyWeek[0].survey];
-  //       chatOptions.xaxis.categories.push(surveyName);
-  //     }
-  //     return surveyWeek.length;
-  //   });
-
-  //   data.push(chartData);
-  //   return data;
-  // };
-
-  // const getMonthlyData = (surveyData: any[], selectedMonth: number): any[] => {
-  //   const data: any[] = [];
-  //   const chartData: any = {
-  //     name: "Monthly Analysis",
-  //     data: [],
-  //   };
-
-  //   // Collect survey counts for each type
-  //   const surveyTypeCounts: Record<string, number> = {};
-
-  //   surveyData.forEach((surveyWeek: any[]) => {
-  //     surveyWeek.forEach((survey: any) => {
-  //       const surveyDate = new Date(survey.created);
-  //       if (surveyDate.getMonth() === selectedMonth) {
-  //         const surveyType = surveyNameMapping[survey.survey];
-  //         if (surveyType) {
-  //           if (surveyTypeCounts[surveyType]) {
-  //             surveyTypeCounts[surveyType]++;
-  //           } else {
-  //             surveyTypeCounts[surveyType] = 1;
-  //           }
-  //         }
-  //       }
-  //     });
-  //   });
-
-  //   // Populate chart data with survey type counts
-  //   for (const surveyType in surveyTypeCounts) {
-  //     console.log(surveyType);
-  //     if (surveyTypeCounts.hasOwnProperty(surveyType)) {
-  //       chartData.data.push(surveyTypeCounts[surveyType]);
-  //       chatOptions.xaxis.categories.push(surveyType);
-  //     }
-  //   }
-
-  //   data.push(chartData);
-  //   console.log(data);
-  //   return data;
-  // };
-
-  const getMonthlyData = (
-    surveyData: any[],
-    selectedMonth: number
-  ): { label: string; value: number }[] => {
-    const formattedData: { label: string; value: number }[] = [];
-
-    // Collect survey counts for each type
-    const surveyTypeCounts: Record<string, number> = {};
-
-    surveyData.forEach((surveyWeek: any[]) => {
-      surveyWeek.forEach((survey: any) => {
-        const surveyDate = new Date(survey.created);
-        if (surveyDate.getMonth() === selectedMonth) {
-          const surveyType = surveyNameMapping[survey.survey];
-          if (surveyType) {
-            if (surveyTypeCounts[surveyType]) {
-              surveyTypeCounts[surveyType]++;
-            } else {
-              surveyTypeCounts[surveyType] = 1;
+      surveyData.forEach((surveyWeek: any[]) => {
+        surveyWeek.forEach((survey: any) => {
+          const surveyDate = new Date(survey.created);
+          if (surveyDate.getMonth() === selectedMonth) {
+            const surveyType = surveyNameMapping[survey.survey];
+            if (surveyType) {
+              surveyTypeCounts[surveyType] =
+                (surveyTypeCounts[surveyType] || 0) + 1;
             }
           }
-        }
-      });
-    });
-
-    // Populate formatted data with survey type counts
-    for (const surveyType in surveyTypeCounts) {
-      if (surveyTypeCounts.hasOwnProperty(surveyType)) {
-        formattedData.push({
-          label: surveyType,
-          value: surveyTypeCounts[surveyType],
         });
-      }
-    }
-
-    return formattedData;
-  };
-
-  const formatData = (analysisData: any[][]): any[] => {
-    const data: any[] = [];
-    chatOptions.xaxis.categories = [];
-
-    analysisData.forEach((weekData, index) => {
-      const chartData: any = {
-        name: selectedOption === 2 ? "Monthly Analysis" : `Week ${index + 1}`,
-        data: [],
-      };
-
-      chatOptions.xaxis.categories.push(chartData.name);
-
-      weekData.forEach((surveyData) => {
-        chartData.data.push(surveyData.length);
       });
 
-      data.push(chartData);
-    });
-
-    return data;
-  };
-
-  // const formatMonthlyData = (analysisData: any[]): any[] => {
-  //   const data: any[] = [];
-  //   chatOptions.xaxis.categories = [];
-
-  //   analysisData.forEach((weekData, index) => {
-  //     const chartData: any = {
-  //       name: selectedOption === 2 ? "Monthly Analysis" : `Week ${index + 1}`,
-  //       data: [],
-  //     };
-
-  //     chatOptions.xaxis.categories.push(chartData.name);
-
-  //     for (const surveyType in weekData) {
-  //       if (weekData.hasOwnProperty(surveyType)) {
-  //         chartData.data.push(weekData[surveyType]);
-  //       }
-  //     }
-
-  //     data.push(chartData);
-  //   });
-
-  //   return data;
-  // };
-
-  const formatMonthlyData = (
-    analysisData: any[]
-  ): { label: string; value: number }[] => {
-    const formattedData: { label: string; value: number }[] = [];
-
-    analysisData.forEach((weekData, index) => {
-      const dataForWeek: { label: string; value: number } = {
-        label: selectedOption === 2 ? "Monthly Analysis" : `Week ${index + 1}`,
-        value: 0, // Initialize the value, you can update this according to your data logic
-      };
-
-      for (const surveyType in weekData) {
-        if (weekData.hasOwnProperty(surveyType)) {
-          dataForWeek.value += weekData[surveyType];
+      for (const surveyType in surveyTypeCounts) {
+        if (surveyTypeCounts.hasOwnProperty(surveyType)) {
+          formattedData.push({
+            label: surveyType,
+            value: surveyTypeCounts[surveyType],
+          });
         }
       }
 
-      formattedData.push(dataForWeek);
-    });
+      return formattedData;
+    },
+    [surveyNameMapping]
+  );
 
-    return formattedData;
-  };
-
-  useEffect(() => {
+  const chartData = useMemo(() => {
     if (!companySurveyHistory) {
-      // Fetch data if needed
-    } else {
-      setSurveyHistory(companySurveyHistory);
-
-      let barChartData: any[];
-
-      if (selectedOption === 2) {
-        barChartData = getMonthlyData(companySurveyHistory, currentMonth);
-        setChatOptions(barChartOptionsDailyTraffic);
-        // setSurveyChartData(formatMonthlyData(barChartData));
-        setSurveyChartData(barChartData);
-      } else {
-        barChartData = getAnalysisData(
-          companySurveyHistory,
-          currentMonth,
-          currentYear
-        );
-        setChatOptions(barChartOptionsConsumption);
-        console.log(barChartData);
-        setSurveyChartData(barChartData);
-      }
+      return [];
     }
-  }, [companySurveyHistory, selectedOption, currentMonth, currentYear]);
+
+    if (selectedOption === 2) {
+      return getMonthlyData(companySurveyHistory, currentMonth);
+    } else {
+      return getAnalysisData(companySurveyHistory, currentMonth, currentYear);
+    }
+  }, [
+    companySurveyHistory,
+    selectedOption,
+    currentMonth,
+    currentYear,
+    getMonthlyData,
+  ]);
 
   const handleChange = (e: SurveyOptions) => {
     setSelectedOption(e.value);
@@ -456,13 +252,12 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
         </Button>
       </Flex>
 
-      <Box h="260px" mt="auto">
-        {surveyChartData && surveyChartData.length > 0 ? (
-          // <BarChart chartData={surveyChartData} chartOptions={chatOptions} />
-          <DBarChart data={surveyChartData} />
+      <Box h="360px" mt="auto">
+        {chartData && chartData.length > 0 ? (
+          <ABarChart data={chartData} />
         ) : (
           <NoData
-            title="No company survey data"
+            title="No data available for the selected period"
             bg="transparent"
             border="none"
             boxShadow="none"

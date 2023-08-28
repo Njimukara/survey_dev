@@ -43,6 +43,8 @@ export default function Offers(props: { [x: string]: any }) {
       mb={{ base: "0px", lg: "20px" }}
       fontFamily={font_family}
       borderRadius="10"
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
       {...rest}
     >
       <Flex align="center" w="100%" px="15px" py="10px">
@@ -87,6 +89,8 @@ export default function Offers(props: { [x: string]: any }) {
       justifyContent="center"
       flexDirection="column"
       borderRadius="10"
+      border="1px solid"
+      borderColor="rgba(0, 0, 0, 0.11)"
       fontFamily={font_family}
     >
       <Icon as={BiErrorCircle} boxSize={24} color="#3A2FB71F" />

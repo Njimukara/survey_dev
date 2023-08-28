@@ -146,7 +146,7 @@ export default function ColumnsTable(props: TableProps) {
   const router = useRouter();
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
+  const textColorSecondary = useColorModeValue("#757575", "white");
   const whiteColor = useColorModeValue("white", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const btnbg = useColorModeValue(
@@ -164,7 +164,12 @@ export default function ColumnsTable(props: TableProps) {
   const nullbtnbgfocus = useColorModeValue({ bg: "none" }, { bg: "none" });
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
   };
 
   const formatSurveyType = (surveytype: number) => {

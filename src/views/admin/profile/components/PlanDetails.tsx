@@ -107,13 +107,15 @@ export default function PlanDetails(props: { [x: string]: any }) {
     <Card
       mb={{ base: "0px", lg: "20px" }}
       borderRadius="10"
+      border="1px solid"
       bgGradient={mainBg}
+      borderColor="rgba(0, 0, 0, 0.11)"
       {...rest}
     >
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        p={2}
+        // p={1}
         fontFamily={font_family}
       >
         <Flex flexDirection="column" w="100%">
@@ -123,14 +125,14 @@ export default function PlanDetails(props: { [x: string]: any }) {
               fontFamily={font_family}
               fontSize="16px"
               fontWeight="500"
-              mb={2}
-              color={textColorSecondary}
+              mb={4}
+              color={lighttext}
             >
               Subscirption Details
             </Text>
 
             {loading ? (
-              <Box alignItems="center">
+              <Box alignItems="center" fontFamily={font_family}>
                 <Text>Loading</Text>
               </Box>
             ) : (
@@ -162,14 +164,15 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         fontWeight="bold"
                         flexDirection="column"
                       >
-                        <Text fontSize="24px" fontWeight="600">
+                        <Text fontSize="24px" mb={2} fontWeight="600">
                           {presentSubscription?.plan?.name}
                         </Text>
                         <Text
                           bg={boxBg}
-                          px="2"
+                          px="6"
                           my="2"
                           py="1"
+                          fontWeight="500"
                           w="max-content"
                           borderRadius="10px"
                           color="primary.600"
@@ -242,7 +245,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
                           Status :{" "}
                         </Text>
                         <Text
-                          fontSize="16px"
+                          fontSize="24px"
                           fontWeight="600"
                           color={
                             presentSubscription?.subscription_data?.status ===

@@ -644,7 +644,7 @@ export default function MultibeamEchoSounder() {
       .then((res) => {
         setResults(res.data);
         setSurveyParameters(res.data.results);
-        // console.log(res);
+        console.log(res);
         toast({
           position: "bottom-right",
           description: "Successful",
@@ -653,10 +653,10 @@ export default function MultibeamEchoSounder() {
           isClosable: true,
         });
         setPlanning(false);
-        getCompanySurvey();
-        getSurveyHistory();
+        // getSurveyHistory();
       })
       .catch((error) => {
+        console.log(error);
         toast({
           position: "bottom-right",
           description: "Error planning survey at this time",
@@ -735,12 +735,13 @@ export default function MultibeamEchoSounder() {
               />
             </FormControl>
             <FormControl>
-              <FormLabel fontSize="sm">Surveys</FormLabel>
+              <FormLabel fontSize="sm">
+                Import Survey Parameters from Past Surveys
+              </FormLabel>
               <Select
                 styles={reactSelectStyles}
                 options={surveyOptions}
                 onChange={(e) => loadSurveyData(e)}
-                placeholder="Load past survey data"
               />
             </FormControl>
           </Card>

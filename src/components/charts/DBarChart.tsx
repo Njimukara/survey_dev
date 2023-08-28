@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 interface DBarChartProps {
@@ -11,13 +11,11 @@ const DBarChart: React.FC<DBarChartProps> = ({ data }) => {
   useEffect(() => {
     if (!svgRef.current) return;
 
-    console.log(data);
-
     const svg = d3.select(svgRef.current);
 
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = svgRef.current.clientWidth; // Get the container's width
-    const height = svgRef.current.clientHeight; // Get the container's height
+    const width = svgRef.current.clientWidth;
+    const height = svgRef.current.clientHeight;
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -35,18 +33,11 @@ const DBarChart: React.FC<DBarChartProps> = ({ data }) => {
       .nice()
       .range([innerHeight, 0]);
 
-    // const bars = svg.selectAll(".bar").data(data);
     const bars = svg
       .selectAll<SVGRectElement, { label: string; value: number }>("rect")
       .data(data);
 
-    bars
-      .exit()
-      .transition()
-      .duration(500)
-      .attr("height", 0)
-      .attr("y", innerHeight)
-      .remove();
+    bars.exit().remove();
 
     bars
       .enter()
@@ -87,8 +78,6 @@ const DBarChart: React.FC<DBarChartProps> = ({ data }) => {
       .style("font-size", "14px")
       .style("font-family", "Poppins, sans-serif")
       .style("font-weight", "400");
-
-    // svg.select(".y-axis").call(d3.axisLeft(y));
   }, [data]);
 
   return (
