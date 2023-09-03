@@ -162,21 +162,4 @@ export default function ProfileOverview() {
   );
 }
 
-// export async function getServerSideProps(context: any) {
-//   const session = await getSession();
-
-//   if (!session) {
-//     return {
-//       props: {
-//         session: "No session",
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       session,
-//     },
-//   };
-// }
 ProfileOverview.requireAuth = true;

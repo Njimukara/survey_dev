@@ -42,20 +42,12 @@ import {
 import { FaUsers } from "react-icons/fa";
 
 // Custom components
-import SurveyTable from "views/admin/default/components/SurveyTable";
-import {
-  columnsDataSurvey,
-  TableData,
-} from "views/admin/default/variables/columnsData";
+import { TableData } from "views/admin/default/variables/columnsData";
 import AdminLayout from "layouts/admin";
 import Card from "components/card/Card";
 import PieCard from "views/admin/default/components/PieCard";
 import Offers from "views/admin/default/components/Offers";
-import {
-  columnsDataComplex,
-  RealComplexHeader,
-  TableColumn,
-} from "views/admin/default/variables/columnsData";
+import { TableColumn } from "views/admin/default/variables/columnsData";
 import Users from "views/admin/default/components/Users";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
@@ -66,11 +58,13 @@ import { useCurrentUser } from "contexts/UserContext";
 import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-import TransactionTable from "views/admin/default/components/TransactionTable";
 import { useSubscription } from "contexts/SubscriptionContext";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
-import ReusableTable from "views/admin/dataTables/components/Table";
+import Table from "components/table/Table";
+import NewTransactionTable from "views/admin/dataTables/components/TransationTable";
+import TransactionTable from "views/admin/dataTables/components/TransationTable";
+import SurveyTable from "views/admin/dataTables/components/SurveyTable";
 
 const columnsData: TableColumn[] = [
   {
@@ -120,6 +114,89 @@ const columnsData: TableColumn[] = [
   {
     Header: "PAYMENT",
     accessor: "payment",
+  },
+];
+
+export const employeeData = [
+  {
+    id: 1,
+    name: "John Doe",
+    position: "Software Engineer",
+    department: "Engineering",
+    age: 30,
+    salary: "$85,000",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    position: "Marketing Specialist",
+    department: "Marketing",
+    age: 28,
+    salary: "$60,000",
+  },
+  {
+    id: 3,
+    name: "Robert Johnson",
+    position: "Sales Manager",
+    department: "Sales",
+    age: 35,
+    salary: "$75,000",
+  },
+  {
+    id: 4,
+    name: "Emily Brown",
+    position: "HR Manager",
+    department: "Human Resources",
+    age: 32,
+    salary: "$70,000",
+  },
+  {
+    id: 5,
+    name: "Michael Williams",
+    position: "Product Manager",
+    department: "Product",
+    age: 33,
+    salary: "$90,000",
+  },
+  {
+    id: 6,
+    name: "Jessica Davis",
+    position: "Graphic Designer",
+    department: "Design",
+    age: 26,
+    salary: "$55,000",
+  },
+  {
+    id: 7,
+    name: "William Taylor",
+    position: "Accountant",
+    department: "Finance",
+    age: 29,
+    salary: "$65,000",
+  },
+  {
+    id: 8,
+    name: "Olivia Johnson",
+    position: "Customer Support",
+    department: "Support",
+    age: 27,
+    salary: "$50,000",
+  },
+  {
+    id: 9,
+    name: "Ethan Miller",
+    position: "Data Analyst",
+    department: "Data",
+    age: 31,
+    salary: "$80,000",
+  },
+  {
+    id: 10,
+    name: "Sophia Anderson",
+    position: "Quality Assurance",
+    department: "Quality Assurance",
+    age: 30,
+    salary: "$70,000",
   },
 ];
 
@@ -303,7 +380,6 @@ export default function UserReports(props: { [x: string]: any }) {
                 <NoData title="No company survey data" />
               ) : (
                 <PieCard companySurvey={mergedCompanyHistory} />
-                // <NoData title="Pie data" />
               )}
               <Users members={companyMembers} />
             </SimpleGrid>
@@ -314,16 +390,12 @@ export default function UserReports(props: { [x: string]: any }) {
             mergedCompanyHistory &&
             mergedCompanyHistory.length > 0 ? (
               <SurveyTable
-                columnsData={columnsDataSurvey}
                 tableData={mergedCompanyHistory as unknown as TableData[]}
               />
             ) : user?.user_profile?.user_type == individualUser &&
               surveyHistory &&
               surveyHistory.length > 0 ? (
-              <SurveyTable
-                columnsData={columnsDataSurvey}
-                tableData={surveyHistory as unknown as TableData[]}
-              />
+              <SurveyTable tableData={surveyHistory} />
             ) : (
               <NoData title="No survey data" />
             )}
@@ -341,15 +413,8 @@ export default function UserReports(props: { [x: string]: any }) {
               mb="30px"
             >
               {invertedArray.length > 0 ? (
-                // <TransactionTable
-                //   columnsData={columnsDataComplex}
-                //   tableData={invertedArray}
-                // />
-                <ReusableTable
-                  columns={columnsData}
-                  data={invertedArray}
-                  searchPlaceholder="Input Search"
-                  tableName="Transaction Data"
+                <TransactionTable
+                  tableData={invertedArray as unknown as TableData[]}
                 />
               ) : (
                 <NoData title="No subscription history" />

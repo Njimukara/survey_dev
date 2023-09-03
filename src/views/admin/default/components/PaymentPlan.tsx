@@ -38,7 +38,6 @@ import { useCurrentUser } from "contexts/UserContext";
 import axiosConfig from "axiosConfig";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import CompletePayment from "pages/admin/completePayment";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 
 // Assets
@@ -87,7 +86,7 @@ export default function PaymentPlan(props: Props) {
   const [customerEmail, setCustomerEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [customerLivemode] = useState(true);
-  const [trialPeriodDays] = useState(0);
+  const [trialPeriodDays] = useState(3);
   const [cancelAtPeriodEnd] = useState(true);
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
@@ -230,7 +229,7 @@ export default function PaymentPlan(props: Props) {
         router.push("/admin/default").then(() => router.reload());
 
         // router.replace("/admin/completePayment");
-        updateSurveyOrder(res);
+        // updateSurveyOrder(res);
       })
       .catch((err) => {
         // console.log(err);

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Flex,
   Table,
-  Icon,
   Tbody,
   Td,
   Text,
@@ -14,6 +13,7 @@ import {
   Box,
   Input,
   Checkbox,
+  Icon,
 } from "@chakra-ui/react";
 import {
   useGlobalFilter,
@@ -26,21 +26,20 @@ import {
 import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 import { isWindowAvailable } from "utils/navigation";
-
-import { MdDownload, MdCancel, MdSearch } from "react-icons/md";
+import { MdBarChart } from "react-icons/md";
 
 interface TableColumn {
   Header: string;
   accessor: string;
   Cell?: (cellProps: any) => JSX.Element;
-  download?: (rowData: any) => void; // Function to handle download
+  download?: (rowData: any) => void;
 }
 
 interface ReusableTableProps {
   columns: TableColumn[];
   data: any[];
   searchPlaceholder: string;
-  tableName: string;
+  tableName?: string;
 }
 
 export default function ReusableTable({
@@ -49,10 +48,7 @@ export default function ReusableTable({
   tableName,
   searchPlaceholder,
 }: ReusableTableProps) {
-  const font_family = `'Poppins', sans-serif'`;
-
-  // Rest of your styling code
-  // ...
+  const font_family = `'Poppins', sans-serif`;
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const [isMounted, setIsMounted] = useState(false);
@@ -85,10 +81,6 @@ export default function ReusableTable({
     setGlobalFilter,
   } = tableInstance;
 
-  // Rest of your rendering logic
-  // ...
-  // Including header rendering and row rendering
-  // ...
   useEffect(() => {
     if (isMounted) return;
     setIsMounted(true);
@@ -105,16 +97,30 @@ export default function ReusableTable({
       overflowX={{ sm: "scroll", lg: "hidden" }}
       fontFamily={font_family}
     >
-      <Flex px="25px" justify="space-between" mb="20px" align="center">
+      <Flex
+        px="25px"
+        justify="space-between"
+        mb="20px"
+        align="center"
+        flexDirection={{ sm: "column", md: "row" }}
+      >
         <Text
           color={textColor}
           fontSize="22px"
           fontWeight="700"
           lineHeight="100%"
+          mb={{ sm: "10px", md: "0" }}
+          flexBasis={{ sm: "100%", md: "auto" }}
         >
           {tableName || ""}
         </Text>
-        <Menu />
+        <Input
+          type="text"
+          placeholder={searchPlaceholder}
+          variant="flushed"
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          w={{ sm: "100%", md: "50%" }}
+        />
       </Flex>
 
       {isWindowAvailable() && (
@@ -132,8 +138,8 @@ export default function ReusableTable({
                     <Flex
                       justify="space-between"
                       align="center"
-                      fontSize={{ sm: "10px", lg: "12px" }}
-                      color="gray.400"
+                      fontSize={{ sm: "10px", lg: "16px" }}
+                      fontWeight="600"
                     >
                       {column.render("Header")}
                     </Flex>
@@ -157,7 +163,7 @@ export default function ReusableTable({
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
                       borderColor="transparent"
                     >
-                      {/* Render text content */}
+                      {/* Render cell content */}
                       {cell.column.Cell ? cell.render("Cell") : cell.value}
                     </Td>
                   ))}
@@ -168,8 +174,47 @@ export default function ReusableTable({
         </Table>
       )}
 
-      {/* Rest of your component content */}
-      {/* ... */}
+      {/* Pagination */}
+      <Box display="flex" justifyContent="center" mt="20px">
+        <Button
+          onClick={() => gotoPage(0)}
+          disabled={!canPreviousPage}
+          mx="2px"
+          size="sm"
+        >
+          {"<<"}
+        </Button>{" "}
+        <Button
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+          mx="2px"
+          size="sm"
+        >
+          {"<"}
+        </Button>{" "}
+        <Button
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+          mx="2px"
+          size="sm"
+        >
+          {">"}
+        </Button>{" "}
+        <Button
+          onClick={() => gotoPage(pageCount - 1)}
+          disabled={!canNextPage}
+          mx="2px"
+          size="sm"
+        >
+          {">>"}
+        </Button>{" "}
+        <Text fontSize="sm" mt="6px">
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{" "}
+        </Text>
+      </Box>
     </Card>
   );
 }

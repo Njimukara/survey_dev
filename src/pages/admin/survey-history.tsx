@@ -2,7 +2,6 @@ import { Box, Flex, Spinner } from "@chakra-ui/react";
 import React from "react";
 import AdminLayout from "layouts/admin";
 import { useEffect, useState } from "react";
-import SurveyTable from "views/admin/default/components/SurveyTable";
 import {
   columnsDataSurvey,
   TableData,
@@ -10,6 +9,7 @@ import {
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import NoData from "layouts/admin/noData";
 import { useSession } from "next-auth/react";
+import SurveyTable from "views/admin/dataTables/components/SurveyTable";
 
 export default function SurveyHistory() {
   // component variables
@@ -37,7 +37,6 @@ export default function SurveyHistory() {
             <Flex w="100%">
               {surveyHistory.length > 0 ? (
                 <SurveyTable
-                  columnsData={columnsDataSurvey}
                   tableData={surveyHistory as unknown as TableData[]}
                 />
               ) : (

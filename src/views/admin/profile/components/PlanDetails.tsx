@@ -79,14 +79,6 @@ export default function PlanDetails(props: { [x: string]: any }) {
     }
   };
 
-  // useEffect(() => {
-  //   if (subscriptions.length <= 0) {
-  //     fetchSubscriptions();
-  //   }
-  //   setSubscription(subscriptions[subscriptions.length - 1]);
-  //   setPresentSubscription(currentSubscription);
-  // }, [loading, subscriptions, fetchSubscriptions, currentSubscription]);
-
   useEffect(() => {
     if (subscriptions.length > 0) {
       setSubscription(subscriptions[subscriptions.length - 1]);
@@ -307,30 +299,32 @@ export default function PlanDetails(props: { [x: string]: any }) {
                       </Text>
                     </Flex>
                     {presentSubscription?.subscription_data?.status.toLowerCase() !=
-                      "active" && (
-                      <Alert
-                        status="info"
-                        fontSize="14px"
-                        py={1}
-                        mt={2}
-                        borderRadius="6px"
-                      >
-                        <AlertIcon />
-                        Just made payment? Click{" "}
-                        <Button
-                          onClick={() => {
-                            router.reload();
-                          }}
-                          py={0}
-                          px={1}
-                          bg="none"
-                          textDecoration="underline"
+                      "active" ||
+                      (presentSubscription?.subscription_data?.status ==
+                        "trialing" && (
+                        <Alert
+                          status="info"
+                          fontSize="14px"
+                          py={1}
+                          mt={2}
+                          borderRadius="6px"
                         >
-                          HERE
-                        </Button>{" "}
-                        to refresh
-                      </Alert>
-                    )}
+                          <AlertIcon />
+                          Just made payment? Click{" "}
+                          <Button
+                            onClick={() => {
+                              router.reload();
+                            }}
+                            py={0}
+                            px={1}
+                            bg="none"
+                            textDecoration="underline"
+                          >
+                            HERE
+                          </Button>{" "}
+                          to refresh
+                        </Alert>
+                      ))}
                   </Box>
                 )}
               </>

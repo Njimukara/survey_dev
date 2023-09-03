@@ -45,11 +45,11 @@ import { SubscriptionCard } from "components/card/SubscriptionCard";
 import { Plan, subsciptionPlan } from "../../../types/data";
 import { useSubscription } from "contexts/SubscriptionContext";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
-import TransactionTable from "views/admin/default/components/TransactionTable";
 import { useCurrentUser } from "contexts/UserContext";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
 import { usePlanContext } from "contexts/PlanContext";
+import TransactionTable from "views/admin/dataTables/components/TransationTable";
 
 export default function Transactions() {
   // component variables
@@ -206,7 +206,6 @@ export default function Transactions() {
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
             {localSubscriptions.length > 0 ? (
               <TransactionTable
-                columnsData={columnsDataComplex}
                 tableData={localSubscriptions as unknown as TableData[]}
               />
             ) : (
@@ -315,7 +314,6 @@ export default function Transactions() {
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
             {localSubscriptions.length > 0 ? (
               <TransactionTable
-                columnsData={columnsDataComplex}
                 tableData={localSubscriptions as unknown as TableData[]}
               />
             ) : (

@@ -130,29 +130,13 @@ export default function PendingUserInvite(props: TableProps) {
     // console.log(data);
     setSending(true);
     const id = data.id;
-    const body = {
-      // email: data.email,
-      // company: data.company,
-      // invited_by: data.invited_by,
-      // token: data.token,
-      // invitation_url: data.invitation_url,
-      // expires_on: data.expires_on,
-      // status: data.status,
-    };
+    const body = {};
 
     // console.log(body, id);
     setSending(true);
-    // const config = {
-    //   headers: {
-    //     Accept: "application/json;charset=UTF-8",
-    //     Authorization: `Token ${session?.user?.auth_token}`,
-    //   },
-    // };
     await axiosConfig
       .put(`/api/company/invitations/${id}/renew/`, body)
       .then((res) => {
-        // setCompanyMembers(res.data.members);
-        // console.log(res);
         fetchInvitations();
         setSending(false);
         toast({
@@ -193,17 +177,9 @@ export default function PendingUserInvite(props: TableProps) {
 
     // console.log(body, id);
     setSending(true);
-    // const config = {
-    //   headers: {
-    //     Accept: "application/json;charset=UTF-8",
-    //     Authorization: `Token ${session?.user?.auth_token}`,
-    //   },
-    // };
     await axiosConfig
       .put(`/api/company/invitations/${id}/cancel/`, body)
       .then((res) => {
-        // setCompanyMembers(res.data.members);
-        // console.log(res);
         fetchInvitations();
         setSending(false);
         toast({

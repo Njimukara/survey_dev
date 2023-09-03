@@ -3,31 +3,21 @@ import {
   Button,
   Flex,
   Text,
-  SimpleGrid,
   Heading,
-  useColorModeValue,
   Card,
   Spinner,
 } from "@chakra-ui/react";
 import React from "react";
 import AdminLayout from "layouts/admin";
 import { TableData } from "views/admin/default/variables/columnsData";
-import {
-  columnsDataUsers,
-  PendingInvite,
-} from "views/admin/dataTables/variables/columnsData";
-// import tableDataUser from "views/admin/dataTables/variables/tableDataUser.json";
-// import pendingInvite from "views/admin/dataTables/variables/pendingInvite.json";
-import UserTableComplex from "views/admin/dataTables/components/UserTableComplex";
-import PendingUserInvite from "views/admin/dataTables/components/PendinguserInvite";
 import { useEffect, useState, useCallback } from "react";
 import InviteUser from "views/admin/profile/components/InviteUser";
-import axios from "axios";
 import { useSession } from "next-auth/react";
-import Router from "next/router";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
 import useInvitations from "utils/useInvitations";
+import CompanyUsersTable from "views/admin/dataTables/components/CompanyUsersTable";
+import PendingUsersTable from "views/admin/dataTables/components/PendingUsersTable";
 
 const LoadingSpinner = () => (
   <Card w="100%" borderRadius={10}>
@@ -56,15 +46,11 @@ export default function Users() {
   const [loading, setLoading] = useState(false);
   const [companyMembers, setCompanyMembers] = useState([]);
   const [hasDetails, setHasDetails] = useState(false);
-  // const [invitations, setInvitations] = useState([]);
   const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
 
   const { fetching, invitations } = useInvitations();
-  // const [companyUserLength, setCompanyUserLength] = useState(0);
-  // const [companyUser] = useState(2);
 
-  // session hook
   const { data: session, status } = useSession();
 
   // toggleUser invite modal
@@ -86,23 +72,6 @@ export default function Users() {
       setFetching(false);
     }
   }, []);
-
-  //   get invitations
-  // const getInvitations = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axiosConfig.get(
-  //       "/api/company/companymembers/invitations/"
-  //     );
-  //     let result = response.data.filter((invite: any) => {
-  //       return invite.status == 1;
-  //     });
-  //     setInvitations(result);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setLoading(false);
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (session != null) {
@@ -151,17 +120,12 @@ export default function Users() {
                 Invite User
               </Button>
             )}
-            <InviteUser
-              // getInvitations={getInvitations}
-              opened={isOpen}
-              toggleModal={toggleModal}
-            />
+            <InviteUser opened={isOpen} toggleModal={toggleModal} />
           </Box>
         </Flex>
         <Flex w="75%">
           {companyMembers && companyMembers.length != 0 ? (
-            <UserTableComplex
-              columnsData={columnsDataUsers}
+            <CompanyUsersTable
               getCompanyMembers={getCompanyMembers}
               tableData={companyMembers as unknown as TableData[]}
             />
@@ -184,8 +148,7 @@ export default function Users() {
         </Flex>
         <Flex w="75%">
           {invitations && invitations.length != 0 ? (
-            <PendingUserInvite
-              columnsData={PendingInvite}
+            <PendingUsersTable
               // getInvitations={getInvitations}
               tableData={invitations as unknown as TableData[]}
             />

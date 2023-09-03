@@ -99,7 +99,7 @@ export type TableData = Column<{
 }>;
 
 export type TableProps = {
-  columnsData: ColumnData;
+  columnsData?: ColumnData;
   tableData: TableData[];
   getInvitations?: any;
   getCompanyMembers?: [] | any;
