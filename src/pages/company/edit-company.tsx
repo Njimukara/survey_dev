@@ -54,11 +54,14 @@ import { useState } from "react";
 import { Country, City } from "country-state-city";
 import Select from "react-select";
 import axiosConfig from "axiosConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchCompanyData } from "redux/companySlice";
 
 export default function EditCompany({ providers }: any) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const [company, setCompany] = useState<any>();
+  // const [company, setCompany] = useState<any>();
   const [error, setError] = useState(null);
   const [canEdit, setCanEdit] = useState(true);
   const [name, setName] = useState("");
@@ -73,6 +76,11 @@ export default function EditCompany({ providers }: any) {
   const [createObjectURL, setCreateObjectURL] = useState(null);
 
   const { data: session, status } = useSession();
+  const dispatch = useDispatch<AppDispatch>();
+  const companyData = useSelector(
+    (state: RootState) => state.reduxStore.company
+  );
+  const { company } = companyData;
 
   // chakra toast
   const toast = useToast();
@@ -150,7 +158,12 @@ export default function EditCompany({ providers }: any) {
         headerOptions
       )
       .then((res) => {
-        getCompany();
+        dispatch(
+          fetchCompanyData({
+            apiEndpoint: "/api/company/my-company/",
+            force: true,
+          })
+        );
         toggleEdit();
         setSubmitting(false);
         toast({
@@ -194,28 +207,19 @@ export default function EditCompany({ providers }: any) {
     return tempCountry;
   };
 
-  const getCompany = async () => {
-    await axiosConfig
-      .get(`/api/company/my-company/`)
-      .then((res) => {
-        // console.log(res);
-        setCompany(res?.data);
-        setName(res?.data?.name);
-        let tempcountry = countryNameFromIso(res?.data?.country);
-        let tempIso = res?.data?.country;
-        setIso(res?.data?.country);
-        setCountry({ value: tempIso, label: tempcountry });
-        setSelectedCity({ label: city, value: tempIso });
+  const getCompany = () => {
+    setName(company?.name);
+    let tempcountry = countryNameFromIso(company?.country);
+    let tempIso = company?.country;
+    setIso(company?.country);
+    setCountry({ value: tempIso, label: tempcountry });
+    setSelectedCity({ label: city, value: tempIso });
 
-        setCity(res?.data?.city);
-        setState(res?.data?.state);
-        setZipCode(res?.data?.zip_code);
-        setStreetAddress(res?.data?.street_address);
-        setCreateObjectURL(res?.data?.logo);
-      })
-      .catch((error) => {
-        // console.log(error);
-      });
+    setCity(company?.city);
+    setState(company?.state);
+    setZipCode(company?.zip_code);
+    setStreetAddress(company?.street_address);
+    setCreateObjectURL(company?.logo);
   };
 
   useEffect(() => {

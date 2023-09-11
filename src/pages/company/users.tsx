@@ -18,6 +18,9 @@ import NoData from "layouts/admin/noData";
 import useInvitations from "utils/useInvitations";
 import CompanyUsersTable from "views/admin/dataTables/components/CompanyUsersTable";
 import PendingUsersTable from "views/admin/dataTables/components/PendingUsersTable";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
+import { UserTypes } from "utils/userTypes";
 
 const LoadingSpinner = () => (
   <Card w="100%" borderRadius={10}>
@@ -44,14 +47,22 @@ export default function Users() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setFetching] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [companyMembers, setCompanyMembers] = useState([]);
+  // const [companyMembers, setCompanyMembers] = useState([]);
   const [hasDetails, setHasDetails] = useState(false);
   const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
+  const { data: session } = useSession();
+  const sessionUser = session?.user;
+  const userProfile = sessionUser?.data?.user_profile;
+  const userType = userProfile?.user_type;
 
-  const { fetching, invitations } = useInvitations();
+  const { companyInvites, invitesError, invitesLoading, fetchInvitations } =
+    useInvitations();
 
-  const { data: session, status } = useSession();
+  const companyMembersData = useSelector(
+    (state: RootState) => state.reduxStore.company
+  );
+  const { companyMembers, membersLoading, membersError } = companyMembersData;
 
   // toggleUser invite modal
   const toggleModal = (state: boolean) => {
@@ -60,17 +71,16 @@ export default function Users() {
 
   //   get invitations
   const getCompanyMembers = useCallback(async () => {
-    setFetching(true);
-
-    try {
-      const response = await axiosConfig.get(
-        "/api/company/companymembers/companymember/"
-      );
-      setCompanyMembers(response.data);
-      setFetching(false);
-    } catch (error) {
-      setFetching(false);
-    }
+    // setFetching(true);
+    // try {
+    //   const response = await axiosConfig.get(
+    //     "/api/company/companymembers/companymember/"
+    //   );
+    //   setCompanyMembers(response.data);
+    //   setFetching(false);
+    // } catch (error) {
+    //   setFetching(false);
+    // }
   }, []);
 
   useEffect(() => {
@@ -108,7 +118,7 @@ export default function Users() {
             <Text>
               All users in this company are listed in the adjacent table.
             </Text>
-            {user?.user_profile?.user_type == companyUser && (
+            {userType == UserTypes.COMPANY_USER && (
               <Button
                 mt="5"
                 py="5"
@@ -147,12 +157,12 @@ export default function Users() {
           </Box>
         </Flex>
         <Flex w="75%">
-          {invitations && invitations.length != 0 ? (
+          {companyInvites && companyInvites.length != 0 ? (
             <PendingUsersTable
               // getInvitations={getInvitations}
-              tableData={invitations as unknown as TableData[]}
+              tableData={companyInvites as unknown as TableData[]}
             />
-          ) : fetching ? (
+          ) : invitesLoading ? (
             <LoadingSpinner />
           ) : (
             <NoData title="No pending invies in your company" />

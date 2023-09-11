@@ -26,6 +26,9 @@ import { Router } from "next/router";
 import NProgress from "nprogress";
 import { AllSurveysProvider } from "contexts/SurveyContext";
 import { SurveyHistoryProvider } from "contexts/SurveyHistoryContext";
+import { Provider } from "react-redux";
+import { persistor, store } from "../redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 NProgress.configure({ showSpinner: false });
 
 // add requireAuth to AppProps
@@ -58,25 +61,33 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
         refetchOnWindowFocus={true}
       >
         {Component.requireAuth ? (
-          <AuthGuard>
-            <SubscriptionProvider>
-              <SurveyHistoryProvider>
-                <PlanContextProvider>
-                  <AllSurveysProvider>
-                    <CurrentUserProvider>
-                      <Component {...pageProps} />
-                    </CurrentUserProvider>
-                  </AllSurveysProvider>
-                </PlanContextProvider>
-              </SurveyHistoryProvider>
-            </SubscriptionProvider>
-          </AuthGuard>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <AuthGuard>
+                <SubscriptionProvider>
+                  <SurveyHistoryProvider>
+                    <PlanContextProvider>
+                      <AllSurveysProvider>
+                        <CurrentUserProvider>
+                          <Component {...pageProps} />
+                        </CurrentUserProvider>
+                      </AllSurveysProvider>
+                    </PlanContextProvider>
+                  </SurveyHistoryProvider>
+                </SubscriptionProvider>
+              </AuthGuard>
+            </PersistGate>
+          </Provider>
         ) : (
-          <AllSurveysProvider>
-            <PlanContextProvider>
-              <Component {...pageProps} />
-            </PlanContextProvider>
-          </AllSurveysProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <AllSurveysProvider>
+                <PlanContextProvider>
+                  <Component {...pageProps} />
+                </PlanContextProvider>
+              </AllSurveysProvider>
+            </PersistGate>
+          </Provider>
         )}
         {/* <Component {...pageProps} /> */}
       </SessionProvider>

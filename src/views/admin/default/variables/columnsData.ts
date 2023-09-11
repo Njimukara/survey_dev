@@ -99,6 +99,7 @@ export type TableData = Column<{
 }>;
 
 export type TableProps = {
+  tableName?: string;
   columnsData?: ColumnData;
   tableData: TableData[];
   getInvitations?: any;

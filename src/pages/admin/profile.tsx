@@ -35,38 +35,37 @@ import CompanyDetails from "views/admin/default/components/CompanyDetails";
 import { useCurrentUser } from "contexts/UserContext";
 import CompanyUsers from "views/admin/profile/components/CompanyUsers";
 import axiosConfig from "axiosConfig";
+import getClient from "axiosInstance";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import useUpdateSurveyHistory from "hooks/useUpdateSurveyHistory";
+import { UserTypes } from "utils/userTypes";
+import { fetchCompanyData } from "redux/companySlice";
+import EditCompanyModal from "components/modals/EditCompany";
 
 export default function ProfileOverview() {
   const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
   const [user, setUser] = useState<any>();
-  const [company, setCompany] = useState();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // const [company, setCompany] = useState();
   const [hasDetails, setHasDetails] = useState(false);
-  const [companyUser, setCompanyUser] = useState(2);
-  const [companyMembers, setCompanyMembers] = useState([]);
-  const [individualUser, setIndividualUser] = useState(1);
+  // const [companyMembers, setCompanyMembers] = useState([]);
+  const companyData = useSelector(
+    (state: RootState) => state.reduxStore.company
+  );
+  const { company, companyMembers, membersLoading } = companyData;
 
   const { data: session } = useSession();
 
   const toggleHasDetails = (state: boolean) => {
     setHasDetails(state);
   };
-
-  // get company
-  const getCompany = useCallback(async () => {
-    await axiosConfig
-      .get("/api/company/my-company/")
-      .then((res) => {
-        setHasDetails(true);
-        setCompany(res.data);
-        setCompanyMembers(res?.data?.members);
-      })
-      .catch((error) => {
-        return;
-      });
-  }, []);
+  const { userType } = useUpdateSurveyHistory();
 
   // state for user invite
   const [modalState, setModalState] = useState(false);
+  const [editCompanyModalState, setEditCompanyModal] = useState(false);
 
   // toggle company user invite modal
   const toggleCompanyUserModal = (state: boolean) => {
@@ -74,22 +73,29 @@ export default function ProfileOverview() {
   };
 
   useEffect(() => {
+    if (company != null) {
+      // setCompanyMembers(company?.members);
+      setHasDetails(true);
+    }
+  }, [company]);
+
+  useEffect(() => {
+    if (!company || Object.keys(company).length === 0) {
+      dispatch(
+        fetchCompanyData({
+          apiEndpoint: "/api/company/my-company/",
+          force: true,
+        })
+      );
+    }
+  }, [company, dispatch]);
+
+  useEffect(() => {
     if (!currentUser) {
       fetchCurrentUser();
     }
     setUser(currentUser);
-    if (session?.user?.data?.user_profile?.user_type == companyUser) {
-      getCompany();
-    }
-  }, [
-    hasDetails,
-    session,
-    getCompany,
-    fetchCurrentUser,
-    currentUser,
-    companyUser,
-    loading,
-  ]);
+  }, [hasDetails, session, company, fetchCurrentUser, currentUser, loading]);
 
   return (
     <AdminLayout>
@@ -115,8 +121,8 @@ export default function ProfileOverview() {
             phoneNumber={user?.user_profile?.phone_number || "loading"}
           />
         </Grid>
-        {(user?.user_profile?.user_type == companyUser ||
-          user?.user_profile?.user_type == individualUser) && (
+        {(userType == UserTypes.COMPANY_USER ||
+          userType == UserTypes.REGULAR_USER) && (
           <Grid
             templateColumns={{
               base: "1fr",
@@ -132,7 +138,7 @@ export default function ProfileOverview() {
           </Grid>
         )}
         <Grid>
-          {user?.user_profile?.user_type == companyUser && (
+          {userType == UserTypes.COMPANY_USER && (
             <Grid
               templateColumns={{
                 base: "repeat(2, 1fr)",
@@ -143,8 +149,8 @@ export default function ProfileOverview() {
               <CompanyDetails
                 borderRadius="10"
                 hasDetails={hasDetails}
-                toggleHasDetails={toggleHasDetails}
                 company={company}
+                toggleHasDetails={toggleHasDetails}
               />
               {hasDetails && (
                 <CompanyUsers

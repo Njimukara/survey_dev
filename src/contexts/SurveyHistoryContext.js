@@ -22,11 +22,6 @@ export const SurveyHistoryProvider = ({ children }) => {
     setCompanySurveyHistory([]);
     setSurveyOptions([]);
 
-    // if (subscriptions.length === 0) {
-    //   setPending(false); // Set pending to false if no subscriptions
-    //   return;
-    // }
-
     // Fetch survey history
     try {
       const assignedSurveys = subscriptions[0]?.assigned_surveys;
@@ -42,12 +37,12 @@ export const SurveyHistoryProvider = ({ children }) => {
         (acc, cur) => [...acc, ...cur],
         []
       );
-      console.log(combinedResults);
+      // console.log("combined results", combinedResults);
       setSurveyHistory(combinedResults);
       getOptions(combinedResults);
       setPending(false); // Fetching complete, set pending to false
     } catch (err) {
-      console.error("surveyhistory", err);
+      // console.error("surveyhistory", err);
       setPending(false); // Fetching failed, set pending to false
     }
   }, [subscriptions]);
@@ -75,9 +70,10 @@ export const SurveyHistoryProvider = ({ children }) => {
 
         setCompanySurveyHistory(results);
         setMergedCompanyHistory(combinedResults);
+        // console.log("companySurvey", combinedResults);
         getOptions(combinedResults);
       } catch (err) {
-        console.error(err);
+        // console.error(err);
       }
     }
   }, [subscriptions]);
@@ -97,14 +93,14 @@ export const SurveyHistoryProvider = ({ children }) => {
   useEffect(() => {
     if (session?.user?.data?.user_profile?.user_type === companyUser) {
       getCompanySurvey();
-    } else {
       getSurveyHistory();
+    } else {
     }
   }, [
     companyUser,
-    session?.user?.data?.user_profile?.user_type,
-    getSurveyHistory,
     getCompanySurvey,
+    getSurveyHistory,
+    session?.user?.data?.user_profile?.user_type,
   ]);
 
   return (

@@ -1,35 +1,26 @@
 import {
   Flex,
-  Table,
-  Progress,
   Icon,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useColorModeValue,
   Button,
-  Input,
   Box,
 } from "@chakra-ui/react";
 import { useMemo, useState, useEffect, useRef } from "react";
 
-// Custom components
-import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
 import SurveyResults from "pages/admin/survey-results";
 
 // Assets
 import { MdDeleteOutline } from "react-icons/md";
 import { TableColumn, TableProps } from "../../default/variables/columnsData";
-import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useRouter } from "next/router";
 import { BiLinkExternal } from "react-icons/bi";
 import { useReactToPrint } from "react-to-print";
 import axiosConfig from "axiosConfig";
 import ReusableTable from "views/admin/dataTables/components/Table";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchSurveys } from "redux/surveySlice";
 
 interface survey {
   id: number;
@@ -38,14 +29,16 @@ interface survey {
 }
 
 const SurveyTable = (props: TableProps) => {
-  const { tableData } = props;
+  const { tableData, tableName } = props;
 
+  const dispatch = useDispatch<AppDispatch>();
   const font_family = "Poppins";
-
-  //   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-  const { surveys, getAllSurveys } = useAllSurveysContext();
-  const [searchTerm, setSearchTerm] = useState("");
+  // const { surveys, getAllSurveys } = useAllSurveysContext();
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys } = allSurveys;
   const [survey, setSurvey] = useState(null);
 
   const componentRef = useRef();
@@ -63,12 +56,12 @@ const SurveyTable = (props: TableProps) => {
 
   useEffect(() => {
     if (!surveys) {
-      getAllSurveys();
+      dispatch(fetchSurveys());
     }
-  }, [surveys, getAllSurveys]);
+  }, [dispatch, surveys]);
 
   const handleDelete = async (row: any) => {
-    const { id, name, created, survey, status } = row?.original;
+    const { id, survey } = row?.original;
     let code: string;
 
     const matchingSurvey = surveys.find(
@@ -85,19 +78,10 @@ const SurveyTable = (props: TableProps) => {
       .catch((err) => {
         console.log(err);
       });
-
-    // console.log(row);
-    // formatSurveyType
   };
 
-  const textColor = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = useColorModeValue("#757575", "white");
   const whiteColor = useColorModeValue("white", "white");
-  const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-  const btnbg = useColorModeValue(
-    { bg: "secondary.200" },
-    { bg: "secondary.200" }
-  );
   const bgHover = useColorModeValue(
     { bg: "green.600" },
     { bg: "whiteAlpha.50" }
@@ -132,7 +116,6 @@ const SurveyTable = (props: TableProps) => {
   };
 
   const viewResults = (cell: any) => {
-    // console.log(cell.row?.original?.id);
     let result_id = cell.row?.original?.id;
     let survey_id = cell.row?.original?.survey;
     router.push(
@@ -149,7 +132,7 @@ const SurveyTable = (props: TableProps) => {
       Header: "TYPE",
       accessor: "survey",
       Cell: ({ cell: { value } }) => (
-        <Text color={textColor} fontSize="sm" fontWeight="400">
+        <Text fontFamily={font_family} fontSize="sm" fontWeight="400">
           {formatSurveyType(value)}
         </Text>
       ),
@@ -159,7 +142,6 @@ const SurveyTable = (props: TableProps) => {
       Header: "DOWNLOAD",
       accessor: "download",
       Cell: ({ cell }) => (
-        // Custom Cell component for the "Actions" column
         <Flex align="center">
           <Button
             size="xs"
@@ -183,14 +165,14 @@ const SurveyTable = (props: TableProps) => {
       Header: "DATE GENERATED",
       accessor: "created",
       Cell: ({ cell: { value } }) => (
-        <Text color={textColor} fontSize="sm" fontWeight="400">
+        <Text fontFamily={font_family} fontSize="sm" fontWeight="400">
           {formatDate(value)}
         </Text>
       ),
     },
     {
-      Header: "Actions", // Customize the column header
-      accessor: "id", // Assuming "id" is the unique identifier for each row
+      Header: "Actions",
+      accessor: "id",
       Cell: ({ cell }) => (
         <Flex>
           <Button
@@ -202,7 +184,6 @@ const SurveyTable = (props: TableProps) => {
             onClick={() => viewResults(cell)}
           >
             <Icon as={BiLinkExternal} w={5} h={5} color={textColorSecondary} />
-            {/* {printcell(cell.row?.original?.id)} */}
           </Button>
           <Button
             size="xs"
@@ -225,7 +206,7 @@ const SurveyTable = (props: TableProps) => {
         columns={Tabblecolumns}
         data={data}
         searchPlaceholder="Input Search"
-        tableName="Survey History"
+        tableName={tableName || "Survey History"}
       />
       <Box display="none">
         {survey && <SurveyResults surveyResult={survey} ref={componentRef} />}

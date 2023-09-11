@@ -60,6 +60,9 @@ import PhoneInput from "react-phone-number-input";
 import axiosConfig from "axiosConfig";
 import { FaLinkedin } from "react-icons/fa";
 import { useAllSurveysContext } from "contexts/SurveyContext";
+import type { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSubscriptions } from "redux/subscriptionsSlice";
 
 const CustomInput = forwardRef(
   (props: any, ref: LegacyRef<HTMLInputElement>) => {
@@ -115,6 +118,7 @@ export default function SignIn() {
   );
 
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [show, setShow] = React.useState(false);
   const [login, setLogin] = React.useState(true);
   const [remember, setRemember] = React.useState(false);
@@ -161,6 +165,10 @@ export default function SignIn() {
       return;
     }
     setSubmitting(true);
+    const returnUrl = Array.isArray(router.query.returnUrl)
+      ? (router.query.returnUrl[0] as string)
+      : (router.query.returnUrl as string) || "/admin";
+
     const res: any = await signIn("Credentials", {
       email: formData.email,
       password: formData.password,
@@ -170,8 +178,9 @@ export default function SignIn() {
 
     if (res.status == 200) {
       getAllSurveys();
+      dispatch(fetchSubscriptions("/api/plans/subscription/"));
       setSubmitting(false);
-      router.push("/admin");
+      router.push(returnUrl);
     } else if (res.status != 200) {
       let error = JSON.parse(res.error);
       setError(error.errors);

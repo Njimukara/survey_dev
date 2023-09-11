@@ -39,6 +39,9 @@ import axiosConfig from "axiosConfig";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "redux/store";
+import { fetchSubscriptions } from "redux/subscriptionsSlice";
 
 // Assets
 // import { MultiSelect } from "chakra-multiselect";
@@ -91,12 +94,13 @@ export default function PaymentPlan(props: Props) {
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
   const [cancelAt, setCancelAt] = useState<Date>();
-  const [daysUntilDue] = useState<number>(3);
+  const [daysUntilDue] = useState<number>(5);
   const [currency, setCurrency] = useState<string>("usd");
   const [planID, setPlanID] = useState<number>(0);
   const [value, setValue] = useState<number[]>([]);
   // const [surveys, setSurveys] = useState([]);
   const { currentUser, fetchCurrentUser } = useCurrentUser();
+  const dispatch = useDispatch<AppDispatch>();
 
   // get user session
   var { data: session } = useSession();
@@ -226,8 +230,8 @@ export default function PaymentPlan(props: Props) {
           duration: 4000,
           isClosable: true,
         });
-        router.push("/admin/default").then(() => router.reload());
-
+        dispatch(fetchSubscriptions("/api/plans/subscription/"));
+        router.push("/admin/default");
         // router.replace("/admin/completePayment");
         // updateSurveyOrder(res);
       })
@@ -519,7 +523,7 @@ export default function PaymentPlan(props: Props) {
               <Text>Plan: {plan?.title}</Text>
               <Text mb="2">Total: $ {formatPrice(plan.price)}</Text>
               <Text mb="5">
-                You will have {daysUntilDue} days of free trial{" "}
+                You will have {trialPeriodDays} days of free trial{" "}
               </Text>
               <Button
                 type="submit"

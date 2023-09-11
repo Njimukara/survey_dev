@@ -17,11 +17,17 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useSubscription } from "contexts/SubscriptionContext";
 import axiosConfig from "axiosConfig";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 
 export default function PlanDetails(props: { [x: string]: any }) {
   const { ...rest } = props;
 
   const font_family = "Poppins";
+  const { data, isLoading, error } = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { currentSubscription } = data;
 
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");
@@ -39,8 +45,8 @@ export default function PlanDetails(props: { [x: string]: any }) {
   );
   const mainBg = useColorModeValue({ bg: "white" }, { bg: "whiteAlpha.100" });
 
-  const { loading, subscriptions, currentSubscription, fetchSubscriptions } =
-    useSubscription();
+  // const { loading, subscriptions, currentSubscription, fetchSubscriptions } =
+  //   useSubscription();
 
   const [, setSubscription] = useState<any>();
   const [presentSubscription, setPresentSubscription] = useState<any>();
@@ -70,8 +76,9 @@ export default function PlanDetails(props: { [x: string]: any }) {
       });
   };
 
+  const subscribeAgain = () => {};
+
   const makePayment = () => {
-    console.log(currentSubscription);
     let url =
       currentSubscription?.invoices[0]?.invoice_data?.hosted_invoice_url;
     if (url) {
@@ -79,11 +86,11 @@ export default function PlanDetails(props: { [x: string]: any }) {
     }
   };
 
-  useEffect(() => {
-    if (subscriptions.length > 0) {
-      setSubscription(subscriptions[subscriptions.length - 1]);
-    }
-  }, [subscriptions]);
+  // useEffect(() => {
+  //   if (subscriptions.length > 0) {
+  //     setSubscription(subscriptions[subscriptions.length - 1]);
+  //   }
+  // }, [subscriptions]);
 
   useEffect(() => {
     if (currentSubscription) {
@@ -91,9 +98,9 @@ export default function PlanDetails(props: { [x: string]: any }) {
     }
   }, [currentSubscription]);
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
+  // useEffect(() => {
+  //   fetchSubscriptions();
+  // }, []);
 
   return (
     <Card
@@ -123,7 +130,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
               Subscirption Details
             </Text>
 
-            {loading ? (
+            {isLoading ? (
               <Box alignItems="center" fontFamily={font_family}>
                 <Text>Loading</Text>
               </Box>
@@ -182,52 +189,105 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         </Text>
                       </Flex>
                       <Flex align="center" flexDirection="column">
-                        {presentSubscription?.subscription_data?.status ==
-                        "incomplete" ? (
-                          <Button
-                            mb="15px"
-                            w="150px"
-                            fontSize="small"
-                            variant="homePrimary"
-                            py="5"
-                            bg="primary.600"
-                            color={whiteText}
-                            _hover={bgHover}
-                            _focus={bgFocus}
-                            _active={bgFocus}
-                            onClick={makePayment}
-                          >
-                            Make Payment
-                          </Button>
+                        {presentSubscription?.subscription_data?.status?.toLowerCase() ===
+                          "trialing" ||
+                        presentSubscription?.subscription_data?.status?.toLowerCase() ===
+                          "incomplete" ? (
+                          <>
+                            <Button
+                              mb="15px"
+                              w="150px"
+                              fontSize="small"
+                              variant="homePrimary"
+                              py="5"
+                              bg="primary.600"
+                              color={whiteText}
+                              _hover={bgHover}
+                              _focus={bgFocus}
+                              _active={bgFocus}
+                              onClick={makePayment}
+                            >
+                              Make Payment
+                            </Button>
+                            <Button
+                              w="150px"
+                              fontSize="small"
+                              py="4"
+                              variant="outline"
+                              color={textColor}
+                              bg={"white"}
+                              border="1px"
+                              borderColor="primary.500"
+                              _hover={{ bg: boxBg, color: textColor }}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : presentSubscription?.subscription_data?.status.toLowerCase() ===
+                          "canceled" ? (
+                          <Flex direction="column">
+                            <Button
+                              w="150px"
+                              mb="15px"
+                              fontSize="small"
+                              py="4"
+                              variant="homePrimary"
+                              bg="primary.600"
+                              color={whiteText}
+                              _hover={bgHover}
+                              _focus={bgFocus}
+                              _active={bgFocus}
+                              onClick={makePayment}
+                            >
+                              Make Payment
+                            </Button>
+                            <Button
+                              w="150px"
+                              fontSize="small"
+                              py="4"
+                              variant="outline"
+                              color={textColor}
+                              bg={"white"}
+                              border="1px"
+                              borderColor="primary.500"
+                              onClick={() => router.push("/admin/transactions")}
+                            >
+                              Subscribe
+                            </Button>
+                          </Flex>
                         ) : (
-                          <Button
-                            mb="15px"
-                            w="150px"
-                            fontSize="small"
-                            variant="homePrimary"
-                            bg="primary.600"
-                            py="5"
-                            color={whiteText}
-                            _hover={bgHover}
-                            _focus={bgFocus}
-                            _active={bgFocus}
-                          >
-                            Upgrade Plan
-                          </Button>
+                          <>
+                            <Button
+                              mb="15px"
+                              w="150px"
+                              fontSize="small"
+                              variant="homePrimary"
+                              bg="primary.600"
+                              py="5"
+                              color={whiteText}
+                              _hover={bgHover}
+                              _focus={bgFocus}
+                              _active={bgFocus}
+                              onClick={() => router.push("/")}
+                            >
+                              Upgrade Plan
+                            </Button>
+                            <Button
+                              w="150px"
+                              fontSize="small"
+                              py="4"
+                              variant="outline"
+                              color={textColor}
+                              bg={"white"}
+                              border="1px"
+                              borderColor="primary.500"
+                              _hover={{ bg: boxBg, color: textColor }}
+                              onClick={() => router.push("/")}
+                            >
+                              Cancel
+                            </Button>
+                          </>
                         )}
-                        <Button
-                          w="150px"
-                          fontSize="small"
-                          py="4"
-                          variant="outline"
-                          color={textColor}
-                          bg={"white"}
-                          border="1px"
-                          borderColor="primary.500"
-                          _hover={{ bg: boxBg, color: textColor }}
-                        >
-                          Cancel
-                        </Button>
                       </Flex>
                     </Flex>
 

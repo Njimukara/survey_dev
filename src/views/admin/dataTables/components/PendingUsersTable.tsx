@@ -43,7 +43,9 @@ const checkExpiry = (data: any) => {
 const PendingUsersTable = (props: TableProps) => {
   const { tableData } = props;
 
-  const { fetchInvitations } = useInvitations();
+  // const { fetchInvitations } = useInvitations();
+  const { companyInvites, invitesError, invitesLoading, fetchInvitations } =
+    useInvitations();
   const { currentUser } = useCurrentUser();
 
   const [user, setUser] = useState<any>(currentUser);
@@ -172,7 +174,7 @@ const PendingUsersTable = (props: TableProps) => {
           onClick={() => copyToClipboard(value)}
           _hover={btnTransBgHover}
           py="0"
-          h="48px"
+          h="40px"
           px="0"
           fontSize="sm"
         >
@@ -193,7 +195,7 @@ const PendingUsersTable = (props: TableProps) => {
           variant="homePrimary"
           px="3"
           py="0"
-          h="48px"
+          h="40px"
           fontSize="sm"
         >
           resend
@@ -219,7 +221,7 @@ const PendingUsersTable = (props: TableProps) => {
           borderColor="red.300"
           py="0"
           px="3"
-          height="48px"
+          height="40px"
           fontSize="sm"
         >
           revoke

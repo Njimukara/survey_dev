@@ -7,6 +7,7 @@ import PieChart from "components/charts/PieChart";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import { ApexOptions } from "apexcharts";
+import NoData from "layouts/admin/noData";
 
 type ApexGeneric = ApexOptions & any;
 
@@ -75,7 +76,7 @@ const monthOptions = [
 ];
 
 export default function Conversion(props: { [x: string]: any }) {
-  const { companySurvey, ...rest } = props;
+  const { companySurvey, loading, ...rest } = props;
 
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -85,7 +86,7 @@ export default function Conversion(props: { [x: string]: any }) {
     { bg: "primary.700", color: "secondaryGray.900" }
   );
 
-  const { mergedCompanyHistory } = useSurveyHistoryContext();
+  // const { mergedCompanyHistory } = useSurveyHistoryContext();
 
   const [period, setPeriod] = useState("year");
   const [month, setMonth] = useState(null);
@@ -165,30 +166,20 @@ export default function Conversion(props: { [x: string]: any }) {
   );
 
   const data = useMemo(
-    () => getAnalysis(mergedCompanyHistory, period, year, month),
-    [getAnalysis, mergedCompanyHistory, period, year, month]
+    () => getAnalysis(companySurvey, period, year, month),
+    [getAnalysis, companySurvey, period, year, month]
   );
 
   const CalculatePieWeekData = (cperiod: string) => {
     setPeriod(cperiod);
   };
 
+  if (!companySurvey) {
+    return <NoData title="No user statistics" />;
+  }
+
   if (companySurvey && companySurvey.length <= 0) {
-    return (
-      <Card
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        borderRadius="10"
-        border="1px solid"
-        borderColor="rgba(0, 0, 0, 0.11)"
-        {...rest}
-      >
-        <Text color={textColorPrimary} mb="4" fontWeight="bold" fontSize="2xl">
-          No user statistics.
-        </Text>
-      </Card>
-    );
+    return <NoData title="No user statistics" />;
   }
 
   return (

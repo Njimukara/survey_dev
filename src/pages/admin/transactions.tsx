@@ -50,9 +50,17 @@ import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
 import { usePlanContext } from "contexts/PlanContext";
 import TransactionTable from "views/admin/dataTables/components/TransationTable";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 
 export default function Transactions() {
   // component variables
+  const subscriptionsData = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { data, isLoading, error } = subscriptionsData;
+  const currentSubscription = data?.currentSubscription;
+  const subscriptions = data?.data;
 
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [upgrade, setUpgrade] = useState(false);
@@ -62,7 +70,7 @@ export default function Transactions() {
 
   // get user subscription from store
   const [localSubscriptions, setLocalSubscriptions] = useState([]);
-  const { subscriptions, fetchSubscriptions } = useSubscription();
+  // const { subscriptions, fetchSubscriptions } = useSubscription();
   const { currentUser, fetchCurrentUser } = useCurrentUser();
 
   const { plans, errors, loading } = usePlanContext();
@@ -99,7 +107,6 @@ export default function Transactions() {
   }, [errors, plans, toast]);
 
   useEffect(() => {
-    console.log(subscriptions);
     if (!currentUser) {
       fetchCurrentUser();
     }

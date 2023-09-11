@@ -48,7 +48,7 @@ import useInvitations from "utils/useInvitations";
 export default function PendingUserInvite(props: TableProps) {
   const { columnsData, tableData } = props;
 
-  const { fetching, invitations, fetchInvitations } = useInvitations();
+  const { fetchInvitations } = useInvitations();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();

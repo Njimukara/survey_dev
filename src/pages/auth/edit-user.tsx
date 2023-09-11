@@ -50,13 +50,23 @@ import SetEmail from "views/admin/profile/components/SetEmail";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import axiosConfig from "axiosConfig";
+import Select from "react-select";
+import { useFormik } from "formik";
+import styles from "../../styles/PhoneNumbr.module.css";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  // phone_number: Yup.string().required("Country is required"),
+  user_type: Yup.string().required("User type required"),
+});
 
 export default function EditUser() {
   const router = useRouter();
   const [submitting, setSubmitting] = React.useState(false);
   const [, setUser] = React.useState<any>();
   const [error, setError] = React.useState(null);
-  const [canEdit, setCanEdit] = React.useState(true);
+  // const [canEdit, setCanEdit] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
   const [emailModal, setEmailModal] = React.useState(false);
   const [name, setName] = React.useState("");
@@ -69,10 +79,6 @@ export default function EditUser() {
 
   // chakra toast
   const toast = useToast();
-
-  const toggleEdit = () => {
-    setCanEdit(!canEdit);
-  };
 
   // open password reset modal
   const toggleModal = (state: boolean | ((prevState: boolean) => boolean)) => {
@@ -87,7 +93,7 @@ export default function EditUser() {
   };
 
   // function to upddate user
-  const updateUser = async () => {
+  const handleSubmit = async () => {
     setSubmitting(true);
     let formData = new FormData();
     formData.append("name", name);
@@ -102,19 +108,15 @@ export default function EditUser() {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
+        // Authorization: `Token ${session?.user?.auth_token}`,
       },
     };
 
-    await axios
-      .patch(
-        `https://surveyplanner.pythonanywhere.com/auth/users/me/`,
-        formData,
-        options
-      )
+    await axiosConfig
+      .patch(`/auth/users/me/`, formData, options)
       .then(() => {
         getUser();
-        toggleEdit();
+        // toggleEdit();
         setSubmitting(false);
         toast({
           position: "bottom-right",
@@ -183,27 +185,23 @@ export default function EditUser() {
 
   return (
     <AdminLayout>
-      <Card mt={20} borderRadius="10" fontFamily="inter">
+      <Card mt={20} borderRadius="10" fontFamily="Poppins">
         <form>
           <Flex gap={20} pt={10} px={10} w="100%">
             {/* image upload */}
             <Flex alignItems="center" flexDirection="column">
-              {createObjectURL && (
-                <Image
-                  src={createObjectURL || "/profile.png"}
-                  objectFit="contain"
-                  bg="transparent"
-                  width="370px"
-                  height="230px"
-                  borderRadius="lg"
-                />
-              )}
+              <Image
+                src={createObjectURL || "/profile.png"}
+                objectFit="contain"
+                bg="transparent"
+                width="200px"
+                height="200px"
+                borderRadius="lg"
+              />
               <Box position="relative" overflow="hidden" my="3">
-                {!canEdit && (
-                  <Button ml="10px" cursor="pointer">
-                    {image ? image.name : "Upload Avatar"}
-                  </Button>
-                )}
+                <Button ml="10px" cursor="pointer">
+                  {image ? image.name : "Upload Avatar"}
+                </Button>
                 <Input
                   onChange={uploadToClient}
                   position="absolute"
@@ -214,7 +212,7 @@ export default function EditUser() {
                   accept="image/x-png,image/gif,image/jpeg,image/avif"
                 />
               </Box>
-              {(image || (createObjectURL && !canEdit)) && (
+              {(image || createObjectURL) && (
                 <Button onClick={removeAvatar} ml="10px" cursor="pointer">
                   Remove Avatar
                 </Button>
@@ -238,14 +236,15 @@ export default function EditUser() {
                 </Flex>
               )}
               {/* Edit form begins */}
-              <FormControl pb="3">
-                <HStack spacing="10px">
+              <Flex w="100%" gap="5">
+                <FormControl pb="3">
+                  {/* <HStack spacing="10px"> */}
                   <FormLabel w="150px">Your name *</FormLabel>
                   <Input
                     data-cy="editName_input"
                     id="name"
                     name="name"
-                    variant="rounded"
+                    variant="flushed"
                     fontSize="sm"
                     ms={{ base: "0px", md: "0px" }}
                     type="text"
@@ -256,13 +255,12 @@ export default function EditUser() {
                     size="lg"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    isDisabled={canEdit}
                   />
-                </HStack>
-              </FormControl>
+                  {/* </HStack> */}
+                </FormControl>
 
-              <FormControl>
-                <HStack spacing="10px">
+                <FormControl w="100%">
+                  {/* <HStack spacing="10px"> */}
                   <FormLabel w="150px">Phone Number</FormLabel>
                   <PhoneInput
                     placeholder="Phone Number"
@@ -270,19 +268,15 @@ export default function EditUser() {
                     value={phone_number}
                     onChange={setPhone_number}
                     inputComponent={Input}
-                    isDisabled={canEdit}
-                    style={{
-                      borderRadius: "15px",
-                      padding: "4px",
-                      fontSize: "14px",
-                      width: "100%",
-                    }}
+                    className={styles["phone-input"]}
                   />
-                </HStack>
-              </FormControl>
+                  {/* </HStack> */}
+                </FormControl>
+              </Flex>
 
-              <FormControl pb="3">
-                <HStack spacing="10px">
+              <Flex w="100%" gap="5">
+                <FormControl pb="3">
+                  {/* <HStack spacing="10px"> */}
                   <FormLabel w="150px">Email *</FormLabel>
                   <InputGroup size="md">
                     <Input
@@ -292,9 +286,8 @@ export default function EditUser() {
                       placeholder="Confirm Password"
                       size="lg"
                       mt="12px"
-                      variant="rounded"
+                      variant="flushed"
                       value={email}
-                      isDisabled={canEdit}
                     />
                     <InputRightElement
                       display="flex"
@@ -303,78 +296,75 @@ export default function EditUser() {
                       w="max-content"
                     >
                       <Button
-                        _hover={{ bg: "none", color: "primary.500" }}
+                        bg="none"
+                        color="primary.500"
+                        _hover={{ bg: "none", color: "primary.600" }}
                         onClick={() => toggleEmailModal(true)}
                       >
                         Reset Email
                       </Button>
                     </InputRightElement>
                   </InputGroup>
-                </HStack>
-              </FormControl>
+                  {/* </HStack> */}
+                </FormControl>
 
-              <FormControl pb="3">
-                <Flex alignItems="center">
+                <FormControl pb="3">
                   <FormLabel w="120px">Password</FormLabel>
-                  <Button
-                    bg="none"
-                    _hover={{ bg: "none", color: "primary.500" }}
-                    onClick={() => toggleModal(true)}
-                  >
-                    Reset Password
-                  </Button>
-                </Flex>
-              </FormControl>
-
-              {canEdit ? (
-                <Flex w="100%" gap="20px" alignItems="center" pl="150px" mt={5}>
-                  <Button
-                    data-cy="toggleEdit"
-                    onClick={toggleEdit}
-                    fontSize="sm"
-                    variant="homePrimary"
-                    bg="primary.600"
-                    fontWeight="500"
-                    py="5"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => router.push("/admin/profile")}
-                    fontSize="sm"
-                    variant="outline"
-                    py="4"
-                    px="5"
-                    fontWeight="500"
-                  >
-                    Back
-                  </Button>
-                </Flex>
-              ) : (
-                <Flex w="100%" gap="20px" alignItems="center" pl="150px" mt={5}>
-                  <Button
-                    isLoading={submitting}
-                    onClick={updateUser}
-                    fontSize="sm"
-                    variant="homePrimary"
-                    bg="primary.600"
-                    fontWeight="500"
-                    py="5"
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    onClick={toggleEdit}
-                    fontSize="sm"
-                    variant="outline"
-                    py="4"
-                    px="5"
-                    fontWeight="500"
-                  >
-                    Cancel
-                  </Button>
-                </Flex>
-              )}
+                  <InputGroup size="md">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      fontSize="sm"
+                      placeholder="Confirm Password"
+                      size="lg"
+                      mt="12px"
+                      variant="flushed"
+                      type="password"
+                      value="password"
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="15px"
+                      w="max-content"
+                    >
+                      <Button
+                        bg="none"
+                        color="primary.500"
+                        _hover={{ bg: "none", color: "primary.600" }}
+                        onClick={() => toggleModal(true)}
+                      >
+                        Reset Password
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+              </Flex>
+              <Flex w="100%" gap="20px" mt={5}>
+                <Button
+                  // isLoading={formik.isSubmitting}
+                  onClick={handleSubmit}
+                  fontSize="sm"
+                  variant="homePrimary"
+                  bg="primary.600"
+                  fontWeight="500"
+                  py="0"
+                  h="40px"
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => router.back()}
+                  fontSize="sm"
+                  variant="outline"
+                  py="0"
+                  h="40px"
+                  px="5"
+                  fontWeight="500"
+                >
+                  Cancel
+                </Button>
+              </Flex>
             </Flex>
           </Flex>
         </form>

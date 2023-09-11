@@ -20,12 +20,12 @@ import Card from "components/card/Card";
 import User from "./User";
 
 export default function Users(props: { [x: string]: any }) {
-  const { members, ...rest } = props;
+  const { members, loading, ...rest } = props;
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const font_family = "Poppins";
 
-  if (members.length == 0) {
+  if (members && members.length == 0) {
     return (
       <Card
         alignItems="center"

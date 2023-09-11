@@ -24,7 +24,7 @@ export const buttonStyles = {
           borderColor: "primary.500",
           color: "primary.500",
           py: "9",
-          px: "14",
+          px: "14px",
           fontSize: "16px",
           fontWeight: "semibold",
           _selected: {

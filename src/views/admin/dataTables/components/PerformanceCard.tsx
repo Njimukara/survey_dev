@@ -31,9 +31,6 @@ export default function PercormanceCard(props: Props) {
   const [acoustic, setAcoustic] = useState(4);
 
   // Chakra Color Mode
-  const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
-
-  const [mounted, setMounted] = useState(false);
   const array = [1, 2, 3, 4];
 
   const formattedString = (inputString: string) => {
@@ -43,27 +40,18 @@ export default function PercormanceCard(props: Props) {
       .replace(/\b\w/g, (match) => match.toUpperCase());
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setMounted(true);
-    }, 3000);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
-
   return (
     <Card
       justifyContent="center"
       flexDirection="column"
       w="100%"
       mb="0px"
-      p="6"
+      p="5"
       borderRadius={10}
       {...rest}
     >
-      <Grid templateColumns="repeat(9, 1fr)" gap="1" py="3">
-        <GridItem colSpan={5} h="10">
+      <Flex gap="2">
+        <Box w="300px">
           <Text fontSize="large" fontWeight="bold" textTransform="uppercase">
             Performance of{" "}
             {survey_Id == lidar
@@ -74,22 +62,25 @@ export default function PercormanceCard(props: Props) {
               ? "SSSs"
               : "Cameras"}
           </Text>
-        </GridItem>
-        {array.map((item, index) => (
-          <GridItem colSpan={1} h="10" key={index}>
-            <Text fontSize="sm" fontWeight="bold">
-              {survey_Id == lidar
-                ? `Lidar ${item}`
-                : survey_Id == multibeam
-                ? `MBES ${item}`
-                : survey_Id == scan
-                ? `SL ${item}`
-                : `AC ${item}`}
-            </Text>
-          </GridItem>
-        ))}
-      </Grid>
-
+        </Box>
+        <Box w="300px">
+          <Grid templateColumns="repeat(8, 1fr)" gap="1">
+            {array.map((item, index) => (
+              <GridItem colSpan={1} h="10" w="50px" key={index}>
+                <Text fontSize="sm" fontWeight="bold">
+                  {survey_Id == lidar
+                    ? `Lidar ${item}`
+                    : survey_Id == multibeam
+                    ? `MBES ${item}`
+                    : survey_Id == scan
+                    ? `SL ${item}`
+                    : `AC ${item}`}
+                </Text>
+              </GridItem>
+            ))}
+          </Grid>
+        </Box>
+      </Flex>
       <Flex>
         <Box pt="2" w="300px">
           <Flex flexDir="column">
@@ -100,51 +91,25 @@ export default function PercormanceCard(props: Props) {
             ))}
           </Flex>
         </Box>
-        <Box w="250px">
+        <Box w="300px">
           <Grid templateColumns="repeat(8, 1fr)" gap="1">
             {performance_ssss.map((ss, index) => (
               <>
                 <GridItem colSpan={2}>
                   {Object.keys(ss).map((attr, ind) => (
                     <>
-                      {ss[attr].type === "number" && (
-                        <Input
-                          key={attr + ind}
-                          w="8"
-                          h="10"
-                          name={`${index}.${attr}`}
-                          color={textColorSecondary}
-                          fontSize="sm"
-                          variant="flushed"
-                          size="sm"
-                          type="number"
-                          placeholder="0.02"
-                          value={
-                            value && value[index] ? value[index][attr] : ""
-                          }
-                          onChange={handleform}
-                        />
-                      )}
-                      {ss[attr].type === "select" && (
-                        <Select
-                          key={attr + ind}
-                          onChange={handleform}
-                          name={`${index}.${attr}`}
-                          size="xs"
-                          h="10"
-                          fontSize="xs"
-                          variant="flushed"
-                          value={
-                            value && value[index] ? value[index][attr] : ""
-                          }
-                        >
-                          {ss[attr].option.map((opt: string, index: number) => (
-                            <option value={opt} key={index}>
-                              {opt}
-                            </option>
-                          ))}
-                        </Select>
-                      )}
+                      <Input
+                        key={attr + ind}
+                        w="10"
+                        h="10"
+                        name={`${index}.${attr}`}
+                        readOnly
+                        fontSize="sm"
+                        variant="flushed"
+                        size="sm"
+                        placeholder="0.02"
+                        value={value && value[index] ? value[index][attr] : ""}
+                      />
                     </>
                   ))}
                 </GridItem>

@@ -14,6 +14,7 @@ import { NextAvatar } from "components/image/Avatar";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import RegisterCompany from "./RegisterCompany";
+import EditCompanyModal from "components/modals/EditCompany";
 
 interface Company {
   name: string;
@@ -23,15 +24,26 @@ interface Company {
   state?: string;
   zip_code?: string;
   street_address?: string;
+  company?: any;
+  owner?: string;
 }
 
 const countryNameFromIso = (countryCode: string) => {
-  const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-    type: "region",
-  });
-  let tempCountry = countryCode;
-  tempCountry = regionNamesInEnglish.of(tempCountry);
-  return tempCountry;
+  try {
+    const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+      type: "region",
+    });
+
+    if (countryCode) {
+      const tempCountry = regionNamesInEnglish.of(countryCode);
+      return tempCountry;
+    }
+  } catch (error) {
+    return "";
+    // console.error("Error converting country code to country name:", error);
+  }
+
+  return countryCode;
 };
 
 export default function CompanyDetails(props: {
@@ -53,6 +65,12 @@ export default function CompanyDetails(props: {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [country, setCountry] = useState("");
+
+  const [editCompanyModalState, setEditCompanyModal] = useState(false);
+
+  const toggleCompanyEditModal = (state: boolean) => {
+    setEditCompanyModal(state);
+  };
 
   // toggle company Registration modal
   const toggleModal = (state: boolean) => {
@@ -179,15 +197,19 @@ export default function CompanyDetails(props: {
               </Box>
               <Box>
                 <Text color="gray.400" transform="capitalize">
-                  {/* Admin: {company?.owner} */}
+                  Admin
                 </Text>
+                <Text>{company?.owner}</Text>
               </Box>
             </Grid>
           </Box>
         </Box>
         <Box>
           <Button
-            onClick={() => router.push("/company/edit-company")}
+            // onClick={() => router.push("/company/edit-company")}
+            onClick={() => {
+              toggleCompanyEditModal(!editCompanyModalState);
+            }}
             mb={2}
             mt={{ base: "2", lg: "4" }}
             variant="homePrimary"
@@ -202,6 +224,10 @@ export default function CompanyDetails(props: {
           </Button>
         </Box>
       </Grid>
+      <EditCompanyModal
+        opened={editCompanyModalState}
+        toggleModal={toggleCompanyEditModal}
+      />
     </Card>
   );
 }

@@ -21,6 +21,9 @@ import { useRouter } from "next/router";
 import axiosConfig from "axiosConfig";
 import ReusableTable from "views/admin/dataTables/components/Table";
 import { useSession } from "next-auth/react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "redux/store";
+import { fetchCompanyData, fetchCompanyMembers } from "redux/companySlice";
 
 interface user {
   date_joined?: string;
@@ -49,6 +52,8 @@ const getBlockedState = (data: user) => {
 
 const CompanyUsersTable = (props: TableProps) => {
   const { getCompanyMembers, columnsData, tableData } = props;
+
+  const dispatch = useDispatch<AppDispatch>();
 
   //   const columns = useMemo(() => columnsData, [columnsData]);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -113,7 +118,12 @@ const CompanyUsersTable = (props: TableProps) => {
           .patch(`/api/company/companymember/${id}/block/`, body)
           .then((res) => {
             // refresh the table to show recent updates
-            getCompanyMembers();
+            dispatch(
+              fetchCompanyMembers({
+                apiEndpoint: "/api/company/companymembers/companymember/",
+                force: true,
+              })
+            );
             setSending(false);
             toast({
               position: "bottom-right",
@@ -137,15 +147,18 @@ const CompanyUsersTable = (props: TableProps) => {
         return;
       }
 
-      // else unblock User
-      console.log("unblock user please");
       setSending(true);
       let body = {};
       await axiosConfig
         .patch(`/api/company/companymember/${id}/unblock/`, body)
         .then((res) => {
           // refresh the table to show recent updates
-          getCompanyMembers();
+          dispatch(
+            fetchCompanyMembers({
+              apiEndpoint: "/api/company/companymembers/companymember/",
+              force: true,
+            })
+          );
           setSending(false);
           toast({
             position: "bottom-right",
@@ -177,7 +190,13 @@ const CompanyUsersTable = (props: TableProps) => {
     await axiosConfig
       .delete(`/api/company/companymember/${id}/delete/`)
       .then((res) => {
-        getCompanyMembers();
+        // getCompanyMembers();
+        dispatch(
+          fetchCompanyMembers({
+            apiEndpoint: "/api/company/companymembers/companymember/",
+            force: true,
+          })
+        );
         setLoading(false);
         toast({
           position: "bottom-right",

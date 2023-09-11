@@ -6,6 +6,7 @@ import {
   FormLabel,
   Input,
   Select,
+  FormErrorMessage,
   SimpleGrid,
   Text,
   useColorModeValue,
@@ -19,6 +20,8 @@ export default function SurveyInput(props: { [x: string]: any }) {
     type,
     value,
     options,
+    error, // Add error prop
+    touched,
     inputName,
     placeholder,
     handleChange,
@@ -38,44 +41,57 @@ export default function SurveyInput(props: { [x: string]: any }) {
       .replace(/\b\w/g, (match) => match.toUpperCase());
   };
 
-  if (type != "select") {
-    return (
-      <FormControl display="flex" mb="1">
-        <FormLabel flex={1} fontSize="sm" fontWeight="400">
-          {formattedString(label)}
-        </FormLabel>
-        <Input
-          color={textColorSecondary}
-          w="20%"
-          value={value || ""}
-          fontSize={size}
-          variant="flushed"
-          size={size}
-          type={type}
-          placeholder={placeholder}
-          name={inputName}
-          onChange={(e) => handleChange(e)}
-        />
-      </FormControl>
-    );
-  }
-
-  if (type == "select") {
-    return (
-      <Select
-        onChange={(e) => handleChange(e)}
-        name={inputName}
-        size="xs"
-        fontSize="xs"
-        variant="flushed"
+  // if (type != "select") {
+  return (
+    <FormControl
+      isInvalid={touched && touched[inputName] && error && error[inputName]}
+      display="flex"
+      mb="1"
+    >
+      <FormLabel flex={1} fontSize="sm" fontWeight="400">
+        {formattedString(label)}
+      </FormLabel>
+      <Input
+        // disabled
+        // color={"g"}
+        readOnly
+        w="20%"
         value={value || ""}
-      >
-        {options?.map((opt: string, index: number) => (
-          <option value={opt} key={index}>
-            {opt}
-          </option>
-        ))}
-      </Select>
-    );
-  }
+        fontSize={size}
+        variant="flushed"
+        size={size}
+        placeholder={placeholder}
+        name={inputName}
+      />
+      <FormErrorMessage>
+        {touched && touched[inputName] && error && error[inputName]}
+      </FormErrorMessage>{" "}
+    </FormControl>
+  );
+  // }
+
+  // if (type == "select") {
+  //   return (
+  //     <FormControl>
+  //       <Select
+  //         disabled
+  //         onChange={(e) => handleChange(e)}
+  //         name={inputName}
+  //         size="xs"
+  //         fontSize="xs"
+  //         variant="flushed"
+  //         value={value || ""}
+  //       >
+  //         {options?.map((opt: string, index: number) => (
+  //           <option value={opt} key={index}>
+  //             {opt}
+  //           </option>
+  //         ))}
+  //       </Select>
+  //       <FormErrorMessage>
+  //         {touched && touched[inputName] && error && error[inputName]}
+  //       </FormErrorMessage>{" "}
+  //     </FormControl>
+  //   );
+  // }
 }

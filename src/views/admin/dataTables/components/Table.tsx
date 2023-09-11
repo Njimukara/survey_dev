@@ -14,6 +14,8 @@ import {
   Input,
   Checkbox,
   Icon,
+  InputLeftElement,
+  InputGroup,
 } from "@chakra-ui/react";
 import {
   useGlobalFilter,
@@ -27,6 +29,7 @@ import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 import { isWindowAvailable } from "utils/navigation";
 import { MdBarChart } from "react-icons/md";
+import { SearchIcon } from "@chakra-ui/icons";
 
 interface TableColumn {
   Header: string;
@@ -114,13 +117,17 @@ export default function ReusableTable({
         >
           {tableName || ""}
         </Text>
-        <Input
-          type="text"
-          placeholder={searchPlaceholder}
-          variant="flushed"
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          w={{ sm: "100%", md: "50%" }}
-        />
+        <InputGroup w={{ sm: "100%", md: "50%" }}>
+          <InputLeftElement pointerEvents="none">
+            <SearchIcon />
+          </InputLeftElement>
+          <Input
+            type="text"
+            placeholder={searchPlaceholder}
+            variant="flushed"
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+        </InputGroup>
       </Flex>
 
       {isWindowAvailable() && (

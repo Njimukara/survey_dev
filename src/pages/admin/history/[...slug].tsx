@@ -31,6 +31,10 @@ import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useRouter } from "next/router";
 import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import useSurveyHistory from "utils/useSurveyHistory";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchSurveys } from "redux/surveySlice";
+import OperationalConditions from "views/admin/dataTables/components/OperationalConditions";
 
 const jsonData = {
   name: "my test survey",
@@ -311,24 +315,18 @@ export default function MultibeamEchoSounder() {
   // const [user, setUser] = useState(null);
   // const [result, setResult] = useState(null);
   const [resultID, setResultID] = useState(null);
-  const { surveys, getAllSurveys } = useAllSurveysContext();
+  // const { surveys, getAllSurveys } = useAllSurveysContext();
+  const dispatch = useDispatch<AppDispatch>();
   const { surveyHistory } = useSurveyHistory();
-
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys } = allSurveys;
+  const { data } = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { currentSubscription } = data;
   const router = useRouter();
-
-  // const checkSurvey = () => {
-  //   let url: any = router.query;
-  //   let result_id = Number(url.result_id);
-  //   setResultID(result_id);
-  //   let survey_id = Number(url.survey_id);
-
-  //   const foundSurvey = surveys.find(
-  //     (survey: Survey) => survey.id === survey_id
-  //   );
-  //   if (foundSurvey) {
-  //     setSurvey(foundSurvey);
-  //   }
-  // };
 
   const getSurveyResults = useCallback(() => {
     const requestedSurvey = surveyHistory.find(
@@ -337,77 +335,6 @@ export default function MultibeamEchoSounder() {
 
     if (requestedSurvey) {
       const { name, survey, results, parameters } = requestedSurvey;
-
-      // Destructure the item based on survey type
-      // if (survey === 1) {
-      //   const {
-      //     calibration_parameters,
-      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
-      //     survey_platform_performance,
-      //     lever_arm_measures_between,
-      //     operational_conditions,
-      //     "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
-      //   } = parameters;
-
-      //   setCalibrationForm(calibration_parameters);
-      //   setPerformanceForm(performance_gnss_usbl);
-      //   setPlatformForm(survey_platform_performance);
-      //   setOperationalForm(operational_conditions);
-      //   setSSPerformanceForm(performance_ssss);
-      //   setLeverForm(lever_arm_measures_between);
-      // } else if (survey === 2) {
-      //   //lydar
-      //   const {
-      //     calibration_parameters,
-      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
-      //     survey_platform_performance,
-      //     lever_arm_measures_between,
-      //     operational_conditions,
-      //     "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
-      //   } = parameters;
-
-      //   setCalibrationForm(calibration_parameters);
-      //   setPerformanceForm(performance_gnss_usbl);
-      //   setPlatformForm(survey_platform_performance);
-      //   setOperationalForm(operational_conditions);
-      //   setSSPerformanceForm(performance_ssss);
-      //   setLeverForm(lever_arm_measures_between);
-      // } else if (survey === 3) {
-      //   //side scan
-      //   const {
-      //     calibration_parameters,
-      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
-      //     survey_platform_performance,
-      //     lever_arm_measures_between,
-      //     operational_conditions,
-      //     "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
-      //   } = parameters;
-
-      //   setCalibrationForm(calibration_parameters);
-      //   setPerformanceForm(performance_gnss_usbl);
-      //   setPlatformForm(survey_platform_performance);
-      //   setOperationalForm(operational_conditions);
-      //   setSSPerformanceForm(performance_ssss);
-      //   setLeverForm(lever_arm_measures_between);
-      // } else if (survey === 4) {
-      //   //acoustc
-      //   const {
-      //     calibration_parameters,
-      //     "performance_ins-gnss-usbl": performance_gnss_usbl,
-      //     survey_platform_performance,
-      //     lever_arm_measures_between,
-      //     operational_conditions,
-      //     "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
-      //   } = parameters;
-
-      //   setCalibrationForm(calibration_parameters);
-      //   setPerformanceForm(performance_gnss_usbl);
-      //   setPlatformForm(survey_platform_performance);
-      //   setOperationalForm(operational_conditions);
-      //   setSSPerformanceForm(performance_ssss);
-      //   setLeverForm(lever_arm_measures_between);
-      // }
-
       const parameterMappings: {
         [key: number]: { formKey: string; performanceKey: string };
       } = {
@@ -451,6 +378,8 @@ export default function MultibeamEchoSounder() {
 
       setSurveyName(name);
       setSurveyParameters(results);
+
+      console.log("slug results");
       setLoading(false);
       // Rest of your code for handling the found survey
     }
@@ -458,7 +387,7 @@ export default function MultibeamEchoSounder() {
 
   useEffect(() => {
     if (!surveys) {
-      getAllSurveys();
+      dispatch(fetchSurveys());
     } else {
       let url: any = router.query;
       let result_id = Number(url.result_id);
@@ -477,15 +406,15 @@ export default function MultibeamEchoSounder() {
     surveys,
     survey,
     surveyHistory,
-    getAllSurveys,
     router.query,
     resultID,
     getSurveyResults,
+    dispatch,
   ]);
 
   useEffect(() => {
-    setSubscription(subscriptions[subscriptions.length - 1]);
-  }, [subscriptions]);
+    setSubscription([currentSubscription]);
+  }, [currentSubscription]);
 
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
@@ -834,8 +763,8 @@ export default function MultibeamEchoSounder() {
                 value={platformForm}
                 survey_Id={surveyID}
               />
-              <OperationalConditionsCard
-                operationConditions={operationalConditions}
+              <OperationalConditions
+                conditions={operationalConditions}
                 handleform={handleOperationalForm}
                 survey_Id={surveyID}
                 value={operationalForm}
@@ -856,7 +785,6 @@ export default function MultibeamEchoSounder() {
                 survey_Id={surveyID}
                 value={leverForm}
               />
-              <CloudPoints surveyID={surveyID} />
             </Box>
           </Flex>
           {/* <Button

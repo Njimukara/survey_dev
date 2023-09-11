@@ -58,13 +58,11 @@ export const authOptions = (req) => ({
             await axiosConfig
               .get(`/auth/users/me/`, config)
               .then((res) => {
-                console.log("res", res);
                 user.data = res.data;
                 user.auth_token = respond.data.auth_token;
                 return user;
               })
               .catch((err) => {
-                console.log("err", err);
                 throw new Error(
                   JSON.stringify({
                     errors: "Server error, please try again later",

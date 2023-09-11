@@ -29,7 +29,7 @@ import useInvitations from "utils/useInvitations";
 export default function InviteUser(props: { [x: string]: any }) {
   let { getInvitations, toggleModal, opened, ...rest } = props;
 
-  const { fetching, invitations, fetchInvitations } = useInvitations();
+  const { fetchInvitations } = useInvitations();
 
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");

@@ -1,35 +1,9 @@
-import {
-  Flex,
-  Table,
-  Progress,
-  Icon,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue,
-  Button,
-  Input,
-  Box,
-} from "@chakra-ui/react";
-import { useMemo, useState, useEffect, useRef } from "react";
-
-// Custom components
-import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
-import SurveyResults from "pages/admin/survey-results";
+import { Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
+import { useMemo } from "react";
 
 // Assets
-import {
-  MdCancel,
-  MdCheckCircle,
-  MdDeleteOutline,
-  MdOutlineError,
-} from "react-icons/md";
+import { MdCancel, MdCheckCircle, MdOutlineError } from "react-icons/md";
 import { TableColumn, TableProps } from "../../default/variables/columnsData";
-import { useAllSurveysContext } from "contexts/SurveyContext";
 import ReusableTable from "views/admin/dataTables/components/Table";
 
 const formatDate = (date: string) => {
@@ -49,15 +23,14 @@ const TransactionTable = (props: TableProps) => {
   const { tableData } = props;
   //   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-
-  const textColor = useColorModeValue("secondaryGray.900", "white");
+  const font_family = "Poppins";
 
   const Tabblecolumns: TableColumn[] = [
     {
       Header: "AMOUNT",
       accessor: "plan",
       Cell: ({ cell: { value } }) => (
-        <Text color={textColor} fontSize="sm" fontWeight="400">
+        <Text fontSize="sm" fontWeight="400" fontFamily={font_family}>
           ${formatPrice(value?.amount)}
         </Text>
       ),
@@ -69,7 +42,7 @@ const TransactionTable = (props: TableProps) => {
       Cell: ({ cell }) => {
         let data = null;
 
-        if (cell.value === "active") {
+        if (cell.value === "active" || cell.value === "trialing") {
           data = (
             <Flex align="center">
               <Icon
@@ -79,7 +52,12 @@ const TransactionTable = (props: TableProps) => {
                 color="green.500"
                 as={MdCheckCircle}
               />
-              <Text color="green.500" fontSize="sm" fontWeight="400">
+              <Text
+                color="green.500"
+                fontSize="sm"
+                fontWeight="400"
+                fontFamily={font_family}
+              >
                 {cell.value.toUpperCase()}
               </Text>
             </Flex>
@@ -94,16 +72,26 @@ const TransactionTable = (props: TableProps) => {
                 color="orange.500"
                 as={MdOutlineError}
               />
-              <Text color="orange.500" fontSize="sm" fontWeight="400">
+              <Text
+                color="orange.500"
+                fontSize="sm"
+                fontWeight="400"
+                fontFamily={font_family}
+              >
                 {cell.value.toUpperCase()}
               </Text>
             </Flex>
           );
-        } else if (cell.value === "canceled" || cell.value === "trialing") {
+        } else if (cell.value === "canceled") {
           data = (
             <Flex align="center">
               <Icon w="24px" h="24px" me="5px" color="red.500" as={MdCancel} />
-              <Text color="red.500" fontSize="sm" fontWeight="400">
+              <Text
+                color="red.500"
+                fontSize="sm"
+                fontWeight="400"
+                fontFamily={font_family}
+              >
                 {cell.value.toUpperCase()}
               </Text>
             </Flex>
@@ -117,7 +105,7 @@ const TransactionTable = (props: TableProps) => {
       Header: "DATE",
       accessor: "start_date",
       Cell: ({ cell: { value } }) => (
-        <Text color={textColor} fontSize="sm" fontWeight="400">
+        <Text fontSize="sm" fontWeight="400" fontFamily={font_family}>
           {formatDate(value)}
         </Text>
       ),
@@ -126,7 +114,7 @@ const TransactionTable = (props: TableProps) => {
       Header: "PAYMENT", // Customize the column header
       accessor: "payment", // Assuming "id" is the unique identifier for each row
       Cell: ({ cell }) => (
-        <Text color={textColor} fontSize="sm" fontWeight="400">
+        <Text fontSize="sm" fontWeight="400" fontFamily={font_family}>
           Stripe Invoice
         </Text>
       ),

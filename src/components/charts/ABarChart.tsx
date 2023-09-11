@@ -26,6 +26,11 @@ const ABarChart: React.FC<BarChartProps> = ({ data }) => {
       xaxis: {
         categories: data.map((item) => item.label),
       },
+      plotOptions: {
+        bar: {
+          columnWidth: "30%", // Adjust the bar width here (e.g., 30% for narrower bars)
+        },
+      },
     },
     series: [
       {

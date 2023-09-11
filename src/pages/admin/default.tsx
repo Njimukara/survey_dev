@@ -52,7 +52,7 @@ import Users from "views/admin/default/components/Users";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import { useCurrentUser } from "contexts/UserContext";
 import { useAllSurveysContext } from "contexts/SurveyContext";
@@ -65,6 +65,17 @@ import Table from "components/table/Table";
 import NewTransactionTable from "views/admin/dataTables/components/TransationTable";
 import TransactionTable from "views/admin/dataTables/components/TransationTable";
 import SurveyTable from "views/admin/dataTables/components/SurveyTable";
+import getClient from "axiosInstance";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { UserTypes } from "utils/userTypes";
+import { fetchCompanyMembers } from "redux/companySlice";
+import {
+  fetchCompanySurveys,
+  fetchSurveyHistory,
+} from "redux/surveyHistorySlice";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const columnsData: TableColumn[] = [
   {
@@ -200,75 +211,92 @@ export const employeeData = [
   },
 ];
 
-export default function UserReports(props: { [x: string]: any }) {
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-    date_joined: string;
-    user_profile: {
-      user_type: number;
-      avatar: string;
-    };
-  }
+export default function UserReports(serverData: any) {
+  const [user, setUser] = useState<any>();
 
   const font_family = "Poppins";
-
-  const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
-  const { subscriptions, fetchSubscriptions } = useSubscription();
-
-  // Chakra Color Mode
   const brandColor = useColorModeValue("primary.600", "#271E67");
   const boxBg = useColorModeValue("#F7F7FC", "whiteAlpha.100");
 
-  const [user, setUser] = useState<User>(currentUser);
-  const [companyUser, setCompanyUser] = useState(2);
-  const [individualUser, setIndividualUser] = useState(1);
-  const [companyMembers, setCompanyMembers] = useState([]);
-  const [, setSurveyHistory] = useState([]);
   const { data: session } = useSession();
+  const sessionUser = session?.user;
+  const userProfile = sessionUser?.data?.user_profile;
+  const userType = userProfile?.user_type;
 
-  const { mergedCompanyHistory, pending, surveyHistory, companySurveyHistory } =
-    useSurveyHistoryContext();
+  const currentUserData = useCurrentUser();
+  const { currentUser } = currentUserData;
 
-  // chakra toast
-  const toast = useToast();
+  const subscriptionsData = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { data } = subscriptionsData;
+  const currentSubscription = data?.currentSubscription;
+
+  const companyMembersData = useSelector(
+    (state: RootState) => state.reduxStore.company
+  );
+  const { companyMembers, membersLoading, membersError } = companyMembersData;
+
+  const surveyHistoryData = useSelector(
+    (state: RootState) => state.reduxStore.surveyHistory
+  );
+  const {
+    surveyHistory,
+    companySurveysLoading,
+    companySurveys,
+    mergedCompanySurveys,
+    mergedSurveyHistory,
+  } = surveyHistoryData;
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [subscriptions, setSubscriptions] = useState([]);
 
   const invertedArray = useMemo(() => {
-    return [...subscriptions].reverse();
+    if (Array.isArray(subscriptions)) {
+      return [...subscriptions].reverse();
+    } else {
+      // Handle the case where subscriptions is not an array
+      return [];
+    }
   }, [subscriptions]);
 
-  const getCompanyMembers = useCallback(async () => {
-    try {
-      const response = await axiosConfig.get(
-        "api/company/companymembers/companymember/"
-      );
-      setCompanyMembers(response.data);
-    } catch (error) {
-      toast({
-        position: "bottom-right",
-        description: "Error getting company users",
-        status: "error",
-        duration: 4000,
-        isClosable: true,
-      });
-    }
+  useEffect(() => {
+    // console.log(companySurveyHistory, mergedCompanyHistory);
+    setSubscriptions(data?.data);
   }, []);
-
-  // useEffect(() => {
-
-  //   getSurveyHistory();
-  //   console.log(surveyHistory);
-  // }, [subscriptions]);
 
   useEffect(() => {
     setUser(currentUser);
-    // console.log("default, companyhistory", companySurveyHistory);
   }, [currentUser]);
 
   useEffect(() => {
-    if (session?.user?.data?.user_profile?.user_type === companyUser) {
-      getCompanyMembers();
+    if (userType === UserTypes.COMPANY_USER) {
+      // dispatch({"SET_COMPANY_MEMEBERS", serverData});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      currentSubscription != null &&
+      userType === UserTypes.COMPANY_USER &&
+      companyMembers.length > 0
+    ) {
+      // console.log("company usr");
+      dispatch(
+        fetchCompanySurveys({
+          force: true,
+        })
+      );
+      // console.log(mergedCompanySurveys);
+    } else {
+      // console.log("regular usr");
+      dispatch(
+        fetchSurveyHistory({
+          force: true,
+        })
+      );
+      // console.log(mergedSurveyHistory);
     }
   }, []);
 
@@ -279,14 +307,7 @@ export default function UserReports(props: { [x: string]: any }) {
         fontFamily={font_family}
       >
         <>
-          {/* <Flex> */}
-          <Card
-            mb="3%"
-            h="144px"
-            borderRadius="10"
-            bg={brandColor}
-            // bgGradient="linear(to-r, #3A2FB7, #3A2FB7)"
-          >
+          <Card mb="3%" h="144px" borderRadius="10" bg={brandColor}>
             <Box py="3" color="white" pl="10">
               <Heading
                 data-cy="dashboard-heading"
@@ -302,129 +323,172 @@ export default function UserReports(props: { [x: string]: any }) {
               </Text>
             </Box>
           </Card>
-          {/* </Flex> */}
+
           <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="3%">
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdFileCopy}
-                      color="primary.600"
-                    />
-                  }
-                />
-              }
-              name="Surveys"
-              value={
-                !pending && user?.user_profile?.user_type != companyUser
-                  ? surveyHistory.length
-                  : mergedCompanyHistory.length
-              }
-            />
-            {user?.user_profile?.user_type == companyUser ? (
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={FaUsers}
-                        color="primary.600"
-                      />
-                    }
-                  />
-                }
-                name="Company users"
-                value={companyMembers.length}
-              />
-            ) : (
-              ""
-            )}
+            <MiniStatistics name="Surveys" value={getSurveysCount()} />
+            {getUserTypeSpecificStatistics()}
           </SimpleGrid>
 
           <Flex gap="20px" mb="20px">
-            {user?.user_profile?.user_type == companyUser ||
-            user?.user_profile?.user_type == individualUser ? (
-              <>
-                <Flex w="70%">
-                  <PlanDetails />
-                </Flex>
-                <Flex w="30%">
-                  <Offers />
-                </Flex>
-              </>
-            ) : (
-              <Flex w="100%">
-                <Offers />
-              </Flex>
-            )}
+            {getUserTypeSpecificContent()}
           </Flex>
 
-          {user?.user_profile?.user_type == companyUser && (
+          {userType === UserTypes.COMPANY_USER && !membersLoading && (
             <SimpleGrid
               columns={{ base: 1, md: 2, xl: 2 }}
               gap="20px"
               mb="20px"
             >
-              {mergedCompanyHistory && mergedCompanyHistory.length <= 0 ? (
-                <NoData title="No company survey data" />
-              ) : (
-                <PieCard companySurvey={mergedCompanyHistory} />
-              )}
-              <Users members={companyMembers} />
+              {renderCompanySurveys()}
+              <Users loading={membersLoading} members={companyMembers} />
             </SimpleGrid>
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            {user?.user_profile?.user_type == companyUser &&
-            mergedCompanyHistory &&
-            mergedCompanyHistory.length > 0 ? (
-              <SurveyTable
-                tableData={mergedCompanyHistory as unknown as TableData[]}
-              />
-            ) : user?.user_profile?.user_type == individualUser &&
-              surveyHistory &&
-              surveyHistory.length > 0 ? (
-              <SurveyTable tableData={surveyHistory} />
-            ) : (
-              <NoData title="No survey data" />
-            )}
+            {renderSurveyTable()}
           </SimpleGrid>
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="30px">
-            <WeeklyRevenue />
+            <WeeklyRevenue companySurvey={getCompanySurveyData()} />
           </SimpleGrid>
 
-          {(user?.user_profile?.user_type == companyUser ||
-            user?.user_profile?.user_type == individualUser) && (
+          {(userType === UserTypes.COMPANY_USER ||
+            userType === UserTypes.REGULAR_USER) && (
             <SimpleGrid
               columns={{ base: 1, md: 1, xl: 1 }}
               gap="20px"
               mb="30px"
             >
-              {invertedArray.length > 0 ? (
-                <TransactionTable
-                  tableData={invertedArray as unknown as TableData[]}
-                />
-              ) : (
-                <NoData title="No subscription history" />
-              )}
+              {renderTransactionTable()}
             </SimpleGrid>
           )}
         </>
       </Box>
     </AdminLayout>
   );
+
+  // Helper functions
+  function getSurveysCount() {
+    return userType !== UserTypes.COMPANY_USER
+      ? mergedSurveyHistory?.length ?? 0
+      : mergedCompanySurveys?.length ?? 0;
+  }
+
+  function getUserTypeSpecificStatistics() {
+    if (userType === UserTypes.COMPANY_USER) {
+      return (
+        <MiniStatistics name="Company users" value={companyMembers?.length} />
+      );
+    }
+    return null;
+  }
+
+  function getUserTypeSpecificContent() {
+    if (
+      userType === UserTypes.COMPANY_USER ||
+      userType === UserTypes.REGULAR_USER
+    ) {
+      return (
+        <>
+          <Flex w="70%">
+            <PlanDetails />
+          </Flex>
+          <Flex w="30%">
+            <Offers />
+          </Flex>
+        </>
+      );
+    }
+    return (
+      <Flex w="100%">
+        <Offers />
+      </Flex>
+    );
+  }
+
+  function renderCompanySurveys() {
+    if (mergedCompanySurveys && mergedCompanySurveys.length <= 0) {
+      return <NoData title="No company survey data" />;
+    }
+    return (
+      <PieCard
+        loading={companySurveysLoading}
+        companySurvey={mergedCompanySurveys}
+      />
+    );
+  }
+
+  function renderSurveyTable() {
+    if (
+      userType === UserTypes.REGULAR_USER &&
+      mergedSurveyHistory &&
+      mergedSurveyHistory.length > 0
+    ) {
+      return (
+        <SurveyTable
+          tableData={mergedSurveyHistory as unknown as TableData[]}
+        />
+      );
+    } else if (
+      userType === UserTypes.COMPANY_USER &&
+      mergedCompanySurveys &&
+      mergedCompanySurveys.length > 0
+    ) {
+      return (
+        <SurveyTable
+          tableData={mergedCompanySurveys as unknown as TableData[]}
+        />
+      );
+    } else {
+      return <NoData title="No survey data" />;
+    }
+  }
+
+  function getCompanySurveyData() {
+    return companySurveys || surveyHistory;
+  }
+
+  function renderTransactionTable() {
+    if (invertedArray.length > 0) {
+      return (
+        <TransactionTable tableData={invertedArray as unknown as TableData[]} />
+      );
+    } else {
+      return <NoData title="No subscription history" />;
+    }
+  }
 }
 
 UserReports.requireAuth = true;
+
+export async function getServerSideProps(context: any) {
+  const client = await getClient(context);
+  const session = await getSession(context);
+  const userType = session.user?.data?.user_profile?.user_type;
+  console.log(userType);
+  if (userType === UserTypes.COMPANY_USER) {
+    try {
+      const response = await client.get(
+        `/api/company/companymembers/companymember/`
+      );
+      const serverData = response.data;
+      return {
+        props: {
+          serverData,
+        },
+      };
+    } catch (error) {
+      return {
+        props: {
+          serverData: [],
+        },
+      };
+    }
+  } else {
+    return {
+      props: {
+        serverData: [],
+      },
+    };
+  }
+}

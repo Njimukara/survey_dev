@@ -2,28 +2,51 @@ import { Box, Flex, Spinner } from "@chakra-ui/react";
 import React from "react";
 import AdminLayout from "layouts/admin";
 import { useEffect, useState } from "react";
-import {
-  columnsDataSurvey,
-  TableData,
-} from "views/admin/default/variables/columnsData";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+import { TableData } from "views/admin/default/variables/columnsData";
 import NoData from "layouts/admin/noData";
-import { useSession } from "next-auth/react";
 import SurveyTable from "views/admin/dataTables/components/SurveyTable";
+import { UserTypes } from "utils/userTypes";
+import useUpdateSurveyHistory from "hooks/useUpdateSurveyHistory";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
+
+interface survey {
+  id: number;
+  name: string;
+  code: string;
+}
+
+const formatSurveyType = (surveytype: number, surveys: any[]) => {
+  let name = "";
+  if (surveys) {
+    surveys.map((survey: survey) => {
+      if (survey.id == surveytype) {
+        name = survey.name;
+      }
+    });
+    return name;
+  }
+};
 
 export default function SurveyHistory() {
   // component variables
-  const { data: session } = useSession();
+  const { userType } = useUpdateSurveyHistory();
 
   const [allSurveyHistory, setAllsurveyHistory] = useState([]);
-  const [companyUser, setCompanyUser] = useState(2);
+  const surveyHistoryData = useSelector(
+    (state: RootState) => state.reduxStore.surveyHistory
+  );
+  const { surveyHistory, companySurveys } = surveyHistoryData;
 
-  const { mergedCompanyHistory, pending, surveyHistory, companySurveyHistory } =
-    useSurveyHistoryContext();
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys } = allSurveys;
+  const [survey, setSurvey] = useState(null);
 
   useEffect(() => {
-    if (session?.user?.data?.user_profile?.user_type === companyUser) {
-      setAllsurveyHistory(companySurveyHistory);
+    if (userType === UserTypes.COMPANY_USER) {
+      setAllsurveyHistory(companySurveys);
     } else {
       setAllsurveyHistory(surveyHistory);
     }
@@ -37,6 +60,7 @@ export default function SurveyHistory() {
             <Flex w="100%">
               {surveyHistory.length > 0 ? (
                 <SurveyTable
+                  tableName={formatSurveyType(surveyHistory[0].type, surveys)}
                   tableData={surveyHistory as unknown as TableData[]}
                 />
               ) : (

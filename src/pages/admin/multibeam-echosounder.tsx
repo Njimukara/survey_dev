@@ -11,22 +11,30 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner";
-import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
-import PercormanceCard from "views/admin/dataTables/components/PerformanceCard";
 import Parameters from "views/admin/dataTables/components/Parameters";
-import PerformanceInsCard from "views/admin/dataTables/components/PerformanceInsCard";
-import PlatformPerformance from "views/admin/dataTables/components/PlatformPerformance";
-import OperationalConditionsCard from "views/admin/dataTables/components/OperationalConditionsCard";
-import Calibrations from "views/admin/dataTables/components/Calibrations";
-import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
-import CloudPoints from "views/admin/dataTables/components/CloudPoints";
 import Select from "react-select";
-import { useAllSurveysContext } from "contexts/SurveyContext";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import axiosConfig from "axiosConfig";
+import {
+  calibrationsFields,
+  lever_arm_measuresFields,
+  operationalConditionsFields,
+  performaceCardFields,
+  performaceINSFields,
+  platformPerformanceFields,
+} from "utils/multibeamFields";
+import TestPerformanceCard from "views/admin/dataTables/components/ChatCard";
+import SurveySectionCard from "views/admin/dataTables/components/SurveySectionCard";
+import { checkSubscription } from "utils/checksubscription";
+import useSurveyOptions from "hooks/SurveyOptions";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { fetchSurveys } from "redux/surveySlice";
+import useUpdateSurveyHistory from "hooks/useUpdateSurveyHistory";
 
 type Survey = {
   id: number;
@@ -37,169 +45,158 @@ type Survey = {
   is_delete: boolean;
 };
 
+const reactSelectStyles = {
+  control: (defaultStyles: any) => ({
+    ...defaultStyles,
+    backgroundColor: "transparent",
+    borderColor: "grey.200",
+    color: "black",
+    padding: "6px",
+    borderRadius: "15px",
+    boxShadow: "none",
+  }),
+  singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
+};
+
+var initialValues = {
+  surveyName: "",
+  operational_conditions: Yup.object().shape({}),
+  survey_platform_performance: Yup.object().shape({}),
+  calibration_parameters: Yup.object().shape({}),
+  lever_arm_measures_between: Yup.object().shape({}),
+  performance_ins: Yup.object().shape({}),
+  performance_card: [
+    {
+      maximum_range: "",
+      beam_divergence: "",
+      signal_to_noise_ratio: "",
+      uncertainty_of_divergence: "",
+      pulse_duration: "",
+      pulse_repetition_rate: "",
+      range_uncertainty: "",
+      lidar_scanning_angle: "",
+      texture: "",
+    },
+    {
+      maximum_range: "",
+      beam_divergence: "",
+      signal_to_noise_ratio: "",
+      uncertainty_of_divergence: "",
+      pulse_duration: "",
+      pulse_repetition_rate: "",
+      range_uncertainty: "",
+      lidar_scanning_angle: "",
+      texture: "",
+    },
+    {
+      maximum_range: "",
+      beam_divergence: "",
+      signal_to_noise_ratio: "",
+      uncertainty_of_divergence: "",
+      pulse_duration: "",
+      pulse_repetition_rate: "",
+      range_uncertainty: "",
+      lidar_scanning_angle: "",
+      texture: "",
+    },
+    {
+      maximum_range: "",
+      beam_divergence: "",
+      signal_to_noise_ratio: "",
+      uncertainty_of_divergence: "",
+      pulse_duration: "",
+      pulse_repetition_rate: "",
+      range_uncertainty: "",
+      lidar_scanning_angle: "",
+      texture: "",
+    },
+  ],
+};
+
+const validationSchema = Yup.object().shape({});
+
 export default function MultibeamEchoSounder() {
-  const [subscription, setSubscription] = useState<any>();
-  const [calibrations, setCalibrations] = useState<any>({
-    roll_boresight: { type: "number" },
-    pitch_boresight: { type: "number" },
-    yaw_boresight: { type: "number" },
-    pitch_boresight_uncertainty: { type: "number" },
-    roll_boresight_uncertainty: { type: "number" },
-    yaw_boresight_uncertainty: { type: "number" },
-    ford_gnss_usbl_transducer: { type: "number" },
-    ford_ins_of_the_usbl_and_gnss: { type: "number" },
-    std_gnss_and_usbl_transducer: { type: "number" },
-    std_ins_of_the_usbl_the_gnss: { type: "number" },
-    "latency_gnss-smf": { type: "number" },
-    "latency_gnss-usbl": { type: "number" },
-    "latency_gnss-ins-of-usbl": { type: "number" },
-    "uncty_of_latency_gnss-smf": { type: "number" },
-    "latency_gnss-ins": { type: "number" },
-    "uncty_of_latency_gnss-ins": { type: "number" },
-  });
-  const [platformPerformance, setPlatformPerformance] = useState<any>({
-    survey_speed: { type: "number" },
-    survey_speed_uncertainty: { type: "number" },
-    draft_uncertainty: { type: "number" },
-    variation_in_z_due_to_loads: { type: "number" },
-  });
-  const [operationalConditions, setOperationalConditions] = useState<any>({
-    mean_sound_speed: { type: "number" },
-    max_depth_of_the_svp: { type: "number" },
-    svs_uncertainty: { type: "number" },
-    svp_uncertainty: { type: "number" },
-    uncert_svp_beyond_its_max_depth: { type: "number" },
-    tide_uncertainty: { type: "number" },
-    co_tidal_uncertainty: { type: "number" },
-    depth: { type: "number" },
-    altitude_of_sss: { type: "number" },
-    incidence_angle_of_mbes: { type: "number" },
-    distance_x_between_sss_and_usbl: { type: "number" },
-  });
-  const [performance_ins, setPerformance_ins] = useState<any>({
-    yaw_uncertainty: { type: "number" },
-    roll_uncertainty: { type: "number" },
-    pitch_uncertainty: { type: "number" },
-    positioning_uncertainty_in_h: { type: "number" },
-    positioning_uncertainty_in_v: { type: "number" },
-    heave_uncertainty: { type: "number" },
-    slant_range_uncertainty_of_the_usbl: { type: "number" },
-    angle_uncertainty_of_the_usbl: { type: "number" },
+  const handleSubmit = async (values: any) => {
+    setPlanning(true);
+    var {
+      performance_ins,
+      calibration_parameters,
+      survey_platform_performance,
+      operational_conditions,
+      lever_arm_measures_between,
+      performance_card,
+    } = values;
+
+    const formData = {
+      "performance_ins-gnss-usbl": performance_ins,
+      calibration_parameters: calibration_parameters,
+      survey_platform_performance: survey_platform_performance,
+      operational_conditions: operational_conditions,
+      lever_arm_measures_between: lever_arm_measures_between,
+      "performance_of_mbess-s1-s2-s3-s4": performance_card,
+    };
+
+    let data = {
+      name: values.surveyName,
+      // survey: multibeamSurvey?.id,
+      parameters: formData,
+    };
+
+    console.log(data);
+    await axiosConfig
+      .post(`/api/surveys/${surveyCode}/generate-survey/`, data)
+      .then((res) => {
+        // setResults(res.data);
+        setSurveyParameters(res.data.results);
+        console.log(res);
+        updateSurveyHistory();
+        toast({
+          position: "bottom-right",
+          description: "Successful",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
+        setPlanning(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast({
+          position: "bottom-right",
+          description: "Error planning survey at this time",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setPlanning(false);
+      });
+  };
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: handleSubmit,
   });
 
-  const [performanceCard, setPerformanceCard] = useState<any>([
-    {
-      defined_operating_frequency: { type: "number" },
-      horizontal_field_of_view: { type: "number" },
-      vertical_field_of_view: { type: "number" },
-      pulse_duration: { type: "number" },
-      beamwidth: { type: "number" },
-      depression_angle: { type: "number" },
-      max_range_of_sss: { type: "number" },
-      along_track_beanwidth: { type: "number" },
-      accross_track_beanwidth: { type: "number" },
-      beams_number: { type: "number" },
-      depth_resolution: { type: "number" },
-      ping_rate: { type: "number" },
-      user_defined_swath_coverage: {
-        type: "select",
-        option: [
-          20, 30, 45, 60, 75, 90, 100, 110, 120, 130, 140, 145, 150, 165, 170,
-          175,
-        ],
-      },
-      shape_of_atennna: {
-        type: "select",
-        option: ["rectangular", "circular"],
-      },
-    },
-    {
-      defined_operating_frequency: { type: "number" },
-      horizontal_field_of_view: { type: "number" },
-      vertical_field_of_view: { type: "number" },
-      pulse_duration: { type: "number" },
-      beamwidth: { type: "number" },
-      depression_angle: { type: "number" },
-      max_range_of_sss: { type: "number" },
-      along_track_beanwidth: { type: "number" },
-      accross_track_beanwidth: { type: "number" },
-      beams_number: { type: "number" },
-      depth_resolution: { type: "number" },
-      ping_rate: { type: "number" },
-      user_defined_swath_coverage: {
-        type: "select",
-        option: [
-          20, 30, 45, 60, 75, 90, 100, 110, 120, 130, 140, 145, 150, 165, 170,
-          175,
-        ],
-      },
-      shape_of_atennna: {
-        type: "select",
-        option: ["rectangular", "circular"],
-      },
-    },
-    {
-      defined_operating_frequency: { type: "number" },
-      horizontal_field_of_view: { type: "number" },
-      vertical_field_of_view: { type: "number" },
-      pulse_duration: { type: "number" },
-      beamwidth: { type: "number" },
-      depression_angle: { type: "number" },
-      max_range_of_sss: { type: "number" },
-      along_track_beanwidth: { type: "number" },
-      accross_track_beanwidth: { type: "number" },
-      beams_number: { type: "number" },
-      depth_resolution: { type: "number" },
-      ping_rate: { type: "number" },
-      user_defined_swath_coverage: {
-        type: "select",
-        option: [
-          20, 30, 45, 60, 75, 90, 100, 110, 120, 130, 140, 145, 150, 165, 170,
-          175,
-        ],
-      },
-      shape_of_atennna: {
-        type: "select",
-        option: ["rectangular", "circular"],
-      },
-    },
-    {
-      defined_operating_frequency: { type: "number" },
-      horizontal_field_of_view: { type: "number" },
-      vertical_field_of_view: { type: "number" },
-      pulse_duration: { type: "number" },
-      beamwidth: { type: "number" },
-      depression_angle: { type: "number" },
-      max_range_of_sss: { type: "number" },
-      along_track_beanwidth: { type: "number" },
-      accross_track_beanwidth: { type: "number" },
-      beams_number: { type: "number" },
-      depth_resolution: { type: "number" },
-      ping_rate: { type: "number" },
-      user_defined_swath_coverage: {
-        type: "select",
-        option: [
-          20, 30, 45, 60, 75, 90, 100, 110, 120, 130, 140, 145, 150, 165, 170,
-          175,
-        ],
-      },
-      shape_of_atennna: {
-        type: "select",
-        option: ["rectangular", "circular"],
-      },
-    },
-  ]);
+  const { userType, updateSurveyHistory } = useUpdateSurveyHistory();
+  const [survey, setSurvey] = useState([]);
+  const [updated, setUpdated] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const [surveyCode, setSurveyCode] = useState("S03");
+  const [planning, setPlanning] = useState(false);
 
-  const [leverarm, setLeverarm] = useState<any>({
-    lever_arms_uncertainty: { type: "number" },
-    ford_gnss_smf: { type: "number" },
-    ford_ins_and_gnss: { type: "number" },
-    down_ins_and_gnss: { type: "number" },
-    down_gnss_and_smf: { type: "number" },
-    std_ins_and_gnss: { type: "number" },
-    std_gnss_and_smf: { type: "number" },
-    sounding_reduction: { type: "select", option: ["gnss"] },
-  });
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+
+  const { surveys, multibeamSurvey } = allSurveys;
+
+  const subscriptionsData = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { data, isLoading } = subscriptionsData;
+  const currentSubscription = data?.currentSubscription;
+  const { surveyOptions } = useSurveyOptions(multibeamSurvey?.id);
 
   const [surveyParameters, setSurveyParameters] = useState<any>({
     number_of_profiles_in_length: 0.0,
@@ -210,16 +207,8 @@ export default function MultibeamEchoSounder() {
     accross_track_beams_repartition: 0.0,
     "thu-1-lambda": 0.0,
   });
-
-  const [calibrationForm, setCalibrationForm] = useState<any>({});
-  const [platformForm, setPlatformForm] = useState<any>({});
   const [performanceForm, setPerformanceForm] = useState<any>({});
-  const [leverForm, setLeverForm] = useState<any>({});
-  const [operationalForm, setOperationalForm] = useState<any>({});
 
-  const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
-
-  const [survey, setSurvey] = useState([]);
   const [results, setResults] = useState({
     "swath-width": { type: "number" },
     survey_time: { type: "number" },
@@ -238,358 +227,25 @@ export default function MultibeamEchoSounder() {
       enum: ["gnss", "tide"],
     },
   });
-  const [surveyID, setSurveyID] = useState<number>(1);
-  const [surveyName, setSurveyName] = useState("");
-  const [planning, setPlanning] = useState(false);
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-  const [surveyCode, setSurveyCode] = useState("S01");
-  const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
-  const { surveyOptions, getCompanySurvey, getSurveyHistory } =
-    useSurveyHistoryContext();
 
   // chakra toast
   const toast = useToast();
 
-  const checkSubscription = () => {
-    subscription?.assigned_surveys?.forEach((survey: any) => {
-      if (survey?.id == surveyID) {
-        setSurvey([survey?.id]);
-      }
-    });
-  };
-
   useEffect(() => {
     if (!surveys) {
-      getAllSurveys();
+      dispatch(fetchSurveys());
+    } else if (currentSubscription && multibeamSurvey) {
+      setSurvey(checkSubscription(currentSubscription, multibeamSurvey));
+      setSurveyCode(multibeamSurvey.code);
     }
-
-    if (subscription && multibeam) {
-      checkSubscription();
-    }
-
-    if (multibeam) {
-      setSurveyCode(multibeam.code);
-      setSurveyID(multibeam.id);
-    }
-  }, [surveys, subscription]);
+  }, []);
 
   useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
-    setSubscription(subscriptions[subscriptions.length - 1]);
+    formik.setValues(initialValues);
+  }, [updated]);
 
-    sub();
-    // console.log("formside scan", form);
-  }, [loading, subscription]);
-
-  const handleCalibrationsForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...calibrationForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setCalibrationForm(updatedForm);
-  };
-  const handleleverForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...leverForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setLeverForm(updatedForm);
-  };
-  const handleOperationalForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...operationalForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setOperationalForm(updatedForm);
-  };
-  const handlePerformanceForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...performanceForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setPerformanceForm(updatedForm);
-  };
-  const handlePlatformForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...platformForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setPlatformForm(updatedForm);
-  };
-  const handlessPerformanceForm = (event: any) => {
-    // Clone form because we need to modify it
-    let updatedForm = { ...ssPerformanceForm };
-
-    const { name, value } = event.target;
-
-    // Split the name into an array of keys
-    const keys = name.split(".");
-
-    // Build the nested object dynamically
-
-    let nestedObj = updatedForm;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-
-      if (!nestedObj[key]) {
-        // Check if the next key is a number (indicating an array)
-        if (isNaN(keys[i + 1])) {
-          nestedObj[key] = {};
-        } else {
-          nestedObj[key] = [];
-        }
-      }
-
-      nestedObj = nestedObj[key];
-    }
-
-    const lastKey = keys[keys.length - 1];
-    if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-      // Convert the value to a number if it represents an array index
-      nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    } else {
-      nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-        ? parseFloat(value)
-        : value;
-    }
-    // Update state
-    setSSPerformanceForm(updatedForm);
-  };
-
-  // const handleFormChange = (event: any, form: any, setFormState: any) => {
-  //   // Clone form because we need to modify it
-  //   let updatedForm = { ...form };
-
-  //   const { name, value } = event.target;
-
-  //   // Split the name into an array of keys
-  //   const keys = name.split(".");
-
-  //   // Build the nested object dynamically
-  //   let nestedObj = updatedForm;
-
-  //   for (let i = 0; i < keys.length - 1; i++) {
-  //     const key = keys[i];
-
-  //     if (!nestedObj[key]) {
-  //       // Check if the next key is a number (indicating an array)
-  //       if (isNaN(keys[i + 1])) {
-  //         nestedObj[key] = {};
-  //       } else {
-  //         nestedObj[key] = [];
-  //       }
-  //     }
-
-  //     nestedObj = nestedObj[key];
-  //   }
-
-  //   const lastKey = keys[keys.length - 1];
-  //   if (Array.isArray(nestedObj) && !isNaN(lastKey)) {
-  //     // Convert the value to a number if it represents an array index
-  //     nestedObj[Number(lastKey)] = shouldConvertToFloat(lastKey)
-  //       ? parseFloat(value)
-  //       : value;
-  //   } else {
-  //     nestedObj[lastKey] = shouldConvertToFloat(lastKey)
-  //       ? parseFloat(value)
-  //       : value;
-  //   }
-  //   // Update state
-  //   setFormState(updatedForm);
-  // };
-
-  // Helper function to determine if a value should be converted to a float
-
-  const shouldConvertToFloat = (inputField: string): boolean => {
-    // Add conditions for the input fields where conversion is not required
-    const fieldsRequiringFloatConversion = [
-      "sounding_reduction",
-      "shape_of_atennna",
-    ];
-    return !fieldsRequiringFloatConversion.includes(inputField);
-  };
-
-  const loadSurveyData = (event: any) => {
+  const loadSurveyData = (e: any) => {
+    console.log(e.value);
     const {
       name,
       parameters: {
@@ -600,104 +256,29 @@ export default function MultibeamEchoSounder() {
         operational_conditions,
         "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
       },
-    } = event.value;
+    } = e.value;
+    // initialValues.surveyName = name;
+    // initialValues.survey_platform_performance = survey_platform_performance;
+    // initialValues.calibration_parameters = calibration_parameters;
+    // initialValues.operational_conditions = operational_conditions;
+    // initialValues.lever_arm_measures_between = lever_arm_measures_between;
+    // initialValues.performance_card = performance_ssss;
+    // initialValues.performance_ins = performance_gnss_usbl;
 
-    setCalibrationForm(calibration_parameters);
-    setPerformanceForm(performance_gnss_usbl);
-    setPlatformForm(survey_platform_performance);
-    setOperationalForm(operational_conditions);
-    setSSPerformanceForm(performance_ssss);
-    setLeverForm(lever_arm_measures_between);
-    setSurveyName(name);
-  };
-
-  const handleSubmit = async (surveyCode: string) => {
-    setPlanning(true);
-    let performanceValues = [];
-
-    for (let key in ssPerformanceForm) {
-      if (
-        typeof ssPerformanceForm[key] === "object" &&
-        !Array.isArray(ssPerformanceForm[key])
-      ) {
-        performanceValues.push(ssPerformanceForm[key]);
-      }
-    }
-
-    let formData = {
-      "performance_ins-gnss-usbl": performanceForm,
-      calibration_parameters: calibrationForm,
-      survey_platform_performance: platformForm,
-      operational_conditions: operationalForm,
-      lever_arm_measures_between: leverForm,
-      "performance_of_mbess-s1-s2-s3-s4": performanceValues,
+    initialValues = {
+      ...initialValues,
+      surveyName: name,
+      calibration_parameters,
+      operational_conditions,
+      lever_arm_measures_between,
+      performance_card: performance_ssss,
+      performance_ins: performance_gnss_usbl,
+      survey_platform_performance,
     };
-
-    let data = {
-      name: surveyName,
-      survey: multibeam.id,
-      parameters: formData,
-    };
-
-    await axiosConfig
-      .post(`/api/surveys/${surveyCode}/generate-survey/`, data)
-      .then((res) => {
-        setResults(res.data);
-        setSurveyParameters(res.data.results);
-        console.log(res);
-        toast({
-          position: "bottom-right",
-          description: "Successful",
-          status: "info",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-        // getSurveyHistory();
-      })
-      .catch((error) => {
-        console.log(error);
-        toast({
-          position: "bottom-right",
-          description: "Error planning survey at this time",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        setPlanning(false);
-      });
+    setUpdated(!updated);
   };
 
-  const reactSelectStyles = {
-    control: (defaultStyles: any) => ({
-      ...defaultStyles,
-      backgroundColor: "transparent",
-      borderColor: "grey.200",
-      color: "black",
-      padding: "6px",
-      borderRadius: "15px",
-      boxShadow: "none",
-    }),
-    singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "black" }),
-  };
-
-  // useEffect(() => {
-  //   console.log("after generate survey", form);
-  //   getSurveys();
-  // }, [surveys]);
-
-  // useEffect(() => {
-  //   const sub = async () => {
-  //     await fetchSubscriptions();
-  //   };
-
-  //   checkSubscription();
-  //   setSubscription(subscriptions[subscriptions.length - 1]);
-
-  //   sub();
-  // }, [loading, subscription]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <AdminLayout>
         <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">
@@ -709,113 +290,103 @@ export default function MultibeamEchoSounder() {
 
   return survey.length > 0 ? (
     <AdminLayout>
-      <Grid
-        pt={{ base: "130px", md: "80px", xl: "80px" }}
-        templateColumns="repeat(5, 1fr)"
-        gap={3}
-      >
-        <GridItem colSpan={5}>
-          <Card py="5" px="10">
-            <FormControl mb="2">
-              <FormLabel fontSize="sm">Survey Name</FormLabel>
-              <Input
-                data-cy="register-name"
-                id="name"
-                name="name"
-                variant="rounded"
-                fontSize="sm"
-                ms={{ base: "0px", md: "0px" }}
-                type="text"
-                placeholder="Survey Name"
-                mr="2px"
-                fontWeight="500"
-                size="sm"
-                value={surveyName}
-                onChange={(e) => setSurveyName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">
-                Import Survey Parameters from Past Surveys
-              </FormLabel>
-              <Select
-                styles={reactSelectStyles}
-                options={surveyOptions}
-                onChange={(e) => loadSurveyData(e)}
-              />
-            </FormControl>
-          </Card>
-        </GridItem>
-        <GridItem colSpan={2}>
-          <PercormanceCard
-            mb="2"
-            mr="2"
-            performance_ssss={performanceCard}
-            value={ssPerformanceForm}
-            handleform={handlessPerformanceForm}
-            survey_Id={surveyID}
-          />
-          <Parameters
-            results={surveyParameters}
-            value={performanceForm}
-            survey_Id={surveyID}
-          />
-        </GridItem>
-        <GridItem colSpan={3}>
-          <Flex gap={3}>
-            <Box>
-              <PerformanceInsCard
-                mb="2"
-                performance_ins={performance_ins}
-                handleform={handlePerformanceForm}
-                survey_Id={surveyID}
-                value={performanceForm}
-              />
-              <PlatformPerformance
-                mb="2"
-                platformPerformance={platformPerformance}
-                handleform={handlePlatformForm}
-                value={platformForm}
-                survey_Id={surveyID}
-              />
-              <OperationalConditionsCard
-                operationConditions={operationalConditions}
-                handleform={handleOperationalForm}
-                survey_Id={surveyID}
-                value={operationalForm}
-              />
-            </Box>
-            <Box>
-              <Calibrations
-                mb="2"
-                calibrations={calibrations}
-                handleform={handleCalibrationsForm}
-                survey_Id={surveyID}
-                value={calibrationForm}
-              />
-              <LeverarmCard
-                mb="2"
-                Leverarm={leverarm}
-                handleform={handleleverForm}
-                survey_Id={surveyID}
-                value={leverForm}
-              />
-              <CloudPoints survey_Id={surveyID} />
-            </Box>
-          </Flex>
-          <Button
-            mt="6"
-            onClick={() => {
-              handleSubmit(surveyCode);
-            }}
-            isLoading={planning}
-            variant="homePrimary"
-            py="6"
-          >
-            Plan Survey
-          </Button>
-        </GridItem>
-      </Grid>
+      <form onSubmit={formik.handleSubmit}>
+        <Grid
+          pt={{ base: "130px", md: "80px", xl: "80px" }}
+          templateColumns="repeat(5, 1fr)"
+          gap={3}
+        >
+          <GridItem colSpan={5}>
+            <Card py="5" px="10">
+              <FormControl mb="2">
+                <FormLabel fontSize="sm">Survey Name</FormLabel>
+                <Input
+                  data-cy="register-name"
+                  id="name"
+                  name="surveyName"
+                  variant="rounded"
+                  fontSize="sm"
+                  ms={{ base: "0px", md: "0px" }}
+                  type="text"
+                  placeholder="Survey Name"
+                  mr="2px"
+                  fontWeight="500"
+                  size="sm"
+                  value={formik.values.surveyName}
+                  onChange={formik.handleChange}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm">
+                  Import Survey Parameters from Past Surveys
+                </FormLabel>
+                <Select
+                  styles={reactSelectStyles}
+                  options={surveyOptions}
+                  onChange={(e) => loadSurveyData(e)}
+                  placeholder="Load previous survey data"
+                />
+              </FormControl>
+            </Card>
+          </GridItem>
+          <GridItem colSpan={2}>
+            <TestPerformanceCard
+              CardName="Performance of LiDARS"
+              IndexLabel="lidar"
+              fields={performaceCardFields}
+              form={formik}
+            />
+            <Parameters results={surveyParameters} value={performanceForm} />
+          </GridItem>
+          <GridItem colSpan={3}>
+            <Flex gap={3}>
+              <Box>
+                <SurveySectionCard
+                  mb="2"
+                  fields={performaceINSFields}
+                  formik={formik}
+                  cardName="Performance INS/GNSS/USBL"
+                />
+                <SurveySectionCard
+                  mb="2"
+                  fields={platformPerformanceFields}
+                  formik={formik}
+                  cardName=" Survey Platform Performance"
+                />
+                <SurveySectionCard
+                  mb="2"
+                  fields={operationalConditionsFields}
+                  formik={formik}
+                  cardName="Operational Conditions"
+                />
+              </Box>
+              <Box>
+                <SurveySectionCard
+                  mb="2"
+                  fields={calibrationsFields}
+                  formik={formik}
+                  cardName="Calbration Parameters"
+                />
+                <SurveySectionCard
+                  mb="2"
+                  fields={lever_arm_measuresFields}
+                  formik={formik}
+                  cardName="Lever arm Measures Between"
+                />
+              </Box>
+            </Flex>
+            <Button
+              mt="6"
+              type="submit"
+              isLoading={planning}
+              variant="homePrimary"
+              py="6"
+            >
+              Plan Survey
+            </Button>
+          </GridItem>
+        </Grid>
+      </form>
     </AdminLayout>
   ) : (
     <PurchaseLisence />

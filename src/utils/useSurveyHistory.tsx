@@ -2,6 +2,8 @@ import axiosConfig from "axiosConfig";
 import { useSubscription } from "contexts/SubscriptionContext";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 
 const useSurveyHistory = (initialValue = 0, step = 1) => {
   const { data: session } = useSession();
@@ -11,16 +13,20 @@ const useSurveyHistory = (initialValue = 0, step = 1) => {
 
   const [companySurveyHistory, setCompanySurveyHistory] = useState([]);
   const [error, setError] = useState(null);
-  const { subscriptions } = useSubscription();
+  const { data } = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { currentSubscription } = data;
+  // const { subscriptions } = useSubscription();
 
   const getSurveyHistory = useCallback(() => {
-    if (subscriptions.length <= 0) {
+    if (!currentSubscription) {
       return;
     } else {
       setSurveyHistory([]);
       setCompanySurveyHistory([]);
-      let assignedSurveys = subscriptions[0]?.assigned_surveys;
-      console.log("custom hook", subscriptions);
+      let assignedSurveys = currentSubscription?.assigned_surveys;
+      console.log("custom hook", currentSubscription);
 
       assignedSurveys.forEach(async (survey: any) => {
         try {
@@ -52,7 +58,7 @@ const useSurveyHistory = (initialValue = 0, step = 1) => {
   }, [
     companyUser,
     session?.user?.data?.user_profile?.user_type,
-    subscriptions,
+    currentSubscription,
   ]);
 
   useEffect(() => {

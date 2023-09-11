@@ -18,6 +18,10 @@ import Calibrations from "views/admin/dataTables/components/Calibrations";
 import LeverarmCard from "views/admin/dataTables/components/LeverarmCard";
 import CloudPoints from "views/admin/dataTables/components/CloudPoints";
 import { useAllSurveysContext } from "contexts/SurveyContext";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchSurveys } from "redux/surveySlice";
+import OperationalConditions from "views/admin/dataTables/components/OperationalConditions";
 
 type Survey = {
   id: number;
@@ -34,7 +38,12 @@ function SurveyResults(
 ) {
   const [surveyid, setSurveyId] = useState<number>(1);
   const [surveyName, setSurveyName] = useState("");
-  const { surveys, getAllSurveys } = useAllSurveysContext();
+  const dispatch = useDispatch<AppDispatch>();
+  // const { surveys, getAllSurveys } = useAllSurveysContext();
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys, lidarSurvey } = allSurveys;
 
   const [calibrations, setCalibrations] = useState<any>({
     roll_boresight: { type: "number" },
@@ -178,96 +187,44 @@ function SurveyResults(
   const [performanceForm, setPerformanceForm] = useState<any>({});
   const [leverForm, setLeverForm] = useState<any>({});
   const [operationalForm, setOperationalForm] = useState<any>({});
-
   const [ssPerformanceForm, setSSPerformanceForm] = useState<any>({});
 
   const getSurveyResults = useCallback(() => {
-    let currentSurvey: Survey;
-
     if (surveyResult) {
-      surveys.map((survey: Survey) => {
-        if (survey.id == surveyResult.survey) {
-          currentSurvey = survey;
-          setSurveyId(survey.id);
-        }
-      });
-      // destructure the results
-      const { name, results, parameters } = surveyResult;
-      console.log(currentSurvey, "currentSurvey");
+      const { name, survey, results, parameters } = surveyResult;
+      const parameterMappings: {
+        [key: number]: { formKey: string; performanceKey: string };
+      } = {
+        1: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_mbess-s1-s2-s3-s4",
+        },
+        2: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_lidars-l1-l2-l3-l4",
+        },
+        3: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_ssss-s1-s2-s3-s4",
+        },
+        4: {
+          formKey: "performance_ins-gnss-usbl",
+          performanceKey: "performance_of_cameras-a1-a2-a3-a4",
+        },
+      };
 
-      // Destructure the item based on survey type
-      if (
-        currentSurvey &&
-        currentSurvey.name.toLowerCase().includes("multibeam")
-      ) {
+      if (survey >= 1 && survey <= 4) {
         const {
           calibration_parameters,
-          "performance_ins-gnss-usbl": performance_gnss_usbl,
           survey_platform_performance,
           lever_arm_measures_between,
           operational_conditions,
-          "performance_of_mbess-s1-s2-s3-s4": performance_ssss,
         } = parameters;
 
-        setCalibrationForm(calibration_parameters);
-        setPerformanceForm(performance_gnss_usbl);
-        setPlatformForm(survey_platform_performance);
-        setOperationalForm(operational_conditions);
-        setSSPerformanceForm(performance_ssss);
-        setLeverForm(lever_arm_measures_between);
-      } else if (
-        currentSurvey &&
-        currentSurvey.name.toLowerCase().includes("dynamic")
-      ) {
-        //lydar
-        const {
-          calibration_parameters,
-          "performance_ins-gnss-usbl": performance_gnss_usbl,
-          survey_platform_performance,
-          lever_arm_measures_between,
-          operational_conditions,
-          "performance_of_lidars-l1-l2-l3-l4": performance_ssss,
-        } = parameters;
+        const { formKey, performanceKey } = parameterMappings[survey];
+        const performance_gnss_usbl = parameters[formKey];
+        const performance_ssss = parameters[performanceKey];
 
-        setCalibrationForm(calibration_parameters);
-        setPerformanceForm(performance_gnss_usbl);
-        setPlatformForm(survey_platform_performance);
-        setOperationalForm(operational_conditions);
-        setSSPerformanceForm(performance_ssss);
-        setLeverForm(lever_arm_measures_between);
-      } else if (
-        currentSurvey &&
-        currentSurvey.name.toLowerCase().includes("scan")
-      ) {
-        //side scan
-        const {
-          calibration_parameters,
-          "performance_ins-gnss-usbl": performance_gnss_usbl,
-          survey_platform_performance,
-          lever_arm_measures_between,
-          operational_conditions,
-          "performance_of_ssss-s1-s2-s3-s4": performance_ssss,
-        } = parameters;
-
-        setCalibrationForm(calibration_parameters);
-        setPerformanceForm(performance_gnss_usbl);
-        setPlatformForm(survey_platform_performance);
-        setOperationalForm(operational_conditions);
-        setSSPerformanceForm(performance_ssss);
-        setLeverForm(lever_arm_measures_between);
-      } else if (
-        currentSurvey &&
-        currentSurvey.name.toLowerCase().includes("acoustic")
-      ) {
-        //acoustc
-        const {
-          calibration_parameters,
-          "performance_ins-gnss-usbl": performance_gnss_usbl,
-          survey_platform_performance,
-          lever_arm_measures_between,
-          operational_conditions,
-          "performance_of_cameras-a1-a2-a3-a4": performance_ssss,
-        } = parameters;
         setCalibrationForm(calibration_parameters);
         setPerformanceForm(performance_gnss_usbl);
         setPlatformForm(survey_platform_performance);
@@ -279,15 +236,16 @@ function SurveyResults(
       setSurveyName(name);
       setSurveyParameters(results);
     }
-  }, [surveyResult, surveys]);
+  }, [surveyResult]);
 
   useEffect(() => {
     if (!surveys) {
-      getAllSurveys();
+      dispatch(fetchSurveys());
     } else {
       getSurveyResults();
     }
-  }, [surveys, getSurveyResults, getAllSurveys]);
+    console.log(surveyResult);
+  }, [surveys, getSurveyResults, dispatch, surveyResult]);
 
   const handleCalibrationsForm = (event: any) => {
     // Clone form because we need to modify it
@@ -608,8 +566,8 @@ function SurveyResults(
               handleform={handlePlatformForm}
               value={platformForm}
             />
-            <OperationalConditionsCard
-              operationConditions={operationalConditions}
+            <OperationalConditions
+              conditions={operationalConditions}
               handleform={handleOperationalForm}
               value={operationalForm}
             />
@@ -627,7 +585,6 @@ function SurveyResults(
               handleform={handleleverForm}
               value={leverForm}
             />
-            <CloudPoints surveyid={surveyid} />
           </Box>
         </Flex>
       </GridItem>

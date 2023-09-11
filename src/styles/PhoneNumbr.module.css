@@ -20,3 +20,17 @@
 .circle_clip {
   clip-path: inset(0 30% 34% 0);
 }
+
+.phone-input {
+  width: 100% !important;
+  border-radius: 0
+}
+
+.phone-input > input {
+  border: none !important;
+  padding: 4px !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  border-bottom: 1px solid #E0E5F2 !important;
+  border-radius: 0
+}

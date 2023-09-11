@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
+import EditUser from "components/modals/EditUser";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
@@ -51,6 +52,11 @@ export default function Banner(props: {
   const [userAvatar, setUserAvatar] = useState(false);
 
   const { data: session } = useSession();
+
+  const [editModalState, setEditModalState] = useState(false);
+  const toggleModal = (state: boolean) => {
+    setEditModalState(state);
+  };
 
   // chakra toast
   const toast = useToast();
@@ -150,6 +156,7 @@ export default function Banner(props: {
             <Button
               data-cy="edit-info"
               onClick={() => router.push("/auth/edit-user")}
+              // onClick={() => toggleModal(!editModalState)}
               mr={2}
               bg="primary.600"
               variant="homePrimary"
@@ -215,6 +222,7 @@ export default function Banner(props: {
             </AlertDialogContent>
           </AlertDialogOverlay>
         </AlertDialog>
+        {/* <EditUser toggleModal={toggleModal} opened={editModalState} /> */}
       </Flex>
     </Card>
   );

@@ -16,6 +16,8 @@ import { useRouter } from "next/router";
 import { useSubscription } from "contexts/SubscriptionContext";
 import { MdCheckCircle } from "react-icons/md";
 import axiosConfig from "axiosConfig";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 
 interface Subscription {
   plan: any;
@@ -127,11 +129,14 @@ function SubscriptionDetails({
 export default function SubscirptionDetails(props: { [x: string]: any }) {
   const { upgrade, ...rest } = props;
 
+  const subscriptionsData = useSelector(
+    (state: RootState) => state.reduxStore.subscrptions
+  );
+  const { data } = subscriptionsData;
+  const currentSubscription = data?.currentSubscription;
+
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");
-
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
-  const [subscription, setSubscription] = useState<any>();
 
   // delete user acount
   const deleteAccount = async () => {
@@ -145,21 +150,12 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
       });
   };
 
-  useEffect(() => {
-    if (!subscriptions) {
-      fetchSubscriptions().catch((error: any) => {
-        console.error("Failed to fetch subsciprions:", error);
-      });
-    }
-    setSubscription(subscriptions[subscriptions.length - 1]);
-  }, [loading, subscriptions, fetchSubscriptions]);
-
   return (
     <Card mb={{ base: "0px", lg: "20px" }} borderRadius="10">
       <Flex justifyContent="space-between" alignItems="center" p={2}>
         <Flex flexDirection="column" w="100%">
           <SubscriptionDetails
-            subscription={subscription}
+            subscription={currentSubscription}
             textColorSecondary={textColorSecondary}
             upgrade={upgrade}
           />

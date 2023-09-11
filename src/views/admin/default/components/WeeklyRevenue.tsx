@@ -8,6 +8,8 @@ import Select from "react-select";
 import NoData from "layouts/admin/noData";
 import { useAllSurveysContext } from "contexts/SurveyContext";
 import ABarChart from "components/charts/ABarChart";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 
 interface SurveyOptions {
   value: number;
@@ -58,7 +60,7 @@ const calculateWeekNumber = (
 };
 
 export default function WeeklyRevenue(props: WeeklyRevenueProps) {
-  const { ...rest } = props;
+  const { companySurvey, ...rest } = props;
 
   const font_family: string = "Poppins";
 
@@ -82,10 +84,15 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   const [currentMonth, setCurrentMonth] = useState<number>(
     new Date().getMonth()
   );
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
   const [currentYear] = useState<number>(new Date().getFullYear());
-
-  const { companySurveyHistory, getSurveyHistory } = useSurveyHistoryContext();
-  const { surveys } = useAllSurveysContext();
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys } = allSurveys;
+  const [survey, setSurvey] = useState(null);
 
   const surveyNameMapping = useMemo(() => {
     const mapping: { [key: number]: string } = {};
@@ -95,7 +102,7 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
     return mapping;
   }, [surveys]);
 
-  const getAnalysisData = (
+  const getWeeklyData = (
     surveys: any[],
     month: number,
     year: number
@@ -125,7 +132,6 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
       });
     });
 
-    // Convert weekData to the desired format
     weekData.forEach((count, index) => {
       const label = `Week ${index + 1}`;
       analysisData.push({ label, value: count });
@@ -167,18 +173,68 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
     [surveyNameMapping]
   );
 
+  const getYearlyData = (surveys: any[], year: any) => {
+    const analysisData = [];
+
+    // Create a data structure to hold totals for each survey type within each month
+    const monthlyTotals: Record<string, Record<string, number>> = {};
+
+    surveys.forEach((surveyWeek: any) => {
+      surveyWeek.forEach((survey: any) => {
+        const surveyDate = new Date(survey.created);
+        if (surveyDate.getFullYear() === year) {
+          const month = surveyDate.getMonth();
+          const surveyType = surveyNameMapping[survey.survey];
+          if (surveyType) {
+            if (!monthlyTotals[month]) {
+              monthlyTotals[month] = {};
+            }
+            if (!monthlyTotals[month][surveyType]) {
+              monthlyTotals[month][surveyType] = 0;
+            }
+            monthlyTotals[month][surveyType]++;
+          }
+        }
+      });
+    });
+
+    // Convert the monthly totals into the desired format
+    for (let month = 0; month < 12; month++) {
+      const label = monthOptions[month].label; // Assuming you have an array of month names
+      const monthData = monthlyTotals[month] || {};
+
+      // Calculate the total value for this month
+      let totalValue = 0;
+      for (const surveyType in monthData) {
+        if (monthData.hasOwnProperty(surveyType)) {
+          totalValue += monthData[surveyType];
+        }
+      }
+
+      analysisData.push({
+        label,
+        value: totalValue,
+      });
+    }
+
+    return analysisData;
+  };
+
   const chartData = useMemo(() => {
-    if (!companySurveyHistory) {
+    if (!companySurvey) {
       return [];
     }
 
     if (selectedOption === 2) {
-      return getMonthlyData(companySurveyHistory, currentMonth);
+      return getMonthlyData(companySurvey, currentMonth);
+    } else if (selectedOption == 1) {
+      return getWeeklyData(companySurvey, currentMonth, currentYear);
     } else {
-      return getAnalysisData(companySurveyHistory, currentMonth, currentYear);
+      // Yearly Analysis
+      return getYearlyData(companySurvey, selectedYear);
     }
   }, [
-    companySurveyHistory,
+    companySurvey,
     selectedOption,
     currentMonth,
     currentYear,
@@ -196,6 +252,7 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   const options: SurveyOptions[] = [
     { value: 1, label: "Weekly Analysis" },
     { value: 2, label: "Monthly Analysis" },
+    { value: 3, label: "Yearly Analysis" },
   ];
 
   return (

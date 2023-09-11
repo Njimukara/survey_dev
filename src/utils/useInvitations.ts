@@ -1,29 +1,27 @@
 import { useEffect, useState, useCallback } from "react";
-import axiosConfig from "axiosConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchCompanyInvites } from "redux/companySlice";
 
 const useInvitations = () => {
-  const [fetching, setFeching] = useState(true);
-  const [invitations, setInvitations] = useState([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { companyInvites, invitesError, invitesLoading } = useSelector(
+    (state: RootState) => state.reduxStore.company
+  );
 
   const fetchInvitations = useCallback(async () => {
-    setFeching(true);
-    try {
-      const response = await axiosConfig.get(
-        "/api/company/companymembers/invitations/"
-      );
-      const result = response.data.filter((invite: any) => invite.status === 1);
-      setInvitations(result);
-      setFeching(false);
-    } catch (error) {
-      setFeching(false);
-    }
-  }, []);
+    dispatch(
+      fetchCompanyInvites({
+        force: true,
+      })
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     fetchInvitations();
   }, [fetchInvitations]);
 
-  return { fetching, invitations, fetchInvitations };
+  return { companyInvites, invitesError, invitesLoading, fetchInvitations };
 };
 
 export default useInvitations;
