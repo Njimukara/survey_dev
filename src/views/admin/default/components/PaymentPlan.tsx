@@ -33,14 +33,14 @@ import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { Formik, Form, useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/router";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useCurrentUser } from "contexts/UserContext";
 import axiosConfig from "axiosConfig";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "redux/store";
+// import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
 import { fetchSubscriptions } from "redux/subscriptionsSlice";
 
 // Assets
@@ -81,8 +81,8 @@ export default function PaymentPlan(props: Props) {
   const [error, setError] = useState("");
   const [serverError, setServerError] = useState("");
   const [total, setTotal] = useState(0);
-  const { surveys, getAllSurveys } = useAllSurveysContext();
-  const { updateSurveyOrder } = useSurveyHistoryContext();
+  // const { surveys, getAllSurveys } = useAllSurveysContext();
+  // const { updateSurveyOrder } = useSurveyHistoryContext();
 
   // subscription variables
   const [customerName, setCustomerName] = useState("");
@@ -101,6 +101,10 @@ export default function PaymentPlan(props: Props) {
   // const [surveys, setSurveys] = useState([]);
   const { currentUser, fetchCurrentUser } = useCurrentUser();
   const dispatch = useDispatch<AppDispatch>();
+  const allSurveys = useSelector(
+    (state: RootState) => state.reduxStore.surveys
+  );
+  const { surveys } = allSurveys;
 
   // get user session
   var { data: session } = useSession();
@@ -270,11 +274,11 @@ export default function PaymentPlan(props: Props) {
     onSubmit,
   });
 
-  useEffect(() => {
-    if (!surveys) {
-      getAllSurveys();
-    }
-  }, [surveys, getAllSurveys]);
+  // useEffect(() => {
+  //   if (!surveys) {
+  //     getAllSurveys();
+  //   }
+  // }, [surveys, getAllSurveys]);
 
   useEffect(() => {
     let cancelDate = getCancelDate(30);
@@ -411,7 +415,7 @@ export default function PaymentPlan(props: Props) {
               </FormLabel>
               <Stack spacing={5} direction="row">
                 {surveys &&
-                  surveys.map((survey: survey) => {
+                  surveys?.map((survey: survey) => {
                     return (
                       <Checkbox
                         key={survey.id}

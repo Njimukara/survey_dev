@@ -59,10 +59,11 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import axiosConfig from "axiosConfig";
 import { FaLinkedin } from "react-icons/fa";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import type { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSubscriptions } from "redux/subscriptionsSlice";
+import { fetchSurveys } from "redux/surveySlice";
 
 const CustomInput = forwardRef(
   (props: any, ref: LegacyRef<HTMLInputElement>) => {
@@ -127,7 +128,7 @@ export default function SignIn() {
   const [phoneNumber, setPhoneNumber] = React.useState(null);
   const [numberError, setNumberError] = React.useState(null);
 
-  const { getAllSurveys } = useAllSurveysContext();
+  // const { getAllSurveys } = useAllSurveysContext();
 
   // varaibles used for login
   const [formData, setFormData] = React.useState({
@@ -177,8 +178,9 @@ export default function SignIn() {
     });
 
     if (res.status == 200) {
-      getAllSurveys();
+      // getAllSurveys();
       dispatch(fetchSubscriptions("/api/plans/subscription/"));
+      dispatch(fetchSurveys());
       setSubmitting(false);
       router.push(returnUrl);
     } else if (res.status != 200) {

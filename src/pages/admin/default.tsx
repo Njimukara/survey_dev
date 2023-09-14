@@ -55,10 +55,10 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { getSession, useSession } from "next-auth/react";
 import PlanDetails from "views/admin/profile/components/PlanDetails";
 import { useCurrentUser } from "contexts/UserContext";
-import { useAllSurveysContext } from "contexts/SurveyContext";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
 import Table from "components/table/Table";
@@ -211,7 +211,7 @@ export const employeeData = [
   },
 ];
 
-export default function UserReports(serverData: any) {
+export default function UserReports() {
   const [user, setUser] = useState<any>();
 
   const font_family = "Poppins";
@@ -263,6 +263,7 @@ export default function UserReports(serverData: any) {
 
   useEffect(() => {
     // console.log(companySurveyHistory, mergedCompanyHistory);
+    console.log("subscriptions", subscriptions);
     setSubscriptions(data?.data);
   }, []);
 
@@ -272,7 +273,12 @@ export default function UserReports(serverData: any) {
 
   useEffect(() => {
     if (userType === UserTypes.COMPANY_USER) {
-      // dispatch({"SET_COMPANY_MEMEBERS", serverData});
+      dispatch(
+        fetchCompanyMembers({
+          apiEndpoint: "/api/company/companymembers/companymember/",
+          force: true,
+        })
+      );
     }
   }, []);
 
@@ -340,7 +346,9 @@ export default function UserReports(serverData: any) {
               mb="20px"
             >
               {renderCompanySurveys()}
-              <Users loading={membersLoading} members={companyMembers} />
+              {!membersLoading && (
+                <Users loading={membersLoading} members={companyMembers} />
+              )}
             </SimpleGrid>
           )}
 
@@ -460,35 +468,3 @@ export default function UserReports(serverData: any) {
 }
 
 UserReports.requireAuth = true;
-
-export async function getServerSideProps(context: any) {
-  const client = await getClient(context);
-  const session = await getSession(context);
-  const userType = session.user?.data?.user_profile?.user_type;
-  console.log(userType);
-  if (userType === UserTypes.COMPANY_USER) {
-    try {
-      const response = await client.get(
-        `/api/company/companymembers/companymember/`
-      );
-      const serverData = response.data;
-      return {
-        props: {
-          serverData,
-        },
-      };
-    } catch (error) {
-      return {
-        props: {
-          serverData: [],
-        },
-      };
-    }
-  } else {
-    return {
-      props: {
-        serverData: [],
-      },
-    };
-  }
-}

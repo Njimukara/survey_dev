@@ -57,7 +57,8 @@ const countryNameFromIso = (countryCode: any) => {
   const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
     type: "region",
   });
-  let tempCountry = regionNamesInEnglish.of(countryCode);
+  // console.log(regionNamesInEnglish);
+  let tempCountry = regionNamesInEnglish?.of(countryCode);
   return tempCountry;
 };
 
@@ -160,7 +161,6 @@ export default function EditCompanyModal(props: { [x: string]: any }) {
   });
 
   useEffect(() => {
-    console.log(company);
     let tempcountry = countryNameFromIso(company?.country);
     let tempIso = company?.country;
     setCountry({ value: tempIso, label: tempcountry });

@@ -3,10 +3,10 @@ import { Box, Button, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
 import Card from "components/card/Card";
 
 import { MdBarChart } from "react-icons/md";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+// import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import Select from "react-select";
 import NoData from "layouts/admin/noData";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import ABarChart from "components/charts/ABarChart";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/store";
@@ -96,10 +96,14 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
 
   const surveyNameMapping = useMemo(() => {
     const mapping: { [key: number]: string } = {};
-    surveys?.forEach((survey: any) => {
-      mapping[survey.id] = survey.name;
-    });
-    return mapping;
+    if (surveys) {
+      console.log(surveys);
+      surveys?.forEach((survey: any) => {
+        mapping[survey.id] = survey.name;
+      });
+      return mapping;
+    }
+    return;
   }, [surveys]);
 
   const getWeeklyData = (
@@ -221,7 +225,7 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   };
 
   const chartData = useMemo(() => {
-    if (!companySurvey) {
+    if (!companySurvey || !surveys || surveys.length <= 0) {
       return [];
     }
 

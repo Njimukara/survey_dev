@@ -1,7 +1,7 @@
 "use client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps } from "next/app";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import theme from "theme/theme";
 
 import "styles/Fonts.css";
@@ -19,13 +19,13 @@ import "theme/styles.css";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { AuthGuard } from "layouts/auth/AuthGuard";
-import { SubscriptionProvider } from "contexts/SubscriptionContext";
+// import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import { PlanContextProvider } from "contexts/PlanContext";
 import { CurrentUserProvider } from "contexts/UserContext";
 import { Router } from "next/router";
 import NProgress from "nprogress";
-import { AllSurveysProvider } from "contexts/SurveyContext";
-import { SurveyHistoryProvider } from "contexts/SurveyHistoryContext";
+// import { AllSurveysProvider } from "contexts/SurveyContext";
+// import { SurveyHistoryProvider } from "contexts/SurveyHistoryContext";
 import { Provider } from "react-redux";
 import { persistor, store } from "../redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -39,6 +39,14 @@ type AppPropsWithAuth = AppProps<{ session?: Session }> & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithAuth) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
+
   Router.events.on("routeChangeStart", (url) => {
     NProgress.start();
   });
@@ -64,28 +72,28 @@ function MyApp({ Component, pageProps }: AppPropsWithAuth) {
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <AuthGuard>
-                <SubscriptionProvider>
-                  <SurveyHistoryProvider>
-                    <PlanContextProvider>
-                      <AllSurveysProvider>
-                        <CurrentUserProvider>
-                          <Component {...pageProps} />
-                        </CurrentUserProvider>
-                      </AllSurveysProvider>
-                    </PlanContextProvider>
-                  </SurveyHistoryProvider>
-                </SubscriptionProvider>
+                {/* <SubscriptionProvider> */}
+                {/* <SurveyHistoryProvider> */}
+                <PlanContextProvider>
+                  {/* <AllSurveysProvider> */}
+                  <CurrentUserProvider>
+                    <Component {...pageProps} />
+                  </CurrentUserProvider>
+                  {/* </AllSurveysProvider> */}
+                </PlanContextProvider>
+                {/* </SurveyHistoryProvider> */}
+                {/* </SubscriptionProvider> */}
               </AuthGuard>
             </PersistGate>
           </Provider>
         ) : (
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <AllSurveysProvider>
-                <PlanContextProvider>
-                  <Component {...pageProps} />
-                </PlanContextProvider>
-              </AllSurveysProvider>
+              {/* <AllSurveysProvider> */}
+              <PlanContextProvider>
+                <Component {...pageProps} />
+              </PlanContextProvider>
+              {/* </AllSurveysProvider> */}
             </PersistGate>
           </Provider>
         )}

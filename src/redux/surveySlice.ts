@@ -28,7 +28,7 @@ export interface surveyState {
 }
 
 const initialState: surveyState = {
-  surveys: {},
+  surveys: [],
   surveyLoading: false,
   surveyError: null,
   lidarSurvey: {},

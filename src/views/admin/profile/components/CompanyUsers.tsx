@@ -21,17 +21,10 @@ export default function CompanyUsers(props: { [x: string]: any }) {
     "0px 5px 5px rgba(112, 144, 176, 0.12)",
     "unset"
   );
+  console.log(companyMembers);
 
   // const [companyMembers, setCompanyMembers] = useState([]);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   if (!company) {
-  //     return;
-  //   } else {
-  //     setCompanyMembers(company);
-  //   }
-  // }, [company]);
 
   return (
     <Card mb={{ base: "0px", "2xl": "20px" }} bg="transparent" {...rest}>
@@ -88,7 +81,7 @@ export default function CompanyUsers(props: { [x: string]: any }) {
           </Flex>
         </Flex>
         <Box w="100%">
-          {companyMembers && companyMembers.length != 0 ? (
+          {companyMembers && companyMembers?.length != 0 ? (
             companyMembers
               .slice(0, 5)
               .map((member: { email: string; name: string }) => (

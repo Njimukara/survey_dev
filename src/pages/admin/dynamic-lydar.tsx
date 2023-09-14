@@ -11,12 +11,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect, useCallback } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 // import { useAllSurveysContext } from "contexts/SurveyContext";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+// import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import axiosConfig from "axiosConfig";
 import { Formik, useFormik, Form, Field, getIn, ErrorMessage } from "formik";
 import * as Yup from "yup";
