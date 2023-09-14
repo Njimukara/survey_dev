@@ -21,7 +21,7 @@ const ApiClient = (session) => {
     return request;
   });
 
-  axiosRetry(instance, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
+  // axiosRetry(instance, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
   return instance;
 };
 
