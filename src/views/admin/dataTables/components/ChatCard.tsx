@@ -102,6 +102,7 @@ const TestPerformanceCard = ({ fields, form, CardName, IndexLabel }: Props) => {
                       {type === "select" ? (
                         <Select
                           variant="flushed"
+                          required
                           fontSize="xs"
                           size="xs"
                           name={`performance_card[${index}].${fieldName}`}
@@ -118,6 +119,7 @@ const TestPerformanceCard = ({ fields, form, CardName, IndexLabel }: Props) => {
                       ) : (
                         <Input
                           variant="flushed"
+                          required
                           borderBottom="1px solid gray"
                           fontSize="xs"
                           size="xs"

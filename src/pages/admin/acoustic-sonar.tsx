@@ -160,9 +160,10 @@ export default function AcousticSonar() {
       })
       .catch((error) => {
         console.log(error);
+        const errMessage = error?.response?.data?.detail;
         toast({
           position: "bottom-right",
-          description: "Error planning survey at this time",
+          description: errMessage || "Error planning survey at this time",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -282,6 +283,7 @@ export default function AcousticSonar() {
                 <FormLabel fontSize="sm">Survey Name</FormLabel>
                 <Input
                   data-cy="register-name"
+                  required
                   id="surveyName"
                   name="surveyName"
                   variant="rounded"

@@ -1,4 +1,4 @@
-export const performaceCardFields = [
+export const sideScanPerformaceCardFields = [
   {
     name: "survey_platform_performance.defined_operating_frequency",
     label: "defined_operating_frequency",

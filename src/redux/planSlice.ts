@@ -9,7 +9,7 @@ export const fetchPlans = createAsyncThunk("counter/fetchPlans", async () => {
     const data = await response.data;
     return data;
   } catch (error) {
-    return error;
+    throw new Error("An error occurred while fetching plans.");
   }
 });
 

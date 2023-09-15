@@ -23,6 +23,8 @@
 // Chakra imports
 import { Box, Grid } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // Custom components
 import Banner from "views/admin/profile/components/Banner";
@@ -98,7 +100,7 @@ export default function ProfileOverview() {
       fetchCurrentUser();
     }
     setUser(currentUser);
-  }, [hasDetails, session, company, fetchCurrentUser, currentUser, loading]);
+  }, [hasDetails, company, fetchCurrentUser, currentUser, loading]);
 
   return (
     <AdminLayout>
@@ -150,7 +152,7 @@ export default function ProfileOverview() {
               gap={{ base: "20px", xl: "20px" }}
             >
               {companyLoading ? (
-                <div>Loading Company Details...</div>
+                <Skeleton height={150} />
               ) : (
                 <CompanyDetails
                   borderRadius="10"
@@ -162,7 +164,7 @@ export default function ProfileOverview() {
               {hasDetails && (
                 <>
                   {membersLoading || companyLoading ? (
-                    <div>Loading Company Users...</div>
+                    <Skeleton height={150} />
                   ) : (
                     <CompanyUsers
                       borderRadius="10"

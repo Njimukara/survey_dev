@@ -97,7 +97,6 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   const surveyNameMapping = useMemo(() => {
     const mapping: { [key: number]: string } = {};
     if (surveys) {
-      console.log(surveys);
       surveys?.forEach((survey: any) => {
         mapping[survey.id] = survey.name;
       });
@@ -225,7 +224,12 @@ export default function WeeklyRevenue(props: WeeklyRevenueProps) {
   };
 
   const chartData = useMemo(() => {
-    if (!companySurvey || !surveys || surveys.length <= 0) {
+    if (
+      !companySurvey ||
+      companySurvey.length <= 0 ||
+      !surveys ||
+      surveys.length <= 0
+    ) {
       return [];
     }
 

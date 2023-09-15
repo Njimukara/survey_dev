@@ -7,6 +7,8 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  Grid,
+  GridItem,
   HStack,
   Heading,
   Icon,
@@ -42,6 +44,7 @@ import PhoneInput from "react-phone-number-input";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "redux/store";
 import { fetchSubscriptions } from "redux/subscriptionsSlice";
+import styles from "../../../../styles/PhoneNumbr.module.css";
 
 // Assets
 // import { MultiSelect } from "chakra-multiselect";
@@ -89,7 +92,7 @@ export default function PaymentPlan(props: Props) {
   const [customerEmail, setCustomerEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [customerLivemode] = useState(true);
-  const [trialPeriodDays] = useState(3);
+  const [trialPeriodDays, setTrialPeriodDays] = useState(0);
   const [cancelAtPeriodEnd] = useState(true);
   const [description, setDescription] = useState("");
   const [collectionMethod] = useState("send_invoice");
@@ -128,6 +131,12 @@ export default function PaymentPlan(props: Props) {
       updatedList.splice(value.indexOf(parseInt(e.target.value)), 1);
     }
     setValue(updatedList);
+  };
+
+  const toggleFreeTrial = () => {
+    if (trialPeriodDays == 0) {
+      setTrialPeriodDays(3);
+    } else setTrialPeriodDays(0);
   };
 
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -306,37 +315,35 @@ export default function PaymentPlan(props: Props) {
       {...rest}
     >
       <form onSubmit={handleSubmit}>
-        <Flex gap="5">
-          <Flex flexDirection="column" flex="1" w="70%">
-            <Text
-              w="100%"
-              textAlign="left"
-              fontWeight="600"
-              pb="10px"
-              fontSize="lg"
-              color={textColordark}
-            >
-              License Subscription
-            </Text>
-            <Text
-              w="100%"
-              textAlign="left"
-              fontWeight="600"
-              py="15px"
-              fontSize="16px"
-              color={textColordark}
-            >
-              User Details
-            </Text>
+        <Box gap="5">
+          <Text
+            w="100%"
+            textAlign="left"
+            fontWeight="600"
+            pb="15px"
+            fontSize="lg"
+            color={textColordark}
+          >
+            License Subscription
+          </Text>
+          {/* <Text
+            w="100%"
+            textAlign="left"
+            fontWeight="600"
+            py="15px"
+            fontSize="16px"
+            color={textColordark}
+          >
+            User Details
+          </Text> */}
+          <Flex w="100%" gap="5">
             <FormControl pb="10px">
-              <FormLabel fontSize="16px" color={textColorSecondary}>
-                Name
-              </FormLabel>
+              <FormLabel fontSize="14px">Name</FormLabel>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                variant="rounded"
+                variant="flushed"
                 required
                 value={values.name}
                 onChange={handleChange}
@@ -348,102 +355,104 @@ export default function PaymentPlan(props: Props) {
                 </FormHelperText>
               )}
             </FormControl>
-            <Flex w="100%" pb="10px">
-              <FormControl mr="4">
-                <FormLabel fontSize="16px" color={textColorSecondary}>
-                  Email
-                </FormLabel>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  variant="rounded"
-                  placeholder=""
-                  isDisabled
-                  required
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.email && touched.email && (
-                  <FormHelperText color="red.400" mt="0" mb="5px">
-                    {errors.email}
-                  </FormHelperText>
-                )}
-              </FormControl>
-              <FormControl>
-                <FormLabel fontSize="16px" color={textColorSecondary}>
-                  Phone Number *
-                </FormLabel>
-                <PhoneInput
-                  placeholder="Phone Number"
-                  international
-                  value={phone}
-                  onChange={setPhone}
-                  inputComponent={Input}
-                  style={{
-                    borderRadius: "15px",
-                    padding: "4px",
-                    fontSize: "14px",
-                    width: "100%",
-                  }}
-                />
-                {!phone && (
-                  <FormHelperText display="flex" color="red.400" mt="0">
-                    <Text>
-                      <>required</>
-                    </Text>
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Flex>
+            <FormControl mr="4">
+              <FormLabel fontSize="14px">Email</FormLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                variant="flushed"
+                placeholder=""
+                readOnly
+                required
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.email && touched.email && (
+                <FormHelperText color="red.400" mt="0" mb="5px">
+                  {errors.email}
+                </FormHelperText>
+              )}
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="14px">Phone Number *</FormLabel>
+              <PhoneInput
+                placeholder="Phone Number"
+                international
+                value={phone}
+                onChange={setPhone}
+                inputComponent={Input}
+                className={styles["phone-input"]}
+              />
+              {!phone && (
+                <FormHelperText display="flex" color="red.400" mt="0">
+                  <Text>
+                    <>required</>
+                  </Text>
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Flex>
 
-            <Text
-              w="100%"
-              textAlign="left"
-              fontWeight="600"
-              py="15px"
-              fontSize="sm"
-              color={textColordark}
-            >
-              Plan Details
-            </Text>
+          <Text
+            w="100%"
+            textAlign="left"
+            fontWeight="600"
+            py="15px"
+            fontSize="sm"
+            color={textColordark}
+          >
+            Plan Details
+          </Text>
 
-            <FormControl py="2" mb="2">
-              <FormLabel fontSize="16px" color={textColorSecondary}>
-                Select Survey(s). max {plan.max_products}
+          <FormControl py="2" mb="2">
+            <FormLabel fontSize="14px">
+              Select Survey(s). max {plan.max_products}
+            </FormLabel>
+            <Stack spacing={5} direction="row">
+              {surveys &&
+                surveys?.map((survey: survey) => {
+                  return (
+                    <Checkbox
+                      key={survey.id}
+                      colorScheme="primary"
+                      value={survey.id}
+                      onChange={handleCheckedState}
+                      isDisabled={
+                        !isChecked(survey.id) &&
+                        value.length == plan.max_products
+                      }
+                    >
+                      {survey.name}
+                    </Checkbox>
+                  );
+                })}
+            </Stack>
+            <FormHelperText color="red.400">{error}</FormHelperText>
+          </FormControl>
+          <Flex w="100%" pb="10px" gap="5">
+            <FormControl>
+              <FormLabel fontSize="14px">
+                Choose the Free Trial Option
               </FormLabel>
-              <Stack spacing={5} direction="row">
-                {surveys &&
-                  surveys?.map((survey: survey) => {
-                    return (
-                      <Checkbox
-                        key={survey.id}
-                        colorScheme="primary"
-                        value={survey.id}
-                        onChange={handleCheckedState}
-                        isDisabled={
-                          !isChecked(survey.id) &&
-                          value.length == plan.max_products
-                        }
-                      >
-                        {survey.name}
-                      </Checkbox>
-                    );
-                  })}
-              </Stack>
-              <FormHelperText color="red.400">{error}</FormHelperText>
+              <Checkbox colorScheme="blue" onChange={() => toggleFreeTrial()}>
+                3 days free trial
+              </Checkbox>
+              {errors.coupon && touched.coupon && (
+                <FormHelperText color="red.400" mt="0" mb="5px">
+                  {errors.coupon}
+                </FormHelperText>
+              )}
             </FormControl>
 
             <FormControl>
-              <FormLabel fontSize="16px" color={textColorSecondary}>
-                Have a coupon code?
-              </FormLabel>
+              <FormLabel fontSize="14px">Have a coupon code?</FormLabel>
               <Input
                 id="coupon"
                 name="coupon"
                 type="text"
-                variant="rounded"
+                variant="flushed"
                 placeholder=""
                 value={values.coupon}
                 onChange={handleChange}
@@ -456,112 +465,95 @@ export default function PaymentPlan(props: Props) {
               )}
             </FormControl>
 
-            <HStack my="3">
-              {/* <FormControl w="20%">
-                <FormLabel fontSize="16px" color={textColorSecondary}>
-                  Select Currency
-                </FormLabel>
-                <HStack>
-                  {radioOptions.map((value) => {
-                    const radio = getRadioProps({ value });
-                    return (
-                      <RadioCard key={value} {...radio}>
-                        {value}
-                      </RadioCard>
-                    );
-                  })}
-                </HStack>
-              </FormControl> */}
-              <FormControl>
-                <FormLabel fontSize="16px" color={textColorSecondary}>
-                  Total
-                </FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Icon
-                      as={FaDollarSign}
-                      color="gray.300"
-                      bg="none"
-                      mt="2"
-                      boxSize={5}
-                    />
-                  </InputLeftElement>
-
-                  <Input
-                    data-cy="plan-price"
-                    type="number"
-                    isDisabled
-                    variant="rounded"
-                    placeholder="$23232"
-                    value={formatPrice(total)}
-                    _disabled={{
-                      bg: "gray.100",
-                      color: "primary.500",
-                      weight: "bold",
-                      border: "none",
-                    }}
-                    onChange={(e) => setTotal(parseFloat(e.target.value))}
+            {/* <HStack my="3"> */}
+            <FormControl>
+              <FormLabel fontSize="16px" color={textColorSecondary}>
+                Total
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon
+                    as={FaDollarSign}
+                    color="gray.300"
+                    bg="none"
+                    mt="2"
+                    boxSize={5}
                   />
-                </InputGroup>
-              </FormControl>
-            </HStack>
+                </InputLeftElement>
+
+                <Input
+                  data-cy="plan-price"
+                  type="number"
+                  readOnly
+                  variant="flushed"
+                  placeholder="$23232"
+                  value={formatPrice(total)}
+                  onChange={(e) => setTotal(parseFloat(e.target.value))}
+                />
+              </InputGroup>
+            </FormControl>
+            {/* </HStack> */}
           </Flex>
 
-          <Flex
-            flexDirection="column"
-            w={{ base: "280px", md: "280px", xl: "280px" }}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Box
-              bgGradient="linear(to-b, primary.500, brand.700)"
-              px="5"
-              py="3"
-              h="max-content"
-              color="white"
-              borderRadius={10}
-            >
-              <Heading as="h4" size="lg" py="3">
-                Order Summary
-              </Heading>
-              <Text>Plan: {plan?.title}</Text>
-              <Text mb="2">Total: $ {formatPrice(plan.price)}</Text>
-              <Text mb="5">
-                You will have {trialPeriodDays} days of free trial{" "}
-              </Text>
-              <Button
-                type="submit"
-                isLoading={loading}
-                fontSize="sm"
-                variant="homeWhite"
-                fontWeight="800"
-                color="primary.500"
-                w="100%"
-                h="30"
-                my="24px"
-                py="7"
-                _focus={{ bg: "white" }}
-              >
-                Place Order
-              </Button>
-            </Box>
-            <Flex w="100%">
-              <Button
-                variant="outline"
-                w="full"
-                py="7"
-                my="3"
-                onClick={() => {
-                  getplan(null);
-                  changeStep(1);
-                  handleUpgrade(false);
-                }}
-              >
-                cancel
-              </Button>
-            </Flex>
+          <Heading as="h6" fontSize="16px">
+            Order Summary
+          </Heading>
+          <Flex w="100%" bg="#F7F7FC" px="4" py="2" mt="2" borderRadius="5">
+            <Grid w="100%" templateColumns="repeat(2, 1fr)" gap="5">
+              <GridItem>
+                <Text>Plan</Text>
+              </GridItem>
+              <GridItem>
+                <Text>{plan?.title}</Text>
+              </GridItem>
+              <GridItem>
+                <Text>Cost</Text>
+              </GridItem>
+              <GridItem>
+                <Text>$ {formatPrice(plan.price)}</Text>
+              </GridItem>
+              {trialPeriodDays > 0 && (
+                <>
+                  <GridItem>
+                    <Text>Free Trial</Text>
+                  </GridItem>
+                  <GridItem>
+                    <Text>
+                      You will have {trialPeriodDays} days of free trial
+                    </Text>
+                  </GridItem>
+                </>
+              )}
+            </Grid>
           </Flex>
-        </Flex>
+          <Flex gap="5" mt="4">
+            <Button
+              type="submit"
+              isLoading={loading}
+              fontSize="sm"
+              variant="homePrimary"
+              fontWeight="800"
+              h="40px"
+              py="0"
+              // _focus={{ bg: "white" }}
+            >
+              Place Order
+            </Button>
+            <Button
+              variant="outline"
+              border="1px"
+              py="0"
+              h="40px"
+              onClick={() => {
+                getplan(null);
+                changeStep(1);
+                handleUpgrade(false);
+              }}
+            >
+              cancel
+            </Button>
+          </Flex>
+        </Box>
       </form>
     </Card>
   );

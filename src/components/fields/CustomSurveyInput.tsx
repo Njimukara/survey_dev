@@ -68,6 +68,7 @@ export default function CustomSurveyInput({
           {...field}
           {...rest}
           required
+          w="35%"
           size="sm"
           fontSize="xs"
           variant="flushed"

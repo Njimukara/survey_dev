@@ -25,13 +25,14 @@ import navImage from "img/layout/Navbar.png";
 import { MdNotificationsNone, MdInfoOutline } from "react-icons/md";
 import { IoMdMoon, IoMdSunny } from "react-icons/io";
 import { FaEthereum } from "react-icons/fa";
-import routes from "routes";
+// import routes from "routes";
 import { Image } from "components/image/Image";
 // import { AuthUser } from ''
 
 import { getSession, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import useRoutes from "routes";
 // import { useRouter } from 'next/router'
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props;
@@ -50,6 +51,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
     "14px 17px 40px 4px rgba(112, 144, 176, 0.06)"
   );
   const circularbg = useColorModeValue("#EDEDED", "navy.800");
+  const { routes } = useRoutes();
 
   // Variables
   const [user, setUser] = useState<any>();

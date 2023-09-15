@@ -24,7 +24,7 @@ export function PlanContextProvider({ children }) {
       }
       setLoading(false);
     } catch (err) {
-      console.log("sub error", err);
+      // console.log("sub error", err);
       setErrors(err);
       setLoading(false);
     }

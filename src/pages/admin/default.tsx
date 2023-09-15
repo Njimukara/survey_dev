@@ -76,6 +76,8 @@ import {
 } from "redux/surveyHistorySlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import useSurveys from "hooks/useSurveys";
+import { updateSurveys } from "redux/surveySlice";
 
 const columnsData: TableColumn[] = [
   {
@@ -214,9 +216,9 @@ export const employeeData = [
 export default function UserReports() {
   const [user, setUser] = useState<any>();
 
-  const font_family = "Poppins";
-  const brandColor = useColorModeValue("primary.600", "#271E67");
-  const boxBg = useColorModeValue("#F7F7FC", "whiteAlpha.100");
+  const font_family: string = "Poppins";
+  const brandColor: string = useColorModeValue("primary.600", "#271E67");
+  const boxBg: string = useColorModeValue("#F7F7FC", "whiteAlpha.100");
 
   const { data: session } = useSession();
   const sessionUser = session?.user;
@@ -235,7 +237,15 @@ export default function UserReports() {
   const companyMembersData = useSelector(
     (state: RootState) => state.reduxStore.company
   );
-  const { companyMembers, membersLoading, membersError } = companyMembersData;
+  const {
+    companyMembers,
+    membersLoading,
+    membersError,
+  }: {
+    companyMembers: any[];
+    membersLoading: boolean;
+    membersError: any;
+  } = companyMembersData;
 
   const surveyHistoryData = useSelector(
     (state: RootState) => state.reduxStore.surveyHistory
@@ -246,9 +256,23 @@ export default function UserReports() {
     companySurveys,
     mergedCompanySurveys,
     mergedSurveyHistory,
+  }: {
+    surveyHistory: any[];
+    companySurveysLoading: boolean;
+    companySurveys: any[];
+    mergedCompanySurveys: any[];
+    mergedSurveyHistory: any[];
   } = surveyHistoryData;
 
   const dispatch = useDispatch<AppDispatch>();
+  const surveyData = useSurveys();
+  const {
+    surveys,
+    surveysLoading,
+  }: {
+    surveys: any[];
+    surveysLoading: boolean;
+  } = surveyData;
 
   const [subscriptions, setSubscriptions] = useState([]);
 
@@ -262,8 +286,14 @@ export default function UserReports() {
   }, [subscriptions]);
 
   useEffect(() => {
+    // console.log("surveys loading", surveysLoading);
+    // console.log("surveys", surveys);
+    dispatch(updateSurveys(surveys));
+  }, [surveys, surveysLoading, dispatch]);
+
+  useEffect(() => {
     // console.log(companySurveyHistory, mergedCompanyHistory);
-    console.log("subscriptions", subscriptions);
+    // console.log("subscriptions", subscriptions);
     setSubscriptions(data?.data);
   }, []);
 
@@ -376,13 +406,13 @@ export default function UserReports() {
   );
 
   // Helper functions
-  function getSurveysCount() {
+  function getSurveysCount(): number {
     return userType !== UserTypes.COMPANY_USER
       ? mergedSurveyHistory?.length ?? 0
       : mergedCompanySurveys?.length ?? 0;
   }
 
-  function getUserTypeSpecificStatistics() {
+  function getUserTypeSpecificStatistics(): JSX.Element {
     if (userType === UserTypes.COMPANY_USER) {
       return (
         <MiniStatistics name="Company users" value={companyMembers?.length} />
@@ -391,7 +421,7 @@ export default function UserReports() {
     return null;
   }
 
-  function getUserTypeSpecificContent() {
+  function getUserTypeSpecificContent(): JSX.Element {
     if (
       userType === UserTypes.COMPANY_USER ||
       userType === UserTypes.REGULAR_USER
@@ -414,7 +444,7 @@ export default function UserReports() {
     );
   }
 
-  function renderCompanySurveys() {
+  function renderCompanySurveys(): JSX.Element {
     if (mergedCompanySurveys && mergedCompanySurveys.length <= 0) {
       return <NoData title="No company survey data" />;
     }
@@ -426,7 +456,7 @@ export default function UserReports() {
     );
   }
 
-  function renderSurveyTable() {
+  function renderSurveyTable(): JSX.Element {
     if (
       userType === UserTypes.REGULAR_USER &&
       mergedSurveyHistory &&
@@ -456,7 +486,7 @@ export default function UserReports() {
     return companySurveys || surveyHistory;
   }
 
-  function renderTransactionTable() {
+  function renderTransactionTable(): JSX.Element {
     if (invertedArray.length > 0) {
       return (
         <TransactionTable tableData={invertedArray as unknown as TableData[]} />

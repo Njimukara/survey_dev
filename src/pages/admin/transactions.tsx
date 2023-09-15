@@ -91,7 +91,7 @@ export default function Transactions() {
   };
 
   useEffect(() => {
-    if (!plans || plans.length <= 0) {
+    if (!plans) {
       dispatch(fetchPlans());
     }
   }, [plans, dispatch]);
@@ -102,6 +102,24 @@ export default function Transactions() {
     }
     setLocalSubscriptions(subscriptions);
   }, [subscriptions]);
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+          <Flex h="200" w="100%" justifyContent="center" alignItems="center">
+            <Spinner
+              thickness="2px"
+              speed="0.95s"
+              emptyColor="gray.200"
+              color="primary.600"
+              size="sm"
+            />
+          </Flex>
+        </Box>
+      </AdminLayout>
+    );
+  }
 
   if (localSubscriptions && localSubscriptions.length != 0) {
     return (
@@ -278,7 +296,7 @@ export default function Transactions() {
                         {plans &&
                           plans?.map((plan: Plan) => (
                             <SubscriptionCard
-                              key={plan.id}
+                              key={plan.id + "2"}
                               id={plan.id}
                               title={plan.name}
                               price={plan.amount}

@@ -17,11 +17,6 @@ export default function CompanyUsers(props: { [x: string]: any }) {
 
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const cardShadow = useColorModeValue(
-    "0px 5px 5px rgba(112, 144, 176, 0.12)",
-    "unset"
-  );
-  console.log(companyMembers);
 
   // const [companyMembers, setCompanyMembers] = useState([]);
   const router = useRouter();

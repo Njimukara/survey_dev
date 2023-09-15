@@ -5,7 +5,8 @@ import Navbar from "components/navbar/NavbarAdmin";
 import Sidebar from "components/sidebar/Sidebar";
 import { SidebarContext } from "contexts/SidebarContext";
 import { PropsWithChildren, useEffect, useState } from "react";
-import routes from "routes";
+import useRoutes from "routes";
+// import {routes} from "routes";
 import {
   getActiveNavbar,
   getActiveNavbarText,
@@ -24,6 +25,7 @@ export default function AdminLayout(props: DashboardLayoutProps) {
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const { onOpen } = useDisclosure();
+  const { routes } = useRoutes();
 
   useEffect(() => {
     window.document.documentElement.dir = "ltr";

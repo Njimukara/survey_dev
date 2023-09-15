@@ -25,7 +25,7 @@ export const fetchSubscriptions = createAsyncThunk(
       }
       return { data, currentSubscription };
     } catch (error) {
-      throw error;
+      throw new Error("An error occurred while fetching subscriptions.");
     }
   }
 );
