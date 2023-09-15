@@ -50,23 +50,31 @@ function AuthIllustration(props: {
         />
         <Flex
           flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
           position="absolute"
           color="white"
-          left={{ base: "0%", md: "0%", lg: "10%" }}
+          left={{ base: "0%", md: "0%", lg: "8%" }}
           top="50%"
           px={{ base: 0, md: "20px", lg: 0 }}
         >
-          <Text textAlign="center" fontSize="30px" fontWeight="bold">
-            Welcome to Survey Planner
-          </Text>
-          <Text
-            textAlign="center"
-            fontSize="20px"
-            letterSpacing="wide"
-            opacity="0.8"
+          <Flex
+            justifyContent="center"
+            flexDirection="column"
+            alignItems="center"
           >
-            The Fastest solution to generate hydrographic surveys
-          </Text>
+            <Text textAlign="center" fontSize="30px" fontWeight="bold">
+              Welcome to Survey Planner
+            </Text>
+            <Text
+              textAlign="center"
+              fontSize="20px"
+              letterSpacing="wide"
+              opacity="0.8"
+            >
+              The Fastest solution to generate hydrographic surveys
+            </Text>
+          </Flex>
         </Flex>
       </GridItem>
       <GridItem w="100%" my="auto">

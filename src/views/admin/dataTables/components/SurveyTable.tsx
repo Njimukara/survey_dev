@@ -55,7 +55,7 @@ const SurveyTable = (props: TableProps) => {
   });
 
   useEffect(() => {
-    if (!surveys) {
+    if (!surveys || surveys.length <= 0) {
       dispatch(fetchSurveys());
     }
   }, [dispatch, surveys]);
@@ -64,7 +64,7 @@ const SurveyTable = (props: TableProps) => {
     const { id, survey } = row?.original;
     let code: string;
 
-    const matchingSurvey = surveys.find(
+    const matchingSurvey = surveys?.find(
       (uniqueSurvey: survey) => uniqueSurvey.id === survey
     );
 
@@ -105,7 +105,7 @@ const SurveyTable = (props: TableProps) => {
 
   const formatSurveyType = (surveytype: number) => {
     let name = "";
-    if (surveys) {
+    if (surveys || surveys.length > 0) {
       surveys.map((survey: survey) => {
         if (survey.id == surveytype) {
           name = survey.name;

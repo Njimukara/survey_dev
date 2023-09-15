@@ -11,12 +11,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect } from "react";
 import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
 import OperationalConditionsCard from "views/admin/dataTables/components/OperationalConditionsCard";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import { FormikHelpers, useFormik, useFormikContext } from "formik";
 import * as Yup from "yup";
 
@@ -81,9 +81,9 @@ export default function MultibeamEchoSounder() {
   const [survey, setSurvey] = useState([]);
   const [surveyID, setSurveyID] = useState<number>(1);
 
-  const { loading, subscriptions, fetchSubscriptions } = useSubscription();
+  // const { loading, subscriptions, fetchSubscriptions } = useSubscription();
   const [surveyCode, setSurveyCode] = useState("S01");
-  const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
+  // const { surveys, multibeam, getAllSurveys } = useAllSurveysContext();
 
   // chakra toast
   const toast = useToast();
@@ -96,32 +96,7 @@ export default function MultibeamEchoSounder() {
     });
   };
 
-  useEffect(() => {
-    if (!surveys) {
-      getAllSurveys();
-    }
-
-    if (subscription && multibeam) {
-      checkSubscription();
-    }
-
-    if (multibeam) {
-      setSurveyCode(multibeam.code);
-      setSurveyID(multibeam.id);
-    }
-  }, [surveys, subscription]);
-
-  useEffect(() => {
-    const sub = async () => {
-      await fetchSubscriptions();
-    };
-    setSubscription(subscriptions[subscriptions.length - 1]);
-
-    sub();
-    // console.log("formside scan", form);
-  }, [loading, subscription]);
-
-  if (loading) {
+  if (true) {
     return (
       <AdminLayout>
         <Flex w="100%" h="100vh" justifyContent="center" alignItems="center">

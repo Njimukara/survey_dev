@@ -6,6 +6,7 @@ import subscriptionsSlice from "../subscriptionsSlice";
 import surveyHistorySlice from "redux/surveyHistorySlice";
 import { Reducer } from "redux";
 import surveySlice from "redux/surveySlice";
+import planSlice from "redux/planSlice";
 
 const rootReducer: Reducer = combineReducers({
   subscrptions: subscriptionsSlice,
@@ -13,6 +14,7 @@ const rootReducer: Reducer = combineReducers({
   user: userReducer,
   surveyHistory: surveyHistorySlice,
   surveys: surveySlice,
+  plans: planSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>; // Define RootState type

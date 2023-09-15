@@ -18,7 +18,7 @@ interface survey {
 
 const formatSurveyType = (surveytype: number, surveys: any[]) => {
   let name = "";
-  if (surveys) {
+  if (surveys || surveys.length > 0) {
     surveys.map((survey: survey) => {
       if (survey.id == surveytype) {
         name = survey.name;
@@ -54,7 +54,7 @@ export default function SurveyHistory() {
 
   return (
     <AdminLayout>
-      {allSurveyHistory.length > 0 ? (
+      {allSurveyHistory && allSurveyHistory.length > 0 ? (
         allSurveyHistory.map((surveyHistory, index) => (
           <Flex key={index} pt={{ md: "100px" }} px="50px" w="100%" gap={10}>
             <Flex w="100%">

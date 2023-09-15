@@ -40,18 +40,19 @@ import { useCallback, useEffect, useState } from "react";
 // Assets
 import PaymentPlan from "views/admin/default/components/PaymentPlan";
 import { TableData } from "views/admin/default/variables/columnsData";
-import { columnsDataComplex } from "views/admin/default/variables/columnsData";
+// import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import { SubscriptionCard } from "components/card/SubscriptionCard";
 import { Plan, subsciptionPlan } from "../../../types/data";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import SubscirptionDetails from "views/admin/profile/components/SubscriptionDetails";
 import { useCurrentUser } from "contexts/UserContext";
-import axiosConfig from "axiosConfig";
+// import axiosConfig from "axiosConfig";
 import NoData from "layouts/admin/noData";
-import { usePlanContext } from "contexts/PlanContext";
+// import { usePlanContext } from "contexts/PlanContext";
 import TransactionTable from "views/admin/dataTables/components/TransationTable";
-import { useSelector } from "react-redux";
-import { RootState } from "redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchPlans } from "redux/planSlice";
 
 export default function Transactions() {
   // component variables
@@ -64,16 +65,12 @@ export default function Transactions() {
 
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [upgrade, setUpgrade] = useState(false);
-  // const [fetching, setFetching] = useState(true);
   const [step, setStep] = useState(1);
-  // const [plans, setPlans] = useState([]);
-
-  // get user subscription from store
+  const dispatch = useDispatch<AppDispatch>();
+  const plansData = useSelector((state: RootState) => state.reduxStore.plans);
+  const { plans, plansLoading, plansError } = plansData;
   const [localSubscriptions, setLocalSubscriptions] = useState([]);
-  // const { subscriptions, fetchSubscriptions } = useSubscription();
   const { currentUser, fetchCurrentUser } = useCurrentUser();
-
-  const { plans, errors, loading } = usePlanContext();
 
   // chakra toast
   const toast = useToast();
@@ -94,17 +91,10 @@ export default function Transactions() {
   };
 
   useEffect(() => {
-    if (plans.length <= 0 && errors) {
-      // getPlans();
-      toast({
-        position: "bottom-right",
-        description: "Error getting plans",
-        status: "error",
-        duration: 4000,
-        isClosable: true,
-      });
+    if (!plans) {
+      dispatch(fetchPlans());
     }
-  }, [errors, plans, toast]);
+  }, [plans, dispatch]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -113,7 +103,25 @@ export default function Transactions() {
     setLocalSubscriptions(subscriptions);
   }, [subscriptions]);
 
-  if (localSubscriptions.length != 0) {
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+          <Flex h="200" w="100%" justifyContent="center" alignItems="center">
+            <Spinner
+              thickness="2px"
+              speed="0.95s"
+              emptyColor="gray.200"
+              color="primary.600"
+              size="sm"
+            />
+          </Flex>
+        </Box>
+      </AdminLayout>
+    );
+  }
+
+  if (localSubscriptions && localSubscriptions.length != 0) {
     return (
       <AdminLayout>
         <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -158,7 +166,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {loading ? (
+                {plansLoading ? (
                   <Flex
                     h="200"
                     w="100%"
@@ -181,20 +189,21 @@ export default function Transactions() {
                         spacing="20px"
                         minChildWidth="250px"
                       >
-                        {plans.map((plan: Plan, index: number) => (
-                          <SubscriptionCard
-                            key={plan.id + index}
-                            id={plan.id}
-                            title={plan.name}
-                            price={plan.amount}
-                            period={plan?.stripe_plan_id?.interval}
-                            description={plan?.stripe_plan_id?.description}
-                            advantages={plan.features}
-                            max_products={plan.max_products}
-                            getplan={getSelectedPlan}
-                            changeStep={changeStep}
-                          ></SubscriptionCard>
-                        ))}
+                        {plans &&
+                          plans?.map((plan: Plan, index: number) => (
+                            <SubscriptionCard
+                              key={plan.id + index}
+                              id={plan.id}
+                              title={plan.name}
+                              price={plan.amount}
+                              period={plan?.stripe_plan_id?.interval}
+                              description={plan?.stripe_plan_id?.description}
+                              advantages={plan.features}
+                              max_products={plan.max_products}
+                              getplan={getSelectedPlan}
+                              changeStep={changeStep}
+                            ></SubscriptionCard>
+                          ))}
                       </SimpleGrid>
                     </TabPanel>
                     <TabPanel>
@@ -211,7 +220,7 @@ export default function Transactions() {
           )}
 
           <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-            {localSubscriptions.length > 0 ? (
+            {localSubscriptions && localSubscriptions?.length > 0 ? (
               <TransactionTable
                 tableData={localSubscriptions as unknown as TableData[]}
               />
@@ -261,7 +270,7 @@ export default function Transactions() {
                     Annually
                   </Tab>
                 </TabList>
-                {loading ? (
+                {plansLoading ? (
                   <Flex
                     h="200"
                     w="100%"
@@ -284,20 +293,21 @@ export default function Transactions() {
                         spacing="20px"
                         minChildWidth="250px"
                       >
-                        {plans.map((plan: Plan) => (
-                          <SubscriptionCard
-                            key={plan.id}
-                            id={plan.id}
-                            title={plan.name}
-                            price={plan.amount}
-                            period={plan?.stripe_plan_id?.interval}
-                            description={plan?.stripe_plan_id?.description}
-                            advantages={plan.features}
-                            max_products={plan.max_products}
-                            getplan={getSelectedPlan}
-                            changeStep={changeStep}
-                          ></SubscriptionCard>
-                        ))}
+                        {plans &&
+                          plans?.map((plan: Plan) => (
+                            <SubscriptionCard
+                              key={plan.id + "2"}
+                              id={plan.id}
+                              title={plan.name}
+                              price={plan.amount}
+                              period={plan?.stripe_plan_id?.interval}
+                              description={plan?.stripe_plan_id?.description}
+                              advantages={plan.features}
+                              max_products={plan.max_products}
+                              getplan={getSelectedPlan}
+                              changeStep={changeStep}
+                            ></SubscriptionCard>
+                          ))}
                       </SimpleGrid>
                     </TabPanel>
                     <TabPanel>

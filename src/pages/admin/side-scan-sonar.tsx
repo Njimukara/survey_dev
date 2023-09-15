@@ -23,7 +23,7 @@ import {
   calibrationsFields,
   lever_arm_measuresFields,
   operationalConditionsFields,
-  performaceCardFields,
+  sideScanPerformaceCardFields,
   performaceINSFields,
   platformPerformanceFields,
 } from "utils/sideScanFields";
@@ -183,13 +183,10 @@ function EchoSounder() {
   const dispatch = useDispatch<AppDispatch>();
   const [surveyCode, setSurveyCode] = useState("S03");
   const [planning, setPlanning] = useState(false);
-
   const allSurveys = useSelector(
     (state: RootState) => state.reduxStore.surveys
   );
-
-  const { surveys, sideScanSurvey } = allSurveys;
-
+  const { surveys, surveyLoading, sideScanSurvey } = allSurveys;
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
@@ -203,11 +200,12 @@ function EchoSounder() {
   useEffect(() => {
     if (!surveys) {
       dispatch(fetchSurveys());
-    } else if (currentSubscription && sideScanSurvey) {
-      setSurvey(checkSubscription(currentSubscription, sideScanSurvey));
+    } else if (currentSubscription && sideScanSurvey && !surveyLoading) {
+      var side = checkSubscription(currentSubscription, sideScanSurvey);
+      setSurvey(side);
       setSurveyCode(sideScanSurvey?.code);
     }
-  }, []);
+  }, [surveyLoading, sideScanSurvey]);
 
   useEffect(() => {
     formik.setValues(initialValues);
@@ -279,6 +277,7 @@ function EchoSounder() {
                 <FormLabel fontSize="sm">Survey Name</FormLabel>
                 <Input
                   data-cy="register-name"
+                  required
                   id="surveyName"
                   name="surveyName"
                   variant="rounded"
@@ -310,7 +309,7 @@ function EchoSounder() {
             <TestPerformanceCard
               CardName="Performance of SSSS"
               IndexLabel="SSSS"
-              fields={performaceCardFields}
+              fields={sideScanPerformaceCardFields}
               form={formik}
             />
             <Parameters results={surveyParameters} value={performanceForm} />

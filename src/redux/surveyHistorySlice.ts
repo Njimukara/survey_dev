@@ -32,10 +32,15 @@ export const fetchSurveyHistory = createAsyncThunk(
         []
       );
       // console.log("individual surveyhistory", results, combinedResults);
-      return { results, combinedResults };
+      // return { results, combinedResults };
+      const combinedResultsObject = { data: combinedResults };
+
+      // console.log("company", combinedResultsObject, results);
+      return { combinedResults: combinedResultsObject, results };
     } catch (err) {
       // console.error("surveyhistory", err);
-      return err;
+      // return err;
+      throw new Error("An error occurred while fetching survey history.");
     }
   }
 );
@@ -68,10 +73,15 @@ export const fetchCompanySurveys = createAsyncThunk(
         []
       );
       // console.log("company", combinedResults, results);
-      return { combinedResults, results };
+      // return { combinedResults, results };
+      const combinedResultsObject = { data: combinedResults };
+
+      // console.log("company", combinedResultsObject, results);
+      return { combinedResults: combinedResultsObject, results };
     } catch (err) {
       // console.error("company history", err);
-      return err;
+      // return err;
+      throw new Error("An error occurred while fetching surveys.");
     }
   }
 );
@@ -111,7 +121,7 @@ export const surveyHisorySlice = createSlice({
       .addCase(fetchSurveyHistory.fulfilled, (state, action) => {
         state.surveyHistoryLoading = false;
         state.surveyHistory = action.payload.results;
-        state.mergedSurveyHistory = action.payload.combinedResults;
+        state.mergedSurveyHistory = action.payload.combinedResults.data;
       })
       .addCase(fetchSurveyHistory.rejected, (state, action) => {
         state.surveyHistoryLoading = false;
@@ -124,7 +134,7 @@ export const surveyHisorySlice = createSlice({
       .addCase(fetchCompanySurveys.fulfilled, (state, action) => {
         state.companySurveysLoading = false;
         state.companySurveys = action.payload.results;
-        state.mergedCompanySurveys = action.payload.combinedResults;
+        state.mergedCompanySurveys = action.payload.combinedResults.data;
       })
       .addCase(fetchCompanySurveys.rejected, (state, action) => {
         state.companySurveysLoading = false;

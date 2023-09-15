@@ -12,7 +12,7 @@ export const fetchSurveys = createAsyncThunk(
 
       return surveys;
     } catch (error) {
-      return error;
+      throw new Error("An error occurred while fetching surveys.");
     }
   }
 );
@@ -28,7 +28,7 @@ export interface surveyState {
 }
 
 const initialState: surveyState = {
-  surveys: {},
+  surveys: [],
   surveyLoading: false,
   surveyError: null,
   lidarSurvey: {},
@@ -40,7 +40,18 @@ const initialState: surveyState = {
 export const surveySlice = createSlice({
   name: "counter",
   initialState,
-  reducers: {},
+  reducers: {
+    updateSurveys: (state, action) => {
+      state.surveys = action.payload;
+    },
+    updateLidarSurvey: (state, action) => {
+      // You can update state properties here based on the action payload
+      state.lidarSurvey = action.payload;
+    },
+    updateMultibeamSurvey: (state, action) => {
+      state.multibeamSurvey = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSurveys.pending, (state) => {
@@ -73,6 +84,9 @@ export const surveySlice = createSlice({
       });
   },
 });
+
+export const { updateLidarSurvey, updateMultibeamSurvey, updateSurveys } =
+  surveySlice.actions;
 
 // Action creators are generated for each case reducer function
 export default surveySlice.reducer;

@@ -1,13 +1,12 @@
 import axiosConfig from "axiosConfig";
 import React, { useEffect } from "react";
-import { useSubscription } from "./SubscriptionContext";
 
 export const CurrentUserContext = React.createContext();
 
 export const CurrentUserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const { subscriptions } = useSubscription();
+  // const { subscriptions } = useSubscription();
 
   const fetchCurrentUser = async () => {
     setLoading(true);

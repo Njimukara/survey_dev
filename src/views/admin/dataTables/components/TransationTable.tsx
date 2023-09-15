@@ -2,7 +2,12 @@ import { Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 import { useMemo } from "react";
 
 // Assets
-import { MdCancel, MdCheckCircle, MdOutlineError } from "react-icons/md";
+import {
+  MdCancel,
+  MdCheckCircle,
+  MdOutlineError,
+  MdTimer,
+} from "react-icons/md";
 import { TableColumn, TableProps } from "../../default/variables/columnsData";
 import ReusableTable from "views/admin/dataTables/components/Table";
 
@@ -22,9 +27,14 @@ const formatPrice = (price: number) => {
 const TransactionTable = (props: TableProps) => {
   const { tableData } = props;
   //   const columns = useMemo(() => columnsData, [columnsData]);
+
   const data = useMemo(() => tableData, [tableData]);
   const font_family = "Poppins";
 
+  if (!tableData) {
+    // You can return a loading indicator or an appropriate message here
+    return <div>Loading...</div>;
+  }
   const Tabblecolumns: TableColumn[] = [
     {
       Header: "AMOUNT",
@@ -86,6 +96,20 @@ const TransactionTable = (props: TableProps) => {
           data = (
             <Flex align="center">
               <Icon w="24px" h="24px" me="5px" color="red.500" as={MdCancel} />
+              <Text
+                color="red.500"
+                fontSize="sm"
+                fontWeight="400"
+                fontFamily={font_family}
+              >
+                {cell.value.toUpperCase()}
+              </Text>
+            </Flex>
+          );
+        } else {
+          data = (
+            <Flex align="center">
+              <Icon w="24px" h="24px" me="5px" color="red.500" as={MdTimer} />
               <Text
                 color="red.500"
                 fontSize="sm"

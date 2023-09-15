@@ -23,6 +23,8 @@
 // Chakra imports
 import { Box, Grid } from "@chakra-ui/react";
 import AdminLayout from "layouts/admin";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // Custom components
 import Banner from "views/admin/profile/components/Banner";
@@ -34,14 +36,11 @@ import { useSession } from "next-auth/react";
 import CompanyDetails from "views/admin/default/components/CompanyDetails";
 import { useCurrentUser } from "contexts/UserContext";
 import CompanyUsers from "views/admin/profile/components/CompanyUsers";
-import axiosConfig from "axiosConfig";
-import getClient from "axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "redux/store";
 import useUpdateSurveyHistory from "hooks/useUpdateSurveyHistory";
 import { UserTypes } from "utils/userTypes";
-import { fetchCompanyData } from "redux/companySlice";
-import EditCompanyModal from "components/modals/EditCompany";
+import { fetchCompanyData, fetchCompanyMembers } from "redux/companySlice";
 
 export default function ProfileOverview() {
   const { loading, currentUser, fetchCurrentUser } = useCurrentUser();
@@ -54,7 +53,8 @@ export default function ProfileOverview() {
   const companyData = useSelector(
     (state: RootState) => state.reduxStore.company
   );
-  const { company, companyMembers, membersLoading } = companyData;
+  const { company, companyMembers, membersLoading, companyLoading } =
+    companyData;
 
   const { data: session } = useSession();
 
@@ -65,7 +65,6 @@ export default function ProfileOverview() {
 
   // state for user invite
   const [modalState, setModalState] = useState(false);
-  const [editCompanyModalState, setEditCompanyModal] = useState(false);
 
   // toggle company user invite modal
   const toggleCompanyUserModal = (state: boolean) => {
@@ -74,7 +73,13 @@ export default function ProfileOverview() {
 
   useEffect(() => {
     if (company != null) {
-      // setCompanyMembers(company?.members);
+      console.log(companyMembers, membersLoading);
+      dispatch(
+        fetchCompanyMembers({
+          apiEndpoint: "/api/company/companymembers/companymember/",
+          force: true,
+        })
+      );
       setHasDetails(true);
     }
   }, [company]);
@@ -95,7 +100,7 @@ export default function ProfileOverview() {
       fetchCurrentUser();
     }
     setUser(currentUser);
-  }, [hasDetails, session, company, fetchCurrentUser, currentUser, loading]);
+  }, [hasDetails, company, fetchCurrentUser, currentUser, loading]);
 
   return (
     <AdminLayout>
@@ -146,19 +151,29 @@ export default function ProfileOverview() {
               }}
               gap={{ base: "20px", xl: "20px" }}
             >
-              <CompanyDetails
-                borderRadius="10"
-                hasDetails={hasDetails}
-                company={company}
-                toggleHasDetails={toggleHasDetails}
-              />
-              {hasDetails && (
-                <CompanyUsers
+              {companyLoading ? (
+                <Skeleton height={150} />
+              ) : (
+                <CompanyDetails
                   borderRadius="10"
-                  toggleModal={toggleCompanyUserModal}
-                  isOpen={modalState}
-                  companyMembers={companyMembers}
+                  hasDetails={hasDetails}
+                  company={company}
+                  toggleHasDetails={toggleHasDetails}
                 />
+              )}
+              {hasDetails && (
+                <>
+                  {membersLoading || companyLoading ? (
+                    <Skeleton height={150} />
+                  ) : (
+                    <CompanyUsers
+                      borderRadius="10"
+                      toggleModal={toggleCompanyUserModal}
+                      isOpen={modalState}
+                      companyMembers={companyMembers}
+                    />
+                  )}
+                </>
               )}
             </Grid>
           )}

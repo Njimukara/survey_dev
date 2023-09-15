@@ -9,25 +9,44 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import axios from "axios";
+// import axios from "axios";
 import Card from "components/card/Card";
-import { NextAvatar } from "components/image/Avatar";
+// import { NextAvatar } from "components/image/Avatar";
 import { signOut } from "next-auth/react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import axiosConfig from "axiosConfig";
-import { useSelector } from "react-redux";
-import { RootState } from "redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store";
+import { fetchSubscriptions } from "redux/subscriptionsSlice";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function PlanDetails(props: { [x: string]: any }) {
   const { ...rest } = props;
 
   const font_family = "Poppins";
+  const dispatch = useDispatch<AppDispatch>();
   const { data, isLoading, error } = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
   const { currentSubscription } = data;
+  const subscriptionStatus =
+    currentSubscription?.subscription_data?.status?.toLowerCase();
+
+  const showAlert = useMemo(() => {
+    const isStatusActive = subscriptionStatus === "active";
+    const isStatusTrialing = subscriptionStatus === "trialing";
+    const isStatusIncomplete = subscriptionStatus === "incomplete";
+
+    // Return true or false based on your conditions
+    return !isStatusActive || isStatusTrialing || isStatusIncomplete;
+  }, [subscriptionStatus]);
+
+  const updateSubscriptions = () => {
+    dispatch(fetchSubscriptions("/api/plans/subscription/"));
+  };
 
   // Chakra Color Mode
   const textColor = useColorModeValue("navy.500", "white");
@@ -45,13 +64,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
   );
   const mainBg = useColorModeValue({ bg: "white" }, { bg: "whiteAlpha.100" });
 
-  // const { loading, subscriptions, currentSubscription, fetchSubscriptions } =
-  //   useSubscription();
-
-  const [, setSubscription] = useState<any>();
   const [presentSubscription, setPresentSubscription] = useState<any>();
-  const [totalSpent, setTotalSpent] = useState(0);
-
   const router = useRouter();
 
   const formatDate = (date: any) => {
@@ -86,21 +99,16 @@ export default function PlanDetails(props: { [x: string]: any }) {
     }
   };
 
-  // useEffect(() => {
-  //   if (subscriptions.length > 0) {
-  //     setSubscription(subscriptions[subscriptions.length - 1]);
-  //   }
-  // }, [subscriptions]);
+  useEffect(() => {
+    updateSubscriptions();
+  }, []);
 
   useEffect(() => {
     if (currentSubscription) {
+      // console.log("current subscription", currentSubscription);
       setPresentSubscription(currentSubscription);
     }
   }, [currentSubscription]);
-
-  // useEffect(() => {
-  //   fetchSubscriptions();
-  // }, []);
 
   return (
     <Card
@@ -132,7 +140,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
             {isLoading ? (
               <Box alignItems="center" fontFamily={font_family}>
-                <Text>Loading</Text>
+                <Skeleton height={150} />
               </Box>
             ) : (
               <>
@@ -358,33 +366,28 @@ export default function PlanDetails(props: { [x: string]: any }) {
                         </span>
                       </Text>
                     </Flex>
-                    {presentSubscription?.subscription_data?.status.toLowerCase() !=
-                      "active" ||
-                      (presentSubscription?.subscription_data?.status ==
-                        "trialing" && (
-                        <Alert
-                          status="info"
-                          fontSize="14px"
-                          py={1}
-                          mt={2}
-                          borderRadius="6px"
+                    {showAlert && (
+                      <Alert
+                        status="info"
+                        fontSize="14px"
+                        py={1}
+                        mt={2}
+                        borderRadius="6px"
+                      >
+                        <AlertIcon />
+                        Just made payment? Click{" "}
+                        <Button
+                          onClick={() => router.reload()}
+                          py={0}
+                          px={1}
+                          bg="none"
+                          textDecoration="underline"
                         >
-                          <AlertIcon />
-                          Just made payment? Click{" "}
-                          <Button
-                            onClick={() => {
-                              router.reload();
-                            }}
-                            py={0}
-                            px={1}
-                            bg="none"
-                            textDecoration="underline"
-                          >
-                            HERE
-                          </Button>{" "}
-                          to refresh
-                        </Alert>
-                      ))}
+                          HERE
+                        </Button>{" "}
+                        to refresh
+                      </Alert>
+                    )}
                   </Box>
                 )}
               </>

@@ -9,14 +9,29 @@ type Survey = {
   is_delete: boolean;
 };
 
+const hasPermission = (currentSubscription: any) => {
+  const subscriptionStatus = currentSubscription?.status?.toLowerCase();
+
+  const isStatusActive = subscriptionStatus !== "active";
+  const isStatusTrialing = subscriptionStatus !== "trialing";
+
+  return isStatusActive || isStatusTrialing;
+};
+
 export const checkSubscription = (
   currentSubscription: any,
   surveyToCheck: Survey
 ) => {
-  const surveys = currentSubscription?.assigned_surveys || [];
-  const matchingSurvey = surveys.find(
-    (survey: Survey) => survey.id === surveyToCheck?.id
-  );
+  if (!hasPermission(currentSubscription)) {
+    return [];
+  }
 
-  return matchingSurvey ? [matchingSurvey.id] : [];
+  const surveys = currentSubscription?.assigned_surveys || [];
+  if (surveys.length > 0) {
+    const matchingSurvey = surveys.find(
+      (survey: Survey) => survey.id === surveyToCheck?.id
+    );
+    console.log(matchingSurvey);
+    return matchingSurvey ? [matchingSurvey.id] : [];
+  } else return [];
 };

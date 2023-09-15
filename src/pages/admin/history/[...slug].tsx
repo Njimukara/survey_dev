@@ -12,7 +12,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 // import Spinner from "components/spinner";
-import { useSubscription } from "contexts/SubscriptionContext";
+// import { useSubscription } from "contexts/SubscriptionContext";
 import AdminLayout from "layouts/admin";
 import React, { useState, useEffect, useCallback } from "react";
 // import PurchaseLisence from "views/admin/default/components/PurchaseLisence";
@@ -27,9 +27,9 @@ import CloudPoints from "views/admin/dataTables/components/CloudPoints";
 import { useSession } from "next-auth/react";
 // import axios from "axios";
 // import Select from "react-select";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useRouter } from "next/router";
-import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
+// import { useSurveyHistoryContext } from "contexts/SurveyHistoryContext";
 import useSurveyHistory from "utils/useSurveyHistory";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "redux/store";
@@ -311,7 +311,7 @@ export default function MultibeamEchoSounder() {
   });
   const [surveyID, setSurveyID] = useState<number>(1);
   const [surveyName, setSurveyName] = useState("");
-  const { subscriptions } = useSubscription();
+  // const { subscriptions } = useSubscription();
   // const [user, setUser] = useState(null);
   // const [result, setResult] = useState(null);
   const [resultID, setResultID] = useState(null);

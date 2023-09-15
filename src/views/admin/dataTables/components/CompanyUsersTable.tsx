@@ -16,7 +16,7 @@ import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 
 // Assets
 import { TableColumn, TableProps } from "../../default/variables/columnsData";
-import { useAllSurveysContext } from "contexts/SurveyContext";
+// import { useAllSurveysContext } from "contexts/SurveyContext";
 import { useRouter } from "next/router";
 import axiosConfig from "axiosConfig";
 import ReusableTable from "views/admin/dataTables/components/Table";
@@ -59,7 +59,7 @@ const CompanyUsersTable = (props: TableProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const data = useMemo(() => tableData, [tableData]);
-  const { surveys, getAllSurveys } = useAllSurveysContext();
+  // const { surveys, getAllSurveys } = useAllSurveysContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [survey, setSurvey] = useState(null);
   const [isSending, setSending] = useState(false);
@@ -70,11 +70,11 @@ const CompanyUsersTable = (props: TableProps) => {
   const [user, setUser] = useState<any>();
   const [companyUser] = useState(2);
 
-  useEffect(() => {
-    if (!surveys) {
-      getAllSurveys();
-    }
-  }, [surveys, getAllSurveys]);
+  // useEffect(() => {
+  //   if (!surveys) {
+  //     getAllSurveys();
+  //   }
+  // }, [surveys, getAllSurveys]);
 
   const { data: session, status } = useSession();
 

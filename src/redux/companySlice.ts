@@ -23,7 +23,8 @@ export const fetchCompanyData = createAsyncThunk(
       return data;
     } catch (error) {
       //   throw companyError;
-      return error;
+      throw new Error("An error occurred while fetching company data.");
+      // return error;
     }
   }
 );
@@ -47,7 +48,10 @@ export const fetchCompanyInvites = createAsyncThunk(
       return data;
     } catch (error) {
       //   throw companyError;
-      return error;
+      throw new Error(
+        "An error occurred while fetching company member invites."
+      );
+      // return error;
     }
   }
 );
@@ -69,11 +73,14 @@ export const fetchCompanyMembers = createAsyncThunk(
     try {
       const response = await axiosConfig.get(apiEndpoint);
       const data = await response.data;
+      // console.log("company memebrs called", data);
 
       return data;
     } catch (error) {
+      // console.log("company memebrs called error", error);
       //   throw companyError;
-      return error;
+      throw new Error("An error occurred while fetching company members.");
+      // return error;
     }
   }
 );
@@ -97,7 +104,7 @@ const initialState: CompanyStoreState = {
   companyMembers: [],
   companyInvites: [],
   companyLoading: false,
-  membersLoading: true,
+  membersLoading: false,
   membersError: null,
   companyError: null,
   invitesError: null,

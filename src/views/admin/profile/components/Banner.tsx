@@ -15,6 +15,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import axiosConfig from "axiosConfig";
 import Card from "components/card/Card";
 import { NextAvatar } from "components/image/Avatar";
 import EditUser from "components/modals/EditUser";
@@ -33,13 +34,7 @@ export default function Banner(props: {
   const { avatar, name, email, date_joined, phoneNumber, ...rest } = props;
 
   // Chakra Color Mode
-  const borderColor = useColorModeValue(
-    "primary.100 !important",
-    "#111C44 !important"
-  );
-
   const font_family = "Poppins";
-
   const date = new Date(date_joined)?.toLocaleDateString() ?? "Loading";
   const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber) ?? "Not Set";
   const router = useRouter();
@@ -47,12 +42,9 @@ export default function Banner(props: {
   // alert dialog controls
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
-
   const [deleting, setDeleting] = useState(false);
   const [userAvatar, setUserAvatar] = useState(false);
-
   const { data: session } = useSession();
-
   const [editModalState, setEditModalState] = useState(false);
   const toggleModal = (state: boolean) => {
     setEditModalState(state);
@@ -73,19 +65,8 @@ export default function Banner(props: {
   const deleteAccount = async () => {
     setDeleting(true);
 
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json;charset=UTF-8",
-        Authorization: `Token ${session?.user?.auth_token}`,
-      },
-    };
-
     try {
-      await axios.delete(
-        `https://surveyplanner.pythonanywhere.com/auth/users/${session?.user?.data.id}/`,
-        config
-      );
+      await axiosConfig.delete(`/auth/users/${session?.user?.data.id}/`);
       signOut({ callbackUrl: "http://localhost:3000" });
       onClose();
     } catch (err) {
@@ -116,8 +97,8 @@ export default function Banner(props: {
             alt="user avatar"
             h="100px"
             w="100px"
-            border="10px solid"
-            borderColor={borderColor}
+            border="none"
+            borderColor="transparent"
           />
         </Flex>
         <Box h="100%" mx="10px" w="2px" bg="gray.200" />
