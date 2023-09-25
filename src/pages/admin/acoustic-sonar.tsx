@@ -68,48 +68,44 @@ var initialValues = {
   performance_ins: Yup.object().shape({}),
   performance_card: [
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "integrated",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_camera: "",
+      "inclination_of_the_antenna-horizontal": "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "external",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_camera: "",
+      "inclination_of_the_antenna-horizontal": "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "integrated",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_camera: "",
+      "inclination_of_the_antenna-horizontal": "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "external",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_camera: "",
+      "inclination_of_the_antenna-horizontal": "",
     },
   ],
 };
@@ -194,8 +190,8 @@ export default function AcousticSonar() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data, isLoading } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  const { data, isLoading, currentSubscription } = subscriptionsData;
+  // const currentSubscription = data?.currentSubscription;
   const { surveyOptions } = useSurveyOptions(acousticSurvey?.id);
 
   // chakra toast

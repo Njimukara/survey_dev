@@ -322,10 +322,10 @@ export default function MultibeamEchoSounder() {
     (state: RootState) => state.reduxStore.surveys
   );
   const { surveys } = allSurveys;
-  const { data } = useSelector(
+  const { data, currentSubscription } = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { currentSubscription } = data;
+  // const { currentSubscription } = data;
   const router = useRouter();
 
   const getSurveyResults = useCallback(() => {

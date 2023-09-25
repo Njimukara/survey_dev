@@ -59,9 +59,8 @@ export default function Transactions() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data, isLoading, error } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
-  const subscriptions = data?.data;
+  const { data, currentSubscription, isLoading, error } = subscriptionsData;
+  const subscriptions = data;
 
   const [selectedPlan, setSelectedPlan] = useState<subsciptionPlan>(null);
   const [upgrade, setUpgrade] = useState(false);

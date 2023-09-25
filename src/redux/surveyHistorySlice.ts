@@ -14,7 +14,7 @@ export const fetchSurveyHistory = createAsyncThunk(
       }
     }
 
-    const subscription = state.reduxStore.subscrptions.data.currentSubscription;
+    const subscription = state.reduxStore.subscrptions.currentSubscription;
 
     try {
       const assignedSurveys = subscription?.assigned_surveys;
@@ -37,10 +37,15 @@ export const fetchSurveyHistory = createAsyncThunk(
 
       // console.log("company", combinedResultsObject, results);
       return { combinedResults: combinedResultsObject, results };
-    } catch (err) {
+    } catch (err: any) {
       // console.error("surveyhistory", err);
       // return err;
-      throw new Error("An error occurred while fetching survey history.");
+      // const error = err?.response?.data?.detail;
+      const error = "err?.response?.data?.detail";
+
+      // return error;
+
+      throw new Error(error);
     }
   }
 );
@@ -55,7 +60,7 @@ export const fetchCompanySurveys = createAsyncThunk(
         return state.reduxStore.surveyHistory.companySurveys; // Return the existing data from the store
       }
     }
-    const subscription = state.reduxStore.subscrptions.data.currentSubscription;
+    const subscription = state.reduxStore.subscrptions.currentSubscription;
     try {
       const assignedSurveys = subscription?.assigned_surveys;
       const surveyRequests = assignedSurveys?.map(
@@ -78,10 +83,12 @@ export const fetchCompanySurveys = createAsyncThunk(
 
       // console.log("company", combinedResultsObject, results);
       return { combinedResults: combinedResultsObject, results };
-    } catch (err) {
+    } catch (err: any) {
       // console.error("company history", err);
       // return err;
-      throw new Error("An error occurred while fetching surveys.");
+      // const error = err?.response?.data?.detail;
+      const error = "err?.response?.data?.detail";
+      throw new Error(error);
     }
   }
 );
@@ -117,28 +124,38 @@ export const surveyHisorySlice = createSlice({
       .addCase(fetchSurveyHistory.pending, (state) => {
         state.surveyHistoryLoading = true;
         state.surveyHistoryError = null;
+        state.mergedSurveyHistory = [];
+        state.surveyHistory = [];
       })
       .addCase(fetchSurveyHistory.fulfilled, (state, action) => {
         state.surveyHistoryLoading = false;
+        state.surveyHistoryError = null;
         state.surveyHistory = action.payload.results;
         state.mergedSurveyHistory = action.payload.combinedResults.data;
       })
       .addCase(fetchSurveyHistory.rejected, (state, action) => {
         state.surveyHistoryLoading = false;
         state.surveyHistoryError = action.error.message || "An error occurred";
+        state.mergedSurveyHistory = [];
+        state.surveyHistory = [];
       })
       .addCase(fetchCompanySurveys.pending, (state) => {
         state.companySurveysLoading = true;
         state.companySurveysError = null;
+        state.mergedCompanySurveys = [];
+        state.companySurveys = [];
       })
       .addCase(fetchCompanySurveys.fulfilled, (state, action) => {
         state.companySurveysLoading = false;
+        state.companySurveysError = null;
         state.companySurveys = action.payload.results;
         state.mergedCompanySurveys = action.payload.combinedResults.data;
       })
       .addCase(fetchCompanySurveys.rejected, (state, action) => {
         state.companySurveysLoading = false;
         state.companySurveysError = action.error.message || "An error occurred";
+        state.mergedCompanySurveys = [];
+        state.companySurveys = [];
       });
   },
 });

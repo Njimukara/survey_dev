@@ -38,6 +38,12 @@ export const clearError = () => ({
   type: CLEAR_ERROR,
 });
 
+export const logout = () => {
+  return {
+    type: "LOGOUT",
+  };
+};
+
 // actions.js
 
 export const fetchPlans = () => {

@@ -20,21 +20,6 @@ export const performaceCardFields = [
     type: "number",
   },
   {
-    name: "perforance_card.pulse_duration",
-    label: "pulse_duration",
-    type: "number",
-  },
-  {
-    name: "perforance_card.beamwidth",
-    label: "beamwidth",
-    type: "number",
-  },
-  {
-    name: "perforance_card.depression_angle",
-    label: "depression_angle",
-    type: "number",
-  },
-  {
     name: "perforance_card.max_range_of_sss",
     label: "max_range_of_sss",
     type: "number",
@@ -55,13 +40,23 @@ export const performaceCardFields = [
     type: "number",
   },
   {
-    name: "perforance_card.depth_resolution",
+    name: "perforance_card.depth_resol  ution",
     label: "depth_resolution",
     type: "number",
   },
   {
+    name: "perforance_card.beamwidth",
+    label: "beamwidth",
+    type: "number",
+  },
+  {
+    name: "perforance_card.depression_angle",
+    label: "depression_angle",
+    type: "number",
+  },
+  {
     name: "perforance_card.ping_rate",
-    label: "accross_track_beanwidth",
+    label: "ping_rate",
     type: "number",
   },
   {

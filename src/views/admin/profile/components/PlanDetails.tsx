@@ -28,10 +28,10 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
   const font_family = "Poppins";
   const dispatch = useDispatch<AppDispatch>();
-  const { data, isLoading, error } = useSelector(
+  const { data, currentSubscription, isLoading, error } = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { currentSubscription } = data;
+  // const { currentSubscription } = data;
   const subscriptionStatus =
     currentSubscription?.subscription_data?.status?.toLowerCase();
 
@@ -89,8 +89,6 @@ export default function PlanDetails(props: { [x: string]: any }) {
       });
   };
 
-  const subscribeAgain = () => {};
-
   const makePayment = () => {
     let url =
       currentSubscription?.invoices[0]?.invoice_data?.hosted_invoice_url;
@@ -140,7 +138,7 @@ export default function PlanDetails(props: { [x: string]: any }) {
 
             {isLoading ? (
               <Box alignItems="center" fontFamily={font_family}>
-                <Skeleton height={150} />
+                <Skeleton count={5} height={10} />
               </Box>
             ) : (
               <>

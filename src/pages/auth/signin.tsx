@@ -64,6 +64,10 @@ import type { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSubscriptions } from "redux/subscriptionsSlice";
 import { fetchSurveys } from "redux/surveySlice";
+import {
+  fetchCompanySurveys,
+  fetchSurveyHistory,
+} from "redux/surveyHistorySlice";
 
 const CustomInput = forwardRef(
   (props: any, ref: LegacyRef<HTMLInputElement>) => {
@@ -181,6 +185,16 @@ export default function SignIn() {
       // getAllSurveys();
       dispatch(fetchSubscriptions("/api/plans/subscription/"));
       dispatch(fetchSurveys());
+      // dispatch(
+      //   fetchSurveyHistory({
+      //     force: true,
+      //   })
+      // );
+      // dispatch(
+      //   fetchCompanySurveys({
+      //     force: true,
+      //   })
+      // );
       setSubmitting(false);
       router.push(returnUrl);
     } else if (res.status != 200) {

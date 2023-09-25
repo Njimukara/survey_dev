@@ -95,7 +95,7 @@ var initialValues = {
       pulse_repetition_rate: "",
       range_uncertainty: "",
       lidar_scanning_angle: "",
-      texture: "integrated",
+      texture: "",
     },
     {
       maximum_range: "",
@@ -106,7 +106,7 @@ var initialValues = {
       pulse_repetition_rate: "",
       range_uncertainty: "",
       lidar_scanning_angle: "",
-      texture: "external",
+      texture: "",
     },
     {
       maximum_range: "",
@@ -117,7 +117,7 @@ var initialValues = {
       pulse_repetition_rate: "",
       range_uncertainty: "",
       lidar_scanning_angle: "",
-      texture: "integrated",
+      texture: "",
     },
     {
       maximum_range: "",
@@ -128,7 +128,7 @@ var initialValues = {
       pulse_repetition_rate: "",
       range_uncertainty: "",
       lidar_scanning_angle: "",
-      texture: "external",
+      texture: "",
     },
   ],
 };
@@ -212,8 +212,8 @@ function DynamicLydar() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data, isLoading } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  const { data, isLoading, currentSubscription } = subscriptionsData;
+  // const currentSubscription = data?.currentSubscription;
   const { surveyOptions } = useSurveyOptions(lidarSurvey?.id);
 
   // chakra toast

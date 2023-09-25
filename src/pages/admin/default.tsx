@@ -231,8 +231,8 @@ export default function UserReports() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  // const { data, currentSubscription } = subscriptionsData;
+  // const currentSubscription = data?.currentSubscription;
 
   const companyMembersData = useSelector(
     (state: RootState) => state.reduxStore.company
@@ -256,12 +256,16 @@ export default function UserReports() {
     companySurveys,
     mergedCompanySurveys,
     mergedSurveyHistory,
+    companySurveysError,
+    surveyHistoryError,
   }: {
     surveyHistory: any[];
     companySurveysLoading: boolean;
     companySurveys: any[];
     mergedCompanySurveys: any[];
     mergedSurveyHistory: any[];
+    companySurveysError: any;
+    surveyHistoryError: any;
   } = surveyHistoryData;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -275,6 +279,13 @@ export default function UserReports() {
   } = surveyData;
 
   const [subscriptions, setSubscriptions] = useState([]);
+  const [presentSubscription, setPresentSubscription] = useState();
+  const [flatCompanySurveyHistory, setFlatCompanySurveyHistory] = useState([]);
+  const [flatUserSurveyHistory, setFlatUserSurveyHistory] = useState([]);
+  const [arraysSurveyHistory, setArraysSurveyHistory] = useState([]);
+  const [arraysCompanySurveyHistory, setArraysCompanySurveyHistory] = useState(
+    []
+  );
 
   const invertedArray = useMemo(() => {
     if (Array.isArray(subscriptions)) {
@@ -285,17 +296,37 @@ export default function UserReports() {
     }
   }, [subscriptions]);
 
+  const surveyError = useMemo(() => {
+    if (companySurveysError) {
+      // console.log("company", companySurveysError);
+      return companySurveysError;
+    } else {
+      // console.log("survey", surveyHistoryError);
+      return surveyHistoryError;
+    }
+  }, [companySurveysError, surveyHistoryError]);
+
   useEffect(() => {
-    // console.log("surveys loading", surveysLoading);
-    // console.log("surveys", surveys);
     dispatch(updateSurveys(surveys));
   }, [surveys, surveysLoading, dispatch]);
 
   useEffect(() => {
-    // console.log(companySurveyHistory, mergedCompanyHistory);
-    // console.log("subscriptions", subscriptions);
-    setSubscriptions(data?.data);
-  }, []);
+    if (subscriptionsData) {
+      const { data, currentSubscription } = subscriptionsData;
+      setSubscriptions(data);
+      setPresentSubscription(currentSubscription);
+    }
+  }, [subscriptionsData]);
+
+  useEffect(() => {
+    setFlatCompanySurveyHistory(mergedCompanySurveys);
+    setArraysCompanySurveyHistory(companySurveys);
+  }, [mergedCompanySurveys, companySurveys]);
+
+  useEffect(() => {
+    setFlatUserSurveyHistory(mergedSurveyHistory);
+    setArraysSurveyHistory(surveyHistory);
+  }, [mergedSurveyHistory, surveyHistory]);
 
   useEffect(() => {
     setUser(currentUser);
@@ -314,7 +345,7 @@ export default function UserReports() {
 
   useEffect(() => {
     if (
-      currentSubscription != null &&
+      presentSubscription != null &&
       userType === UserTypes.COMPANY_USER &&
       companyMembers.length > 0
     ) {
@@ -324,7 +355,7 @@ export default function UserReports() {
           force: true,
         })
       );
-      // console.log(mergedCompanySurveys);
+      // console.log("companysurveys", mergedCompanySurveys);
     } else {
       // console.log("regular usr");
       dispatch(
@@ -332,7 +363,7 @@ export default function UserReports() {
           force: true,
         })
       );
-      // console.log(mergedSurveyHistory);
+      // console.log("surveyHistory", mergedSurveyHistory);
     }
   }, []);
 
@@ -354,8 +385,8 @@ export default function UserReports() {
                 Hello {user?.name}!
               </Heading>
               <Text fontSize="18px" fontWeight="500" fontFamily={font_family}>
-                This is your survey planner dashboard, where you can see an
-                overview of your account details
+                Welcome to your Survey Planner Dashboard, where you can access a
+                comprehensive overview of your account details
               </Text>
             </Box>
           </Card>
@@ -408,8 +439,8 @@ export default function UserReports() {
   // Helper functions
   function getSurveysCount(): number {
     return userType !== UserTypes.COMPANY_USER
-      ? mergedSurveyHistory?.length ?? 0
-      : mergedCompanySurveys?.length ?? 0;
+      ? flatUserSurveyHistory?.length ?? 0
+      : flatCompanySurveyHistory?.length ?? 0;
   }
 
   function getUserTypeSpecificStatistics(): JSX.Element {
@@ -445,13 +476,13 @@ export default function UserReports() {
   }
 
   function renderCompanySurveys(): JSX.Element {
-    if (mergedCompanySurveys && mergedCompanySurveys.length <= 0) {
+    if (flatCompanySurveyHistory && flatCompanySurveyHistory.length <= 0) {
       return <NoData title="No company survey data" />;
     }
     return (
       <PieCard
         loading={companySurveysLoading}
-        companySurvey={mergedCompanySurveys}
+        companySurvey={flatCompanySurveyHistory}
       />
     );
   }
@@ -459,22 +490,22 @@ export default function UserReports() {
   function renderSurveyTable(): JSX.Element {
     if (
       userType === UserTypes.REGULAR_USER &&
-      mergedSurveyHistory &&
-      mergedSurveyHistory.length > 0
+      flatUserSurveyHistory &&
+      flatUserSurveyHistory.length > 0
     ) {
       return (
         <SurveyTable
-          tableData={mergedSurveyHistory as unknown as TableData[]}
+          tableData={flatUserSurveyHistory as unknown as TableData[]}
         />
       );
     } else if (
       userType === UserTypes.COMPANY_USER &&
-      mergedCompanySurveys &&
-      mergedCompanySurveys.length > 0
+      flatCompanySurveyHistory &&
+      flatCompanySurveyHistory.length > 0
     ) {
       return (
         <SurveyTable
-          tableData={mergedCompanySurveys as unknown as TableData[]}
+          tableData={flatCompanySurveyHistory as unknown as TableData[]}
         />
       );
     } else {
@@ -483,7 +514,12 @@ export default function UserReports() {
   }
 
   function getCompanySurveyData() {
-    return companySurveys || surveyHistory;
+    if (userType === UserTypes.COMPANY_USER && companyMembers.length > 0) {
+      return arraysCompanySurveyHistory;
+    } else {
+      return arraysSurveyHistory;
+      // return companySurveys || surveyHistory;
+    }
   }
 
   function renderTransactionTable(): JSX.Element {

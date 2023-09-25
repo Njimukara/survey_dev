@@ -12,9 +12,10 @@ type Survey = {
 const hasPermission = (currentSubscription: any) => {
   const subscriptionStatus = currentSubscription?.status?.toLowerCase();
 
-  const isStatusActive = subscriptionStatus !== "active";
-  const isStatusTrialing = subscriptionStatus !== "trialing";
+  const isStatusActive = subscriptionStatus == "active";
+  const isStatusTrialing = subscriptionStatus == "trialing";
 
+  console.log(isStatusActive, isStatusTrialing);
   return isStatusActive || isStatusTrialing;
 };
 

@@ -30,15 +30,31 @@ const useRoutes = () => {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  // console.log(subscriptionsData);
+  // if (subscriptionsData) {
+  //   const { data, currentSubscription } = subscriptionsData;
+  // }
 
   useEffect(() => {
-    const assignedSurveys = currentSubscription?.assigned_surveys || [];
-    setSurveys(assignedSurveys);
+    if (subscriptionsData) {
+      const { currentSubscription } = subscriptionsData;
+      // const { data, currentSubscription } = subscriptionsData;
 
-    console.log(assignedSurveys);
-  }, [currentSubscription]);
+      if (currentSubscription != null) {
+        const { status } = currentSubscription;
+
+        if (
+          status.toLowerCase() === "active" ||
+          status.toLowerCase() === "trialing"
+        ) {
+          const assignedSurveys = currentSubscription.assigned_surveys || [];
+          setSurveys(assignedSurveys);
+        } else {
+          setSurveys([]);
+        }
+      }
+    }
+  }, [subscriptionsData]);
 
   const productSubRoutes = [
     {
@@ -73,9 +89,9 @@ const useRoutes = () => {
 
   const filteredProductSubRoutes = productSubRoutes.filter((subRoute) =>
     surveys.some((survey) => {
-      console.log(
-        `Checking subRoute: ${subRoute.name} with survey: ${survey.name}`
-      );
+      // console.log(
+      //   `Checking subRoute: ${subRoute.name} with survey: ${survey.name}`
+      // );
       return subRoute.name
         .trim()
         .toLowerCase()
@@ -83,7 +99,7 @@ const useRoutes = () => {
     })
   );
 
-  console.log(filteredProductSubRoutes);
+  // console.log(filteredProductSubRoutes);
 
   const routes: IRoute[] = [
     {
