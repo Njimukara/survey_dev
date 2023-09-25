@@ -1,3 +1,4 @@
+"use client";
 import { extendTheme, HTMLChakraProps, ThemingProps } from "@chakra-ui/react";
 import { CardComponent } from "./additions/card/card";
 import { buttonStyles as Button } from "./components/button";
