@@ -60,55 +60,75 @@ const reactSelectStyles = {
 
 var initialValues = {
   surveyName: "",
-  operational_conditions: Yup.object().shape({}),
-  survey_platform_performance: Yup.object().shape({}),
-  calibration_parameters: Yup.object().shape({}),
-  lever_arm_measures_between: Yup.object().shape({}),
-  performance_ins: Yup.object().shape({}),
+  operational_conditions: {},
+  survey_platform_performance: {},
+  calibration_parameters: {},
+  lever_arm_measures_between: {},
+  performance_ins: {},
   performance_card: [
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
+      along_track_beanwidth: "",
+      accross_track_beanwidth: "",
+      beams_number: "",
+      depth_resolution: "",
+      ping_rate: "",
+      user_defined_swath_coverage: "",
+      shape_of_atennna: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
+      along_track_beanwidth: "",
+      accross_track_beanwidth: "",
+      beams_number: "",
+      depth_resolution: "",
+      ping_rate: "",
+      user_defined_swath_coverage: "",
+      shape_of_atennna: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
+      along_track_beanwidth: "",
+      accross_track_beanwidth: "",
+      beams_number: "",
+      depth_resolution: "",
+      ping_rate: "",
+      user_defined_swath_coverage: "",
+      shape_of_atennna: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
+      along_track_beanwidth: "",
+      accross_track_beanwidth: "",
+      beams_number: "",
+      depth_resolution: "",
+      ping_rate: "",
+      user_defined_swath_coverage: "",
+      shape_of_atennna: "",
     },
   ],
 };
@@ -138,7 +158,7 @@ export default function MultibeamEchoSounder() {
 
     let data = {
       name: values.surveyName,
-      // survey: multibeamSurvey?.id,
+      survey: multibeamSurvey?.id,
       parameters: formData,
     };
 
@@ -153,7 +173,7 @@ export default function MultibeamEchoSounder() {
         toast({
           position: "bottom-right",
           description: "Successful",
-          status: "info",
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
@@ -196,8 +216,8 @@ export default function MultibeamEchoSounder() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data, isLoading } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  const { data, isLoading, currentSubscription } = subscriptionsData;
+  // const currentSubscription = data?.currentSubscription;
   const { surveyOptions } = useSurveyOptions(multibeamSurvey?.id);
 
   const [surveyParameters, setSurveyParameters] = useState<any>({

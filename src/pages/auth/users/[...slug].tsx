@@ -89,14 +89,14 @@ export default function SuccesVerifyEmail({ providers }: any) {
   if (isLoading) {
     return (
       <Box h="100vh" display="flex" justifyContent="center" alignItems="center">
-        <Box w="50%" h="60%" bg="primary.200" borderRadius={10}>
+        <Box w="50%" h="60%" borderRadius={10}>
           <Text
             p={4}
             fontWeight="bold"
             transform="capitalize"
             fontSize={20}
             color={textColor}
-            align="right"
+            align="center"
           >
             Survey Planner
           </Text>
@@ -136,14 +136,14 @@ export default function SuccesVerifyEmail({ providers }: any) {
       justifyContent="center"
       alignItems="center"
     >
-      <Box w="50%" h="60%" bg="primary.200" borderRadius={10}>
+      <Box w="50%" h="60%" borderRadius={20} bg="white" boxShadow="lg" pt="10">
         <Text
           p={4}
           fontWeight="bold"
           transform="capitalize"
           fontSize={20}
           color={textColor}
-          align="right"
+          align="center"
         >
           Survey Planner
         </Text>
@@ -158,10 +158,10 @@ export default function SuccesVerifyEmail({ providers }: any) {
               />
             </Box>
             <Flex flexDirection="column" alignItems="center">
-              <Text fontWeight="bold" fontSize="large">
+              <Text fontWeight="bold" fontSize="24px">
                 Account Verified!
               </Text>
-              <Text my={4}>You have successfully verified your account</Text>
+              <Text my={4}>Account verification successful</Text>
               <Button
                 variant="homePrimary"
                 onClick={() => router.push("/auth/signin")}
@@ -175,18 +175,21 @@ export default function SuccesVerifyEmail({ providers }: any) {
             <Flex
               my={8}
               bg="#cf8888"
-              color="primary.200"
+              color="gray.200"
               borderRadius="50%"
               justifyContent="center"
               alignItems="center"
+              className="spin"
             >
               <Icon boxSize={20} as={MdClear} />
             </Flex>
             <Flex flexDirection="column" alignItems="center">
-              <Text fontWeight="bold" fontSize="large">
+              <Text fontWeight="bold" fontSize="24px">
                 Account not Verified!
               </Text>
-              <Text my={4}>{error}</Text>
+              <Text my={4} fontSize="18px" color="red.500">
+                {error}
+              </Text>
               <Button
                 variant="homePrimary"
                 onClick={() => router.push("/auth/resend-email")}

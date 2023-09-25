@@ -5,7 +5,7 @@ import { subsciptionPlan } from "../../types/data";
 
 // Define an asynchronous action using createAsyncThunk
 export const fetchSubscriptions = createAsyncThunk(
-  "counter/fetchData", // Action type prefix
+  "counter/fetchData",
   async (apiEndpoint: string) => {
     let currentSubscription = null;
     try {
@@ -23,6 +23,8 @@ export const fetchSubscriptions = createAsyncThunk(
           currentSubscription = null;
         }
       }
+      // console.log(data, currentSubscription);
+
       return { data, currentSubscription };
     } catch (error) {
       throw new Error("An error occurred while fetching subscriptions.");
@@ -32,12 +34,14 @@ export const fetchSubscriptions = createAsyncThunk(
 
 export interface subsciptionState {
   data: any;
+  currentSubscription: any;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: subsciptionState = {
-  data: {},
+  data: [],
+  currentSubscription: {},
   isLoading: false,
   error: null,
 };
@@ -54,11 +58,14 @@ export const subscriptionsSlice = createSlice({
       })
       .addCase(fetchSubscriptions.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload;
+        state.data = action.payload.data;
+        state.currentSubscription = action.payload.currentSubscription;
       })
       .addCase(fetchSubscriptions.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || "An error occurred";
+        state.currentSubscription = [];
+        state.data = [];
       });
   },
 });

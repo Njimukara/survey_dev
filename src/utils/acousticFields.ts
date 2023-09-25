@@ -20,11 +20,6 @@ export const performaceCardFields = [
     type: "number",
   },
   {
-    name: "perforance_card.pulse_duration",
-    label: "pulse_duration",
-    type: "number",
-  },
-  {
     name: "perforance_card.beamwidth",
     label: "beamwidth",
     type: "number",
@@ -36,7 +31,7 @@ export const performaceCardFields = [
   },
   {
     name: "perforance_card.max_range_of_camera",
-    label: "max_range_of_sss",
+    label: "max_range_of_camera",
     type: "number",
   },
   {

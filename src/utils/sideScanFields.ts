@@ -15,11 +15,6 @@ export const sideScanPerformaceCardFields = [
     type: "number",
   },
   {
-    name: "survey_platform_performance.uncertainty_of_divergence",
-    label: "uncertainty_of_divergence",
-    type: "number",
-  },
-  {
     name: "survey_platform_performance.pulse_duration",
     label: "pulse_duration",
     type: "number",
@@ -76,6 +71,11 @@ export const performaceINSFields = [
     type: "number",
   },
   {
+    name: "performance_ins.pitch_uncertainty",
+    label: "pitch_uncertainty",
+    type: "number",
+  },
+  {
     name: "performance_ins.positioning_uncertainty_in_h",
     label: "positioning_uncertainty_in_h",
     type: "number",
@@ -106,11 +106,6 @@ export const platformPerformanceFields = [
   {
     name: "survey_platform_performance.survey_speed",
     label: "survey_speed",
-    type: "number",
-  },
-  {
-    name: "survey_platform_performance.flying_height_or_distance",
-    label: "flying_height_or_distance",
     type: "number",
   },
   {
@@ -168,6 +163,11 @@ export const calibrationsFields = [
     type: "number",
   },
   {
+    name: "calibration_parameters.latency_gnss-ins-of-usbl",
+    label: "latency_gnss-ins-of-usbl",
+    type: "number",
+  },
+  {
     name: "calibration_parameters.ford_gnss_usbl_transducer",
     label: "ford_gnss_usbl_transducer",
     type: "number",
@@ -193,6 +193,11 @@ export const operationalConditionsFields = [
   {
     name: "operational_conditions.max_depth_of_the_svp",
     label: "max_depth_of_the_svp",
+    type: "number",
+  },
+  {
+    name: "operational_conditions.mean_sound_speed",
+    label: "mean_sound_speed",
     type: "number",
   },
   {

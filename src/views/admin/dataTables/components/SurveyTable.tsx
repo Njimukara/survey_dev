@@ -105,7 +105,9 @@ const SurveyTable = (props: TableProps) => {
 
   const formatSurveyType = (surveytype: number) => {
     let name = "";
-    if (surveys || surveys.length > 0) {
+    if (!surveys) {
+      return "";
+    } else {
       surveys.map((survey: survey) => {
         if (survey.id == surveytype) {
           name = survey.name;

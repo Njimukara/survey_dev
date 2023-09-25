@@ -33,6 +33,9 @@ import { getSession, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useRoutes from "routes";
+import { useDispatch } from "react-redux";
+import { resetAllStates } from "../../redux/reducers/resetAllState";
+import { AppDispatch } from "redux/store";
 // import { useRouter } from 'next/router'
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props;
@@ -52,6 +55,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
   );
   const circularbg = useColorModeValue("#EDEDED", "navy.800");
   const { routes } = useRoutes();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Variables
   const [user, setUser] = useState<any>();
@@ -70,6 +74,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 
   // functions
   const logOut = async () => {
+    dispatch(resetAllStates());
     const config = {
       headers: {
         Accept: "application/json;charset=UTF-8",

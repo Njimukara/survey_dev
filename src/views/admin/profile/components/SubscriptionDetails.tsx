@@ -132,8 +132,7 @@ export default function SubscirptionDetails(props: { [x: string]: any }) {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  const { currentSubscription } = subscriptionsData;
 
   // Chakra Color Mode
   const textColorSecondary = useColorModeValue("secondaryGray.600", "white");

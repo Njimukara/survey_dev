@@ -51,64 +51,47 @@ const reactSelectStyles = {
 
 var initialValues = {
   surveyName: "",
-  operational_conditions: Yup.object().shape({
-    flying_height_or_distance: Yup.number().required("required"),
-    max_depth_of_the_svp: Yup.number().required("required"),
-    angle_of_incidence_of_a_beam: Yup.number().required("required"),
-    overlap_rate: Yup.number().required("required"),
-    width_of_the_study_area: Yup.number().required("required"),
-    length_of_the_study_area: Yup.number().required("required"),
-    tide_uncertainty: Yup.number().required("required"),
-    co_tidal_uncertainty: Yup.number().required("required"),
-  }),
-  survey_platform_performance: Yup.object().shape({}),
-  calibration_parameters: Yup.object().shape({}),
-  lever_arm_measures_between: Yup.object().shape({}),
-  performance_ins: Yup.object().shape({}),
+  operational_conditions: {},
+  survey_platform_performance: {},
+  calibration_parameters: {},
+  lever_arm_measures_between: {},
+  performance_ins: {},
   performance_card: [
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "integrated",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "external",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "integrated",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
     },
     {
-      maximum_range: "",
-      beam_divergence: "",
-      signal_to_noise_ratio: "",
-      uncertainty_of_divergence: "",
+      defined_operating_frequency: "",
+      horizontal_field_of_view: "",
+      vertical_field_of_view: "",
       pulse_duration: "",
-      pulse_repetition_rate: "",
-      range_uncertainty: "",
-      lidar_scanning_angle: "",
-      texture: "external",
+      beamwidth: "",
+      depression_angle: "",
+      max_range_of_sss: "",
     },
   ],
 };
@@ -117,6 +100,7 @@ const validationSchema = Yup.object().shape({});
 
 function EchoSounder() {
   const handleSubmit = async (values: any) => {
+    console.log(values);
     setPlanning(true);
     var {
       performance_ins,
@@ -147,22 +131,23 @@ function EchoSounder() {
       .then((res) => {
         // setResults(res.data);
         setSurveyParameters(res.data.results);
-        console.log(res);
+        // console.log(res);
         updateSurveyHistory();
         toast({
           position: "bottom-right",
           description: "Successful",
-          status: "info",
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
         setPlanning(false);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
+        const errorMessage = error?.response?.data?.error;
         toast({
           position: "bottom-right",
-          description: "Error planning survey at this time",
+          description: errorMessage || "Error planning survey at this time",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -190,8 +175,8 @@ function EchoSounder() {
   const subscriptionsData = useSelector(
     (state: RootState) => state.reduxStore.subscrptions
   );
-  const { data, isLoading } = subscriptionsData;
-  const currentSubscription = data?.currentSubscription;
+  const { data, currentSubscription, isLoading } = subscriptionsData;
+  // const currentSubscription = data?.currentSubscription;
   const { surveyOptions } = useSurveyOptions(sideScanSurvey?.id);
 
   // chakra toast
@@ -344,12 +329,12 @@ function EchoSounder() {
                   formik={formik}
                   cardName="Calbration Parameters"
                 />
-                <SurveySectionCard
+                {/* <SurveySectionCard
                   mb="2"
                   fields={lever_arm_measuresFields}
                   formik={formik}
                   cardName="Lever arm Measures Between"
-                />
+                /> */}
               </Box>
             </Flex>
             <Button
