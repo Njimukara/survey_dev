@@ -14,26 +14,24 @@ import { CardStyles as Card } from "./components/Card";
 import { inputTheme } from "./components/Inputs";
 
 import { globalStyles } from "./styles";
-export default extendTheme(
-  {
-    fonts: {
-      heading: `'Poppins', sans-serif`,
-      body: `'Poppins', sans-serif`,
-      html: `'Poppins', sans-serif`,
-      p: `'Poppins', sans-serif`,
-      Text: `'Poppins', sans-serif`,
-      input: `'Poppins', sans-serif`,
-      label: `'Poppins', sans-serif`,
-    },
-    breakpoints,
-    components: {
-      Button,
-      Card,
-      Input: inputTheme,
-      Progress: {
-        baseStyle: {
-          filledTrack: {},
-        },
+const overrides = {
+  fonts: {
+    heading: `'Poppins', sans-serif`,
+    body: `'Poppins', sans-serif`,
+    html: `'Poppins', sans-serif`,
+    p: `'Poppins', sans-serif`,
+    Text: `'Poppins', sans-serif`,
+    input: `'Poppins', sans-serif`,
+    label: `'Poppins', sans-serif`,
+  },
+  breakpoints,
+  components: {
+    Button,
+    Card,
+    Input: inputTheme,
+    Progress: {
+      baseStyle: {
+        filledTrack: {},
       },
     },
   },
@@ -45,7 +43,9 @@ export default extendTheme(
   inputStyles,
   textareaStyles,
   switchStyles,
-  CardComponent
-);
+  CardComponent,
+};
+
+export default extendTheme(overrides);
 
 export interface CustomCardProps extends HTMLChakraProps<"div">, ThemingProps {}

@@ -2,7 +2,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import React, { useState, useEffect } from "react";
-import theme from "../theme/theme";
+import theme from "../theme";
 
 import "styles/Fonts.css";
 import "styles/App.css";
@@ -13,19 +13,15 @@ import "styles/MiniCalendar.css";
 import Head from "next/head";
 
 import "../../styles/globals.css";
-// import {theme} from '../theme/';
 import "theme/styles.css";
 
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { AuthGuard } from "layouts/auth/AuthGuard";
-// import { SubscriptionProvider } from "contexts/SubscriptionContext";
 import { PlanContextProvider } from "contexts/PlanContext";
 import { CurrentUserProvider } from "contexts/UserContext";
 import { Router } from "next/router";
 import NProgress from "nprogress";
-// import { AllSurveysProvider } from "contexts/SurveyContext";
-// import { SurveyHistoryProvider } from "contexts/SurveyHistoryContext";
 import { Provider } from "react-redux";
 import { persistor, store } from "../redux/store";
 import { PersistGate } from "redux-persist/integration/react";
