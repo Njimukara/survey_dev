@@ -14,7 +14,7 @@ import { CardStyles as Card } from "./components/Card";
 import { inputTheme } from "./components/Inputs";
 
 import { globalStyles } from "./styles";
-const overrides = {
+export default extendTheme({
   fonts: {
     heading: `'Poppins', sans-serif`,
     body: `'Poppins', sans-serif`,
@@ -44,8 +44,6 @@ const overrides = {
   textareaStyles,
   switchStyles,
   CardComponent,
-};
-
-export default extendTheme(overrides);
+});
 
 export interface CustomCardProps extends HTMLChakraProps<"div">, ThemingProps {}
