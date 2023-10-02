@@ -47,4 +47,4 @@ export default extendTheme({
   CardComponent,
 });
 
-// export interface CustomCardProps extends HTMLChakraProps<"div">, ThemingProps {}
+export interface CustomCardProps extends HTMLChakraProps<"div">, ThemingProps {}
