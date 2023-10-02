@@ -101,7 +101,8 @@ export const globalStyles = {
     global: (props: StyleFunctionProps) => ({
       body: {
         overflowX: "hidden",
-        bg: mode("#F7F7FC", "navy.900")(props),
+        bg: mode('"#F7F7FC"', "navy.900")(props),
+        fontFamily: `'Poppins', sans-serif`,
         letterSpacing: "-0.5px",
         lineHeight: "27px",
       },
@@ -110,6 +111,7 @@ export const globalStyles = {
       },
       html: {
         lineHeight: "27px",
+        fontFamily: "Poppins",
       },
     }),
   },
