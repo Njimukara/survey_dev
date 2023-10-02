@@ -1,7 +1,7 @@
 "use client";
 import { extendTheme, HTMLChakraProps, ThemingProps } from "@chakra-ui/react";
 import { CardComponent } from "./additions/card/card";
-import { buttonStyles } from "./components/button";
+import { buttonStyles as Button } from "./components/button";
 import { badgeStyles } from "./components/badge";
 import { inputStyles } from "./components/input";
 import { progressStyles } from "./components/progress";
@@ -26,7 +26,7 @@ export default extendTheme({
   },
   breakpoints,
   components: {
-    // Button,
+    Button,
     Card,
     Input: inputTheme,
     Progress: {
@@ -35,7 +35,7 @@ export default extendTheme({
       },
     },
   },
-  buttonStyles,
+  // buttonStyles,
   globalStyles,
   badgeStyles,
   linkStyles,

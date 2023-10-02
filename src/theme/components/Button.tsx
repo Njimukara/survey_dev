@@ -4,6 +4,7 @@ export const buttonStyles = {
   //    Style onject for base styling
   baseStyle: {
     borderRadius: "16px",
+    bg: "primary.600",
     boxShadow: "45px 76px 113px 7px rgba(112, 144, 176, 0.08)",
     transition: ".25s all ease",
     h: "48px",
@@ -20,6 +21,44 @@ export const buttonStyles = {
   sizes: {},
   // Style object for different variants eg Primary secondary
   variants: {
+    homeWhite: (props: StyleFunctionProps) => ({
+      bg: "white",
+      color: "gray.900",
+      borderRadius: "5px",
+      pt: "9",
+      pb: "8",
+      px: "8",
+      _focus: {
+        bg: mode("blue.500", "blue.400")(props),
+      },
+      _active: {
+        bg: mode("blue.500", "blue.400")(props),
+      },
+      _hover: {
+        bg: "gray.100",
+        boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
+      },
+    }),
+    homePrimary: (props: StyleFunctionProps) => ({
+      bg: "primary.600",
+      color: "white",
+      borderRadius: "5px",
+      boxShadow: "0px 14px 20px 0px #1448FF1A",
+      pt: "0",
+      pb: "0",
+      px: "8",
+      h: "48px",
+      _focus: {
+        bg: mode("blue.500", "blue.400")(props),
+      },
+      _active: {
+        bg: mode("blue.500", "blue.400")(props),
+      },
+      _hover: {
+        bg: "primary.600",
+        boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
+      },
+    }),
     primary: {
       bg: "rgba(237, 136, 3, 0.5)",
       backdropFilter: "blur(4px)",
@@ -155,44 +194,6 @@ export const buttonStyles = {
     }),
 
     // Home Page Buttons
-    homeWhite: (props: StyleFunctionProps) => ({
-      bg: "white",
-      color: "gray.900",
-      borderRadius: "5px",
-      pt: "9",
-      pb: "8",
-      px: "8",
-      _focus: {
-        bg: mode("blue.500", "blue.400")(props),
-      },
-      _active: {
-        bg: mode("blue.500", "blue.400")(props),
-      },
-      _hover: {
-        bg: "gray.100",
-        boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
-      },
-    }),
-    homePrimary: (props: StyleFunctionProps) => ({
-      bg: "primary.600",
-      color: "white",
-      borderRadius: "5px",
-      boxShadow: "0px 14px 20px 0px #1448FF1A",
-      pt: "0",
-      pb: "0",
-      px: "8",
-      h: "48px",
-      _focus: {
-        bg: mode("blue.500", "blue.400")(props),
-      },
-      _active: {
-        bg: mode("blue.500", "blue.400")(props),
-      },
-      _hover: {
-        bg: "primary.600",
-        boxShadow: "0 1rem 2rem rgba(#333, 0.2)",
-      },
-    }),
   },
   // default values for props eg size and variant
   defaultProps: {},
