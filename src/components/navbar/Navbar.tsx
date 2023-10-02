@@ -126,11 +126,11 @@ const Navbar = (): JSX.Element => {
               Login
             </Button>
           </Link>
+          {/* // _active={{ bg: l"white" }} */}
           <Link as={NextLink} href="/auth/signin">
             <Button
               ml={[0, 0, 4, 8]}
-              variant={"homePrimary"}
-              _active={{ bg: "white" }}
+              variant="homePrimary"
               w="150px"
               py="0"
               h="48px"
